@@ -53,6 +53,12 @@ public class WorldConfig {
     
     private YamlConfiguration config;
 
+    static {
+        if(!worldConfigDir.exists()) {
+            worldConfigDir.mkdirs();
+        }
+    }
+    
     public WorldConfig(String worldName){
         if(!worldConfigDir.exists()) {
             worldConfigDir.mkdirs();

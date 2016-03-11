@@ -35,7 +35,7 @@ public class BannerListener implements Listener {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if(player.getItemInHand().getType().equals(Material.STICK)) {
+        if(event.hasBlock() && player.getItemInHand().getType().equals(Material.STICK)) {
             BlockState state = event.getClickedBlock().getState();
             if(state instanceof Banner) {
                 if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {
