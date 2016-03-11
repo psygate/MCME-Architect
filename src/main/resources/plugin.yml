@@ -55,7 +55,7 @@ permissions:
             architect.noPhysicsList: true
             architect.voxel.delete: true
     architect.ranks.designer: 
-        descriptions: Permission for MCME Designer
+        descriptions: Permission for MCME Designers
         default: op
         children:
             architect.ranks.artist: true
@@ -65,15 +65,15 @@ permissions:
             architect.voxel.stencilListEditor: true
             architect.randomiser.user: true
     architect.ranks.artist: 
-        descriptions: Permission for MCME Artist
+        descriptions: Permission for MCME Artists
         default: op
         children:
             architect.ranks.adventurer: true
             architect.bannerEditor: true
             architect.paintingEditor: true
             architect.armorStandEditor: true
-    architect.ranks.artist: 
-        descriptions: Permission for MCME Adventurer
+    architect.ranks.adventurer: 
+        descriptions: Permission for MCME Adventurers
         default: op
         children:
             architect.fullBrightness: true
