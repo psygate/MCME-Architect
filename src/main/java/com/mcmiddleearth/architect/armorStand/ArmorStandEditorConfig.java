@@ -2,6 +2,8 @@
 package com.mcmiddleearth.architect.armorStand;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import static com.mcmiddleearth.util.ConfigurationUtil.deserializeLocation;
+import static com.mcmiddleearth.util.ConfigurationUtil.serializeLocation;
 import com.mcmiddleearth.util.FileUtil;
 
 import java.io.File;
@@ -51,21 +53,21 @@ public class ArmorStandEditorConfig {
 
     public void placeArmorStand(Location loc, boolean exact) {
         Map<String,Object> data = (Map<String,Object>)copiedEntity.get("ArmorStand");
-        Location saved = ArmorStandUtil.deserializeLocation((Map<String,Object>) data.get("location"));
+        Location saved = deserializeLocation((Map<String,Object>) data.get("location"));
         if(!exact) {
             loc.setX(loc.getBlockX()+saved.getX()-saved.getBlockX());
             loc.setZ(loc.getBlockZ()+saved.getZ()-saved.getBlockZ());
             loc.setYaw(saved.getYaw());
         }
-        data.put("location",ArmorStandUtil.serializeLocation(loc));
+        data.put("location",serializeLocation(loc));
         ArmorStandUtil.deserializeArmorStand((Map<String,Object>)copiedEntity.get("ArmorStand"));
-        data.put("location",ArmorStandUtil.serializeLocation(saved));
+        data.put("location",serializeLocation(saved));
     }
     
     public final void clearCopiedArmorStand() {
         copiedEntity = new MemoryConfiguration();
         Map<String,Object> data = new HashMap<String,Object>();
-        data.put("location", ArmorStandUtil.serializeLocation(new Location(Bukkit.getWorlds().get(0),0.5,0,0.5,0,0)));
+        data.put("location", serializeLocation(new Location(Bukkit.getWorlds().get(0),0.5,0,0.5,0,0)));
         copiedEntity.set("ArmorStand", data);
     }
     
@@ -95,7 +97,7 @@ public class ArmorStandEditorConfig {
             data.load(file);
             copiedEntity = new MemoryConfiguration();
             Map<String, Object> armorData = data.getConfigurationSection("ArmorStand").getValues(true);
-            armorData.put("location", ArmorStandUtil.serializeLocation(new Location(Bukkit.getWorlds().get(0),0.5,0,0.5,0,0)));
+            armorData.put("location", serializeLocation(new Location(Bukkit.getWorlds().get(0),0.5,0,0.5,0,0)));
             copiedEntity.set("ArmorStand",armorData);
             return true;
         }

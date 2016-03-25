@@ -16,18 +16,19 @@
  */
 package com.mcmiddleearth.architect.armorStand;
 
+import static com.mcmiddleearth.util.ConfigurationUtil.deserializeEulerAngle;
+import static com.mcmiddleearth.util.ConfigurationUtil.deserializeLocation;
+import static com.mcmiddleearth.util.ConfigurationUtil.getMap;
+import static com.mcmiddleearth.util.ConfigurationUtil.serializeEulerAngle;
+import static com.mcmiddleearth.util.ConfigurationUtil.serializeLocation;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 
 /**
  *
@@ -113,52 +114,4 @@ public class ArmorStandUtil {
         }
     }
     
-    public static Map<String,Object> serializeLocation(Location loc) {
-        Map<String,Object> result = new HashMap<>();
-        result.put("x", loc.getX());
-        result.put("y", loc.getY());
-        result.put("z", loc.getZ());
-        result.put("yaw", loc.getYaw());
-        result.put("pitch", loc.getPitch());
-        result.put("world", loc.getWorld().getName());
-        return result;
-    }
-    
-    public static Location deserializeLocation(Map<String,Object> data) {
-        World world = Bukkit.getWorld((String) data.get("world"));
-        if(world == null) {
-            return null;
-        }
-        else {
-            return new Location(world, (Double) data.get("x"), 
-                                       (Double) data.get("y"), 
-                                       (Double) data.get("z"), 
-                                       (Float) data.get("yaw"),
-                                       (Float) data.get("pitch"));
-        }
-    }
-    
-    private static Map<String,Object> serializeEulerAngle(EulerAngle angle) {
-        Map<String,Object> result = new HashMap<>();
-        result.put("x", angle.getX());
-        result.put("y", angle.getY());
-        result.put("z", angle.getZ());
-        return result;
-    }
-    
-    private static EulerAngle deserializeEulerAngle(Map<String,Object> data) {
-        return new EulerAngle((Double) data.get("x"),
-                              (Double) data.get("y"),
-                              (Double) data.get("z"));
-    }
-    
-    private static Map<String,Object> getMap(Map<String,Object> data, String key) {
-        Object value = data.get(key);
-        if(value instanceof ConfigurationSection) {
-            return ((ConfigurationSection)value).getValues(true);
-        }
-        else {
-            return (Map<String,Object>) value;
-        }
-    }
 }

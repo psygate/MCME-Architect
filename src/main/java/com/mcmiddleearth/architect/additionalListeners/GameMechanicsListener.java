@@ -72,7 +72,6 @@ public class GameMechanicsListener implements Listener{
     @EventHandler
     public void onBlockForm(BlockFormEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
-//Logger.getGlobal().info("Cancel form in "+event.getBlock().getWorld().getName());
             event.setCancelled(true);
         }
     }
@@ -80,7 +79,6 @@ public class GameMechanicsListener implements Listener{
     @EventHandler
     public void onBlockGrow(BlockGrowEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
-//Logger.getGlobal().info("Cancel grow in "+event.getBlock().getWorld().getName());
             event.setCancelled(true);
         }
     }
@@ -88,14 +86,13 @@ public class GameMechanicsListener implements Listener{
     @EventHandler
     public void onBlockSpread(BlockSpreadEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
-//Logger.getGlobal().info("Cancel spread in "+event.getBlock().getWorld().getName());
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onFurnaceBurn(FurnaceBurnEvent event) {
-Logger.getGlobal().info("Furnace "+event.isBurning());
+//Logger.getGlobal().info("Furnace "+event.isBurning());
         
     }
 }

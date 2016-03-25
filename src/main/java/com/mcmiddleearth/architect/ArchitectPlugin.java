@@ -10,11 +10,15 @@ import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
+import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
 import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
+import com.mcmiddleearth.architect.customHeadManager.CustomHeadListener;
+import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
+import com.mcmiddleearth.architect.customHeadManager.HeadCommand;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsCommand;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
@@ -45,6 +49,7 @@ public class ArchitectPlugin extends JavaPlugin {
         ProtocolLibUtil.init(this);
         MessageUtil.setPREFIX("[Architect] ");
         PluginData.load();
+        CustomHeadManagerData.load();
         
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);
@@ -55,6 +60,8 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new FbtListener(), this);
         pluginManager.registerEvents(new SpecialBlockListener(), this);
         pluginManager.registerEvents(new VoxelBiomeBrushListener(), this);
+        pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
+        pluginManager.registerEvents(new CustomHeadListener(), this);
             
         getCommand("armor").setExecutor(new ArmorStandEditorCommand());
         getCommand("banner").setExecutor(new BannerEditorCommand());
@@ -67,6 +74,7 @@ public class ArchitectPlugin extends JavaPlugin {
         getCommand("schlist").setExecutor(new SchListCommand());
         getCommand("architect").setExecutor(new ArchitectCommand());
         getCommand("rp").setExecutor(new RpCommand());
+        getCommand("chead").setExecutor(new HeadCommand());
         
         getLogger().info("MCME-Architect Enabled!");
     }

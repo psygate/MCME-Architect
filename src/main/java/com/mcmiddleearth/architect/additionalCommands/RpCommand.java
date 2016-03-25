@@ -9,11 +9,11 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.CommonMessages;
+import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.MessageUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -64,7 +64,6 @@ public class RpCommand implements CommandExecutor {
         else if(args[0].toLowerCase().startsWith("mord")) {
             url = "http://www.mcmiddleearth.com/content/Mordor.zip";
         }
-Logger.getGlobal().info("test");
         try {
             URLConnection connection= new URL(url).openConnection();
             String type = connection.getContentType();
@@ -74,7 +73,8 @@ Logger.getGlobal().info("test");
             }
         }
         catch(IOException e) {
-            return true;
+            DevUtil.log(1, "IOExeption with URLconnection");
+            DevUtil.log(e.toString());
         }
         ((Player)cs).setResourcePack(url);
         return true;

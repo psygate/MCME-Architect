@@ -19,12 +19,11 @@ package com.mcmiddleearth.architect.specialBlockHandling;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.MessageUtil;
 import com.mcmiddleearth.util.NumericUtil;
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 /**
  *
@@ -96,8 +94,13 @@ public class GetCommand implements CommandExecutor{
                 CommonMessages.sendNoPermissionError(cs);
             } else {
                 if(args.length>1) {
-                    getHead(p, args[1],"");
-                    MessageUtil.sendInfoMessage(p, "Given "+ChatColor.DARK_AQUA+args[1]+"'s"+ChatColor.AQUA+" head!");
+                    ItemStack head = CustomHeadManagerData.getHead(args[1]);
+                    if(head!=null) {
+                        p.getInventory().addItem(head);
+                        MessageUtil.sendInfoMessage(p, "Given head: "+MessageUtil.STRESSED+args[1]);
+                    } else {
+                        MessageUtil.sendErrorMessage(p, "Head not found in MCME Head Collection");
+                    }
                 } else {
                     CommonMessages.sendNotEnoughArgumentsError(cs);
                 }
@@ -163,15 +166,16 @@ public class GetCommand implements CommandExecutor{
     }
     
     private void getFood(Player p) {
-        getHead(p,"MHF_Cake","Cake");
+        /*getHead(p,"MHF_Cake","Cake");
         getHead(p,"_Grime","Bread");
         getHead(p,"MHF_Cactus","Melon");
         getHead(p,"MHF_Pumpkin","Pumpkin");
         getHead(p,"MHF_Melon","Salad");
         getHead(p,"MHF_Apple","Apple");
         getHead(p,"Ernie77","Roast");
-        getHead(p,"JoeTheManMC","Cheese");
+        getHead(p,"JoeTheManMC","Cheese");*/
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Cheese\"},SkullOwner:{Id:\"9c919b83-f3fe-456f-a824-7d1d08cc8bd2\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU1ZDYxMWE4NzhlODIxMjMxNzQ5YjI5NjU3MDhjYWQ5NDI2NTA2NzJkYjA5ZTI2ODQ3YTg4ZTJmYWMyOTQ2In19fQ==\"}]}}}");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Cheese2\"},SkullOwner:{Id:\"fedf6ee0-8573-4588-89cf-5951e2596795\",Properties:{textures:[{Value:\"aHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lZjgzNjJiMDdkNzdhNjAyNzJiODEyNTQ0ODI2ODM0ODJhYjk1NDZlZmFjNjk1MDM5NWViNmY3NGIxMQ==\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Purple Grapes\"},SkullOwner:{Id:\"7815481b-f563-4ece-af98-64e941b82239\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWU1OTM1ODYzYzUzYTk5NmY1MzM0ZTkwZjU1ZGU1MzhlODNmZmM1ZjZiMGI4ZTgzYTRkYzRmNmU2YjEyMDgifX19\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Chest\"},SkullOwner:{Id:\"148ce164-81e8-43d3-b057-4b21cf96d9d3\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmY2OGQ1MDliNWQxNjY5Yjk3MWRkMWQ0ZGYyZTQ3ZTE5YmNiMWIzM2JmMWE3ZmYxZGRhMjliZmM2ZjllYmYifX19\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Iron Chest\"},SkullOwner:{Id:\"90ff743f-323c-49e0-a239-aaa2117b4fc0\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZThlNTU0NGFmN2Y1NDg5Y2MyNzQ5MWNhNjhmYTkyMzg0YjhlYTVjZjIwYjVjODE5OGFkYjdiZmQxMmJjMmJjMiJ9fX0=\"}]}}}");
@@ -192,20 +196,6 @@ public class GetCommand implements CommandExecutor{
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Potted Azalea Plant\"},SkullOwner:{Id:\"faec9b66-94ca-4b6f-b6cd-f9a54b802ae3\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM1MjU3Yjc5OWQzOTQ2OTI3ZjJiMzI1ZDM2NmViNTEwNGE1YzM1MjE5ZWU0ZTRkMzU3MjFiZjI4YTIxMCJ9fX0=\"}]}}}");
     }
     
-    private void getHead(Player p, String owner, String displayName) {
-        ItemStack item = new ItemStack(Material.SKULL_ITEM, 64, (short) 3);
-        SkullMeta data = (SkullMeta) item.getItemMeta();
-        data.setOwner(owner);
-        if(displayName.equals("")) {
-            data.setDisplayName(owner);
-        } else {
-            data.setDisplayName(displayName);
-        }
-        item.setItemMeta(data.clone());
-
-        p.getInventory().addItem(item);
-    }
-
     private void getSlabs(Player p, String a) {
         if (NumericUtil.isInt(a)) {
             p.getInventory().addItem(addSlab(Math.max(0,NumericUtil.getInt(a))));

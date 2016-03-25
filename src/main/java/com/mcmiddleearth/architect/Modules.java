@@ -39,6 +39,7 @@ public enum Modules {
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
     
+    CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),
     RESOURCE_PACK_SWITCHER ("modules.command.resourcePackSwitcher"),
     FULL_BRIGHTNESS        ("modules.command.fullBrightness"),
     SPECIAL_BLOCKS         ("modules.command.getSpecialBlocks"),
@@ -52,7 +53,8 @@ public enum Modules {
     
     VOXEL_BIOME_BRUSH_FIX  ("modules.voxelBiomeBrushFix"),
     
-    ARMOR_STAND_PROTECTION ("modules.protection.armorStand");
+    ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
+    HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");
     
     @Getter
     private final String moduleKey;

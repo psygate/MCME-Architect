@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.CommonMessages;
+import com.mcmiddleearth.util.DevUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -44,10 +45,14 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class SpecialBlockListener implements Listener{
  
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     private void eggInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.hasBlock() && event.getClickedBlock().getType().equals(Material.DRAGON_EGG)) {
+            DevUtil.log(2,"eggInteract fired cancelled: " + event.isCancelled());
+            if(event.isCancelled()) {
+                return;
+            }
             if(!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.DRAGON_EGG)) {
                 return;
             }
@@ -63,7 +68,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     private void logPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
 
@@ -74,6 +79,10 @@ public class SpecialBlockListener implements Listener{
             }
             if (p.getItemInHand().getItemMeta().hasDisplayName()
                     && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Six Sided")) {
+                DevUtil.log(2,"logPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
                 if(!PluginData.hasPermission(p, Permission.PLACE_SIX_SIDED_LOG)) {
                     CommonMessages.sendNoPermissionError(p);
                     event.setCancelled(true);
@@ -90,7 +99,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     private void pistonPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.getItemInHand().getType().equals(Material.PISTON_BASE)
@@ -101,6 +110,10 @@ public class SpecialBlockListener implements Listener{
             if (p.getItemInHand().getItemMeta().hasDisplayName() && 
                 (p.getItemInHand().getItemMeta().getDisplayName().startsWith("Table")
                 || p.getItemInHand().getItemMeta().getDisplayName().startsWith("Wheel"))) {
+                    DevUtil.log(2,"pistonPlace fired cancelled: " + event.isCancelled());
+                    if(event.isCancelled()) {
+                        return;
+                    }
                     event.setCancelled(true);
                     if(!PluginData.hasPermission(p, Permission.PLACE_PISTON_EXTENSION)) {
                         CommonMessages.sendNoPermissionError(p);
@@ -146,7 +159,7 @@ public class SpecialBlockListener implements Listener{
         return dat;
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     private void vegPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
@@ -163,6 +176,10 @@ public class SpecialBlockListener implements Listener{
             }
             if (p.getItemInHand().getItemMeta().hasDisplayName()
                     && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Placeable")) {
+                DevUtil.log(2,"vegPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
                 if(!PluginData.hasPermission(p, Permission.PLACE_PLANT)) {
                     CommonMessages.sendNoPermissionError(p);
                     event.setCancelled(true);
@@ -233,10 +250,9 @@ public class SpecialBlockListener implements Listener{
         return blockState;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     private void doubleSlabPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
-
         if (p.getItemInHand().getType().equals(Material.STEP)
                 || p.getItemInHand().getType().equals(Material.WOOD_STEP)
                 || p.getItemInHand().getType().equals(Material.STONE_SLAB2)) {
@@ -245,6 +261,10 @@ public class SpecialBlockListener implements Listener{
             }
             if (p.getItemInHand().getItemMeta().hasDisplayName()
                     && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Double")) {
+                DevUtil.log(2,"doubleSlabPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
                 if(!PluginData.hasPermission(p, Permission.PLACE_DOUBLE_SLAB)) {
                     CommonMessages.sendNoPermissionError(p);
                     event.setCancelled(true);
@@ -272,7 +292,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     private void doorPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         Material blockType = event.getBlock().getType();
@@ -282,6 +302,10 @@ public class SpecialBlockListener implements Listener{
             }
             ItemStack item = p.getItemInHand();
             if(item.getItemMeta().getDisplayName().startsWith("Half")) {
+                DevUtil.log(2,"doorPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
                 event.setCancelled(true);
                 if(!PluginData.hasPermission(p, Permission.PLACE_HALF_DOOR)) {
                     CommonMessages.sendNoPermissionError(p);
@@ -322,23 +346,31 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     private void noPhysicsDoors(BlockPhysicsEvent event) {
         Material doorType = event.getBlock().getType();
         if (isDoor(doorType)) {
+            DevUtil.log(2,"noPhysicsDoors fired cancelled: " + event.isCancelled());
+            if(event.isCancelled()) {
+                return;
+            }
             if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.HALF_DOORS)) {
                 event.setCancelled(true);
             }
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     private void noOpenHalfDoors(PlayerInteractEvent event) {
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Player p = event.getPlayer();
             Material blockType = event.getClickedBlock().getType();
             if (isDoor(blockType)) {
                 if(PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.HALF_DOORS)) {
+                    DevUtil.log(2,"noOpenHalfDoors fired cancelled: " + event.isCancelled());
+                    if(event.isCancelled()) {
+                        return;
+                    }
                     Block above = event.getClickedBlock().getRelative(BlockFace.UP);
                     if(event.getClickedBlock().getData()!=8 && !(isDoor(above.getType()) && above.getData()==8)){
                         event.setCancelled(true);

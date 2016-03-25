@@ -115,6 +115,10 @@ public class RandomiserCommand implements CommandExecutor {
                 int[] newProbs = new int[playerConfig.countDataValues()];
                 for(int i=1; i<args.length;i++) {
                     newProbs[i-1] = getInteger(cs, args[i]);
+                    if(newProbs[i-1]<0 || newProbs[i-1]>100) {
+                        sendIllegalProbMessage(cs);
+                        return true;
+                    }
                 }
                 playerConfig.setProbs(newProbs);
                 sendProbsSetMessage(cs);
@@ -311,6 +315,10 @@ public class RandomiserCommand implements CommandExecutor {
 
     private void sendNotActivatedMessage(CommandSender cs) {
         MessageUtil.sendErrorMessage(cs, "Field randomizer is not enabled for this world.");
+    }
+
+    private void sendIllegalProbMessage(CommandSender cs) {
+        MessageUtil.sendErrorMessage(cs, "Probability values must be between 0 and 100.");
     }
 
    

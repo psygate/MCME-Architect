@@ -51,8 +51,11 @@ public enum Permission {
     BANNER_EDITOR         ("architect.bannerEditor"),
     PAINTING_EDITOR       ("architect.paintingEditor"),
     ARMOR_STAND_EDITOR    ("architect.armorStandEditor"),
+    HANGING_ENTITY_EDITOR ("architect.hangingEntityEditor"),
     RANDOMISER_MATERIALS  ("architect.randomiser.allowMaterials"),
-    RANDOMISER_USER       ("architect.randomiser.user");
+    RANDOMISER_USER       ("architect.randomiser.user"),
+    CUSTOM_HEAD_USER      ("architect.customHeadManager.user"),
+    CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager");
 
     @Getter
     private final String permissionNode;

@@ -39,6 +39,9 @@ commands:
    architect:
       description: Manage architect plugin
       usage: /architect version | world | reload | dev
+   chead:
+      description: Manage custom heads
+      usage: /chead list | reviewlist | submit | accept | reject | rename | delete 
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -54,6 +57,7 @@ permissions:
             architect.reload: true
             architect.noPhysicsList: true
             architect.voxel.delete: true
+            architect.customHeadManager.manager: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -69,30 +73,31 @@ permissions:
         default: op
         children:
             architect.ranks.adventurer: true
+            architect.hangingEntityEditor: true
             architect.bannerEditor: true
             architect.paintingEditor: true
             architect.armorStandEditor: true
+            architect.place.halfDoor: true
+            architect.place.plant: true
+            architect.place.pistonExtension: true
+            architect.get.plants: true
+            architect.get.misc: true
+            architect.get.doors: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
         default: op
         children:
             architect.fullBrightness: true
             architect.resourcePackSwitcher: true
-            architect.place.halfDoor: true
             architect.place.doubleSlab: true
-            architect.place.plant: true
-            architect.place.pistonExtension: true
             architect.place.sixSidedLog: true
             architect.get.armor: true
             architect.get.head: true
             architect.get.food: true
             architect.get.logs: true
-            architect.get.doors: true
             architect.get.slabs: true
-            architect.get.plants: true
-            architect.get.misc: true
             architect.getCommand: true
-            
+            architect.customHeadManager.user: true          
     architect.info: 
         descriptions: Allows to use coommand /architect version | world | dev
         default: op
@@ -173,6 +178,9 @@ permissions:
     architect.paintingEditor: 
         descriptions: Allows to use Painting Editor
         default: op
+    architect.hangingEntityEditor: 
+        descriptions: Allows to edit hanging Entities
+        default: op
     architect.armorStandEditor: 
         descriptions: Allows to use Armor Stand Editor
         default: op
@@ -183,4 +191,10 @@ permissions:
             architect.randomiser.user: true
     architect.randomiser.user: 
         descriptions: Allows to use command /random (except of /random allow | deny)
+        default: op
+    architect.customHeadManager.user: 
+        descriptions: Allows to use command /chead list | submit
+        default: op
+    architect.customHeadManager.manager: 
+        descriptions: Allows to use all subcommands of command /chead 
         default: op

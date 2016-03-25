@@ -150,9 +150,9 @@ public class BannerEditorCommand implements CommandExecutor {
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select change texture mode: /banner t");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select change color mode:    /banner c");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select add pattern mode:     /banner a");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select remove pattern mode:     /banner r");
+        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select remove pattern mode: /banner r");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select list patterns mode:    /banner l");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select get banner mode:    /banner g");
+        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select get banner mode:      /banner g");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select save banner mode:    /banner s");
     }
     

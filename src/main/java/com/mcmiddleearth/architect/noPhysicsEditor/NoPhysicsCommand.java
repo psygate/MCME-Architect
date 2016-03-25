@@ -150,7 +150,7 @@ public class NoPhysicsCommand implements CommandExecutor {
     }
 
     private void sendMaterialRemovedMessage(Player p) {
-        MessageUtil.sendErrorMessage(p, "Material removed from noPhysics list.");
+        MessageUtil.sendInfoMessage(p, "Material removed from noPhysics list.");
     }
 
     private void sendMaterialNotNpMessage(Player p) {

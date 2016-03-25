@@ -59,6 +59,18 @@ public class RandomiserConfig {
     }
 
     public void setProbs(int[] newProbs) {
+        int sum = 0;
+        for(int prob : newProbs) {
+            sum+=prob;
+        }
+        int lastNonZero = newProbs.length-1;
+        if(sum<100) {
+            newProbs[lastNonZero]=newProbs[lastNonZero]+(100-sum);
+        }
+        while(sum>100) {
+            newProbs[lastNonZero]=Math.max(0,newProbs[lastNonZero]-(sum-100));
+            lastNonZero--;
+        }
         props = newProbs;
     }
     

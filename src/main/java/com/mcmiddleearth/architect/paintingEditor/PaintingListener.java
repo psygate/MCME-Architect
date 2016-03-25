@@ -30,8 +30,8 @@ public class PaintingListener implements Listener {
     
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void playerInteractEntity(PlayerInteractEntityEvent event) {
-Logger.getGlobal().info("animals "+event.getPlayer().getWorld().getAllowAnimals());
-Logger.getGlobal().info("mobs "+event.getPlayer().getWorld().getAllowMonsters());
+//Logger.getGlobal().info("animals "+event.getPlayer().getWorld().getAllowAnimals());
+//Logger.getGlobal().info("mobs "+event.getPlayer().getWorld().getAllowMonsters());
         
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
