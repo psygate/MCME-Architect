@@ -23,6 +23,7 @@ import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.FileUtil;
 import com.mcmiddleearth.util.MessageUtil;
 import java.util.Arrays;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -82,7 +83,21 @@ public class HeadCommand implements CommandExecutor{
             return true;
         }
         if(args[0].equalsIgnoreCase("submit")) {
-            CustomHeadManagerData.submitHead(player, args[1]);
+            String headName="";
+            if(args.length>2) {
+                UUID ownerId=null;
+                try {
+                    ownerId = UUID.fromString(args[1]);
+                }
+                catch(IllegalArgumentException e) {}
+                if(ownerId==null) {
+                    CustomHeadManagerData.submitHead(player, args[1], args[2]);
+                } else {
+                    CustomHeadManagerData.submitHead(player, ownerId, args[2]);
+                }
+            } else {
+                CustomHeadManagerData.submitHead(player, player.getUniqueId(), args[1]);
+            }
             sendSubmittingHeadMessage(player);
             return true;
         }

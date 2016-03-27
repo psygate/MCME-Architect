@@ -58,10 +58,10 @@ public class RpCommand implements CommandExecutor {
         else if(args[0].toLowerCase().startsWith("r")) {
             url = "http://www.mcmiddleearth.com/content/Rohan.zip";
         }
-        else if(args[0].toLowerCase().startsWith("mori")) {
+        else if(args[0].toLowerCase().startsWith("d")) {
             url = "http://www.mcmiddleearth.com/content/Moria.zip";
         }
-        else if(args[0].toLowerCase().startsWith("mord")) {
+        else if(args[0].toLowerCase().startsWith("m")) {
             url = "http://www.mcmiddleearth.com/content/Mordor.zip";
         }
         try {

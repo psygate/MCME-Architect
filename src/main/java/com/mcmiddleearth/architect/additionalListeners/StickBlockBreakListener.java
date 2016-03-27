@@ -1,0 +1,44 @@
+/*
+ * Copyright (C) 2016 MCME
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.mcmiddleearth.architect.additionalListeners;
+
+import com.mcmiddleearth.architect.Modules;
+import com.mcmiddleearth.architect.PluginData;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+/**
+ *
+ * @author Eriol_Eandur
+ */
+public class StickBlockBreakListener implements Listener {
+
+    @EventHandler
+    public void PlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        if((PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_EDITOR)
+                || PluginData.isModuleEnabled(p.getWorld(),Modules.PAINTING_EDITOR)
+                || PluginData.isModuleEnabled(p.getWorld(),Modules.BANNER_EDITOR)) 
+             && p.getItemInHand().getType().equals(Material.STICK)) {
+            event.setCancelled(true);
+        }
+    }
+    
+}

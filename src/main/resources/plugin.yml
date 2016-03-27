@@ -41,7 +41,7 @@ commands:
       usage: /architect version | world | reload | dev
    chead:
       description: Manage custom heads
-      usage: /chead list | reviewlist | submit | accept | reject | rename | delete 
+      usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -83,6 +83,7 @@ permissions:
             architect.get.plants: true
             architect.get.misc: true
             architect.get.doors: true
+            architect.interactDragonEgg: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
         default: op

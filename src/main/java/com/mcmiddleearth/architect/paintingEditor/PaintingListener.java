@@ -10,14 +10,12 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.MessageUtil;
-import java.util.logging.Logger;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -28,10 +26,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
  */
 public class PaintingListener implements Listener {
     
-    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler
     public void playerInteractEntity(PlayerInteractEntityEvent event) {
-//Logger.getGlobal().info("animals "+event.getPlayer().getWorld().getAllowAnimals());
-//Logger.getGlobal().info("mobs "+event.getPlayer().getWorld().getAllowMonsters());
         
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
@@ -59,7 +55,7 @@ public class PaintingListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler
     public void hangingBreakByEntity(HangingBreakByEntityEvent event) {
         Entity damager = event.getRemover();
         Entity entity = event.getEntity();

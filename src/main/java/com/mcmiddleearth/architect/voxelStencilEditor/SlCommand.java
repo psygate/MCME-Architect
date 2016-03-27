@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -146,31 +145,22 @@ public class SlCommand implements CommandExecutor , Confirmationable {
     
     private int addStencils(StencilList list, String stencilName) {
         File search = new File(VoxelConstants.STENCILS_DIR+"/"+stencilName);
-//Logger.getGlobal().info("search "+search);
-//Logger.getGlobal().info("search path " +search.getPath());
-//Logger.getGlobal().info("search name " +search.getName());
         File dir;
         if(search.isDirectory()) {
             dir = search;
         } else {
             dir = new File(search.getParent());
         }
-//Logger.getGlobal().info("dir "+dir);
-//Logger.getGlobal().info("dir path " +dir.getPath());
-//Logger.getGlobal().info("dir name " +dir.getName());
         File[] stencils = dir.listFiles(FileUtil.getFileExtFilter(VoxelConstants.STENCIL_EXT));
         if(stencils==null) {
             return 0;
         }
         int count = 0;
         for(File stencil: stencils) {
-//Logger.getGlobal().info("stencil name: " +stencil.getName());
             String relativePath = FileUtil.getRelativePath(stencil,VoxelConstants.STENCILS_DIR);
             relativePath = relativePath.substring(0, relativePath.lastIndexOf("."));
             relativePath = relativePath.replace('\\', '/');
-//Logger.getGlobal().info("stencil relavtive name: " +relativePath);
             String regex = stencilName.replaceAll("\\*", ".*");
-//Logger.getGlobal().info("regex: " +regex);
             if(relativePath.matches(regex)) {
                 if(list.addStencil(relativePath)) {
                     count ++;

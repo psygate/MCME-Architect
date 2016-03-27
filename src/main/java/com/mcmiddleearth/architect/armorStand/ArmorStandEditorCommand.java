@@ -35,7 +35,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
 
     private final static Map<UUID, ArmorStandEditorConfig> configList = new HashMap<>();
     
-    private final int maxStepSize = 100;
+    private final int maxStepSize = 360;
     
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String c, String[] args) {
@@ -238,6 +238,8 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch size mode:         /armor s");
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch visibility mode:   /armor v");
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch marker mode:       /armor ma");
+        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch gravity mode:      /armor g");
+        MessageUtil.sendNoPrefixInfoMessage(cs, "- Hand item mode:           /armor h");
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch arms mode:         /armor a");
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch base plate mode:   /armor b");
         MessageUtil.sendNoPrefixInfoMessage(cs, "- Select paste mode:        /armor p [filename]");
@@ -256,6 +258,9 @@ public class ArmorStandEditorCommand implements CommandExecutor {
                     switch(playerConfig.getEditorMode()) {
                         case HAND:
                             MessageUtil.sendNoPrefixInfoMessage(cs, "   -> remove/place item in hand");
+                            break;
+                        case GRAVITY:
+                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch gravity");
                             break;
                         case XROTATE:
                             MessageUtil.sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along x-Axis");

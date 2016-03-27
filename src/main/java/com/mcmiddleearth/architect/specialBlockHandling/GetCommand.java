@@ -82,13 +82,6 @@ public class GetCommand implements CommandExecutor{
                 getPlants(p);
                 MessageUtil.sendInfoMessage(p, "Given plants!");
             }
-        } else if(args[0].toLowerCase().startsWith("food")) {
-            if(!PluginData.hasPermission(p, Permission.GET_FOOD)) {
-                CommonMessages.sendNoPermissionError(cs);
-            } else {
-                getFood(p);
-                MessageUtil.sendInfoMessage(p, "Given special food heads!");
-            }
         } else if(args[0].toLowerCase().startsWith("head")) {
             if(!PluginData.hasPermission(p, Permission.GET_HEAD)) {
                 CommonMessages.sendNoPermissionError(cs);
@@ -165,15 +158,15 @@ public class GetCommand implements CommandExecutor{
         p.getInventory().addItem(addMeta(new ItemStack(Material.RED_MUSHROOM, 64),"Placeable RedMushroom",true));
     }
     
-    private void getFood(Player p) {
-        /*getHead(p,"MHF_Cake","Cake");
+/*    private void getFood(Player p) {
+        getHead(p,"MHF_Cake","Cake");
         getHead(p,"_Grime","Bread");
         getHead(p,"MHF_Cactus","Melon");
         getHead(p,"MHF_Pumpkin","Pumpkin");
         getHead(p,"MHF_Melon","Salad");
         getHead(p,"MHF_Apple","Apple");
         getHead(p,"Ernie77","Roast");
-        getHead(p,"JoeTheManMC","Cheese");*/
+        getHead(p,"JoeTheManMC","Cheese");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Cheese\"},SkullOwner:{Id:\"9c919b83-f3fe-456f-a824-7d1d08cc8bd2\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU1ZDYxMWE4NzhlODIxMjMxNzQ5YjI5NjU3MDhjYWQ5NDI2NTA2NzJkYjA5ZTI2ODQ3YTg4ZTJmYWMyOTQ2In19fQ==\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Cheese2\"},SkullOwner:{Id:\"fedf6ee0-8573-4588-89cf-5951e2596795\",Properties:{textures:[{Value:\"aHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lZjgzNjJiMDdkNzdhNjAyNzJiODEyNTQ0ODI2ODM0ODJhYjk1NDZlZmFjNjk1MDM5NWViNmY3NGIxMQ==\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Purple Grapes\"},SkullOwner:{Id:\"7815481b-f563-4ece-af98-64e941b82239\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWU1OTM1ODYzYzUzYTk5NmY1MzM0ZTkwZjU1ZGU1MzhlODNmZmM1ZjZiMGI4ZTgzYTRkYzRmNmU2YjEyMDgifX19\"}]}}}");
@@ -194,7 +187,7 @@ public class GetCommand implements CommandExecutor{
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Potted Camellia Plant\"},SkullOwner:{Id:\"e5fdfdc7-f8a4-4a77-8d7c-17d98cf8a268\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWRjNGMxMmJmMjYxOWNiZmM4ZjIyZGM2MmMwMjJjZTE1MTI2Y2VhM2UyMTJjMjhkOWY5NmVhMzEwYWM0YzQyIn19fQ==\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Old Books\"},SkullOwner:{Id:\"12c8e58d-6b45-49b6-9b63-77b57b290243\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTM0NGQ4M2U3YzZlY2U5MGQzNGM2ODVhOWEzMzg0ZjhlOGQwMTUxNjMzZmMyZWVhZTRkNGI2MzY4NjJkMzMifX19\"}]}}}");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give "+p.getName()+" skull 64 3 {display:{Name:\"Potted Azalea Plant\"},SkullOwner:{Id:\"faec9b66-94ca-4b6f-b6cd-f9a54b802ae3\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM1MjU3Yjc5OWQzOTQ2OTI3ZjJiMzI1ZDM2NmViNTEwNGE1YzM1MjE5ZWU0ZTRkMzU3MjFiZjI4YTIxMCJ9fX0=\"}]}}}");
-    }
+    }*/
     
     private void getSlabs(Player p, String a) {
         if (NumericUtil.isInt(a)) {
@@ -264,6 +257,9 @@ public class GetCommand implements CommandExecutor{
         armor.add(new ItemStack(Material.LEATHER_LEGGINGS));
         armor.add(new ItemStack(Material.LEATHER_BOOTS));
         try {
+            if(!color.startsWith("0x")) {
+                color = "0x"+color;
+            }
             java.awt.Color desiredcolor = java.awt.Color.decode(color);
             for (ItemStack is : armor) {
                 LeatherArmorMeta meta = (LeatherArmorMeta) is.getItemMeta();
@@ -283,6 +279,7 @@ public class GetCommand implements CommandExecutor{
         p.getInventory().addItem(addMeta(new ItemStack(Material.CACTUS, 64),"Placeable Cactus",true));
         p.getInventory().addItem(new ItemStack(Material.DRAGON_EGG));
         p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_1, 64, (short) 0));
+        p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_2, 64, (short) 0));
         //p.getInventory().addItem(new ItemStack(Material.BURNING_FURNACE, 64));
     }
 

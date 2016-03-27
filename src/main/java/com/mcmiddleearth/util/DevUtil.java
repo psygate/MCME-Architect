@@ -16,9 +16,11 @@
  */
 package com.mcmiddleearth.util;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,7 +62,7 @@ public class DevUtil {
             }
         }
         if(consoleOutput) {
-            Logger.getGlobal().info(MessageUtil.getPREFIX()+message);
+            Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO, MessageUtil.getPREFIX()+message);
         }
     }
     

@@ -32,7 +32,7 @@ public class ArmorStandEditorConfig {
     
     private ArmorStandPart part = ArmorStandPart.HEAD;
     
-    private ArmorStandEditorMode editorMode = ArmorStandEditorMode.HAND;
+    private ArmorStandEditorMode editorMode = ArmorStandEditorMode.COPY;
     
     private int rotationStep = 10;
     

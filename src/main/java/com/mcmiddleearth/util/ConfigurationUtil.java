@@ -47,11 +47,11 @@ public class ConfigurationUtil {
             return null;
         }
         else {
-            return new Location(world, (Double) data.get("x"), 
-                                       (Double) data.get("y"), 
-                                       (Double) data.get("z"), 
-                                       ((Double) data.get("yaw")).floatValue(),
-                                       ((Double) data.get("pitch")).floatValue());
+            return new Location(world, getDouble(data,"x"), 
+                                       getDouble(data,"y"),
+                                       getDouble(data,"z"),
+                                       getFloat(data,"yaw"),
+                                       getFloat(data,"pitch"));
         }
     }
     
@@ -77,5 +77,33 @@ public class ConfigurationUtil {
         else {
             return (Map<String,Object>) value;
         }
+    }
+    
+    private static double getDouble(Map<String,Object> data, String key) {
+        Object value = data.get(key);
+        if(value instanceof Float) {
+            return ((Float)value).doubleValue();
+        }
+        if(value instanceof Double) {
+            return (Double) value;
+        }
+        if(value instanceof Integer) {
+            return ((Integer)value).doubleValue();
+        }
+        return 0;
+    }
+    
+    private static float getFloat(Map<String,Object> data, String key) {
+        Object value = data.get(key);
+        if(value instanceof Float) {
+            return (Float)value;
+        }
+        if(value instanceof Double) {
+            return ((Double) value).floatValue();
+        }
+        if(value instanceof Integer) {
+            return ((Integer)value).floatValue();
+        }
+        return 0;
     }
 }

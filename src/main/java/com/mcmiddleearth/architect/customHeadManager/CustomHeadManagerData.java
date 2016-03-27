@@ -246,8 +246,12 @@ public class CustomHeadManagerData {
         return CustomHeadData.fromFile(file);
     }
     
-    public static void submitHead(Player owner, String name) {
-        new HeadDataBuilder(owner,name);
+    public static void submitHead(Player submitter, UUID owner, String name) {
+        new HeadDataBuilder(submitter, owner, name);
+    }
+    
+    public static void submitHead(Player submitter, String owner, String name) {
+        new HeadDataBuilder(submitter, owner, name);
     }
     
     private static class HeadDataBuilder {
@@ -256,9 +260,62 @@ public class CustomHeadManagerData {
         
         private HttpURLConnection connection;
 
-        private String mojangUrl = "https://sessionserver.mojang.com/session/minecraft/profile/%s";
+        private final String mojangSkinUrl = "https://sessionserver.mojang.com/session/minecraft/profile/%s";
         
-        public HeadDataBuilder(final Player owner, final String name) {
+        private final String mojangUuidUrl = "https://api.mojang.com/users/profiles/minecraft/%s";
+        
+        public HeadDataBuilder(final Player submitter, final UUID ownerId, final String name) {
+            fetchCustomHeadData(submitter, ownerId, name);
+        }
+        
+        public HeadDataBuilder(final Player submitter, final String ownerName, final String name) {
+            fetchCustomHeadData(submitter, ownerName, name);
+        }
+        
+        private void fetchCustomHeadData(final Player submitter, final String ownerName, final String name) {
+            received = false; 
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(received) {
+                        try {
+                            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                                String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
+                                JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
+                                String uuidString = jsonObject.get("id").getAsString();
+                                UUID ownerId = UUIDTypeAdapter.fromString(uuidString);
+                                fetchCustomHeadData(submitter, ownerId, name);
+                            } else {
+                                MessageUtil.sendErrorMessage(submitter, "Player name not found.");
+                            }
+                            cancel();
+                            return;
+                        } catch (IOException | JsonSyntaxException ex) {
+                            Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
+                        } finally {
+                            cancel();
+                        }
+                        MessageUtil.sendErrorMessage(submitter, "Error. Your head has not been submitted.");
+                    }
+                }
+            }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        URL url = new URL(String.format(mojangUuidUrl, ownerName));
+                        connection = (HttpURLConnection) url.openConnection();
+                        connection.setReadTimeout(5000);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        received = true;
+                    }
+                }
+            }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+        }
+        
+        private void fetchCustomHeadData(final Player submitter, final UUID ownerId, final String name) {
             received = false; 
             new BukkitRunnable() {
                 @Override
@@ -283,9 +340,9 @@ public class CustomHeadManagerData {
                                 jsonObject = jsonObject.getAsJsonObject("SKIN");
                                 String url = jsonObject.get("url").getAsString();
                                 url = BaseEncoding.base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-                                UUID headId = new UUID(owner.getUniqueId().getMostSignificantBits()+System.currentTimeMillis(),
-                                                       owner.getUniqueId().getLeastSignificantBits()+System.currentTimeMillis());
-                                CustomHeadData headData = new CustomHeadData(headId, owner.getUniqueId(),url);
+                                UUID headId = new UUID(ownerId.getMostSignificantBits()+System.currentTimeMillis(),
+                                                       ownerId.getLeastSignificantBits()+System.currentTimeMillis());
+                                CustomHeadData headData = new CustomHeadData(headId, ownerId, url);
                                 //ToDo check for heads with same texture
                                 File file = new File(submittedHeadDir,name+"."+fileExtension);
                                 int index = 0;
@@ -294,12 +351,12 @@ public class CustomHeadManagerData {
                                     file = new File(submittedHeadDir,name+index+"."+fileExtension);
                                 }
                                 if(headData.saveToFile(file)) {
-                                    MessageUtil.sendInfoMessage(owner,"Your head has been submitted.");
+                                    MessageUtil.sendInfoMessage(submitter,"Head has been submitted.");
                                     cancel();
                                     return;
                                 }
                             } else {
-                                MessageUtil.sendErrorMessage(owner, "Error. Mojang server didn't respond. Wait one minute at last before you try again.");
+                                MessageUtil.sendErrorMessage(submitter, "Error. Invalid UUID or too many requests. Wait one minute at last before you try again.");
                                 cancel();
                                 return;
                                 }
@@ -308,7 +365,7 @@ public class CustomHeadManagerData {
                         } finally {
                             cancel();
                         }
-                        MessageUtil.sendErrorMessage(owner, "Error. Your head has not been submitted.");
+                        MessageUtil.sendErrorMessage(submitter, "Error. Your head has not been submitted.");
                     }
                 }
             }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
@@ -316,7 +373,7 @@ public class CustomHeadManagerData {
                 @Override
                 public void run() {
                     try {
-                        URL url = new URL(String.format(mojangUrl, UUIDTypeAdapter.fromUUID(owner.getUniqueId())));
+                        URL url = new URL(String.format(mojangSkinUrl, UUIDTypeAdapter.fromUUID(ownerId)));
                         connection = (HttpURLConnection) url.openConnection();
                         connection.setReadTimeout(5000);
                     } catch (IOException ex) {

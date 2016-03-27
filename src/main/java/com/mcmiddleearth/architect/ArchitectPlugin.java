@@ -11,6 +11,7 @@ import com.mcmiddleearth.architect.additionalCommands.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
+import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
@@ -62,6 +63,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new VoxelBiomeBrushListener(), this);
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
+        pluginManager.registerEvents(new StickBlockBreakListener(), this);
             
         getCommand("armor").setExecutor(new ArmorStandEditorCommand());
         getCommand("banner").setExecutor(new BannerEditorCommand());

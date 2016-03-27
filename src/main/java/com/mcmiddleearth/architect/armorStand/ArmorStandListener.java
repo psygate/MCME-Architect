@@ -9,7 +9,6 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.MessageUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -182,7 +181,7 @@ public class ArmorStandListener implements Listener {
                         armorStand.setRightLegPose(rotate(modifiedMode,rightClick,stepInDegree,armorStand.getRightLegPose()));
                         break;
                     case BODY:
-                        armorStand.setBodyPose(rotate(modifiedMode,rightClick,stepInDegree,armorStand.getRightLegPose()));
+                        armorStand.setBodyPose(rotate(modifiedMode,rightClick,stepInDegree,armorStand.getBodyPose()));
                 }
                 break;
             case TURN:
@@ -258,16 +257,21 @@ public class ArmorStandListener implements Listener {
         if(!positive) {
             step *= -1;
         }
+        EulerAngle newAngle;
         switch(mode) {
             case XROTATE:
-                return new EulerAngle(previous.getX()+step,previous.getY(),previous.getZ());
+                newAngle = new EulerAngle(previous.getX()+step,previous.getY(),previous.getZ());
+                break;
             case YROTATE:
-                return new EulerAngle(previous.getX(),previous.getY()+step,previous.getZ());
+                newAngle = new EulerAngle(previous.getX(),previous.getY()+step,previous.getZ());
+                break;
             case ZROTATE:
-                return new EulerAngle(previous.getX(),previous.getY(),previous.getZ()+step);
+                newAngle = new EulerAngle(previous.getX(),previous.getY(),previous.getZ()+step);
+                break;
             default:
-                return EulerAngle.ZERO;
+                newAngle = EulerAngle.ZERO;
         }
+        return newAngle;
     }
     
     private Location turn(Location oldLoc, boolean positive, int stepInDegree) {
@@ -307,7 +311,7 @@ public class ArmorStandListener implements Listener {
     }
 
     private void sendCopyMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Armor stand copied to clippboard.");
+        MessageUtil.sendInfoMessage(player,"Armor stand copied to clipboard.");
     }
 
 }

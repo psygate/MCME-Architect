@@ -177,9 +177,9 @@ public class SpecialBlockListener implements Listener{
             if (p.getItemInHand().getItemMeta().hasDisplayName()
                     && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Placeable")) {
                 DevUtil.log(2,"vegPlace fired cancelled: " + event.isCancelled());
-                if(event.isCancelled()) {
+                /*if(event.isCancelled()) {
                     return;
-                }
+                }*/
                 if(!PluginData.hasPermission(p, Permission.PLACE_PLANT)) {
                     CommonMessages.sendNoPermissionError(p);
                     event.setCancelled(true);
