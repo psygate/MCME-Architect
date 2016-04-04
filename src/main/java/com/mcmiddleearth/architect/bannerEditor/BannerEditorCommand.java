@@ -153,7 +153,9 @@ public class BannerEditorCommand implements CommandExecutor {
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select remove pattern mode: /banner r");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select list patterns mode:    /banner l");
         MessageUtil.sendNoPrefixInfoMessage(cs,"- Select get banner mode:      /banner g");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select save banner mode:    /banner s");
+        MessageUtil.sendNoPrefixInfoMessage(cs,"- Save banner in hand to file: /banner save <filename> <description>");
+        MessageUtil.sendNoPrefixInfoMessage(cs,"- Load banner from file:    /banner load <filename>");
+        MessageUtil.sendNoPrefixInfoMessage(cs,"- Show saved banners:    /banner files [subdirectory] [#page]");
     }
     
     private void sendInfoMessage(CommandSender cs, BannerEditorConfig playerConfig) {

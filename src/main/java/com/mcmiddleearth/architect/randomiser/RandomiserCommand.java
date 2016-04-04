@@ -310,7 +310,7 @@ public class RandomiserCommand implements CommandExecutor {
     }
 
     private void sendMaterialsErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs,"Some Materials were not found or are not allowed to be ranomised.");
+        MessageUtil.sendErrorMessage(cs,"Some materials were not found or are not allowed to be randomised.");
     }
 
     private void sendNotActivatedMessage(CommandSender cs) {
