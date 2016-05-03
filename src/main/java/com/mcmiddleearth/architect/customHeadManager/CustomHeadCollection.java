@@ -20,6 +20,7 @@ import com.mcmiddleearth.util.HeadUtil;
 import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -120,6 +121,64 @@ public class CustomHeadCollection {
                 return customHeads.get(headName);
             }
             return null;
+        }
+    }
+    
+    public String getFullName(String headName) {
+Logger.getGlobal().info("Search for - "+headName);
+        while(headName.startsWith("/")) {
+            headName = headName.substring(1);
+        }
+        int separator = headName.indexOf("/");
+        if(separator==-1) {
+            if(customHeads.containsKey(headName)) {
+Logger.getGlobal().info("Found 1");
+            String foundName = absoluteName()+headName;
+Logger.getGlobal().info("Full name - "+foundName);
+            return foundName;
+            }
+            separator = headName.length();
+        }
+        String firstName = headName.substring(0,separator);
+        CustomHeadCollection subCollection = subCollections.get(firstName);
+        if(subCollection!=null 
+                && (separator == headName.length() || subCollection.contains(headName.substring(separator+1)))) {
+Logger.getGlobal().info("Found 2");
+            String foundName = absoluteName()+headName;
+Logger.getGlobal().info("Full name - "+foundName);
+            return foundName;
+        } 
+        for(String search: subCollections.navigableKeySet()) {
+Logger.getGlobal().info("Search in SubCollection - "+search+" - for head - "+headName);
+            String fullName = subCollections.get(search).getFullName(headName);
+            if(!fullName.equals("")) {
+                return fullName;
+            }
+        }
+Logger.getGlobal().info("Not found");
+        return "";
+    }
+    
+    private String absoluteName() {
+            String result = "";
+            for(String str:absoluteName) {
+                result+=str+"/";
+            }
+            return result;
+    }
+    
+    private boolean contains(String name) {
+        int separator = name.indexOf("/");
+        if(separator<0) {
+            return customHeads.get(name)!=null;
+        } else {
+            String firstName = name.substring(0,separator);
+            CustomHeadCollection subCollection = subCollections.get(firstName);
+            if(subCollection==null) {
+                return false;
+            } else {
+                return subCollection.contains(name.substring(separator+1));
+            }
         }
     }
     

@@ -27,7 +27,8 @@ public enum ArmorStandEditorMode {
     VISIBLE     ("v"),
     GRAVITY     ("g"),
     PASTE       ("p"),
-    COPY        ("c");
+    COPY        ("c"),
+    ROLLBACK    ("rollback");
     
     private final String name;
 

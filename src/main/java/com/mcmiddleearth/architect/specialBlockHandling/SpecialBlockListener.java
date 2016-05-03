@@ -36,6 +36,11 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.Furnace;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -100,6 +105,41 @@ public class SpecialBlockListener implements Listener{
     }
     
     @EventHandler(priority = EventPriority.HIGH)
+    private void giantMushroomPlace(BlockPlaceEvent event) {
+        Player p = event.getPlayer();
+
+        if (p.getItemInHand().getType().equals(Material.HUGE_MUSHROOM_1)
+                || p.getItemInHand().getType().equals(Material.HUGE_MUSHROOM_2)) {
+            if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.SIX_SIDED_LOGS)) {
+                return;
+            }
+            if (p.getItemInHand().getItemMeta().hasEnchants()) {
+                DevUtil.log(2,"giantMushroomPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
+                if(!PluginData.hasPermission(p, Permission.PLACE_SIX_SIDED_LOG)) {
+                    CommonMessages.sendNoPermissionError(p);
+                    event.setCancelled(true);
+                    return;
+                }
+                Block b = event.getBlockPlaced();
+                MaterialData md = p.getItemInHand().getData();
+                md.setData(MushroomBlocks.getDataValue(p.getItemInHand().getItemMeta().getDisplayName()));
+                final BlockState bs = b.getState();
+                bs.setData(md);
+                event.setCancelled(true);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        bs.update(true, false);
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
     private void pistonPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.getItemInHand().getType().equals(Material.PISTON_BASE)
@@ -121,7 +161,7 @@ public class SpecialBlockListener implements Listener{
                     }
                     float yaw = p.getLocation().getYaw();
                     float pitch = p.getLocation().getPitch();
-                    byte data = getPistonDat(yaw, pitch, p.getItemInHand().getType());
+                    byte data = getPistonOrFurnaceDat(yaw, pitch, p.getItemInHand().getType());
                     Block block = event.getBlock();
                     final BlockState blockState = block.getState();
                     blockState.setType(Material.PISTON_EXTENSION);
@@ -136,7 +176,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-    private static byte getPistonDat(float yaw, float pitch, Material type) {
+    private static byte getPistonOrFurnaceDat(float yaw, float pitch, Material type) {
         byte dat = 0;
         while(yaw>180) yaw-=360;
         while(yaw<-180) yaw+=360;
@@ -312,7 +352,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 float yaw = p.getLocation().getYaw();
-                byte data = getDat(yaw);
+                byte data = getDoorDat(yaw);
 
                 Block block = event.getBlock();
                 final BlockState blockState = block.getState();
@@ -327,7 +367,86 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-    private byte getDat(float yaw) {
+    @EventHandler
+    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
+        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
+            return;
+        }
+        final Block block = event.getBlock();
+        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Furnace furnace = (Furnace) block.getState();
+                FurnaceInventory inventory = furnace.getInventory();
+                ItemStack item =inventory.getResult();
+                inventory.setResult(null);
+                inventory.setSmelting(new ItemStack(smelting));
+                furnace.setBurnTime(Short.MAX_VALUE);
+                furnace.update(true, false);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void placeFurnace(BlockPlaceEvent event) {
+        final Player p = event.getPlayer();
+        if(event.getBlock().getType().equals(Material.FURNACE)) {
+            if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
+                return;
+            }
+            if (p.getItemInHand().getItemMeta().hasDisplayName()
+                    && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Burning")) {
+                DevUtil.log(2,"placeBurningFurnace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
+                if(!PluginData.hasPermission(p, Permission.BURNING_FURNACE)) {
+                    CommonMessages.sendNoPermissionError(p);
+                    event.setCancelled(true);
+                    return;
+                }
+                Furnace furnace = (Furnace) event.getBlock().getState();
+                furnace.setType(Material.BURNING_FURNACE);
+                furnace.setRawData(getPistonOrFurnaceDat(p.getLocation().getYaw(),0,Material.BURNING_FURNACE));
+                furnace.update(true, false);
+                final Block block = event.getBlock();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Furnace furnace = (Furnace) block.getState();
+                        furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                        furnace.setBurnTime(Short.MAX_VALUE);
+                        furnace.update(true, false); 
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void protectFurnaceInventory(InventoryOpenEvent event) {
+        HumanEntity player = event.getPlayer();
+        if(!(player instanceof Player)) {
+            return;
+        }
+        Player p = (Player) player;
+        if(event.getInventory() instanceof FurnaceInventory) {
+            if (!PluginData.isModuleEnabled(p.getWorld(), Modules.BURNING_FURNACE)) {
+                return;
+            }
+            DevUtil.log(2,"protectInventoryBurningFurnace fired cancelled: " + event.isCancelled());
+            if(event.isCancelled()) {
+                return;
+            }
+            if(!PluginData.hasPermission(p, Permission.BURNING_FURNACE)) {
+                CommonMessages.sendNoPermissionError(p);
+                event.setCancelled(true);
+            }
+        }
+    }
+    
+    private byte getDoorDat(float yaw) {
         if ((yaw >= -225 && yaw < -135)
                 || (yaw >= 135 && yaw <= 225)) {
             return 3;

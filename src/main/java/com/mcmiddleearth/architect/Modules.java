@@ -30,6 +30,7 @@ public enum Modules {
     PISTON_EXTENSIONS      ("modules.specialBlocks.pistonExtenstions"),
     SIX_SIDED_LOGS         ("modules.specialBlocks.sixSidedLogs"),
     DRAGON_EGG             ("modules.specialBlocks.dragonEgg"),
+    BURNING_FURNACE        ("modules.specialBlocks.burningFurnace"),
 
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),
     MONSTER_SPAWN_BLOCKING ("modules.environment.monsterSpawnBlocking"),
@@ -49,6 +50,7 @@ public enum Modules {
     BANNER_EDITOR          ("modules.command.bannerEditor"),
     PAINTING_EDITOR        ("modules.command.paintingEditor"),
     ARMOR_STAND_EDITOR     ("modules.command.armorStandEditor"),
+    ARMOR_STAND_ROLLBACK   ("modules.command.armorStandRollback"),
     RANDOMISER             ("modules.command.randomiser"),
     
     VOXEL_BIOME_BRUSH_FIX  ("modules.voxelBiomeBrushFix"),

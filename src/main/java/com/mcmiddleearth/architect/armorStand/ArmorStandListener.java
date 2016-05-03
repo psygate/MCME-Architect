@@ -8,6 +8,7 @@ package com.mcmiddleearth.architect.armorStand;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
 import com.mcmiddleearth.util.MessageUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -102,6 +103,7 @@ public class ArmorStandListener implements Listener {
     }
     
     private boolean manipulate(ArmorStand armorStand, Player player, boolean rightClick) {
+        ArmorStandGuard.setModifiedFlag(armorStand);
         ArmorStandEditorConfig config = ArmorStandEditorCommand.getPlayerConfig(player);
         ArmorStandEditorMode mode = config.getEditorMode();
         int stepInDegree = config.getRotationStep();

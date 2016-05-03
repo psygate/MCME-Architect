@@ -3,9 +3,12 @@ main: com.mcmiddleearth.architect.ArchitectPlugin
 version: 0.0.1
 author: Eriol_Eandur
 load: STARTUP
-softdepend: [ProtocolLib]
+softdepend: [ProtocolLib,Essentials]
 
 commands:
+   newafkk:
+      description: Marks a player as away from keyboard, calling essentials /afk
+      usage: /afkk
    get:
       description: Gives user special blocks with changed place behaviour
       usage: /get doors|logs|plants|food|head|slabs|armor|misc
@@ -80,6 +83,7 @@ permissions:
             architect.place.halfDoor: true
             architect.place.plant: true
             architect.place.pistonExtension: true
+            architect.place.burningFurnace: true
             architect.get.plants: true
             architect.get.misc: true
             architect.get.doors: true
@@ -119,6 +123,9 @@ permissions:
         default: op
     architect.place.plant: 
         descriptions: Allows to place special plants
+        default: op
+    architect.place.burningFurnace: 
+        descriptions: Allows to place and interact with burning furnaces
         default: op
     architect.place.pistonExtension: 
         descriptions: Allows to place piston extensions

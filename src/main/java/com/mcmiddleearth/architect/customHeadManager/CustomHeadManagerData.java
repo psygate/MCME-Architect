@@ -131,6 +131,10 @@ public class CustomHeadManagerData {
         ArchitectPlugin.getPluginInstance().saveConfig();
     }
     
+    public static String getFullName(String name) {
+        return collection.getFullName(name);
+    }
+    
     public static ItemStack getSumittedHead(String name) {
         File file = new File(submittedHeadDir, name+"."+fileExtension);
         if(!file.exists()) {

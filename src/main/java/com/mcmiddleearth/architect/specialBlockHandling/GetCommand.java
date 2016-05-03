@@ -82,6 +82,19 @@ public class GetCommand implements CommandExecutor{
                 getPlants(p);
                 MessageUtil.sendInfoMessage(p, "Given plants!");
             }
+        } else if(args[0].toLowerCase().startsWith("mushroom")) {
+            if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
+                CommonMessages.sendNoPermissionError(cs);
+            } else {
+                if(args.length>1 && args[1].equalsIgnoreCase("red")) {
+                    getHugeMushroomsSpecial(p,Material.HUGE_MUSHROOM_2);
+                } else if(args.length>1 && args[1].equalsIgnoreCase("brown")) {
+                    getHugeMushroomsSpecial(p,Material.HUGE_MUSHROOM_1);
+                } else  {
+                    getHugeMushrooms(p);
+                }
+                MessageUtil.sendInfoMessage(p, "Given mushroom blocks!");
+            }
         } else if(args[0].toLowerCase().startsWith("head")) {
             if(!PluginData.hasPermission(p, Permission.GET_HEAD)) {
                 CommonMessages.sendNoPermissionError(cs);
@@ -152,6 +165,26 @@ public class GetCommand implements CommandExecutor{
         p.getInventory().addItem(addMeta(new ItemStack(Material.RED_MUSHROOM, 64),"Placeable RedMushroom",true));
     }
     
+    private void getHugeMushrooms(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.INSIDE.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_2, 64),MushroomBlocks.ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.STEM_ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.STEM.getDisplayName(),true));
+    }
+    
+    private void getHugeMushroomsSpecial(Player p, Material kind) {
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NET.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NWT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.SET.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.ST.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.SWT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.WT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.T.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.ET.getDisplayName(),true));
+    }
+    
     private void getHeads(Player p, String headName) {
         headName = headName.replace('\\','/');
         while(headName.contains("//")) {
@@ -161,7 +194,14 @@ public class GetCommand implements CommandExecutor{
             headName = headName.substring(0,headName.length()-1);
         }
         File file = new File(CustomHeadManagerData.getAcceptedHeadDir(),headName);
-        if(file.isDirectory()) {
+        if(!file.exists()) {
+            headName = CustomHeadManagerData.getFullName(headName);
+            if(headName.equals("")) {
+                return;
+            }
+            file = new File(CustomHeadManagerData.getAcceptedHeadDir(), headName);
+        }
+        if(file.exists() && file.isDirectory()) {
             File[] headFiles = file.listFiles(FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()));
             for(File headFile:headFiles) {
                 String headFilename = headFile.getName().substring(0,headFile.getName().lastIndexOf('.'));
@@ -271,7 +311,7 @@ public class GetCommand implements CommandExecutor{
         p.getInventory().addItem(new ItemStack(Material.DRAGON_EGG));
         p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_1, 64, (short) 0));
         p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_2, 64, (short) 0));
-        //p.getInventory().addItem(new ItemStack(Material.BURNING_FURNACE, 64));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.FURNACE, 64),"Burning Furnace", true));
     }
 
     private static ItemStack addMeta(ItemStack item, String displayName, boolean enchant) {

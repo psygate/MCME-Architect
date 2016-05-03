@@ -37,8 +37,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public class HeadCommand implements CommandExecutor{
 
-    CustomHeadCollection headCollection = new CustomHeadCollection();
-    
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -58,6 +56,15 @@ public class HeadCommand implements CommandExecutor{
         //user commands
         if(!PluginData.hasPermission(player,Permission.CUSTOM_HEAD_USER)) {
             CommonMessages.sendNoPermissionError(player);
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("warp")) {
+            if(CustomHeadManagerData.getGallery()!=null) {
+                MessageUtil.sendInfoMessage(player, "Teleporting to Custom Head Collection ...");
+                player.teleport(CustomHeadManagerData.getGallery().getLocation());
+            } else {
+                MessageUtil.sendErrorMessage(player, "There is no Custom Head Collection on the server.");
+            }
             return true;
         }
         if(args[0].equalsIgnoreCase("list")) {

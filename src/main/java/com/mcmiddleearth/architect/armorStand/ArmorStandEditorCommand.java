@@ -8,6 +8,7 @@ package com.mcmiddleearth.architect.armorStand;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.armorStand.guard.ArmorStandRollbackCommand;
 import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.FileUtil;
 import com.mcmiddleearth.util.MessageUtil;
@@ -20,7 +21,6 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -42,6 +42,9 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         if (!(cs instanceof Player)) {
             CommonMessages.sendPlayerOnlyCommandError(cs);
             return true;
+        }
+        if(args.length>0 && args[0].equalsIgnoreCase("rollback")) {
+            return ArmorStandRollbackCommand.execute((Player)cs, args, configList);
         }
         if(!PluginData.hasPermission((Player)cs,Permission.ARMOR_STAND_EDITOR)) {
             CommonMessages.sendNoPermissionError(cs);
@@ -170,13 +173,13 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         }
     }
     
-    public static ArmorStandEditorConfig getPlayerConfig(OfflinePlayer p) {
+    public static ArmorStandEditorConfig getPlayerConfig(Player p) {
         for(UUID search: configList.keySet()) {
             if(search.equals(p.getUniqueId())) {
                 return configList.get(search);
             }
         }
-        ArmorStandEditorConfig newConfig = new ArmorStandEditorConfig();
+        ArmorStandEditorConfig newConfig = new ArmorStandEditorConfig(p);
         configList.put(p.getUniqueId(), newConfig);
         return newConfig;
     }

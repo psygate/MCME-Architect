@@ -2,6 +2,9 @@
 package com.mcmiddleearth.architect.armorStand;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.Permission;
+import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
 import static com.mcmiddleearth.util.ConfigurationUtil.deserializeLocation;
 import static com.mcmiddleearth.util.ConfigurationUtil.serializeLocation;
 import com.mcmiddleearth.util.FileUtil;
@@ -23,6 +26,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -44,11 +48,14 @@ public class ArmorStandEditorConfig {
     @Getter
     private static final String fileExtension = "yml";
     
-    public ArmorStandEditorConfig() {
+    public ArmorStandEditorConfig(Player p) {
         if(!dataDir.exists()) {
             dataDir.mkdirs();
         }
         clearCopiedArmorStand();
+        if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR)) {
+            editorMode = ArmorStandEditorMode.ROLLBACK;
+        }
      }
 
     public void placeArmorStand(Location loc, boolean exact) {
@@ -60,7 +67,8 @@ public class ArmorStandEditorConfig {
             loc.setYaw(saved.getYaw());
         }
         data.put("location",serializeLocation(loc));
-        ArmorStandUtil.deserializeArmorStand((Map<String,Object>)copiedEntity.get("ArmorStand"));
+        ArmorStand armor = ArmorStandUtil.deserializeArmorStand((Map<String,Object>)copiedEntity.get("ArmorStand"));
+        ArmorStandGuard.setModifiedFlag(armor);
         data.put("location",serializeLocation(saved));
     }
     

@@ -21,8 +21,11 @@ import com.mcmiddleearth.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -35,6 +38,9 @@ import org.bukkit.entity.Player;
 public class PluginData {
     
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
+    
+    @Getter
+    private static final Set<UUID> afkPlayerList = new HashSet<>();
     
     public static boolean isModuleEnabled(World world, Modules modul) {
         WorldConfig config = worldConfigs.get(world.getName());
@@ -111,5 +117,17 @@ public class PluginData {
     
     public static Set<String> getWorldNames() {
         return worldConfigs.keySet();
+    }
+    
+    public static boolean setAFK(UUID player) {
+        return afkPlayerList.add(player);
+    }
+    
+    public static boolean isAFK(UUID player) {
+        return afkPlayerList.contains(player);
+    }
+    
+    public static boolean undoAFK(UUID player) {
+        return afkPlayerList.remove(player);
     }
 }

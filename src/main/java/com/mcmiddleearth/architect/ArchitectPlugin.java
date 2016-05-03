@@ -5,9 +5,11 @@
  */
 package com.mcmiddleearth.architect;
 
+import com.mcmiddleearth.architect.additionalCommands.NewAfkCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.RpCommand;
+import com.mcmiddleearth.architect.additionalListeners.AfkListener;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
@@ -64,6 +66,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
+        pluginManager.registerEvents(new AfkListener(), this);
             
         getCommand("armor").setExecutor(new ArmorStandEditorCommand());
         getCommand("banner").setExecutor(new BannerEditorCommand());
@@ -77,6 +80,7 @@ public class ArchitectPlugin extends JavaPlugin {
         getCommand("architect").setExecutor(new ArchitectCommand());
         getCommand("rp").setExecutor(new RpCommand());
         getCommand("chead").setExecutor(new HeadCommand());
+        getCommand("newafkk").setExecutor(new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");
     }
