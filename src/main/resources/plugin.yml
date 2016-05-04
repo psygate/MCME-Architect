@@ -1,0 +1,208 @@
+name: MCME-Architect
+main: com.mcmiddleearth.architect.ArchitectPlugin
+version: 1.0.0
+author: Eriol_Eandur
+load: STARTUP
+softdepend: [ProtocolLib,Essentials]
+
+commands:
+   newafkk:
+      description: Marks a player as away from keyboard, calling essentials /afk
+      usage: /afkk
+   get:
+      description: Gives user special blocks with changed place behaviour
+      usage: /get doors|logs|plants|food|head|slabs|armor|misc
+   fbt:
+      description: Toggle full brightness on/off.
+      usage: /fbt
+   vv:
+      description: List content in the VoxelSniper plugin directory.
+      usage: /vv stenicl|list|delete [subdir] [#pagennumber]
+   schlist:
+      description: List WorlEdit schematics and subdirectories.
+      usage: /schlist <subdir>
+   sl:
+      description: StencilList generator command.
+      usage: /sl create | add | remove |save | show
+   random:
+      description: Field randomiser command.
+      usage: /random [radius #|range # #|probs [#] |material [names]| show | allow | deny | help]
+   banner:
+      description: Edit banners command
+      usage: see /banner help
+   armor:
+      description: Edit armor stands command
+      usage: see /armor help
+   rp:
+      description: Switch resource packs by command
+      usage: /rp Gondor|Eriador|Lothlorien|Rohan|Moria|Mordor
+   nophy:
+      description: Manage no phyics list
+      usage: /nophy list | add | remove
+   architect:
+      description: Manage architect plugin
+      usage: /architect version | world | reload | dev
+   chead:
+      description: Manage custom heads
+      usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
+permissions:
+    architect.*:
+        description: Allows to use all features of Architect plugin
+        default: op
+        children:
+            architect.ranks.headDesigner: true
+    architect.ranks.headDesigner:
+        descriptions: Permission for MCME Head Designer
+        default: op
+        children:
+            architect.ranks.designer: true
+            architect.randomiser.allowMaterials: true
+            architect.reload: true
+            architect.noPhysicsList: true
+            architect.voxel.delete: true
+            architect.customHeadManager.manager: true
+    architect.ranks.designer: 
+        descriptions: Permission for MCME Designers
+        default: op
+        children:
+            architect.ranks.artist: true
+            architect.info: true
+            architect.weSchemViewer: true
+            architect.voxel.viewer: true
+            architect.voxel.stencilListEditor: true
+            architect.randomiser.user: true
+    architect.ranks.artist: 
+        descriptions: Permission for MCME Artists
+        default: op
+        children:
+            architect.ranks.adventurer: true
+            architect.hangingEntityEditor: true
+            architect.bannerEditor: true
+            architect.paintingEditor: true
+            architect.armorStandEditor: true
+            architect.place.halfDoor: true
+            architect.place.plant: true
+            architect.place.pistonExtension: true
+            architect.place.burningFurnace: true
+            architect.get.plants: true
+            architect.get.misc: true
+            architect.get.doors: true
+            architect.interactDragonEgg: true
+    architect.ranks.adventurer: 
+        descriptions: Permission for MCME Adventurers
+        default: op
+        children:
+            architect.fullBrightness: true
+            architect.resourcePackSwitcher: true
+            architect.place.doubleSlab: true
+            architect.place.sixSidedLog: true
+            architect.get.armor: true
+            architect.get.head: true
+            architect.get.food: true
+            architect.get.logs: true
+            architect.get.slabs: true
+            architect.getCommand: true
+            architect.customHeadManager.user: true          
+    architect.info: 
+        descriptions: Allows to use coommand /architect version | world | dev
+        default: op
+    architect.reload: 
+        descriptions: Allows to use command /architect reload
+        default: op
+    architect.fullBrightness: 
+        descriptions: Allows to use command /fbt 
+        default: op
+    architect.resourcePackSwitcher: 
+        descriptions: Allows to use command /rp 
+        default: op
+    architect.place.halfDoor: 
+        descriptions: Allows to place half doors
+        default: op
+    architect.place.doubleSlab: 
+        descriptions: Allows to place double slabs
+        default: op
+    architect.place.plant: 
+        descriptions: Allows to place special plants
+        default: op
+    architect.place.burningFurnace: 
+        descriptions: Allows to place and interact with burning furnaces
+        default: op
+    architect.place.pistonExtension: 
+        descriptions: Allows to place piston extensions
+        default: op
+    architect.place.sixSidedLog: 
+        descriptions: Allows to place six sided logs
+        default: op
+    architect.interactDragonEgg: 
+        descriptions: Allows to interact (teleport) dragon egg; doesn't make sense to give to anyone
+        default: false
+    architect.get.armor: 
+        descriptions: Allows to get coloured leather armor
+        default: op
+    architect.get.head: 
+        descriptions: Allows to get players head
+        default: op
+    architect.get.food: 
+        descriptions: Allows to get food-like custom heads 
+        default: op
+    architect.get.logs: 
+        descriptions: Allows to get six sided logs
+        default: op
+    architect.get.doors: 
+        descriptions: Allows to get half doors
+        default: op
+    architect.get.slabs: 
+        descriptions: Allows to get double slabs
+        default: op
+    architect.get.plants: 
+        descriptions: Allows to get special plants
+        default: op
+    architect.get.misc: 
+        descriptions: Allows to get miscellaneous items
+        default: op
+    architect.getCommand: 
+        descriptions: Allows to use command /get
+        default: op
+    architect.noPhysicsList: 
+        descriptions: Allows to get coloured leather armor
+        default: op
+    architect.weSchemViewer: 
+        descriptions: Allows to use command /schlist
+        default: op
+    architect.voxel.viewer: 
+        descriptions: Allows to use command /vv list | stencil
+        default: op
+    architect.voxel.delete: 
+        descriptions: Allows to use command /vv delete
+        default: op
+        children:
+            architect.voxel.viewer: true
+    architect.voxel.stencilListEditor: 
+        descriptions: Allows to use command /sl
+        default: op
+    architect.bannerEditor: 
+        descriptions: Allows to use Banner Editor
+        default: op
+    architect.paintingEditor: 
+        descriptions: Allows to use Painting Editor
+        default: op
+    architect.hangingEntityEditor: 
+        descriptions: Allows to edit hanging Entities
+        default: op
+    architect.armorStandEditor: 
+        descriptions: Allows to use Armor Stand Editor
+        default: op
+    architect.randomiser.allowMaterials: 
+        descriptions: Allows to change allowed materials for command /random
+        default: op
+        children:
+            architect.randomiser.user: true
+    architect.randomiser.user: 
+        descriptions: Allows to use command /random (except of /random allow | deny)
+        default: op
+    architect.customHeadManager.user: 
+        descriptions: Allows to use command /chead list | submit
+        default: op
+    architect.customHeadManager.manager: 
+        descriptions: Allows to use all subcommands of command /chead 
+        default: op
