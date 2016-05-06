@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  *
@@ -32,7 +33,8 @@ public class PaintingListener implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
         if(!(entity instanceof Painting 
-                && player.getItemInHand().getType().equals(Material.STICK))) {
+                && player.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                && event.getHand().equals(EquipmentSlot.HAND))) {
             return;
         }
         if(!PluginData.isModuleEnabled(entity.getWorld(),Modules.PAINTING_EDITOR)) {

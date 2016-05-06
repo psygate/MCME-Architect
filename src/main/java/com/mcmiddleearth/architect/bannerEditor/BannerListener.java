@@ -11,6 +11,7 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.MessageUtil;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
@@ -23,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
@@ -35,7 +37,8 @@ public class BannerListener implements Listener {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if(event.hasBlock() && player.getItemInHand().getType().equals(Material.STICK)) {
+        if(event.hasBlock() && player.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                            && event.getHand().equals(EquipmentSlot.HAND)) {
             BlockState state = event.getClickedBlock().getState();
             if(state instanceof Banner) {
                 if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {

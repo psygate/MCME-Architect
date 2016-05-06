@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -40,7 +41,8 @@ public class CustomHeadListener implements Listener {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if(!player.getItemInHand().getType().equals(Material.STICK)) {
+        if(!(player.getInventory().getItemInMainHand().getType().equals(Material.STICK) 
+                && event.getHand().equals(EquipmentSlot.HAND))) {
             return;
         }
         if(!(event.hasBlock() && event.getClickedBlock().getType().equals(Material.SKULL)
