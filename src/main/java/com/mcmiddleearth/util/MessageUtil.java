@@ -83,9 +83,9 @@ public class MessageUtil {
 
     public static void sendClickableMessage(Player sender, String message, String onClickCommand) {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+ sender.getName()+" "
-                +"{ text:\""+message+"\", "
-                  +"clickEvent:{ action:run_command,"
-                               + "value:\""+ onClickCommand +"\"}}");
+                +"{\"text\":\""+message+"\", "
+                  +"\"clickEvent\":{\"action\":\"run_command\","
+                               + "\"value\":\""+ onClickCommand +"\"}}");
     }
         
     public static void sendClickableMessage(Player sender, LinkedHashMap<String,String> data) {
@@ -98,10 +98,10 @@ public class MessageUtil {
             else {
                 rawText = rawText.concat(",");
             }
-            rawText = rawText.concat("{text:\""+message+"\"");
+            rawText = rawText.concat("{\"text\":\""+message+"\"");
             String command = data.get(message);
             if(command!=null) {
-                rawText = rawText.concat(",clickEvent:{ action:run_command,value:\"");
+                rawText = rawText.concat(",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"");
                 rawText = rawText.concat(command+"\"}");
             }
             rawText = rawText.concat("}");
