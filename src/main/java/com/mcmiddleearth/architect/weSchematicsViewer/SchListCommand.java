@@ -20,13 +20,12 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.message.FancyMessage;
+import com.mcmiddleearth.pluginutils.message.MessageType;
 import java.io.File;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,16 +33,16 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class SchListCommand implements CommandExecutor{
+public class SchListCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(sender);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
         if(!PluginData.hasPermission((Player)sender,Permission.WE_SCHEMATICS_VIEWER)) {
-            CommonMessages.sendNoPermissionError(sender);
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
         Player player = (Player) sender;
@@ -53,17 +52,41 @@ public class SchListCommand implements CommandExecutor{
         }
         File baseDir = new File(ArchitectPlugin.getPluginInstance()
                                  .getDataFolder().getParent() + "/WorldEdit/schematics");
-        MessageUtil.sendClickableFileListMessage(player, 
-                                                 ChatColor.GOLD+"World Edit schematics /", 
-                                                 baseDir, 
-                                                 FileUtil.getFileOnlyFilter(), 
-                                                 args,
-                                                 "/schlist", 
-                                                 null);
+        PluginData.getMessageUtil().sendFancyFileListMessage(player, 
+                         new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                            .addSimple(PluginData.getMessageUtil().STRESSED+"World Edit Schematics"
+                                    + PluginData.getMessageUtil().INFO +" /"), 
+                         baseDir, 
+                         FileUtil.getFileOnlyFilter(), 
+                         args,
+                         "/schlist", 
+                         null, true);
         return true;
     }
 
     private void sendNotActivatedMessage(Player player) {
-        MessageUtil.sendErrorMessage(player, "World edit schematics viewer is not enabled.");
+        PluginData.getMessageUtil().sendErrorMessage(player, "World edit schematics viewer is not enabled.");
     }
+    
+    @Override
+    public String getHelpPermission() {
+        return Permission.WE_SCHEMATICS_VIEWER.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": World Edit Schematics Editor.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return " [#page]: Lists all WE schematics, you can click at folder names to navigate into them.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return null;
+    }
+    
+    
 }

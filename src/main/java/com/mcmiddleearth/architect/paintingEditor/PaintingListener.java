@@ -8,8 +8,6 @@ package com.mcmiddleearth.architect.paintingEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -52,7 +50,7 @@ public class PaintingListener implements Listener {
             }
         }
         else {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
         }
         event.setCancelled(true);
     }
@@ -81,13 +79,13 @@ public class PaintingListener implements Listener {
             }
         }
         else {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
         }
         event.setCancelled(true);
     }
 
     private void sendNotEnabledErrorMessage(Player player) {
-        MessageUtil.sendErrorMessage(player, "Painting editor is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(player, "Painting editor is not enabled for this world.");
     }
         
 }

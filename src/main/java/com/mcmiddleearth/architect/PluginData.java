@@ -16,8 +16,9 @@
  */
 package com.mcmiddleearth.architect;
 
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.message.MessageUtil;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,6 +39,9 @@ import org.bukkit.entity.Player;
 public class PluginData {
     
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
+    
+    @Getter
+    private static final MessageUtil messageUtil = new MessageUtil();
     
     @Getter
     private static final Set<UUID> afkPlayerList = new HashSet<>();

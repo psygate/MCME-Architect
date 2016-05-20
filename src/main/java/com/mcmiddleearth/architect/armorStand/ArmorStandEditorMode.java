@@ -5,35 +5,48 @@
  */
 package com.mcmiddleearth.architect.armorStand;
 
+import lombok.Getter;
+import org.bukkit.ChatColor;
+
 /**
  *
  * @author Eriol_Eandur
  */
 public enum ArmorStandEditorMode {
-    HAND        ("h"),
-    XMOVE       ("mx"),
-    YMOVE       ("my"),
-    ZMOVE       ("mz"),
-    MOVE        ("mo"),
-    XROTATE     ("x"),
-    YROTATE     ("y"),
-    ZROTATE     ("z"),
-    ROTATE      ("r"),
-    TURN        ("t"),
-    BASE        ("b"),
-    MARKER      ("ma"),
-    ARMS        ("a"),
-    SIZE        ("s"),
-    VISIBLE     ("v"),
-    GRAVITY     ("g"),
-    PASTE       ("p"),
-    COPY        ("c"),
-    ROLLBACK    ("rollback");
+    HAND        ("h","",": Selects hand item mode"),
+    OFF_HAND    ("o","",": not implemented"),
+    XMOVE       ("mx","",": Selects x-movement mode"),
+    YMOVE       ("my","",": Selects y-movement mode"),
+    ZMOVE       ("mz","",": Selects z-movement mode"),
+    MOVE        ("mo","",": Selects move left/right mode"),
+    XROTATE     ("x"," [part]",": Selects x-axis rotation mode"),
+    YROTATE     ("y"," [part]",": Selects y-axis rotation mode"),
+    ZROTATE     ("z"," [part]",": Selects z-axis rotation mode"),
+    ROTATE      ("r"," [part]",": Selects line of sight rotation mode"),
+    TURN        ("t","",": Selects turn armor stand mode"),
+    BASE        ("b","",": Selects switch base plate mode"),
+    MARKER      ("ma","",": Selects switch marker mode"),
+    ARMS        ("a","",": Selects switch arms mode"),
+    SIZE        ("s","",": Selects switch size mode"),
+    VISIBLE     ("v","",": Selects switch visibility mode"),
+    GRAVITY     ("g","",": Selects switch gravity mode"),
+    PASTE       ("p","",": Selects paste in mode"),
+    COPY        ("c","",": Selects copy mode"),
+    ROLLBACK    ("rollback","",": Not implemented");
     
+    @Getter
     private final String name;
+    
+    @Getter
+    private final String helpText;
+    
+    @Getter
+    private final String arguments;
 
-    private ArmorStandEditorMode(String name) {
+    private ArmorStandEditorMode(String name,String arguments, String helpText) {
         this.name = name;
+        this.helpText = helpText;
+        this.arguments = arguments;
     }
     
     public static ArmorStandEditorMode getEditorMode(String name) {

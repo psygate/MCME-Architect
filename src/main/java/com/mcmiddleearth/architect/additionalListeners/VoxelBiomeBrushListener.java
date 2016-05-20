@@ -21,7 +21,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ProtocolLibUtil;
-import com.mcmiddleearth.util.VoxelUtil;
+import com.mcmiddleearth.pluginutils.VoxelUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

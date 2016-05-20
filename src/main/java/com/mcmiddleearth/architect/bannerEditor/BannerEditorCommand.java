@@ -8,14 +8,16 @@ package com.mcmiddleearth.architect.bannerEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.architect.armorStand.ArmorStandEditorConfig;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
-import com.mcmiddleearth.util.NumericUtil;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutils.message.FancyMessage;
+import com.mcmiddleearth.pluginutils.message.MessageType;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -24,7 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,18 +34,18 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Eriol_Eandur
  */
-public class BannerEditorCommand implements CommandExecutor {
+public class BannerEditorCommand extends AbstractArchitectCommand {
 
     private final static Map<UUID, BannerEditorConfig> configList = new HashMap<>();
     
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String c, String[] args) {
         if (!(cs instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(cs);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
         if(!PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR)) {
-            CommonMessages.sendNoPermissionError(cs);
+            PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
         if(!PluginData.isModuleEnabled(((Player)cs).getWorld(), Modules.BANNER_EDITOR)) {
@@ -58,11 +59,15 @@ public class BannerEditorCommand implements CommandExecutor {
             }
             else {
                 if(args[0].equalsIgnoreCase("help")) {
-                    sendHelpMessage(cs);
+                    int page = 1;
+                    if(args.length>1 && NumericUtil.isInt(args[1])) {
+                        page = NumericUtil.getInt(args[1]);
+                    }
+                    sendHelpMessage((Player) cs,page);
                     return true;
                 } else if(args[0].equalsIgnoreCase("save")) {
                     if(args.length<3) {
-                        CommonMessages.sendNotEnoughArgumentsError(cs);
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
                     if(!p.getItemInHand().getType().equals(Material.BANNER)) {
@@ -79,14 +84,14 @@ public class BannerEditorCommand implements CommandExecutor {
                                 sendFileExistsMessage(cs);
                             }
                         } catch (IOException ex) {
-                            CommonMessages.sendIOError(cs);
+                            PluginData.getMessageUtil().sendIOError(cs);
                             Logger.getLogger(BannerEditorCommand.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                     return true;
                 } else if(args[0].equalsIgnoreCase("load")) {
                     if(args.length<2) {
-                        CommonMessages.sendNotEnoughArgumentsError(cs);
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
                     ItemStack item = playerConfig.loadBanner(args[1]);
@@ -99,13 +104,15 @@ public class BannerEditorCommand implements CommandExecutor {
                     sendGotBanner(p);
                     return true;
                 } else if(args[0].equalsIgnoreCase("files")) {
-                    MessageUtil.sendClickableFileListMessage(p,
-                                    ChatColor.YELLOW+"Banners /",
+                    PluginData.getMessageUtil().sendFancyFileListMessage(p,
+                                    new FancyMessage(MessageType.INFO,PluginData.getMessageUtil())
+                                            .addSimple(PluginData.getMessageUtil().STRESSED+"Banner "
+                                                    +PluginData.getMessageUtil().INFO+"files /"),
                                     BannerEditorConfig.getDataDir(),
                                     FileUtil.getFileExtFilter(BannerEditorConfig.getFileExtension()),
                                     Arrays.copyOfRange(args, 1, args.length), 
                                     "/banner files", 
-                                    "/banner load");
+                                    "/banner load", true);
                     return true;
                 }
                 int id = NumericUtil.getInt(args[0]);
@@ -122,7 +129,7 @@ public class BannerEditorCommand implements CommandExecutor {
                 }
                 BannerEditorMode editorMode = BannerEditorMode.getEditorMode(args[0]);
                 if(editorMode == null) {
-                    CommonMessages.sendInvalidSubcommandError(cs);
+                    PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
                 }
                 else {
                     playerConfig.setEditorMode(editorMode);
@@ -144,66 +151,89 @@ public class BannerEditorCommand implements CommandExecutor {
         return newConfig;
     }
         
-    private void sendHelpMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Tool for editing banners:");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select edited pattern:          /banner <patternId>");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select change texture mode: /banner t");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select change color mode:    /banner c");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select add pattern mode:     /banner a");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select remove pattern mode: /banner r");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select list patterns mode:    /banner l");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Select get banner mode:      /banner g");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Save banner in hand to file: /banner save <filename> <description>");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Load banner from file:    /banner load <filename>");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Show saved banners:    /banner files [subdirectory] [#page]");
-    }
-    
     private void sendInfoMessage(CommandSender cs, BannerEditorConfig playerConfig) {
-                    MessageUtil.sendInfoMessage(cs,"banner editor mode: ");
+                    PluginData.getMessageUtil().sendInfoMessage(cs,"banner editor mode: ");
                     switch(playerConfig.getEditorMode()) {
                         case LIST:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> list patterns");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> list patterns");
                             break;
                         case TEXTURE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> change texture "+ playerConfig.getPatternId());
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> change texture "+ playerConfig.getPatternId());
                             break;
                         case COLOR:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> change color of pattern "+ playerConfig.getPatternId());
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> change color of pattern "+ playerConfig.getPatternId());
                             break;
                         case ADD:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> add pattern");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> add pattern");
                             break;
                         case REMOVE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> remove pattern "+ playerConfig.getPatternId());
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> remove pattern "+ playerConfig.getPatternId());
                             break;
                         case GET:
-                            MessageUtil.sendNoPrefixInfoMessage(cs,"   -> get banner ");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> get banner ");
                             break;
                     }
     }
 
     private void sendNotEnabledErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Banner editor is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Banner editor is not enabled for this world.");
     }
 
     private void sendNoBannerInHandError(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "You don't have a banner in hand.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "You don't have a banner in hand.");
     }
 
     private void sendBannerSavedMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "Banner was saved to file.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Banner was saved to file.");
     }
 
     private void sendFileExistsMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "File already exists. Delete first.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "File already exists. Delete first.");
     }
 
     private void sendGotBanner(Player p) {
-        MessageUtil.sendInfoMessage(p, "Banner was loaded and placed in your inventory.");
+        PluginData.getMessageUtil().sendInfoMessage(p, "Banner was loaded and placed in your inventory.");
     }
 
     private void sendBannerNotFound(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Banner file not found or no valid banner data in file.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Banner file not found or no valid banner data in file.");
+    }
+    
+    @Override
+    public String getHelpPermission() {
+        return Permission.BANNER_EDITOR.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Banner Editor.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": A banners consists of a base which has only a color but no texture and up to 6 different patterns which have a texture and a color each. \n " 
+                + "The banner editor features a number of commands to select properties of a banner you want to change. The changes are applied to a banner by clicking at it with a stick in hand. \n "
+                + ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/banner help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        List<String[]> helpList = new ArrayList<>();
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Banner Editor -";
+        help = new String[][]{{"/banner files ","[folder]",": Shows saved banners."},
+                              {"/banner save ","<filname> <description>",": Saves banner."},
+                              {"/banner load ","<filname>",": Loads banner."}};
+        helpList.addAll(Arrays.asList(help));
+            for(BannerEditorMode mode: BannerEditorMode.values()) {
+                helpList.add(new String[]{"/banner "+mode.getName(),mode.getArguments(),mode.getHelpText()});
+            }
+        help = helpList.toArray(help);
+        super.sendHelpMessage(player, page);
     }
     
 }

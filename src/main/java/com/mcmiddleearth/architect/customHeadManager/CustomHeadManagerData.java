@@ -23,11 +23,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import static com.mcmiddleearth.util.ConfigurationUtil.deserializeLocation;
-import static com.mcmiddleearth.util.ConfigurationUtil.serializeLocation;
-import com.mcmiddleearth.util.FileUtil;
+import com.mcmiddleearth.architect.PluginData;
+import static com.mcmiddleearth.pluginutils.ConfigurationUtil.deserializeLocation;
+import static com.mcmiddleearth.pluginutils.ConfigurationUtil.serializeLocation;
+import com.mcmiddleearth.pluginutils.FileUtil;
 import com.mcmiddleearth.util.HeadUtil;
-import com.mcmiddleearth.util.MessageUtil;
 import com.mojang.util.UUIDTypeAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -290,7 +290,7 @@ public class CustomHeadManagerData {
                                 UUID ownerId = UUIDTypeAdapter.fromString(uuidString);
                                 fetchCustomHeadData(submitter, ownerId, name);
                             } else {
-                                MessageUtil.sendErrorMessage(submitter, "Player name not found.");
+                                PluginData.getMessageUtil().sendErrorMessage(submitter, "Player name not found.");
                             }
                             cancel();
                             return;
@@ -299,7 +299,7 @@ public class CustomHeadManagerData {
                         } finally {
                             cancel();
                         }
-                        MessageUtil.sendErrorMessage(submitter, "Error. Your head has not been submitted.");
+                        PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Your head has not been submitted.");
                     }
                 }
             }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
@@ -355,12 +355,12 @@ public class CustomHeadManagerData {
                                     file = new File(submittedHeadDir,name+index+"."+fileExtension);
                                 }
                                 if(headData.saveToFile(file)) {
-                                    MessageUtil.sendInfoMessage(submitter,"Head has been submitted.");
+                                    PluginData.getMessageUtil().sendInfoMessage(submitter,"Head has been submitted.");
                                     cancel();
                                     return;
                                 }
                             } else {
-                                MessageUtil.sendErrorMessage(submitter, "Error. Invalid UUID or too many requests. Wait one minute at last before you try again.");
+                                PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Invalid UUID or too many requests. Wait one minute at last before you try again.");
                                 cancel();
                                 return;
                                 }
@@ -369,7 +369,7 @@ public class CustomHeadManagerData {
                         } finally {
                             cancel();
                         }
-                        MessageUtil.sendErrorMessage(submitter, "Error. Your head has not been submitted.");
+                        PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Your head has not been submitted.");
                     }
                 }
             }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);

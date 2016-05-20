@@ -17,6 +17,7 @@
 package com.mcmiddleearth.util;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.PluginData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ import org.bukkit.entity.Player;
  */
 public class DevUtil {
     
-    private static List<UUID> developer = new ArrayList<>();
+    private static final List<UUID> developer = new ArrayList<>();
     
     private static final String PREFIX = ""+ChatColor.BOLD+ChatColor.GOLD;
     
@@ -58,11 +59,11 @@ public class DevUtil {
         for(UUID uuid:developer) {
             Player player = Bukkit.getPlayer(uuid);
             if(player!=null) {
-                MessageUtil.sendInfoMessage(player,PREFIX+message);
+                PluginData.getMessageUtil().sendInfoMessage(player,PREFIX+message);
             }
         }
         if(consoleOutput) {
-            Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO, MessageUtil.getPREFIX()+message);
+            Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO, PluginData.getMessageUtil().getPREFIX()+message);
         }
     }
     

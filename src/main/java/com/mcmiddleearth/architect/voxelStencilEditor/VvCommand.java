@@ -19,14 +19,15 @@ package com.mcmiddleearth.architect.voxelStencilEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutils.message.FancyMessage;
+import com.mcmiddleearth.pluginutils.message.MessageType;
 import java.io.File;
 import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,16 +35,16 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class VvCommand implements CommandExecutor{
+public class VvCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(sender);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
         if(!PluginData.hasPermission((Player)sender,Permission.VOXEL_VIEWER)) {
-            CommonMessages.sendNoPermissionError(sender);
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
         Player player = (Player) sender;
@@ -58,28 +59,32 @@ public class VvCommand implements CommandExecutor{
             } else {
                 messageArgs = Arrays.copyOfRange(args,1,args.length);
             }
-            MessageUtil.sendClickableFileListMessage(player, 
-                                                     ChatColor.YELLOW+"StencilLists /", 
-                                                     VoxelConstants.STENCIL_LISTS_DIR, 
-                                                     FileUtil.getFileExtFilter(VoxelConstants.STENCIL_LIST_EXT), 
-                                                     messageArgs,
-                                                     "/vv list", 
-                                                     "/b sl");
+            PluginData.getMessageUtil().sendFancyFileListMessage(player, 
+                         new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                            .addSimple(PluginData.getMessageUtil().HIGHLIGHT_STRESSED+"Stencil Lists"
+                                    + PluginData.getMessageUtil().INFO +" /"), 
+                         VoxelConstants.STENCIL_LISTS_DIR, 
+                         FileUtil.getFileExtFilter(VoxelConstants.STENCIL_LIST_EXT), 
+                         messageArgs,
+                         "/vv list", 
+                         "/b sl", true);
         } else if(args[0].toLowerCase().startsWith("stencil")) {
-            MessageUtil.sendClickableFileListMessage(player, 
-                                                     ChatColor.GOLD+"Voxel Stencils /", 
-                                                     VoxelConstants.STENCILS_DIR, 
-                                                     FileUtil.getFileExtFilter(VoxelConstants.STENCIL_EXT), 
-                                                     Arrays.copyOfRange(args,1,args.length),
-                                                     "/vv stencil", 
-                                                     "/b st");
+            PluginData.getMessageUtil().sendFancyFileListMessage(player, 
+                         new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                            .addSimple(PluginData.getMessageUtil().STRESSED+"Voxel Stencils"
+                                    + PluginData.getMessageUtil().INFO +" /"), 
+                         VoxelConstants.STENCILS_DIR, 
+                         FileUtil.getFileExtFilter(VoxelConstants.STENCIL_EXT), 
+                         Arrays.copyOfRange(args,1,args.length),
+                         "/vv stencil", 
+                         "/b st", true);
         } else if(args[0].equalsIgnoreCase("delete")) {
             if(!PluginData.hasPermission((Player)sender,Permission.VOXEL_VIEWER_DELETE)) {
-                CommonMessages.sendNoPermissionError(sender);
+                PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
             if(args.length<2) {
-                CommonMessages.sendNotEnoughArgumentsError(player);
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(player);
                 return true;
             }
             File file;
@@ -89,32 +94,60 @@ public class VvCommand implements CommandExecutor{
                 file = new File(VoxelConstants.STENCIL_LISTS_DIR+"/"+args[1]);
             }
             if(!file.exists()) {
-                MessageUtil.sendErrorMessage(player, "File not found.");
+                PluginData.getMessageUtil().sendErrorMessage(player, "File not found.");
                 return true;
             }
             if(file.isDirectory() && file.list().length>0) {
-                MessageUtil.sendErrorMessage(player, "You may delete an empty directory only.");
+                PluginData.getMessageUtil().sendErrorMessage(player, "You may delete an empty directory only.");
                 return true;
             }
             file.delete();
-            MessageUtil.sendInfoMessage(player,"File deleted.");
+            PluginData.getMessageUtil().sendInfoMessage(player,"File deleted.");
         } else if(args[0].equalsIgnoreCase("help")) {
-            sendHelpMessage(player);
+            int page = 1;
+            if(args.length>1 && NumericUtil.isInt(args[1])) {
+                page = NumericUtil.getInt(args[1]);
+            }
+            sendHelpMessage(player,page);
         } else {
-            CommonMessages.sendInvalidSubcommandError(player);
+            PluginData.getMessageUtil().sendInvalidSubcommandError(player);
         }
         return true;
     }
 
     private void sendNotActivatedMessage(Player player) {
-        MessageUtil.sendErrorMessage(player,"Voxel viewer is not enabled.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"Voxel viewer is not enabled.");
     }
 
-    private void sendHelpMessage(Player player) {
-        MessageUtil.sendInfoMessage(player, "Help for voxel viewer:");
-        MessageUtil.sendNoPrefixInfoMessage(player, "View voxel stencils: /vv stencil [directory] [#page]");
-        MessageUtil.sendNoPrefixInfoMessage(player, "View stencil lists:   /vv [list] [directory] [#page]");
-        MessageUtil.sendNoPrefixInfoMessage(player, "Delete voxel files:   /vv delete filename");
+    @Override
+    public String getHelpPermission() {
+        return Permission.VOXEL_VIEWER.getPermissionNode();
     }
+
+    @Override
+    public String getShortDescription() {
+        return ": Voxel Viewer.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": Show or delete voxel stencil lists and voxel stencils. \n "
+                +ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/vv help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Voxel Viewer -";
+        help = new String[][]{{"/vv stencil ","[directory] [#page]",": Views stencils."},
+                                       {"/vv ", "[list] [directory] [#page]",": Views stencil lists."},
+                                       {"/vv delete ","<filename>",": Deletes a voxel file."}};
+        super.sendHelpMessage(player, page);
+    }
+    
 }
 

@@ -8,21 +8,23 @@ package com.mcmiddleearth.architect.armorStand;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandRollbackCommand;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutils.message.FancyMessage;
+import com.mcmiddleearth.pluginutils.message.MessageType;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -31,7 +33,7 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class ArmorStandEditorCommand implements CommandExecutor {
+public class ArmorStandEditorCommand extends AbstractArchitectCommand {
 
     private final static Map<UUID, ArmorStandEditorConfig> configList = new HashMap<>();
     
@@ -40,14 +42,14 @@ public class ArmorStandEditorCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String c, String[] args) {
         if (!(cs instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(cs);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
         if(args.length>0 && args[0].equalsIgnoreCase("rollback")) {
             return ArmorStandRollbackCommand.execute((Player)cs, args, configList);
         }
         if(!PluginData.hasPermission((Player)cs,Permission.ARMOR_STAND_EDITOR)) {
-            CommonMessages.sendNoPermissionError(cs);
+            PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         } else {
             Player p = (Player) cs;
@@ -61,7 +63,11 @@ public class ArmorStandEditorCommand implements CommandExecutor {
             }
             else {
                 if(args[0].equalsIgnoreCase("help")) {
-                    sendHelpMessage(cs);
+                    int page = 1;
+                    if(args.length>1 && NumericUtil.isInt(args[1])) {
+                        page = NumericUtil.getInt(args[1]);
+                    }
+                    sendHelpMessage((Player) cs,page);
                     return true;
                 }
                 if(args[0].equals("+") || args[0].equals("-")) {
@@ -85,13 +91,16 @@ public class ArmorStandEditorCommand implements CommandExecutor {
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("files")) {
-                    MessageUtil.sendClickableFileListMessage(p,
-                                    ChatColor.YELLOW+"Armor Stands /",
+                    PluginData.getMessageUtil().sendFancyFileListMessage(p,
+                                    new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                                            .addSimple(PluginData.getMessageUtil().STRESSED+"Armor Stand "
+                                                      +PluginData.getMessageUtil().INFO+"files /"),
                                     ArmorStandEditorConfig.getDataDir(),
                                     FileUtil.getFileExtFilter(ArmorStandEditorConfig.getFileExtension()),
                                     Arrays.copyOfRange(args, 1, args.length), 
                                     "/armor files", 
-                                    "/armor p");
+                                    "/armor p", 
+                                    true);
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("delete")) {
@@ -144,7 +153,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
                 catch(NumberFormatException e) {}
                 ArmorStandEditorMode editorMode = ArmorStandEditorMode.getEditorMode(args[0]);
                 if(editorMode == null) {
-                    CommonMessages.sendInvalidSubcommandError(cs);
+                    PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
                 }
                 else {
                     if(editorMode.equals(ArmorStandEditorMode.PASTE) && args.length>1) {
@@ -153,7 +162,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
                                 sendLoadedMessage(cs);
                             }
                             else {
-                                CommonMessages.sendFileNotFoundError(cs);
+                                PluginData.getMessageUtil().sendFileNotFoundError(cs);
                             }
                         } catch (IOException | InvalidConfigurationException ex) {
                             sendIOErrorMessage(cs);
@@ -184,7 +193,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         return newConfig;
     }
         
-    private void showFiles(CommandSender cs, ArmorStandEditorConfig playerConfig, String folder, int page) {
+/*    private void showFiles(CommandSender cs, ArmorStandEditorConfig playerConfig, String folder, int page) {
         File[] files = playerConfig.getFiles(folder);
         int maxPage=(files.length-1)/10+1;
         if(maxPage<1) {
@@ -195,7 +204,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         }
         sendHeaderMessage(cs, folder, page, maxPage);
         if(!folder.equals("")) {
-            MessageUtil.sendClickableMessage((Player) cs, "   ..","/armor files");
+            PluginData.getMessageUtil().sendClickableMessage((Player) cs, "   ..","/armor files");
         }
         for(int i = (page-1)*10; i<files.length && i<(page-1)*10+10;i++) {
                 //backward order: int i = files.length-1-(page-1)*10; i >= 0 && i > files.length-1-(page-1)*10-10; i--) {
@@ -204,7 +213,7 @@ public class ArmorStandEditorCommand implements CommandExecutor {
     }
     
     private void sendHeaderMessage(CommandSender cs, String folder, int page, int maxPage) {
-        MessageUtil.sendInfoMessage(cs, "Saved armor stand files "
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Saved armor stand files "
                        +(!folder.equals("")?"in folder "+ folder+" ":"")+"[page " +page+"/"+maxPage+"]");
     }
 
@@ -222,149 +231,158 @@ public class ArmorStandEditorCommand implements CommandExecutor {
         while(name.length()<15) {
             name = name.concat(" ");
         }
-        MessageUtil.sendClickableMessage((Player)cs, "   "+name+description, command);
-    }
-    
-    private void sendHelpMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "Tool for editing armor stands:");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Show the current mode:    /armor");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Show help about parts:    /armor parts");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select x-movement mode:   /armor mx");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select y-movement mode:   /armor my");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select z-movement mode:   /armor mz");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select move left/right:   /armor mo");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select turn mode:         /armor t");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select x-rotation mode:   /armor x [part]");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select y-rotation mode:   /armor y [part]");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select z-rotation mode:   /armor z [part]");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select view rotation mode:/armor r [part]");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch size mode:         /armor s");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch visibility mode:   /armor v");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch marker mode:       /armor ma");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch gravity mode:      /armor g");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Hand item mode:           /armor h");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch arms mode:         /armor a");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Switch base plate mode:   /armor b");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select paste mode:        /armor p [filename]");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Select copy mode:         /armor c");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Increase rot/move step:   /armor +");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Decrease rot/move step:   /armor -");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Stet rot/move step:       /armor #");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Place copied armor stand: /armor place");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Clear copied armor stand: /armor clear");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- Save copied armor stand:  /armor save <filename> <description>");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "- List saved armor stand:   /armor files [folder]");
-    }
+        PluginData.getMessageUtil().sendClickableMessage((Player)cs, "   "+name+description, command);
+    }*/
     
     private void sendInfoMessage(CommandSender cs, ArmorStandEditorConfig playerConfig) {
-                    MessageUtil.sendInfoMessage(cs, "armor stand editor mode: ");
+                    PluginData.getMessageUtil().sendInfoMessage(cs, "Current Armor Stand Editor mode: ");
                     switch(playerConfig.getEditorMode()) {
                         case HAND:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> remove/place item in hand");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> remove/place item in hand");
+                            break;
+                        case OFF_HAND:
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> remove/place item in off hand. NOT FUNCTIONAL YET");
                             break;
                         case GRAVITY:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch gravity");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch gravity");
                             break;
                         case XROTATE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along x-Axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along x-Axis");
                             break;
                         case YROTATE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along y-axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along y-axis");
                             break;
                         case ZROTATE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along z-axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along z-axis");
                             break;
                         case ROTATE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along your view direction");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> rotate " + playerConfig.getPart().getPartName()+" along your view direction");
                             break;
                         case MOVE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> move to left/right");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> move to left/right");
                             break;
                         case TURN:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> turn full armor stand");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> turn full armor stand");
                             break;
                         case XMOVE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> move along x-axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> move along x-axis");
                             break;
                         case YMOVE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> move along y-axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> move along y-axis");
                             break;
                         case ZMOVE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> move along z-axis");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> move along z-axis");
                             break;
                         case SIZE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch size");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch size");
                             break;
                         case VISIBLE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch visibility");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch visibility");
                             break;
                         case BASE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch base plate");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch base plate");
                             break;
                         case MARKER:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch collision box");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch collision box");
                             break;
                         case ARMS:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> switch arms");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch arms");
                             break;
                         case PASTE:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> paste armor stand");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> paste armor stand");
                             break;
                         case COPY:
-                            MessageUtil.sendNoPrefixInfoMessage(cs, "   -> copy armor stand");
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> copy armor stand");
                             break;
                     }
     }
 
     private void sendRotationStepMessage(CommandSender cs, int rotationStep) {
-        MessageUtil.sendInfoMessage(cs, "    -> Set rot/move step to "+rotationStep+"degree/percent");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set rot/move step to "+rotationStep+"degree/percent");
     }
 
     private void sendCopiedArmorStandClearedMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "armor stand clippboard was cleared.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "armor stand clippboard was cleared.");
     }
 
     private void sendPartsHelpMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "parts arguments of an armor stand:");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> h  head");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> la  left arm");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> ra  right arm");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> ll  left leg");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> rl  right leg");
-        MessageUtil.sendNoPrefixInfoMessage(cs, "    -> b   body");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "part arguments of Armor Stand Editor:");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    h "+PluginData.getMessageUtil().INFO+" -> head");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    la "+PluginData.getMessageUtil().INFO+"-> left arm");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    ra "+PluginData.getMessageUtil().INFO+"-> right arm");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    ll "+PluginData.getMessageUtil().INFO+"-> left leg");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    rl "+PluginData.getMessageUtil().INFO+"-> right leg");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, PluginData.getMessageUtil().STRESSED+"    b  "+PluginData.getMessageUtil().INFO+"-> body");
     }
 
     private void sendNotEnoughArgumentsMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Not enough arguments: /armor save <filename> <description>");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Not enough arguments: /armor save <filename> <description>");
     }
 
     private void sendSavedMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "Armor stand saved.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Armor stand saved.");
     }
 
     private void sendLoadedMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "Armor stand loaded.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Armor stand loaded.");
     }
 
     private void sendExistsMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "File already exists. Delete first.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "File already exists. Delete first.");
     }
 
     private void sendIOErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "IO error. Nothing was saved.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "IO error. Nothing was saved.");
     }
 
     private void sendFileDeletedMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs, "File deleted.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "File deleted.");
     }
 
     private void sendDeleteErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "File not found or directory not empty.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "File not found or directory not empty.");
     }
 
     private void sendNotActivatedMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Armor stand editor is not activated for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Armor stand editor is not activated for this world.");
     }
         
+    @Override
+    public String getHelpPermission() {
+        return Permission.ARMOR_STAND_EDITOR.getPermissionNode();
+    }
 
+    @Override
+    public String getShortDescription() {
+        return ": Armor Stand Editor.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": The armor stand editor features a number of commands to select properties of an armor stand you want to change. The changes are applied to an armor stand by clicking at it with a stick in hand. \n "
+                +ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/armor help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        List<String[]> helpList = new ArrayList<>();
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Armor Stand Editor -";
+        help = new String[][]{{"/armor parts","",": Shows help about armor stand parts."},
+                              {"/armor place","",": Places copied armor stand."},
+                              {"/armor clear","",": Clears copied armor stand."},
+                              {"/armor save ","<filename> <description>",": Save armor stand."},
+                              {"/armor files ","[folder]",": Show saved armor stands."}};
+        helpList.addAll(Arrays.asList(help));
+            for(ArmorStandEditorMode mode: ArmorStandEditorMode.values()) {
+                helpList.add(new String[]{"/armor "+mode.getName(),mode.getArguments(),mode.getHelpText()});
+            }
+        help = helpList.toArray(help);
+        super.sendHelpMessage(player, page);
+    }
+    
 }

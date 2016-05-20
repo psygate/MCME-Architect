@@ -9,7 +9,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
-import com.mcmiddleearth.util.MessageUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
@@ -35,17 +36,19 @@ public class ArmorStandListener implements Listener {
     public void PlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if(PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_PROTECTION)
-                && p.getItemInHand().getType().equals(Material.ARMOR_STAND) 
+                && p.getInventory().getItemInMainHand().getType().equals(Material.ARMOR_STAND)
+                && event.getHand().equals(EquipmentSlot.HAND)
                 && !PluginData.hasPermission(p,Permission.ARMOR_STAND_EDITOR)
                 && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             event.setCancelled(true);
-            MessageUtil.sendErrorMessage(p, "Sorry, you are not allowed to place armor stands.");
+            PluginData.getMessageUtil().sendErrorMessage(p, "Sorry, you are not allowed to place armor stands.");
         }
         ArmorStandEditorConfig config = ArmorStandEditorCommand.getPlayerConfig(p);
         if(PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_EDITOR)
                 && PluginData.hasPermission(p,Permission.ARMOR_STAND_EDITOR)
                 && config.getEditorMode().equals(ArmorStandEditorMode.PASTE)
-                && (p.getItemInHand().getType().equals(Material.STICK))) {
+                && p.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                && event.getHand().equals(EquipmentSlot.HAND)) {
             Location loc;
             boolean exact;
             if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
@@ -70,7 +73,7 @@ public class ArmorStandListener implements Listener {
                                                      Permission.ARMOR_STAND_EDITOR))) {
                 event.setCancelled(true);
                 if(event.getDamager() instanceof Player) {
-                    MessageUtil.sendErrorMessage(((Player)event.getDamager()),
+                    PluginData.getMessageUtil().sendErrorMessage(((Player)event.getDamager()),
                                                  "Sorry, you are not allowed to remove armor stands.");
                 }
                 return;
@@ -90,7 +93,7 @@ public class ArmorStandListener implements Listener {
             if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.ARMOR_STAND_PROTECTION)
                     && !PluginData.hasPermission(event.getPlayer(),Permission.ARMOR_STAND_EDITOR)) {
                 event.setCancelled(true);
-                MessageUtil.sendErrorMessage(event.getPlayer(),
+                PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),
                                              "Sorry, you are not allowed to interact with armor stands.");
                 return;
             }
@@ -221,27 +224,27 @@ public class ArmorStandListener implements Listener {
                 break;
             case SIZE:
                 armorStand.setSmall(!armorStand.isSmall());
-                player.sendMessage("Switched armor stand size.");
+                PluginData.getMessageUtil().sendInfoMessage(player,"Switched armor stand size.");
                 break;
             case VISIBLE:
                 armorStand.setVisible(!armorStand.isVisible());
-                player.sendMessage("Switched visibility.");
+                PluginData.getMessageUtil().sendInfoMessage(player,"Switched visibility.");
                 break;
             case GRAVITY:
                 armorStand.setGravity(!armorStand.hasGravity());
-                player.sendMessage("Switched armor stand affected by gravity.");
+                PluginData.getMessageUtil().sendInfoMessage(player,"Switched armor stand affected by gravity.");
                 break;
             case BASE:
                 armorStand.setBasePlate(!armorStand.hasBasePlate());
-                player.sendMessage("Switched armor stand base plate.");
+                PluginData.getMessageUtil().sendInfoMessage(player,"Switched armor stand base plate.");
                 break;
             case MARKER:
-                armorStand.setMarker(!armorStand.isMarker());
-                player.sendMessage("Switch ");
+                //armorStand.setMarker(!armorStand.isMarker());
+                PluginData.getMessageUtil().sendErrorMessage(player,"This mode is deactivated.");
                 break;
             case ARMS:
                 armorStand.setArms(!armorStand.hasArms());
-                player.sendMessage("Switched armor stand arms.");
+                PluginData.getMessageUtil().sendInfoMessage(player,"Switched armor stand arms.");
                 break;
             case PASTE:
                 //nothing to do here
@@ -313,7 +316,7 @@ public class ArmorStandListener implements Listener {
     }
 
     private void sendCopyMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Armor stand copied to clipboard.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Armor stand copied to clipboard.");
     }
 
 }

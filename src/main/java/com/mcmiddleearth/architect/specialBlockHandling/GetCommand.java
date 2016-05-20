@@ -19,16 +19,15 @@ package com.mcmiddleearth.architect.specialBlockHandling;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
-import com.mcmiddleearth.util.NumericUtil;
+import com.mcmiddleearth.pluginutils.FileUtil;
+import com.mcmiddleearth.pluginutils.NumericUtil;
 import java.io.File;
 import java.util.ArrayList;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -40,51 +39,55 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
  *
  * @author Eriol_Eandur
  */
-public class GetCommand implements CommandExecutor{
+public class GetCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender cs, Command command, String label, String[] args) {
         if (!(cs instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(cs);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
         Player p = (Player) cs;
         if(!PluginData.hasPermission(p,Permission.GET_COMMAND)) {
-            CommonMessages.sendNoPermissionError(cs);
+            PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
         if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS)) {
             sendNotEnabledErrorMessage(cs);
             return true;
         }
-        if(args.length==0) {
-            CommonMessages.sendNotEnoughArgumentsError(cs);
+        if(args.length==0 || args[0].equalsIgnoreCase("help")) {
+            int page = 1;
+            if(args.length>1 && NumericUtil.isInt(args[1])) {
+                page = NumericUtil.getInt(args[1]);
+            }
+            sendHelpMessage((Player)cs,page);
             return true;
         }
         if(args[0].toLowerCase().startsWith("log")) {
             if(!PluginData.hasPermission(p, Permission.GET_LOGS)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getLogs(p);
-                MessageUtil.sendInfoMessage(p, "Given six sided logs!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given six sided logs!");
             }
         } else if(args[0].toLowerCase().startsWith("door")) {
             if(!PluginData.hasPermission(p, Permission.GET_DOORS)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getDoors(p);
-                MessageUtil.sendInfoMessage(p, "Given half doors!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given half doors!");
             }
         } else if(args[0].toLowerCase().startsWith("plant")) {
             if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getPlants(p);
-                MessageUtil.sendInfoMessage(p, "Given plants!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given plants!");
             }
         } else if(args[0].toLowerCase().startsWith("mushroom")) {
             if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 if(args.length>1 && args[1].equalsIgnoreCase("red")) {
                     getHugeMushroomsSpecial(p,Material.HUGE_MUSHROOM_2);
@@ -93,44 +96,44 @@ public class GetCommand implements CommandExecutor{
                 } else  {
                     getHugeMushrooms(p);
                 }
-                MessageUtil.sendInfoMessage(p, "Given mushroom blocks!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given mushroom blocks!");
             }
         } else if(args[0].toLowerCase().startsWith("head")) {
             if(!PluginData.hasPermission(p, Permission.GET_HEAD)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 if(args.length>1) {
                     getHeads(p, args[1]);
                 } else {
-                    CommonMessages.sendNotEnoughArgumentsError(cs);
+                    PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                 }
             }
         } else if(args[0].toLowerCase().startsWith("slab")) {
             if(!PluginData.hasPermission(p, Permission.GET_SLABS)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getSlabs(p, (args.length>1?args[1]:""));
-                MessageUtil.sendInfoMessage(p, "Given double steps!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given double steps!");
             }
         } else if(args[0].toLowerCase().startsWith("armor")) {
             if(!PluginData.hasPermission(p, Permission.GET_ARMOR)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 if(args.length>1) {
                     getArmor(p, args[1]);
                 } else {
-                    CommonMessages.sendNotEnoughArgumentsError(cs);
+                    PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                 }
             }
         } else if(args[0].toLowerCase().startsWith("misc")) {
             if(!PluginData.hasPermission(p, Permission.GET_MISC)) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getMiscellaneous(p);
-                MessageUtil.sendInfoMessage(p, "Given miscellaneous blocks!");
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given miscellaneous blocks!");
             }
         } else {
-            CommonMessages.sendInvalidSubcommandError(cs);
+            PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
         }
         return true;
     }
@@ -208,14 +211,16 @@ public class GetCommand implements CommandExecutor{
                 ItemStack head = CustomHeadManagerData.getHead(headName+'/'+headFilename);
                 p.getInventory().addItem(head);
             }
-            MessageUtil.sendInfoMessage(p, "Given all heads from: "+MessageUtil.STRESSED+headName);
+            PluginData.getMessageUtil().sendInfoMessage(p, "Given all heads from: "
+                                            +PluginData.getMessageUtil().STRESSED+headName);
         } else {
             ItemStack head = CustomHeadManagerData.getHead(headName);
             if(head!=null) {
                 p.getInventory().addItem(head);
-                MessageUtil.sendInfoMessage(p, "Given head: "+MessageUtil.STRESSED+headName);
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given head: "
+                                    +PluginData.getMessageUtil().STRESSED+headName);
             } else {
-                MessageUtil.sendErrorMessage(p, "Head not found in MCME Head Collection");
+                PluginData.getMessageUtil().sendErrorMessage(p, "Head not found in MCME Head Collection");
             }
         }
     }
@@ -298,9 +303,9 @@ public class GetCommand implements CommandExecutor{
                 is.setItemMeta(meta);
                 p.getInventory().addItem(is);
             }
-            MessageUtil.sendInfoMessage(p, "Given colored leather armor!");
+            PluginData.getMessageUtil().sendInfoMessage(p, "Given colored leather armor!");
         } catch (NumberFormatException ex) {
-            MessageUtil.sendErrorMessage(p, "The color " + color + " is not valid.");
+            PluginData.getMessageUtil().sendErrorMessage(p, "The color " + color + " is not valid.");
         }
     }
     
@@ -312,6 +317,7 @@ public class GetCommand implements CommandExecutor{
         p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_1, 64, (short) 0));
         p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_2, 64, (short) 0));
         p.getInventory().addItem(addMeta(new ItemStack(Material.FURNACE, 64),"Burning Furnace", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.REDSTONE_TORCH_ON, 64),"Burning Torch", true));
     }
 
     private static ItemStack addMeta(ItemStack item, String displayName, boolean enchant) {
@@ -325,9 +331,40 @@ public class GetCommand implements CommandExecutor{
     }
 
     private void sendNotEnabledErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Placement of special Blocks is not enabled in this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Placement of special Blocks is not enabled in this world.");
     }
 
+    @Override
+    public String getHelpPermission() {
+        return Permission.GET_COMMAND.getPermissionNode();
+    }
 
-
+    @Override
+    public String getShortDescription() {
+        return ": Get special blocks for building.";
+    }
+    @Override
+    public String getUsageDescription() {
+        return " <block group>: Gives you a collection of special blocks. \n "
+                +ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/get help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"command /get ... -";
+        help = new String[][]{{"/get logs","",": Get six sided logs, useful for trees"},
+                                       {"/get doors","",": Get half doors"},
+                                       {"/get plants","",": Get placeable plants"},
+                                       {"/get head"," <head or folder name>",": Get heads"," from MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
+                                       {"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
+                                       {"/get armor"," <color>",": Get an armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black"},
+                                       {"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."}};
+        super.sendHelpMessage(player, page);
+    }
+    
 }

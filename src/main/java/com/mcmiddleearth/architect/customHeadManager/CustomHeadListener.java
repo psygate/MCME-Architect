@@ -19,9 +19,7 @@ package com.mcmiddleearth.architect.customHeadManager;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.HeadUtil;
-import com.mcmiddleearth.util.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.block.Skull;
@@ -54,16 +52,17 @@ public class CustomHeadListener implements Listener {
             return;
         }
         if(!PluginData.hasPermission(player,Permission.CUSTOM_HEAD_USER)) {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
             return;
         }
         ItemStack head = HeadUtil.pickCustomHead((Skull) event.getClickedBlock().getState());
         player.getInventory().addItem(head);
-        MessageUtil.sendInfoMessage(player,"Given head: "+MessageUtil.STRESSED+head.getItemMeta().getDisplayName());
+        PluginData.getMessageUtil().sendInfoMessage(player,"Given head: "
+                  +PluginData.getMessageUtil().STRESSED+head.getItemMeta().getDisplayName());
     }
     
     private void sendNotActivatedMessage(Player player) {
-        MessageUtil.sendErrorMessage(player,"Custom Heads are not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"Custom Heads are not enabled for this world.");
     }
 
 }

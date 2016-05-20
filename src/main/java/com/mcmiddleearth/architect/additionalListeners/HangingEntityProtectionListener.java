@@ -19,9 +19,6 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import java.util.logging.Logger;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,7 +44,7 @@ public class HangingEntityProtectionListener implements Listener{
         Player player = (Player) event.getRemover();
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
         }
     }
     
@@ -59,7 +56,7 @@ public class HangingEntityProtectionListener implements Listener{
         Player player = (Player) event.getPlayer();
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
         }
     }
     
@@ -72,7 +69,7 @@ public class HangingEntityProtectionListener implements Listener{
             Player player = (Player) event.getPlayer();
             if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
-                CommonMessages.sendNoPermissionError(player);
+                PluginData.getMessageUtil().sendNoPermissionError(player);
             }
         }
     }
@@ -87,7 +84,7 @@ public class HangingEntityProtectionListener implements Listener{
             Player player = (Player) event.getDamager();
             if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
-                CommonMessages.sendNoPermissionError(player);
+                PluginData.getMessageUtil().sendNoPermissionError(player);
             }
         }
     }

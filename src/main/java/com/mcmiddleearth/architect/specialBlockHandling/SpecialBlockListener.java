@@ -20,8 +20,8 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
 import com.mcmiddleearth.util.DevUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -40,6 +40,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -53,7 +54,9 @@ public class SpecialBlockListener implements Listener{
     @EventHandler(priority = EventPriority.HIGH)
     private void eggInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if (event.hasBlock() && event.getClickedBlock().getType().equals(Material.DRAGON_EGG)) {
+        if (event.hasBlock() 
+                && event.getHand().equals(EquipmentSlot.HAND)
+                && event.getClickedBlock().getType().equals(Material.DRAGON_EGG)) {
             DevUtil.log(2,"eggInteract fired cancelled: " + event.isCancelled());
             if(event.isCancelled()) {
                 return;
@@ -89,7 +92,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 if(!PluginData.hasPermission(p, Permission.PLACE_SIX_SIDED_LOG)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
                 }
@@ -119,7 +122,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 if(!PluginData.hasPermission(p, Permission.PLACE_SIX_SIDED_LOG)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
                 }
@@ -156,7 +159,7 @@ public class SpecialBlockListener implements Listener{
                     }
                     event.setCancelled(true);
                     if(!PluginData.hasPermission(p, Permission.PLACE_PISTON_EXTENSION)) {
-                        CommonMessages.sendNoPermissionError(p);
+                        PluginData.getMessageUtil().sendNoPermissionError(p);
                         return;
                     }
                     float yaw = p.getLocation().getYaw();
@@ -203,6 +206,7 @@ public class SpecialBlockListener implements Listener{
     private void vegPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && event.getHand().equals(EquipmentSlot.OFF_HAND)
                 &&(p.getItemInHand().getType().equals(Material.CARROT_ITEM)
                 || p.getItemInHand().getType().equals(Material.POTATO_ITEM)
                 || p.getItemInHand().getType().equals(Material.WHEAT)
@@ -221,7 +225,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }*/
                 if(!PluginData.hasPermission(p, Permission.PLACE_PLANT)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
                 }
@@ -291,6 +295,52 @@ public class SpecialBlockListener implements Listener{
     }
 
     @EventHandler(priority = EventPriority.HIGH)
+    private void torchPlace(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && event.getHand().equals(EquipmentSlot.HAND)
+                &&(p.getInventory().getItemInMainHand().getType().equals(Material.REDSTONE_TORCH_ON))) {
+            if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.REDSTONE_TORCH)) {
+                return;
+            }
+            if (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()
+                    && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().startsWith("Burning")) {
+                DevUtil.log(2,"torchPlace fired cancelled: " + event.isCancelled());
+                /*if(event.isCancelled()) {
+                    return;
+                }*/
+                if(!PluginData.hasPermission(p, Permission.PLACE_TORCH)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
+                    event.setCancelled(true);
+                    return;
+                }
+                Block b = event.getClickedBlock().getRelative(event.getBlockFace());
+                BlockState bs = b.getState();
+                if(bs.getType().equals(Material.AIR)) {
+                    bs.setType(Material.REDSTONE_TORCH_ON);
+                    bs.setRawData(getTorchDat(event.getBlockFace()));
+                    bs.update(true,false);
+                }
+            }
+        }
+    }
+    
+    private byte getTorchDat(BlockFace face) {
+        switch(face) {
+            case NORTH:
+                return (byte) 4;
+            case SOUTH:
+                return (byte) 3;
+            case WEST:
+                return (byte) 2;
+            case EAST:
+                return (byte) 1;
+            default:
+                return (byte) 0;
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
     private void doubleSlabPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.getItemInHand().getType().equals(Material.STEP)
@@ -306,7 +356,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 if(!PluginData.hasPermission(p, Permission.PLACE_DOUBLE_SLAB)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
                 }
@@ -348,7 +398,7 @@ public class SpecialBlockListener implements Listener{
                 }
                 event.setCancelled(true);
                 if(!PluginData.hasPermission(p, Permission.PLACE_HALF_DOOR)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     return;
                 }
                 float yaw = p.getLocation().getYaw();
@@ -402,7 +452,7 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 if(!PluginData.hasPermission(p, Permission.BURNING_FURNACE)) {
-                    CommonMessages.sendNoPermissionError(p);
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
                 }
@@ -440,7 +490,7 @@ public class SpecialBlockListener implements Listener{
                 return;
             }
             if(!PluginData.hasPermission(p, Permission.BURNING_FURNACE)) {
-                CommonMessages.sendNoPermissionError(p);
+                PluginData.getMessageUtil().sendNoPermissionError(p);
                 event.setCancelled(true);
             }
         }
