@@ -39,18 +39,19 @@ public class PaintingListener implements Listener {
             sendNotEnabledErrorMessage(player);
             return;
         }   
-        if(PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
-             {
-                Painting painting = (Painting) entity;
-                int id = painting.getArt().getId();
-                if(id<Art.values().length-1) {
-                    id++;
-                    painting.setArt(Art.getById(id));
-                }
-            }
+        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+            PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
         }
         else {
-            PluginData.getMessageUtil().sendNoPermissionError(player);
+            Painting painting = (Painting) entity;
+            int id = painting.getArt().getId();
+            if(id<Art.values().length-1) {
+                id++;
+                painting.setArt(Art.getById(id));
+            }
         }
         event.setCancelled(true);
     }
@@ -70,16 +71,19 @@ public class PaintingListener implements Listener {
         if(!player.getItemInHand().getType().equals(Material.STICK)) {
             return;
         }
-        if(PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+            PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
+        }
+        else {
             Painting painting = (Painting) entity;
             int id = painting.getArt().getId();
             if(id>0) {
                 id--;
                 painting.setArt(Art.getById(id));
             }
-        }
-        else {
-            PluginData.getMessageUtil().sendNoPermissionError(player);
         }
         event.setCancelled(true);
     }

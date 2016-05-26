@@ -45,6 +45,10 @@ public class HangingEntityProtectionListener implements Listener{
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
             PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+            event.setCancelled(true);
         }
     }
     
@@ -57,6 +61,10 @@ public class HangingEntityProtectionListener implements Listener{
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
             PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+            event.setCancelled(true);
         }
     }
     
@@ -70,6 +78,10 @@ public class HangingEntityProtectionListener implements Listener{
             if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
                 PluginData.getMessageUtil().sendNoPermissionError(player);
+            } else if(!PluginData.hasGafferPermission(player,event.getRightClicked().getLocation())) {
+                PluginData.getMessageUtil().sendErrorMessage(player, 
+                        PluginData.getGafferProtectionMessage(player, event.getRightClicked().getLocation()));
+                event.setCancelled(true);
             }
         }
     }
@@ -85,6 +97,10 @@ public class HangingEntityProtectionListener implements Listener{
             if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
                 PluginData.getMessageUtil().sendNoPermissionError(player);
+            } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
+                PluginData.getMessageUtil().sendErrorMessage(player, 
+                        PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+                event.setCancelled(true);
             }
         }
     }

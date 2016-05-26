@@ -17,8 +17,8 @@
 package com.mcmiddleearth.architect.additionalCommands;
 
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutils.message.FancyMessage;
-import com.mcmiddleearth.pluginutils.message.MessageType;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;

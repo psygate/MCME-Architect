@@ -16,11 +16,11 @@
  */
 package com.mcmiddleearth.architect.armorStand;
 
-import static com.mcmiddleearth.pluginutils.ConfigurationUtil.deserializeEulerAngle;
-import static com.mcmiddleearth.pluginutils.ConfigurationUtil.deserializeLocation;
-import static com.mcmiddleearth.pluginutils.ConfigurationUtil.getMap;
-import static com.mcmiddleearth.pluginutils.ConfigurationUtil.serializeEulerAngle;
-import static com.mcmiddleearth.pluginutils.ConfigurationUtil.serializeLocation;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.deserializeEulerAngle;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.deserializeLocation;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.getMap;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.serializeEulerAngle;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.serializeLocation;
 import java.util.HashMap;
 import java.util.Map;
 

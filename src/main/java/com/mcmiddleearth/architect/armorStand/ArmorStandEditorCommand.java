@@ -10,10 +10,10 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandRollbackCommand;
-import com.mcmiddleearth.pluginutils.FileUtil;
-import com.mcmiddleearth.pluginutils.NumericUtil;
-import com.mcmiddleearth.pluginutils.message.FancyMessage;
-import com.mcmiddleearth.pluginutils.message.MessageType;
+import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,8 +86,9 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                     sendPartsHelpMessage(cs);
                     return true;
                 }
-                if(args[0].equalsIgnoreCase("place")) {
-                    playerConfig.placeArmorStand(p.getLocation(),true);
+                if(args[0].equalsIgnoreCase("clear")) {
+                    playerConfig.clearCopiedArmorStand();
+                    sendCopiedArmorStandClearedMessage(cs);
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("files")) {
@@ -101,6 +102,17 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                                     "/armor files", 
                                     "/armor p", 
                                     true);
+                    return true;
+                }
+                if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR_TRUSTED)
+                        && (args[0].equalsIgnoreCase("place")
+                          ||args[0].equalsIgnoreCase("delete")
+                          ||args[0].equalsIgnoreCase("save"))) {
+                    PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    return true;
+                }
+                if(args[0].equalsIgnoreCase("place")) {
+                    playerConfig.placeArmorStand(p.getLocation(),true);
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("delete")) {
@@ -135,11 +147,6 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                     {
                         sendNotEnoughArgumentsMessage(cs);
                     }
-                    return true;
-                }
-                if(args[0].equalsIgnoreCase("clear")) {
-                    playerConfig.clearCopiedArmorStand();
-                    sendCopiedArmorStandClearedMessage(cs);
                     return true;
                 }
                 try {

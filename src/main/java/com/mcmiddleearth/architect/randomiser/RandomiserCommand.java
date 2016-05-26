@@ -10,7 +10,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

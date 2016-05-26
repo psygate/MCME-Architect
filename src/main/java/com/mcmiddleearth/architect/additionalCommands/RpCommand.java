@@ -8,7 +8,7 @@ package com.mcmiddleearth.architect.additionalCommands;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.util.DevUtil;
 import java.io.IOException;
 import java.net.URL;

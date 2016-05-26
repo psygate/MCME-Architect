@@ -9,10 +9,10 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.pluginutils.FileUtil;
-import com.mcmiddleearth.pluginutils.NumericUtil;
-import com.mcmiddleearth.pluginutils.message.FancyMessage;
-import com.mcmiddleearth.pluginutils.message.MessageType;
+import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +66,10 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                     sendHelpMessage((Player) cs,page);
                     return true;
                 } else if(args[0].equalsIgnoreCase("save")) {
+                    if(!PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR_SAVE)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                        return true;
+                    }
                     if(args.length<3) {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;

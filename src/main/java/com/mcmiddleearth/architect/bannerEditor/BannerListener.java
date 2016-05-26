@@ -38,12 +38,16 @@ public class BannerListener implements Listener {
                             && event.getHand().equals(EquipmentSlot.HAND)) {
             BlockState state = event.getClickedBlock().getState();
             if(state instanceof Banner) {
+                if(!PluginData.isModuleEnabled(player.getWorld(), Modules.BANNER_EDITOR)) {
+                    sendNotEnabledErrorMessage(player);
+                    return;
+                }
                 if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {
                     PluginData.getMessageUtil().sendNoPermissionError(player);
                     return;
-                } 
-                if(!PluginData.isModuleEnabled(player.getWorld(), Modules.BANNER_EDITOR)) {
-                    sendNotEnabledErrorMessage(player);
+                } else if(!PluginData.hasGafferPermission(player,event.getClickedBlock().getLocation())) {
+                    PluginData.getMessageUtil().sendErrorMessage(player, 
+                            PluginData.getGafferProtectionMessage(player, event.getClickedBlock().getLocation()));
                     return;
                 }
                 Banner banner = (Banner) state;
