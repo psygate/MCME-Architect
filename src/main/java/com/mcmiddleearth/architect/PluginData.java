@@ -16,20 +16,27 @@
  */
 package com.mcmiddleearth.architect;
 
+import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -38,6 +45,9 @@ import org.bukkit.entity.Player;
 public class PluginData {
     
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
+    
+    @Getter
+    private static final MessageUtil messageUtil = new MessageUtil();
     
     @Getter
     private static final Set<UUID> afkPlayerList = new HashSet<>();
@@ -129,5 +139,35 @@ public class PluginData {
     
     public static boolean undoAFK(UUID player) {
         return afkPlayerList.remove(player);
+    }
+    
+    public static boolean hasGafferPermission(Player player, Location location) {
+        Plugin theGaffer = Bukkit.getPluginManager().getPlugin("TheGaffer");
+        if(theGaffer == null) {
+            return true;
+        } else {
+            try {
+                Method getBuildPermMethod = theGaffer.getClass().getMethod("hasBuildPermission", Player.class, Location.class);
+                return (boolean) getBuildPermMethod.invoke(null, player, location);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, "Error getting BuildPermission from TheGaffer", ex);
+                return true;
+            }
+        }
+    }
+    
+    public static String getGafferProtectionMessage(Player player, Location location) {
+        Plugin theGaffer = Bukkit.getPluginManager().getPlugin("TheGaffer");
+        if(theGaffer == null) {
+            return "";
+        } else {
+            try {
+                Method getBuildPermMethod = theGaffer.getClass().getMethod("getBuildProtectionMessage", Player.class, Location.class);
+                return (String) getBuildPermMethod.invoke(null, player, location);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, "Error getting BuildProtectionMessage from TheGaffer", ex);
+                return "";
+            }
+        }
     }
 }

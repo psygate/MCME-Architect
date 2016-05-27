@@ -24,6 +24,7 @@ import lombok.Getter;
  */
 public enum Modules {
     
+    REDSTONE_TORCH         ("modules.specialBlocks.redstoneTorch"),
     HALF_DOORS             ("modules.specialBlocks.halfDoors"),
     DOUBLE_SLABS           ("modules.specialBlocks.doubleSlabs"),
     PLANTS                 ("modules.specialBlocks.plants"),

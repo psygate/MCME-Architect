@@ -21,9 +21,8 @@ import com.mcmiddleearth.architect.PluginData;
 import static com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand.getPlayerConfig;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorConfig;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorMode;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
-import com.mcmiddleearth.util.NumericUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -40,7 +39,7 @@ public class ArmorStandRollbackCommand {
     
     public static boolean execute(Player player, String[] args, Map<UUID, ArmorStandEditorConfig> configList) {
         if(!PluginData.hasPermission(player,Permission.ARMOR_STAND_ROLLBACK)) {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
             return true;
         }
         if(!PluginData.isModuleEnabled((player).getWorld(), Modules.ARMOR_STAND_ROLLBACK)) {
@@ -91,11 +90,11 @@ public class ArmorStandRollbackCommand {
     }
 
     private static void sendInvalidArgumentsMessage(Player player) {
-        MessageUtil.sendErrorMessage(player, "Invalid arguments.");
+        PluginData.getMessageUtil().sendErrorMessage(player, "Invalid arguments.");
     }
 
     private static void sendNotActivatedMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Armor stand rollback is not activated for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Armor stand rollback is not activated for this world.");
     }
 
     private static void sendNoCurrentRollbackMessage(Player player) {

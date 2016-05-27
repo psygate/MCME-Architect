@@ -1,9 +1,10 @@
 name: MCME-Architect
 main: com.mcmiddleearth.architect.ArchitectPlugin
-version: 1.0.0
+version: 1.1.0
 author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
+depend: [PluginUtils]
 
 commands:
    newafkk:
@@ -76,11 +77,18 @@ permissions:
         default: op
         children:
             architect.ranks.adventurer: true
+            architect.bannerEditor.save: true
+            architect.armorStandEditor.trusted: true
+    architect.ranks.adventurer: 
+        descriptions: Permission for MCME Adventurers
+        default: op
+        children:
             architect.hangingEntityEditor: true
             architect.bannerEditor: true
             architect.paintingEditor: true
             architect.armorStandEditor: true
             architect.place.halfDoor: true
+            architect.place.torch: true
             architect.place.plant: true
             architect.place.pistonExtension: true
             architect.place.burningFurnace: true
@@ -88,10 +96,6 @@ permissions:
             architect.get.misc: true
             architect.get.doors: true
             architect.interactDragonEgg: true
-    architect.ranks.adventurer: 
-        descriptions: Permission for MCME Adventurers
-        default: op
-        children:
             architect.fullBrightness: true
             architect.resourcePackSwitcher: true
             architect.place.doubleSlab: true
@@ -117,6 +121,9 @@ permissions:
         default: op
     architect.place.halfDoor: 
         descriptions: Allows to place half doors
+        default: op
+    architect.place.torch: 
+        descriptions: Allows to place redstone torches
         default: op
     architect.place.doubleSlab: 
         descriptions: Allows to place double slabs
@@ -181,8 +188,13 @@ permissions:
         descriptions: Allows to use command /sl
         default: op
     architect.bannerEditor: 
-        descriptions: Allows to use Banner Editor
+        descriptions: Allows to use Banner Editor (except save command)
         default: op
+    architect.bannerEditor.save: 
+        descriptions: Allows to save Banner Editor files
+        default: op
+        children:
+            architect.bannerEditor: true
     architect.paintingEditor: 
         descriptions: Allows to use Painting Editor
         default: op
@@ -190,8 +202,13 @@ permissions:
         descriptions: Allows to edit hanging Entities
         default: op
     architect.armorStandEditor: 
-        descriptions: Allows to use Armor Stand Editor
+        descriptions: Allows to use Armor Stand Editor (except storing and deleting files)
         default: op
+    architect.armorStandEditor.trusted: 
+        descriptions: Allows to store and delete Armor Stand Editor files
+        default: op
+        children:
+            architect.armorStandEditor: true
     architect.randomiser.allowMaterials: 
         descriptions: Allows to change allowed materials for command /random
         default: op

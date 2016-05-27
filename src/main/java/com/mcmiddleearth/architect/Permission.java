@@ -29,6 +29,7 @@ public enum Permission {
     FULL_BRIGHTNESS       ("architect.fullBrightness"),
     RESOURCE_PACK_SWITCH  ("architect.resourcePackSwitcher"),
     PLACE_HALF_DOOR       ("architect.place.halfDoor"),
+    PLACE_TORCH           ("architect.place.torch"),
     PLACE_DOUBLE_SLAB     ("architect.place.doubleSlab"),
     PLACE_PLANT           ("architect.place.plant"),
     PLACE_PISTON_EXTENSION("architect.place.pistonExtension"),
@@ -50,14 +51,17 @@ public enum Permission {
     VOXEL_VIEWER_DELETE   ("architect.voxel.delete"),
     STENCIL_LIST_EDITOR   ("architect.voxel.stencilListEditor"),
     BANNER_EDITOR         ("architect.bannerEditor"),
+    BANNER_EDITOR_SAVE    ("architect.bannerEditor.save"),
     PAINTING_EDITOR       ("architect.paintingEditor"),
     ARMOR_STAND_EDITOR    ("architect.armorStandEditor"),
+    ARMOR_STAND_EDITOR_TRUSTED ("architect.armorStandEditor.trusted"),
     ARMOR_STAND_ROLLBACK  ("architect.armorStandRollback"),
     HANGING_ENTITY_EDITOR ("architect.hangingEntityEditor"),
     RANDOMISER_MATERIALS  ("architect.randomiser.allowMaterials"),
     RANDOMISER_USER       ("architect.randomiser.user"),
     CUSTOM_HEAD_USER      ("architect.customHeadManager.user"),
-    CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager");
+    CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager"),
+    ARCHITECT_HELP        ("architect.help");
 
     @Getter
     private final String permissionNode;

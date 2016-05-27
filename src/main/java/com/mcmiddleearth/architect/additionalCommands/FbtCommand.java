@@ -19,10 +19,7 @@ package com.mcmiddleearth.architect.additionalCommands;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -32,17 +29,17 @@ import org.bukkit.potion.PotionEffectType;
  *
  * @author Eriol_Eandur
  */
-public class FbtCommand implements CommandExecutor{
+public class FbtCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(sender);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
         Player player = (Player)sender;
         if(!PluginData.hasPermission(player, Permission.FULL_BRIGHTNESS)) {
-            CommonMessages.sendNoPermissionError(sender);
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
         if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
@@ -62,15 +59,30 @@ public class FbtCommand implements CommandExecutor{
     }
 
     private void sendNotEnabledErrorMessage(CommandSender sender) {
-        MessageUtil.sendErrorMessage(sender,"Full brightness is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(sender,"Full brightness is not enabled for this world.");
     }
 
     private void sendOffMessage(Player p) {
-        MessageUtil.sendInfoMessage(p,"Full brightness off!");
+        PluginData.getMessageUtil().sendInfoMessage(p,"Full brightness off!");
     }
     
     private void sendOnMessage(Player p) {
-        MessageUtil.sendInfoMessage(p,"Full brightness on!");
+        PluginData.getMessageUtil().sendInfoMessage(p,"Full brightness on!");
+    }
+
+    @Override
+    public String getHelpPermission() {
+        return Permission.FULL_BRIGHTNESS.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Nightvision";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": Switches on/off full brightness which allows you to see in complete darkness.";
     }
     
 }

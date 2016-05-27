@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.architect;
 
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.NewAfkCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
@@ -31,8 +32,9 @@ import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockListener;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
-import com.mcmiddleearth.util.MessageUtil;
 import com.mcmiddleearth.util.ProtocolLibUtil;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,12 +47,15 @@ public class ArchitectPlugin extends JavaPlugin {
     
     @Getter
     private static ArchitectPlugin pluginInstance;
+    
+    @Getter
+    private final static List<String> commandList = new ArrayList<>();
 
     @Override
     public void onEnable() {
         pluginInstance = this;
         ProtocolLibUtil.init(this);
-        MessageUtil.setPREFIX("[Architect] ");
+        PluginData.getMessageUtil().setPluginName("Architect");
         PluginData.load();
         CustomHeadManagerData.load();
         
@@ -66,23 +71,30 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
-        pluginManager.registerEvents(new AfkListener(), this);
+//        pluginManager.registerEvents(new AfkListener(), this);
             
-        getCommand("armor").setExecutor(new ArmorStandEditorCommand());
-        getCommand("banner").setExecutor(new BannerEditorCommand());
-        getCommand("random").setExecutor(new RandomiserCommand());
-        getCommand("noPhy").setExecutor(new NoPhysicsCommand());
-        getCommand("fbt").setExecutor(new FbtCommand());
-        getCommand("get").setExecutor(new GetCommand());
-        getCommand("sl").setExecutor(new SlCommand());
-        getCommand("vv").setExecutor(new VvCommand());
-        getCommand("schlist").setExecutor(new SchListCommand());
-        getCommand("architect").setExecutor(new ArchitectCommand());
-        getCommand("rp").setExecutor(new RpCommand());
-        getCommand("chead").setExecutor(new HeadCommand());
-        getCommand("newafkk").setExecutor(new NewAfkCommand());
+        // all CommandExecutors should be subclasses of AbstractArchitectCommand
+        // AbstractArchitectCommand methods are used by command /architect help
+        setCommandExecutor("armor", new ArmorStandEditorCommand());
+        setCommandExecutor("banner", new BannerEditorCommand());
+        setCommandExecutor("random", new RandomiserCommand());
+        setCommandExecutor("noPhy", new NoPhysicsCommand());
+        setCommandExecutor("fbt", new FbtCommand());
+        setCommandExecutor("get", new GetCommand());
+        setCommandExecutor("sl", new SlCommand());
+        setCommandExecutor("vv", new VvCommand());
+        setCommandExecutor("schlist",new SchListCommand());
+        setCommandExecutor("architect", new ArchitectCommand());
+        setCommandExecutor("rp", new RpCommand());
+        setCommandExecutor("chead", new HeadCommand());
+//        setCommandExecutor("newafkk", new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");
+    }
+    
+    public void setCommandExecutor(String command, AbstractArchitectCommand executor) {
+        getCommand(command).setExecutor(executor);
+        commandList.add(command);
     }
     
 }

@@ -19,12 +19,8 @@ package com.mcmiddleearth.util;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.injector.PacketConstructor;
-import com.comphenix.protocol.reflect.StructureModifier;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,14 +49,17 @@ public class ProtocolLibUtil {
         
         private ProtocolManager protocolManager = null;
         private PacketConstructor chunkBulkPacketConstructor = null;
+        private PacketConstructor chunkPacketConstructor = null;
         private PacketConstructor entityPacketConstructor = null;
     
         public ProtocolLibConnection() {
             try{
                 protocolManager = ProtocolLibrary.getProtocolManager();
                 List<Chunk> chunkList = new ArrayList<>();
-                chunkBulkPacketConstructor = protocolManager.createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, 
-                                                                                      chunkList);
+//  no chunk object available at startup     chunkPacketConstructor = protocolManager.createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, 
+//                                                                                      chunk, true, (int) 0);
+//  1.8 only      chunkBulkPacketConstructor = protocolManager.createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, 
+ //                                                                                     chunkList);
 /*                int entityId = 1;
                 protocolManager.addPacketListener(new PacketAdapter(pluginInstance,
                                                                     ListenerPriority.NORMAL, 
@@ -78,11 +77,11 @@ public class ProtocolLibUtil {
                     }
                 }); */
             }
-            catch(NoClassDefFoundError e) {
-                Logger.getLogger(ProtocolLibUtil.class.getName()).log(Level.WARNING, "ProtocolLib is missing.");
+            catch(NoClassDefFoundError | Exception e) {
+                Logger.getLogger(ProtocolLibUtil.class.getName()).log(Level.WARNING, "ProtocolLib is missing.", e);
                 protocolManager = null;
                 chunkBulkPacketConstructor=null;
-                return;
+                chunkPacketConstructor = null;
             }
         }
 
@@ -96,13 +95,29 @@ public class ProtocolLibUtil {
 
         public void sendChunks(Player player, Collection<Chunk> chunkList) {
             if(chunkBulkPacketConstructor==null) {
+                try {
+                    chunkPacketConstructor = protocolManager.createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, 
+                                                                                      chunkList.iterator().next(), true, (int) 0);
+                } catch(Exception e) {
+                    Logger.getLogger(ProtocolLibUtil.class.getName()).log(Level.WARNING, "Cannot send chunk package by ProtocolLib.", e);
+                    return;
+                }
+                for(Chunk chunk:chunkList) {
+                    int par3 = 0b1111111111111111;
+                    PacketContainer chunkPacket = chunkPacketConstructor.createPacket(chunk,true,par3);
+                    try {
+                        protocolManager.sendServerPacket(player, chunkPacket, false);
+                    } catch (/*InvocationTargetException |*/ Exception e) {
+                        throw new RuntimeException("Cannot send chunk packet " + chunkPacket, e);
+                    }
+                }
                 return;
             }
             PacketContainer chunkPacket = chunkBulkPacketConstructor.createPacket(chunkList);
             try {
                 protocolManager.sendServerPacket(player, chunkPacket);
             } catch (InvocationTargetException e) {
-                throw new RuntimeException("Cannot send packet " + chunkPacket, e);
+                throw new RuntimeException("Cannot send bulk chunk packet " + chunkPacket, e);
             }
         }
         

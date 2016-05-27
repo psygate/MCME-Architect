@@ -19,14 +19,15 @@ package com.mcmiddleearth.architect.customHeadManager;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.FileUtil;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
 import java.util.Arrays;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,12 +36,12 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Eriol_Eandur
  */
-public class HeadCommand implements CommandExecutor{
+public class HeadCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(sender);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
         Player player = (Player) sender;
@@ -48,22 +49,25 @@ public class HeadCommand implements CommandExecutor{
             sendNotActivatedMessage(player);
             return true;
         }
-        if (args.length < 1) {
-            CommonMessages.sendNotEnoughArgumentsError(sender);
-            return true;
-        }
-        
         //user commands
         if(!PluginData.hasPermission(player,Permission.CUSTOM_HEAD_USER)) {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
+            return true;
+        }
+        if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
+            int page = 1;
+            if(args.length>1 && NumericUtil.isInt(args[1])) {
+                page = NumericUtil.getInt(args[1]);
+            }
+            sendHelpMessage(player,page);
             return true;
         }
         if(args[0].equalsIgnoreCase("warp")) {
             if(CustomHeadManagerData.getGallery()!=null) {
-                MessageUtil.sendInfoMessage(player, "Teleporting to Custom Head Collection ...");
+                PluginData.getMessageUtil().sendInfoMessage(player, "Teleporting to Custom Head Collection ...");
                 player.teleport(CustomHeadManagerData.getGallery().getLocation());
             } else {
-                MessageUtil.sendErrorMessage(player, "There is no Custom Head Collection on the server.");
+                PluginData.getMessageUtil().sendErrorMessage(player, "There is no Custom Head Collection on the server.");
             }
             return true;
         }
@@ -74,19 +78,22 @@ public class HeadCommand implements CommandExecutor{
             } else {
                 messageArgs = Arrays.copyOfRange(args,1,args.length);
             }
-            MessageUtil.sendClickableFileListMessage(player, 
-                                                     ChatColor.YELLOW+"CustomHeads /", 
-                                                     CustomHeadManagerData.getAcceptedHeadDir(), 
-                                                     FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()), 
-                                                     messageArgs,
-                                                     "/chead list", 
-                                                     "/get head");
+            PluginData.getMessageUtil().sendFancyFileListMessage(player, 
+                             new FancyMessage(MessageType.INFO,PluginData.getMessageUtil())
+                                .addSimple(PluginData.getMessageUtil().STRESSED+"Custom Head "
+                                        +PluginData.getMessageUtil().INFO +"files /"), 
+                             CustomHeadManagerData.getAcceptedHeadDir(), 
+                             FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()), 
+                             messageArgs,
+                             "/chead list", 
+                             "/get head",
+                             true);
             return true;
         }
         if (args.length < 2 && !args[0].equalsIgnoreCase("setCollection")
                             && !args[0].equalsIgnoreCase("reviewList")
                             && !args[0].equalsIgnoreCase("reload")) {
-            CommonMessages.sendNotEnoughArgumentsError(sender);
+            PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
             return true;
         }
         if(args[0].equalsIgnoreCase("submit")) {
@@ -111,7 +118,7 @@ public class HeadCommand implements CommandExecutor{
             
         //manager commands
         if(!PluginData.hasPermission(player,Permission.CUSTOM_HEAD_MANAGER)) {
-            CommonMessages.sendNoPermissionError(player);
+            PluginData.getMessageUtil().sendNoPermissionError(player);
             return true;
         }
         if(args[0].equalsIgnoreCase("reload")) {
@@ -126,13 +133,15 @@ public class HeadCommand implements CommandExecutor{
             } else {
                 messageArgs = Arrays.copyOfRange(args,1,args.length);
             }
-            MessageUtil.sendClickableFileListMessage(player, 
-                                                     ChatColor.GOLD+"Submitted CustomHeads /", 
-                                                     CustomHeadManagerData.getSubmittedHeadDir(), 
-                                                     FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()), 
-                                                     messageArgs,
-                                                     "/chead reviewList", 
-                                                     "/chead review");
+            PluginData.getMessageUtil().sendFancyFileListMessage(player, 
+                         new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                            .addSimple(PluginData.getMessageUtil().HIGHLIGHT+"Submitted Custom Heads "
+                                    +PluginData.getMessageUtil().INFO +" /"), 
+                         CustomHeadManagerData.getSubmittedHeadDir(), 
+                         FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()), 
+                         messageArgs,
+                         "/chead reviewList", 
+                         "/chead review", true);
             return true;
         }
         if(args[0].equalsIgnoreCase("setCollection")) {
@@ -176,7 +185,7 @@ public class HeadCommand implements CommandExecutor{
             return true;
         }
         if (args.length < 3) {
-            CommonMessages.sendNotEnoughArgumentsError(sender);
+            PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
             return true;
         }
         if(args[0].equalsIgnoreCase("rename")) {
@@ -204,56 +213,102 @@ public class HeadCommand implements CommandExecutor{
             }
             return true;
         }
-        CommonMessages.sendInvalidSubcommandError(player);
+        PluginData.getMessageUtil().sendInvalidSubcommandError(player);
         return true;
     }
 
     private void sendNotActivatedMessage(Player player) {
-        MessageUtil.sendErrorMessage(player,"Custom Heads are not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"Custom Heads are not enabled for this world.");
     }
 
     private void sendNewGalleryCreatedMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Custom Head Gallery was created at your location.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Custom Head Gallery was created at your location.");
     }
 
     private void sendGalleryMovedMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Custom Head Gallery was moved to your location.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Custom Head Gallery was moved to your location.");
     }
 
     private void sendGivenReviewHead(Player player) {
-        MessageUtil.sendInfoMessage(player,"Given submitted head for review.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Given submitted head for review.");
     }
 
     private void sendHeadNotFound(Player player) {
-        MessageUtil.sendErrorMessage(player,"Head not found.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"Head not found.");
     }
 
     private void sendHeadAcceptedMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Head was added to Custom Head Collection.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Head was added to Custom Head Collection.");
     }
 
     private void sendHeadAlreadyExists(Player player) {
-        MessageUtil.sendErrorMessage(player,"Head could not be added to Custom Head Collection. Already exists?");
+        PluginData.getMessageUtil().sendErrorMessage(player,"Head could not be added to Custom Head Collection. Already exists?");
     }
 
     private void sendHeadRejected(Player player) {
-        MessageUtil.sendInfoMessage(player,"Head was deleted from submitted heads directory.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Head was deleted from submitted heads directory.");
     }
 
     private void sendHeadDeleted(Player player) {
-        MessageUtil.sendInfoMessage(player,"Head was deleted from Custom Head Collection.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Head was deleted from Custom Head Collection.");
     }
 
     private void sendHeadMoved(Player player) {
-        MessageUtil.sendInfoMessage(player,"Head was renamed.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Head was renamed.");
     }
 
     private void sendSubmittingHeadMessage(Player player) {
-        MessageUtil.sendInfoMessage(player,"Submitting your head . . . .");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Submitting your head . . . .");
     }
     
     private void sendHeadsReloaded(Player player) {
-        MessageUtil.sendInfoMessage(player,"Custom Head Collection was reloaded from file.");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Custom Head Collection was reloaded from file.");
     }
+    
+    @Override
+    public String getHelpPermission() {
+        return Permission.CUSTOM_HEAD_USER.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Submit and mangage heads.";
+    }
+    @Override
+    public String getUsageDescription() {
+        return ": Provides commands to submit heads to MCME Head Collection and manage it. \n "
+                +ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/chead help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"MCME Head Collection -";
+        help = new String[][]{{"/chead warp","","Teleports you to the MCME Head Collection"},
+                                       {"/chead list","",": Shows a clickable list of all heads"},
+                                       {"/chead submit ","[playername] <headName>",": Submits head","If no [playername] is specified your own head will be submited."}};
+        super.sendHelpMessage(player, page);
+/*    private void sendHelpMessage(Player player) {
+        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                .addSimple("Help for command: "+PluginData.getMessageUtil().STRESSED+"/chead")
+                .send(player);
+        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
+                .addSimple("Manages the MCME Head Collection.")
+                .send(player);
+        String[][] rps = new String[][]{{"/chead warp","Teleports you to the MCME Head Collection"},
+                                       {"/chead list","Shows a clickable list of all heads"},
+                                       {"/chead submit"," [playername] <headName>: Submits head"}};
+        for(String[] rp: rps) {
+            new FancyMessage(MessageType.WHITE, PluginData.getMessageUtil())
+                    .addFancy(ChatColor.DARK_AQUA+rp[0]
+                                 +ChatColor.WHITE+rp[1], rp[0],"Click to use command.")
+                    .send(player);
+        }*/
+    }
+    
     
 }

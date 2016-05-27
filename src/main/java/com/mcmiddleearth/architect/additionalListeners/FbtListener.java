@@ -18,7 +18,7 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +37,7 @@ public class FbtListener implements Listener{
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.FULL_BRIGHTNESS)
                 && player.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            MessageUtil.sendInfoMessage(player, "Fullbright is not allowed in this world!");
+            PluginData.getMessageUtil().sendInfoMessage(player, "Fullbright is not allowed in this world!");
         }
     }
 }

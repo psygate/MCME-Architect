@@ -8,8 +8,6 @@ package com.mcmiddleearth.architect.bannerEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
 import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -23,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
@@ -35,15 +34,20 @@ public class BannerListener implements Listener {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if(event.hasBlock() && player.getItemInHand().getType().equals(Material.STICK)) {
+        if(event.hasBlock() && player.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                            && event.getHand().equals(EquipmentSlot.HAND)) {
             BlockState state = event.getClickedBlock().getState();
             if(state instanceof Banner) {
-                if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {
-                    CommonMessages.sendNoPermissionError(player);
-                    return;
-                } 
                 if(!PluginData.isModuleEnabled(player.getWorld(), Modules.BANNER_EDITOR)) {
                     sendNotEnabledErrorMessage(player);
+                    return;
+                }
+                if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(player);
+                    return;
+                } else if(!PluginData.hasGafferPermission(player,event.getClickedBlock().getLocation())) {
+                    PluginData.getMessageUtil().sendErrorMessage(player, 
+                            PluginData.getGafferProtectionMessage(player, event.getClickedBlock().getLocation()));
                     return;
                 }
                 Banner banner = (Banner) state;
@@ -152,34 +156,34 @@ public class BannerListener implements Listener {
     }
 
     private void sendInvalidPatternId(Player player, int id) {
-        MessageUtil.sendErrorMessage(player,"This banner doesn't have "+ id + " patterns.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"This banner doesn't have "+ id + " patterns.");
     }
     
     private void sendBannerInfoMessage(Player player, Banner banner) {
         List<Pattern> patterns = banner.getPatterns();
-        MessageUtil.sendInfoMessage(player,"Base color (ID 0): "+ banner.getBaseColor().toString());
+        PluginData.getMessageUtil().sendInfoMessage(player,"Base color (ID 0): "+ banner.getBaseColor().toString());
         int id = 1;
         for(Pattern pattern: patterns) {
-            MessageUtil.sendInfoMessage(player,"ID "+ id+": "+ pattern.getPattern().toString()+" - "
+            PluginData.getMessageUtil().sendInfoMessage(player,"ID "+ id+": "+ pattern.getPattern().toString()+" - "
                                            + pattern.getColor().toString());
             id++;
         }
     }
     
     private void sendNoPattern(Player player) {
-        MessageUtil.sendErrorMessage(player,"You can change the color of the base banner only.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"You can change the color of the base banner only.");
     }
 
     private void sendBaseNoPattern(Player player) {
-        MessageUtil.sendErrorMessage(player,"The banner base has no texture to remove.");
+        PluginData.getMessageUtil().sendErrorMessage(player,"The banner base has no texture to remove.");
     }
 
     private void sendGotBanner(Player player, int amount) {
-        MessageUtil.sendInfoMessage(player,"Given "+amount+" banners to "+player.getName()+".");
+        PluginData.getMessageUtil().sendInfoMessage(player,"Given "+amount+" banners to "+player.getName()+".");
     }
 
     private void sendNotEnabledErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Banner editor is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Banner editor is not enabled for this world.");
     }
     
 

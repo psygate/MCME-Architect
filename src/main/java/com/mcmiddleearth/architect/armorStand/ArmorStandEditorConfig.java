@@ -5,9 +5,9 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
-import static com.mcmiddleearth.util.ConfigurationUtil.deserializeLocation;
-import static com.mcmiddleearth.util.ConfigurationUtil.serializeLocation;
-import com.mcmiddleearth.util.FileUtil;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.deserializeLocation;
+import static com.mcmiddleearth.pluginutil.ConfigurationUtil.serializeLocation;
+import com.mcmiddleearth.pluginutil.FileUtil;
 
 import java.io.File;
 import java.io.IOException;

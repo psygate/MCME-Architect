@@ -16,45 +16,39 @@
  */
 package com.mcmiddleearth.architect.additionalCommands;
 
-import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class NewAfkCommand implements CommandExecutor{
+public class NewAfkCommand extends AbstractArchitectCommand {
 
     boolean flag = false; 
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(sender);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
         Player player = (Player)sender;
         if(!PluginData.hasPermission(player, Permission.FULL_BRIGHTNESS)) {
-            CommonMessages.sendNoPermissionError(sender);
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
         if(!PluginData.isAFK(player.getUniqueId())) {
             PluginData.setAFK(player.getUniqueId());
             player.setPlayerListName(player.getName()+" (AFK)");
-            MessageUtil.sendInfoMessage(sender, "afk");
+            PluginData.getMessageUtil().sendInfoMessage(sender, "afk");
         } else {
             PluginData.undoAFK(player.getUniqueId());
             player.setPlayerListName(player.getName());
-            MessageUtil.sendInfoMessage(sender, "wb");
+            PluginData.getMessageUtil().sendInfoMessage(sender, "wb");
         }
         /*JavaPlugin essentials = (JavaPlugin) ArchitectPlugin.getPluginInstance().getServer().getPluginManager().getPlugin("Essentials");
         if(essentials!=null) {
@@ -71,15 +65,30 @@ public class NewAfkCommand implements CommandExecutor{
     }
 
     private void sendNotEnabledErrorMessage(CommandSender sender) {
-        MessageUtil.sendErrorMessage(sender,"Full brightness is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(sender,"Full brightness is not enabled for this world.");
     }
 
     private void sendOffMessage(Player p) {
-        MessageUtil.sendInfoMessage(p,"AKF off!");
+        PluginData.getMessageUtil().sendInfoMessage(p,"AKF off!");
     }
     
     private void sendOnMessage(Player p) {
-        MessageUtil.sendInfoMessage(p,"AFK on!");
+        PluginData.getMessageUtil().sendInfoMessage(p,"AFK on!");
+    }
+
+    @Override
+    public String getHelpPermission() {
+        return Permission.FULL_BRIGHTNESS.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Don't use.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": Don't use it.";
     }
     
 }

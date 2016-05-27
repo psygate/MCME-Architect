@@ -9,8 +9,8 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
+import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class RandomiserCommand implements CommandExecutor {
+public class RandomiserCommand extends AbstractArchitectCommand {
 
     private final Map<OfflinePlayer, RandomiserConfig> configList = new HashMap<>();
     
@@ -57,7 +57,7 @@ public class RandomiserCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String c, String[] args) {
         if (!(cs instanceof Player)) {
-            CommonMessages.sendPlayerOnlyCommandError(cs);
+            PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
         Player p = (Player) cs;
@@ -68,7 +68,7 @@ public class RandomiserCommand implements CommandExecutor {
             RandomiserConfig playerConfig =  getPlayerConfig(p);
             if(args.length>0 && (args[0].equalsIgnoreCase("allow") || args[0].equalsIgnoreCase("deny"))){
                 if(!PluginData.hasPermission(p, Permission.RANDOMISER_MATERIALS)){
-                    CommonMessages.sendNoPermissionError(cs);
+                    PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
                 }
                 else {
@@ -87,12 +87,12 @@ public class RandomiserCommand implements CommandExecutor {
                 }
             }
             if (!cs.hasPermission(Permission.RANDOMISER_USER.name())) {
-                CommonMessages.sendNoPermissionError(cs);
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
                 return true;
             }
             if(args.length<1) {
                 randomise(p.getLocation(), playerConfig);
-                MessageUtil.sendInfoMessage(cs, "Randomised your surroundings.");
+                PluginData.getMessageUtil().sendInfoMessage(cs, "Randomised your surroundings.");
                 return true;
             }
             else if(args[0].equalsIgnoreCase("radius")) {
@@ -149,11 +149,15 @@ public class RandomiserCommand implements CommandExecutor {
                 return true;
             }
             else if(args[0].equalsIgnoreCase("help")) {
-                sendHelpMessage(cs);
+                int page = 1;
+                if(args.length>1 && NumericUtil.isInt(args[1])) {
+                    page = NumericUtil.getInt(args[1]);
+                }
+                sendHelpMessage((Player)cs,page);
                 return true;
             }
            else {
-                CommonMessages.sendInvalidSubcommandError(cs);
+                PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
                 return true;
             }
         }
@@ -256,33 +260,20 @@ public class RandomiserCommand implements CommandExecutor {
     }
     
     private void sendMissingArgumentErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs,"You're missing arguments for this command.");
+        PluginData.getMessageUtil().sendErrorMessage(cs,"You're missing arguments for this command.");
     }
 
     private void sendNotANumberErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs,"Not a number.");
+        PluginData.getMessageUtil().sendErrorMessage(cs,"Not a number.");
    }
 
-    private void sendHelpMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Tool for randomising data values:");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Randomise your surroundings: /random");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Set affected radius:     /random radius <radius>");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Set placed data values: /random range <min> <max>");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Set affected materials:  /random material <name>,[name]...");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Set probabilities:         /random prob <prob>, [prob]...");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Show configuration:      /random show");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Show allowed materials: /random showAllowed");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Add allowed materials:   /random allow");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"- Remove allowed materials: /random deny");
-    }
-    
     private void sendInfoMessage(CommandSender cs, RandomiserConfig playerConfig) {
-        MessageUtil.sendInfoMessage(cs,"randomiser tool configuration:");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"Radius: "+playerConfig.getRadius());
-        MessageUtil.sendNoPrefixInfoMessage(cs,"Material: "+playerConfig.getMaterials());
-        MessageUtil.sendNoPrefixInfoMessage(cs,"DataValueRange: "+playerConfig.getMinValue()+" "
+        PluginData.getMessageUtil().sendInfoMessage(cs,"randomiser tool configuration:");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"Radius: "+PluginData.getMessageUtil().STRESSED+playerConfig.getRadius());
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"Material: "+PluginData.getMessageUtil().STRESSED+playerConfig.getMaterials());
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"DataValueRange: "+PluginData.getMessageUtil().STRESSED+playerConfig.getMinValue()+" "
                                          +playerConfig.getMaxValue());
-        MessageUtil.sendNoPrefixInfoMessage(cs,"Probabilities: "+playerConfig.getProbs());
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"Probabilities: "+PluginData.getMessageUtil().STRESSED+playerConfig.getProbs());
     }
     
     private void sendMaterialsInfoMessage(CommandSender cs) {
@@ -290,37 +281,73 @@ public class RandomiserCommand implements CommandExecutor {
         for(Material material: allowedMaterials) {
             matList = matList+material.name()+" ";
         }
-        MessageUtil.sendInfoMessage(cs,"Allowed materials: "+ matList);
+        PluginData.getMessageUtil().sendInfoMessage(cs,"Allowed materials: "+PluginData.getMessageUtil().STRESSED+ matList);
     }
 
     private void sendRadiusSetMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Radius set (max is 150).");
+        PluginData.getMessageUtil().sendInfoMessage(cs,"Radius set (max is 150).");
     }
 
     private void sendProbsSetMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Probabilities set.");
+        PluginData.getMessageUtil().sendInfoMessage(cs,"Probabilities set.");
     }
 
     private void sendRangeSetMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Range of data value set.");
+        PluginData.getMessageUtil().sendInfoMessage(cs,"Range of data value set.");
     }
 
     private void sendMaterialsSetMessage(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"Materials set.");
+        PluginData.getMessageUtil().sendInfoMessage(cs,"Materials set.");
     }
 
     private void sendMaterialsErrorMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs,"Some materials were not found or are not allowed to be randomised.");
+        PluginData.getMessageUtil().sendErrorMessage(cs,"Some materials were not found or are not allowed to be randomised.");
     }
 
     private void sendNotActivatedMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Field randomizer is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Field randomizer is not enabled for this world.");
     }
 
     private void sendIllegalProbMessage(CommandSender cs) {
-        MessageUtil.sendErrorMessage(cs, "Probability values must be between 0 and 100.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Probability values must be between 0 and 100.");
     }
 
+    @Override
+    public String getHelpPermission() {
+        return Permission.RANDOMISER_USER.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Block data value randomiser.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return ": Randomises data values of blocks. Very useful for crops and other fields. \n"
+                +ChatColor.WHITE+"Click for detailed help.";
+    }
+    
+    @Override
+    public String getHelpCommand() {
+        return "/random help";
+    }
+    
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"No Physics List Editor -";
+        help = new String[][]{{"/random","",": Randomises your surroundings"," with current settings"},
+                                       {"/random radius ","<radius>",": Sets affected radius"},
+                                       {"/random range ","<min> <max>",": Sets placed data values",". All data values will be used in equal amounts."},
+                                       {"/random material ","<material> [material] ... ",": Sets affected materials",". You may use material names or block IDs. Blocks with all data values will be affected."},
+                                       {"/random prob ","<prob> [prob] ... ",": Sets probabilities",". \n If more arguments for probabilities are specified than used data values surplus arguments are ignored. \n If too few arguments are specified remaining probabilities will be zero. \n If the sum of given probabilities is not 100% last probabilities will be adapted."},
+                                       {"/random show","",": Shows settings"},
+                                       {"/random showAllowed","",": Shows allowed materials"},
+                                       {"/random allow "," <material> [material] ... ",": Allowes a material"," to be randomised. Don't allow stairs ;)"},
+                                       {"/random deny"," <material> [material] ... ",": Denies a materal", " to be randomised."}};
+        super.sendHelpMessage(player, page);
+    }
+    
    
 
 }

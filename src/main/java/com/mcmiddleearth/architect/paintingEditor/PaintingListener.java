@@ -8,8 +8,6 @@ package com.mcmiddleearth.architect.paintingEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
-import com.mcmiddleearth.util.MessageUtil;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -19,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  *
@@ -32,25 +31,27 @@ public class PaintingListener implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
         if(!(entity instanceof Painting 
-                && player.getItemInHand().getType().equals(Material.STICK))) {
+                && player.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                && event.getHand().equals(EquipmentSlot.HAND))) {
             return;
         }
         if(!PluginData.isModuleEnabled(entity.getWorld(),Modules.PAINTING_EDITOR)) {
             sendNotEnabledErrorMessage(player);
             return;
         }   
-        if(PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
-             {
-                Painting painting = (Painting) entity;
-                int id = painting.getArt().getId();
-                if(id<Art.values().length-1) {
-                    id++;
-                    painting.setArt(Art.getById(id));
-                }
-            }
+        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+            PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
         }
         else {
-            CommonMessages.sendNoPermissionError(player);
+            Painting painting = (Painting) entity;
+            int id = painting.getArt().getId();
+            if(id<Art.values().length-1) {
+                id++;
+                painting.setArt(Art.getById(id));
+            }
         }
         event.setCancelled(true);
     }
@@ -70,7 +71,13 @@ public class PaintingListener implements Listener {
         if(!player.getItemInHand().getType().equals(Material.STICK)) {
             return;
         }
-        if(PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
+            PluginData.getMessageUtil().sendNoPermissionError(player);
+        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
+        }
+        else {
             Painting painting = (Painting) entity;
             int id = painting.getArt().getId();
             if(id>0) {
@@ -78,14 +85,11 @@ public class PaintingListener implements Listener {
                 painting.setArt(Art.getById(id));
             }
         }
-        else {
-            CommonMessages.sendNoPermissionError(player);
-        }
         event.setCancelled(true);
     }
 
     private void sendNotEnabledErrorMessage(Player player) {
-        MessageUtil.sendErrorMessage(player, "Painting editor is not enabled for this world.");
+        PluginData.getMessageUtil().sendErrorMessage(player, "Painting editor is not enabled for this world.");
     }
         
 }

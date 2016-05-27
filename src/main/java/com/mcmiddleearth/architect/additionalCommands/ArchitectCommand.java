@@ -19,14 +19,15 @@ package com.mcmiddleearth.architect.additionalCommands;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.CommonMessages;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.MessageUtil;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -35,19 +36,64 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class ArchitectCommand implements CommandExecutor{
+public class ArchitectCommand extends AbstractArchitectCommand{
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            if(!(sender instanceof Player)) {
+                PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
+                return true;
+            }
+            if(!PluginData.hasPermission((Player)sender,Permission.ARCHITECT_HELP)) {
+                PluginData.getMessageUtil().sendNoPermissionError(sender);
+                return true;
+            }
+            if(args.length<2 || NumericUtil.isInt(args[1])) {
+                int page = 1;
+                if(args.length>1 && NumericUtil.isInt((args[1]))) {
+                    page = NumericUtil.getInt(args[1]);
+                }
+                List<FancyMessage> commandList = new ArrayList<>();
+                FancyMessage header = new FancyMessage(MessageType.INFO,PluginData.getMessageUtil())
+                                                .addSimple("Help for "
+                                                            +PluginData.getMessageUtil().STRESSED+"MCME Architect"
+                                                            +PluginData.getMessageUtil().INFO+" commands.");
+                for(String commandKey: ArchitectPlugin.getCommandList()) {
+                    AbstractArchitectCommand executor = (AbstractArchitectCommand) ArchitectPlugin
+                                                           .getPluginInstance().getCommand(commandKey).getExecutor();
+                    if(sender.hasPermission(executor.getHelpPermission())) {
+                        String shortHelp = executor.getShortDescription();
+                        String usageHelp = executor.getUsageDescription();
+                        String clickCommand = executor.getHelpCommand();
+                        boolean runAtOnce = true;
+                        if(clickCommand==null) {
+                            clickCommand = "/"+commandKey+" ";
+                            runAtOnce = false;
+                        } 
+                        FancyMessage cmdLine = new FancyMessage(MessageType.WHITE,PluginData.getMessageUtil())
+                            .addFancy(ChatColor.DARK_AQUA+"/"+commandKey,
+                                        clickCommand, 
+                                        PluginData.getMessageUtil()
+                                                .hoverFormat("/"+commandKey+usageHelp,":",true))
+                            .addClickable(ChatColor.WHITE+shortHelp, clickCommand);
+                        if(runAtOnce) {
+                            cmdLine.setRunDirect();
+                        }
+                        commandList.add(cmdLine);
+                    }
+                }
+                PluginData.getMessageUtil().sendFancyListMessage((Player)sender, header, commandList, 
+                                                                 "/architect help", page);
+                sendManualMessage(sender);
+            }
+            return true;
+        }
         if(!(sender instanceof ConsoleCommandSender 
                 || (sender instanceof Player 
                     && (PluginData.hasPermission((Player)sender, Permission.ARCHITECT_INFO)
                          || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))))) {
-            CommonMessages.sendNoPermissionError(sender);
-            return true;
-        }
-        if (args.length == 0) {
-            CommonMessages.sendNotEnoughArgumentsError(sender);
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
         if(args[0].equalsIgnoreCase("dev")) {
@@ -84,41 +130,61 @@ public class ArchitectCommand implements CommandExecutor{
             return true;
         }
         if (args[0].toLowerCase().startsWith("world")) {
-            MessageUtil.sendInfoMessage(sender,"Worlds:");
+            PluginData.getMessageUtil().sendInfoMessage(sender,"Worlds:");
             for(String name: PluginData.getWorldNames()) {
                 if(sender instanceof Player) {
-                    LinkedHashMap<String,String> message = new LinkedHashMap<>();
-                    message.put(MessageUtil.getNOPREFIX()+ChatColor.AQUA+"- ",null);
-                    message.put(name,"/mvtp "+name);
-                    MessageUtil.sendClickableMessage((Player)sender, message);
+                    new FancyMessage(MessageType.INFO_INDENTED,PluginData.getMessageUtil())
+                            .addClickable("- "+PluginData.getMessageUtil().STRESSED+name, "/mvtp "+name)
+                            .send((Player) sender);
                 } else {
-                    MessageUtil.sendNoPrefixInfoMessage(sender, "- "+name);
+                    PluginData.getMessageUtil().sendNoPrefixInfoMessage(sender, "- "+name);
                 }
             }
         } else if (args[0].equalsIgnoreCase("version")) {
-            MessageUtil.sendInfoMessage(sender, "Version: "+ ArchitectPlugin.getPluginInstance()
+            PluginData.getMessageUtil().sendInfoMessage(sender, "Version: "+ ArchitectPlugin.getPluginInstance()
                                                      .getDescription().getVersion());
         } else if (args[0].equalsIgnoreCase("reload")) {
             if(!(sender instanceof ConsoleCommandSender 
                     || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
-                CommonMessages.sendNoPermissionError(sender);
+                PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
-            MessageUtil.sendInfoMessage(sender, "Reloading...");
+            PluginData.getMessageUtil().sendInfoMessage(sender, "Reloading...");
             PluginData.load();
-            MessageUtil.sendInfoMessage(sender,  "Reload complete!");
+            PluginData.getMessageUtil().sendInfoMessage(sender,  "Reload complete!");
         } else {
-            CommonMessages.sendInvalidSubcommandError(sender);
+            PluginData.getMessageUtil().sendInvalidSubcommandError(sender);
         }
         return true;
     }
     
     private void showDetails(CommandSender cs) {
-        MessageUtil.sendInfoMessage(cs,"DevUtil: Level - "+DevUtil.getLevel()+"; Console - "+DevUtil.isConsoleOutput()+"; ");
-        MessageUtil.sendNoPrefixInfoMessage(cs,"Developer:");
+        PluginData.getMessageUtil().sendInfoMessage(cs,"DevUtil: Level - "+DevUtil.getLevel()+"; Console - "+DevUtil.isConsoleOutput()+"; ");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"Developer:");
         for(OfflinePlayer player:DevUtil.getDeveloper()) {
-        MessageUtil.sendNoPrefixInfoMessage(cs, "            "+player.getName());
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "            "+player.getName());
         }
+    }
+    
+   private void sendManualMessage(CommandSender cs) {
+        cs.sendMessage(PluginData.getMessageUtil().HIGHLIGHT_STRESSED
+                +"http://www.mcmiddleearth.com/resources/mcme-architect-manual.95");
+    }
+
+
+    @Override
+    public String getHelpPermission() {
+        return Permission.ARCHITECT_INFO.getPermissionNode();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return ": Information about MCME Architect.";
+    }
+
+    @Override
+    public String getUsageDescription() {
+        return " help | world | dev | version | reload [#page]: Argument 'help' shows information about Architect commands. 'world' shows a list of all server worlds. 'dev' switches on/off debug messages. 'version' displays Architect version. 'reload' reloads Architect plugin.";
     }
 
 }
