@@ -6,11 +6,9 @@
 package com.mcmiddleearth.architect;
 
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.architect.additionalCommands.NewAfkCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.RpCommand;
-import com.mcmiddleearth.architect.additionalListeners.AfkListener;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;

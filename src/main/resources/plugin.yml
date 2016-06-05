@@ -106,10 +106,14 @@ permissions:
             architect.get.logs: true
             architect.get.slabs: true
             architect.getCommand: true
-            architect.customHeadManager.user: true          
+            architect.customHeadManager.user: true    
+            architect.help: true
     architect.info: 
-        descriptions: Allows to use coommand /architect version | world | dev
+        descriptions: Allows to use command /architect version | world | dev
         default: op
+    architect.help:
+        description: Allows to use comand /architect help
+        default: true
     architect.reload: 
         descriptions: Allows to use command /architect reload
         default: op

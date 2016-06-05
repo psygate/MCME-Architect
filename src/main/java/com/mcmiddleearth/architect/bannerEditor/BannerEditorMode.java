@@ -13,12 +13,12 @@ import org.bukkit.ChatColor;
  * @author Eriol_Eandur
  */
 public enum BannerEditorMode {
-    LIST    ("l","",": Selects list patterns mode"),
-    TEXTURE ("t","",": Selects cycle texture mode"),
-    COLOR   ("c","",": Selects cycle color mode"),
-    ADD     ("a","",": Selects add patterns mode"),
-    REMOVE  ("r","",": Selects remove patterns mode"),
-    GET     ("g","",": Selects get banner mode");
+    LIST    ("l","",": Selects list patterns mode."),
+    TEXTURE ("t","",": Selects cycle texture mode."),
+    COLOR   ("c","",": Selects cycle color mode."),
+    ADD     ("a","",": Selects add patterns mode."),
+    REMOVE  ("r","",": Selects remove patterns mode."),
+    GET     ("g","",": Selects get banner mode.");
     
     @Getter
     private final String name;

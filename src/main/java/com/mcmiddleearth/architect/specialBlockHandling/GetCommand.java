@@ -360,9 +360,9 @@ public class GetCommand extends AbstractArchitectCommand {
         help = new String[][]{{"/get logs","",": Get six sided logs, useful for trees"},
                                        {"/get doors","",": Get half doors"},
                                        {"/get plants","",": Get placeable plants"},
-                                       {"/get head"," <head or folder name>",": Get heads"," from MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
+                                       {"/get head"," <head or folder name>",": Get head"," from the MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
                                        {"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
-                                       {"/get armor"," <color>",": Get an armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black"},
+                                       {"/get armor"," <color>",": Get dyed leather armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black"},
                                        {"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."}};
         super.sendHelpMessage(player, page);
     }

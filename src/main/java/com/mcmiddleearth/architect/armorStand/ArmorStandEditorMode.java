@@ -30,7 +30,7 @@ public enum ArmorStandEditorMode {
     SIZE        ("s","",": Selects switch size mode"),
     VISIBLE     ("v","",": Selects switch visibility mode"),
     GRAVITY     ("g","",": Selects switch gravity mode"),
-    PASTE       ("p","",": Selects paste in mode"),
+    PASTE       ("p","",": Selects paste mode"),
     COPY        ("c","",": Selects copy mode"),
     ROLLBACK    ("rollback","",": Not implemented");
     

@@ -335,7 +335,7 @@ public class RandomiserCommand extends AbstractArchitectCommand {
     
     @Override
     protected void sendHelpMessage(Player player, int page) {
-        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"No Physics List Editor -";
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Block Data Value Randomiser -";
         help = new String[][]{{"/random","",": Randomises your surroundings"," with current settings"},
                                        {"/random radius ","<radius>",": Sets affected radius"},
                                        {"/random range ","<min> <max>",": Sets placed data values",". All data values will be used in equal amounts."},

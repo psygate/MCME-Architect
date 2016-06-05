@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.customHeadManager;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.HeadUtil;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -39,8 +40,8 @@ public class CustomHeadListener implements Listener {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if(!(player.getInventory().getItemInMainHand().getType().equals(Material.STICK) 
-                && event.getHand().equals(EquipmentSlot.HAND))) {
+        if(!(player.getInventory().getItemInHand().getType().equals(Material.STICK) 
+                && EventUtil.isMainHandEvent(event))) {
             return;
         }
         if(!(event.hasBlock() && event.getClickedBlock().getType().equals(Material.SKULL)
