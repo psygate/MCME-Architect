@@ -9,7 +9,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
-import java.util.logging.Logger;
+import com.mcmiddleearth.pluginutil.EventUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,7 +22,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
@@ -35,12 +34,12 @@ public class ArmorStandListener implements Listener {
     @EventHandler
     public void PlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if(!event.hasBlock() || !event.getHand().equals(EquipmentSlot.HAND)) {
+        if(!event.hasBlock() || !EventUtil.isMainHandEvent(event)) {
             return;
         }
         if(PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_PROTECTION)
-                && p.getInventory().getItemInMainHand().getType().equals(Material.ARMOR_STAND)
-                && event.getHand().equals(EquipmentSlot.HAND)
+                && p.getInventory().getItemInHand().getType().equals(Material.ARMOR_STAND)
+                && EventUtil.isMainHandEvent(event)
                 && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR)) {
                 event.setCancelled(true);
@@ -54,8 +53,8 @@ public class ArmorStandListener implements Listener {
         ArmorStandEditorConfig config = ArmorStandEditorCommand.getPlayerConfig(p);
         if(PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_EDITOR)
                 && config.getEditorMode().equals(ArmorStandEditorMode.PASTE)
-                && p.getInventory().getItemInMainHand().getType().equals(Material.STICK)
-                && event.getHand().equals(EquipmentSlot.HAND)) {
+                && p.getInventory().getItemInHand().getType().equals(Material.STICK)
+                && EventUtil.isMainHandEvent(event)) {
             if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR)) {
                 event.setCancelled(true);
                 PluginData.getMessageUtil().sendErrorMessage(p, "Sorry, you are not allowed to place armor stands.");

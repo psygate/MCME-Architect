@@ -8,6 +8,7 @@ package com.mcmiddleearth.architect.paintingEditor;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.pluginutil.EventUtil;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -17,7 +18,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 /**
  *
@@ -31,8 +31,8 @@ public class PaintingListener implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
         if(!(entity instanceof Painting 
-                && player.getInventory().getItemInMainHand().getType().equals(Material.STICK)
-                && event.getHand().equals(EquipmentSlot.HAND))) {
+                && player.getInventory().getItemInHand().getType().equals(Material.STICK)
+                && EventUtil.isMainHandEvent(event))) {
             return;
         }
         if(!PluginData.isModuleEnabled(entity.getWorld(),Modules.PAINTING_EDITOR)) {

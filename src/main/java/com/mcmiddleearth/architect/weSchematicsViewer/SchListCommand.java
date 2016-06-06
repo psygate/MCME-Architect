@@ -75,7 +75,7 @@ public class SchListCommand extends AbstractArchitectCommand {
 
     @Override
     public String getShortDescription() {
-        return ": World Edit Schematics Editor.";
+        return ": World Edit Schematics Viewer.";
     }
 
     @Override

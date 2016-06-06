@@ -20,8 +20,8 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
-import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,7 +55,7 @@ public class SpecialBlockListener implements Listener{
     private void eggInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.hasBlock() 
-                && event.getHand().equals(EquipmentSlot.HAND)
+                && EventUtil.isMainHandEvent(event)
                 && event.getClickedBlock().getType().equals(Material.DRAGON_EGG)) {
             DevUtil.log(2,"eggInteract fired cancelled: " + event.isCancelled());
             if(event.isCancelled()) {
@@ -225,7 +225,7 @@ public class SpecialBlockListener implements Listener{
     private void vegPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && event.getHand().equals(EquipmentSlot.OFF_HAND)
+                && EventUtil.isMainHandEvent(event)
                 &&(p.getItemInHand().getType().equals(Material.CARROT_ITEM)
                 || p.getItemInHand().getType().equals(Material.POTATO_ITEM)
                 || p.getItemInHand().getType().equals(Material.WHEAT)
@@ -322,13 +322,13 @@ public class SpecialBlockListener implements Listener{
     private void torchPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && event.getHand().equals(EquipmentSlot.HAND)
-                &&(p.getInventory().getItemInMainHand().getType().equals(Material.REDSTONE_TORCH_ON))) {
+                && EventUtil.isMainHandEvent(event)
+                &&(p.getInventory().getItemInHand().getType().equals(Material.REDSTONE_TORCH_ON))) {
             if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.REDSTONE_TORCH)) {
                 return;
             }
-            if (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()
-                    && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().startsWith("Burning")) {
+            if (p.getInventory().getItemInHand().getItemMeta().hasDisplayName()
+                    && p.getInventory().getItemInHand().getItemMeta().getDisplayName().startsWith("Burning")) {
                 DevUtil.log(2,"torchPlace fired cancelled: " + event.isCancelled());
                 if(event.isCancelled()) {
                     return;
@@ -418,22 +418,17 @@ public class SpecialBlockListener implements Listener{
     
     @EventHandler(priority = EventPriority.HIGH)
     private void doorPlace(PlayerInteractEvent event) {
-Logger.getGlobal().info("Door place 1");
         Player p = event.getPlayer();
-Logger.getGlobal().info(""+event.hasBlock()+event.getHand().equals(EquipmentSlot.HAND)+isDoor(p.getInventory().getItemInMainHand().getType()));
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && event.hasBlock()
-                && event.getHand().equals(EquipmentSlot.HAND)
-                &&(isDoorItem(p.getInventory().getItemInMainHand().getType()))) {            
+                && EventUtil.isMainHandEvent(event)
+                &&(isDoorItem(p.getInventory().getItemInHand().getType()))) {            
             if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.HALF_DOORS)) {
                 return;
             }
-Logger.getGlobal().info("2");
             ItemStack item = p.getItemInHand();
-Logger.getGlobal().info("3");
             if(item.hasItemMeta() && item.getItemMeta().hasDisplayName()
                                   && item.getItemMeta().getDisplayName().startsWith("Half")) {
-Logger.getGlobal().info("4");
                 DevUtil.log(2,"doorPlace fired cancelled: " + event.isCancelled());
                 if(event.isCancelled()) {
                     return;

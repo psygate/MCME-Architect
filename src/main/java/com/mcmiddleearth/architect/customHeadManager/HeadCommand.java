@@ -272,7 +272,7 @@ public class HeadCommand extends AbstractArchitectCommand {
 
     @Override
     public String getShortDescription() {
-        return ": Submit and mangage heads.";
+        return ": Submit and manage heads.";
     }
     @Override
     public String getUsageDescription() {
@@ -288,26 +288,10 @@ public class HeadCommand extends AbstractArchitectCommand {
     @Override
     protected void sendHelpMessage(Player player, int page) {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"MCME Head Collection -";
-        help = new String[][]{{"/chead warp","","Teleports you to the MCME Head Collection"},
+        help = new String[][]{{"/chead warp","",": Teleports you to the MCME Head Collection"},
                                        {"/chead list","",": Shows a clickable list of all heads"},
-                                       {"/chead submit ","[playername] <headName>",": Submits head","If no [playername] is specified your own head will be submited."}};
+                                       {"/chead submit ","[playername] <headName>",": Submits a head. ","If no [playername] is specified your own head will be submited."}};
         super.sendHelpMessage(player, page);
-/*    private void sendHelpMessage(Player player) {
-        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
-                .addSimple("Help for command: "+PluginData.getMessageUtil().STRESSED+"/chead")
-                .send(player);
-        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
-                .addSimple("Manages the MCME Head Collection.")
-                .send(player);
-        String[][] rps = new String[][]{{"/chead warp","Teleports you to the MCME Head Collection"},
-                                       {"/chead list","Shows a clickable list of all heads"},
-                                       {"/chead submit"," [playername] <headName>: Submits head"}};
-        for(String[] rp: rps) {
-            new FancyMessage(MessageType.WHITE, PluginData.getMessageUtil())
-                    .addFancy(ChatColor.DARK_AQUA+rp[0]
-                                 +ChatColor.WHITE+rp[1], rp[0],"Click to use command.")
-                    .send(player);
-        }*/
     }
     
     

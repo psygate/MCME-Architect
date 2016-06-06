@@ -18,12 +18,12 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.pluginutil.EventUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 /**
  *
@@ -37,8 +37,8 @@ public class StickBlockBreakListener implements Listener {
         if((PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_EDITOR)
                 || PluginData.isModuleEnabled(p.getWorld(),Modules.PAINTING_EDITOR)
                 || PluginData.isModuleEnabled(p.getWorld(),Modules.BANNER_EDITOR)) 
-              && p.getInventory().getItemInMainHand().getType().equals(Material.STICK)
-              && event.getHand().equals(EquipmentSlot.HAND)) {
+              && p.getInventory().getItemInHand().getType().equals(Material.STICK)
+              && EventUtil.isMainHandEvent(event)) {
             event.setCancelled(true);
         }
     }
