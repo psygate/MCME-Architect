@@ -336,15 +336,15 @@ public class RandomiserCommand extends AbstractArchitectCommand {
     @Override
     protected void sendHelpMessage(Player player, int page) {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Block Data Value Randomiser -";
-        help = new String[][]{{"/random","",": Randomises your surroundings"," with current settings"},
-                                       {"/random radius ","<radius>",": Sets affected radius"},
-                                       {"/random range ","<min> <max>",": Sets placed data values",". All data values will be used in equal amounts."},
+        help = new String[][]{{"/random","",": Randomises your surroundings"," with current settings."},
+                                       {"/random radius ","<radius>",": Sets affected radius."},
+                                       {"/random range ","<min> <max>",": Sets placed data values",". Previously set probabilties are cleared. All data values will be used in equal amounts."},
                                        {"/random material ","<material> [material] ... ",": Sets affected materials",". You may use material names or block IDs. Blocks with all data values will be affected."},
-                                       {"/random prob ","<prob> [prob] ... ",": Sets probabilities",". \n If more arguments for probabilities are specified than used data values surplus arguments are ignored. \n If too few arguments are specified remaining probabilities will be zero. \n If the sum of given probabilities is not 100% last probabilities will be adapted."},
-                                       {"/random show","",": Shows settings"},
-                                       {"/random showAllowed","",": Shows allowed materials"},
+                                       {"/random prob ","<prob> [prob] ... ",": Sets probabilities",". \n If more arguments for probabilities are specified than used data values surplus arguments are ignored. \n If too few arguments are specified remaining probabilities will be zero. \n If the sum of given probabilities is not 100% last probability will be adjusted."},
+                                       {"/random show","",": Shows settings."},
+                                       {"/random showAllowed","",": Shows allowed materials."},
                                        {"/random allow "," <material> [material] ... ",": Allowes a material"," to be randomised. Don't allow stairs ;)"},
-                                       {"/random deny"," <material> [material] ... ",": Denies a materal", " to be randomised."}};
+                                       {"/random deny"," <material> [material] ... ",": Denies a material", " to be randomised."}};
         super.sendHelpMessage(player, page);
     }
     

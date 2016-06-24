@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import lombok.Getter;
 
 import org.bukkit.Bukkit;
@@ -41,6 +42,8 @@ public class ArmorStandEditorConfig {
     private int rotationStep = 10;
     
     private MemoryConfiguration copiedEntity;
+    
+    private boolean hasCopiedArmorStand = false;
     
     @Getter
     private static final File dataDir = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"armorStands");
@@ -77,15 +80,38 @@ public class ArmorStandEditorConfig {
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("location", serializeLocation(new Location(Bukkit.getWorlds().get(0),0.5,0,0.5,0,0)));
         copiedEntity.set("ArmorStand", data);
+        hasCopiedArmorStand = false;
     }
     
     public void copyArmorStand(ArmorStand armor) {
         copiedEntity = new MemoryConfiguration();
         copiedEntity.set("ArmorStand",ArmorStandUtil.serializeArmorStand(armor));
+        hasCopiedArmorStand = true;
     }
     
-    public boolean saveArmorStand(String filename, String description) throws IOException {
+    public boolean hasCopiedArmorStand() {
+        return hasCopiedArmorStand;
+    }
+    
+    public boolean isCreator(String filename, UUID creator) {
+        File file = new File(dataDir,filename+"."+fileExtension);
+        if(file.exists()) {
+            try {
+                YamlConfiguration data = new YamlConfiguration();
+                data.load(file);
+                return UUID.fromString(data.getString("creator")).equals(creator);
+            } catch (IOException | InvalidConfigurationException | NullPointerException ex) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    
+    public boolean saveArmorStand(String filename, String description, UUID creator) throws IOException {
         YamlConfiguration data = new YamlConfiguration();
+        data.set("creator", creator.toString());
         data.set("description", description);
         data.set("ArmorStand", copiedEntity.get("ArmorStand"));
         File saveFile = new File(dataDir, filename+"."+fileExtension);
@@ -136,6 +162,16 @@ public class ArmorStandEditorConfig {
             list.addAll(set);
         }
         return list.toArray(new File[0]);
+    }
+    
+    public boolean existsFile(String filename) {
+        File file = new File(dataDir, filename+".yml");
+        if(file.exists()) {
+            return true;
+        } else {
+            file = new File(dataDir, filename);
+            return file.exists() && file.isDirectory();
+        }
     }
     
     public boolean deleteFile(String filename) {

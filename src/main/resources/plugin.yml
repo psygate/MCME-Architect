@@ -62,6 +62,8 @@ permissions:
             architect.noPhysicsList: true
             architect.voxel.delete: true
             architect.customHeadManager.manager: true
+            architect.armorStandEditor.delete: true
+            architect.bannerEditor.delete: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -195,10 +197,13 @@ permissions:
         descriptions: Allows to use Banner Editor (except save command)
         default: op
     architect.bannerEditor.save: 
-        descriptions: Allows to save Banner Editor files
+        descriptions: Allows to save Banner Editor files and delete own banner files
         default: op
         children:
             architect.bannerEditor: true
+    architect.bannerEditor.delete: 
+        descriptions: Allows to delete Banner Editor files saved by other players
+        default: op
     architect.paintingEditor: 
         descriptions: Allows to use Painting Editor
         default: op
@@ -209,10 +214,13 @@ permissions:
         descriptions: Allows to use Armor Stand Editor (except storing and deleting files)
         default: op
     architect.armorStandEditor.trusted: 
-        descriptions: Allows to store and delete Armor Stand Editor files
+        descriptions: Allows to store Armor Stand Editor files and delete own files
         default: op
         children:
             architect.armorStandEditor: true
+    architect.armorStandEditor.delete: 
+        descriptions: Allows to delete Armor Stand Editor files created by other players
+        default: op
     architect.randomiser.allowMaterials: 
         descriptions: Allows to change allowed materials for command /random
         default: op

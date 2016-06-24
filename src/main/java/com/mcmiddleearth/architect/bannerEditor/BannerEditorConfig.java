@@ -9,6 +9,7 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,10 +47,11 @@ public class BannerEditorConfig {
         this.patternId = patternId;
     }
     
-    public boolean saveBanner(ItemStack banner, String fileName, String description) throws IOException {
+    public boolean saveBanner(ItemStack banner, String fileName, String description,UUID creator) throws IOException {
         YamlConfiguration data = new YamlConfiguration();
         data.set("description", description);
         data.set("Banner", banner.serialize());
+        data.set("creator",creator.toString());
         File saveFile = new File(dataDir+"/"+fileName+"."+fileExtension);
         if(!saveFile.exists()) {
             data.save(saveFile);
@@ -74,4 +76,55 @@ public class BannerEditorConfig {
         }
         return ItemStack.deserialize(bannerData);
     }
+
+    public boolean isCreator(String filename, UUID creator) {
+        File file = new File(dataDir+"/"+filename+"."+fileExtension);
+        if(file.exists()) {
+            try {
+                YamlConfiguration data = new YamlConfiguration();
+                data.load(file);
+                return UUID.fromString(data.getString("creator")).equals(creator);
+            } catch (IOException | InvalidConfigurationException | NullPointerException ex) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    
+    public boolean existsFile(String filename) {
+        File file = new File(dataDir+"/"+filename+".yml");
+        if(file.exists()) {
+            return true;
+        } else {
+            file = new File(dataDir+"/"+filename);
+            return file.exists() && file.isDirectory();
+        }
+    }
+    
+    public boolean deleteFile(String filename) {
+        boolean result = false;
+        File file = new File(dataDir+"/"+filename+".yml");
+        if(file.exists()) {
+            file.delete();
+            result = true;
+        }
+        else {
+            result =  false;
+        }
+        file = new File(dataDir+"/"+filename);
+        if(file.exists() && file.isDirectory()) {
+            if(file.listFiles().length==0) {
+                file.delete();
+                result = true;
+            }
+            else {
+                result = false;
+            }
+        }
+        return result;
+    }
+    
+
 }

@@ -16,8 +16,8 @@ public enum BannerEditorMode {
     LIST    ("l","",": Selects list patterns mode."),
     TEXTURE ("t","",": Selects cycle texture mode."),
     COLOR   ("c","",": Selects cycle color mode."),
-    ADD     ("a","",": Selects add patterns mode."),
-    REMOVE  ("r","",": Selects remove patterns mode."),
+    ADD     ("a","",": Selects add pattern mode."),
+    REMOVE  ("r","",": Selects remove pattern mode."),
     GET     ("g","",": Selects get banner mode.");
     
     @Getter

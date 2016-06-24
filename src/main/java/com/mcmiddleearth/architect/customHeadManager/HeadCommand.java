@@ -288,9 +288,9 @@ public class HeadCommand extends AbstractArchitectCommand {
     @Override
     protected void sendHelpMessage(Player player, int page) {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"MCME Head Collection -";
-        help = new String[][]{{"/chead warp","",": Teleports you to the MCME Head Collection"},
-                                       {"/chead list","",": Shows a clickable list of all heads"},
-                                       {"/chead submit ","[playername] <headName>",": Submits a head. ","If no [playername] is specified your own head will be submited."}};
+        help = new String[][]{{"/chead warp","",": Teleports you to the MCME Head Collection."},
+                                       {"/chead list","",": Shows a clickable list of all heads."},
+                                       {"/chead submit ","[playername] <headName>",": Submits a head. ","If no [playername] is specified your own head will be submitted."}};
         super.sendHelpMessage(player, page);
     }
     
