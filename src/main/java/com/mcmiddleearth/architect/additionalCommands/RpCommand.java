@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.architect.additionalCommands;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
@@ -47,23 +48,24 @@ public class RpCommand extends AbstractArchitectCommand {
             return true;
         }
         String url = "";
+        String section = "ServerResourcePacks.";
         if(args[0].toLowerCase().startsWith("e")) {
-            url = "http://www.mcmiddleearth.com/content/Eriador.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Eriador");//"http://www.mcmiddleearth.com/content/Eriador.zip";
         } 
         else if(args[0].toLowerCase().startsWith("g")) {
-            url = "http://www.mcmiddleearth.com/content/Gondor.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Gondor");//"http://www.mcmiddleearth.com/content/Gondor.zip";
         } 
         else if(args[0].toLowerCase().startsWith("l")) {
-            url = "http://www.mcmiddleearth.com/content/Lothlorien.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Lothlorien");//"http://www.mcmiddleearth.com/content/Lothlorien.zip";
         }
         else if(args[0].toLowerCase().startsWith("r")) {
-            url = "http://www.mcmiddleearth.com/content/Rohan.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Rohan");//"http://www.mcmiddleearth.com/content/Rohan.zip";
         }
         else if(args[0].toLowerCase().startsWith("d")) {
-            url = "http://www.mcmiddleearth.com/content/Moria.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Dwarf");//"http://www.mcmiddleearth.com/content/Moria.zip";
         }
         else if(args[0].toLowerCase().startsWith("m")) {
-            url = "http://www.mcmiddleearth.com/content/Mordor.zip";
+            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Mordor");//"http://www.mcmiddleearth.com/content/Mordor.zip";
         }
         try {
             URLConnection connection= new URL(url).openConnection();

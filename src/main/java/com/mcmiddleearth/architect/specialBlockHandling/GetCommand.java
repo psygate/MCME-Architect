@@ -25,6 +25,7 @@ import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -166,6 +167,7 @@ public class GetCommand extends AbstractArchitectCommand {
         p.getInventory().addItem(addMeta(new ItemStack(Material.PUMPKIN_SEEDS, 64),"Placeable Pumpkin Plant",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.BROWN_MUSHROOM, 64),"Placeable Brown Mushroom",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.RED_MUSHROOM, 64),"Placeable RedMushroom",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.NETHER_STALK, 64),"Placeable Onion",true));
     }
     
     private void getHugeMushrooms(Player p) {

@@ -22,6 +22,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -40,7 +41,6 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -225,15 +225,18 @@ public class SpecialBlockListener implements Listener{
     private void vegPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && EventUtil.isMainHandEvent(event)
+                && (EventUtil.isMainHandEvent(event) 
+                    || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
+                    || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))
                 &&(p.getItemInHand().getType().equals(Material.CARROT_ITEM)
-                || p.getItemInHand().getType().equals(Material.POTATO_ITEM)
-                || p.getItemInHand().getType().equals(Material.WHEAT)
-                || p.getItemInHand().getType().equals(Material.MELON_SEEDS)
-                || p.getItemInHand().getType().equals(Material.PUMPKIN_SEEDS)
-                || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
-                || p.getItemInHand().getType().equals(Material.CACTUS)
-                || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))) {
+                  || p.getItemInHand().getType().equals(Material.POTATO_ITEM)
+                  || p.getItemInHand().getType().equals(Material.WHEAT)
+                  || p.getItemInHand().getType().equals(Material.MELON_SEEDS)
+                  || p.getItemInHand().getType().equals(Material.PUMPKIN_SEEDS)
+                  || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
+                  || p.getItemInHand().getType().equals(Material.CACTUS)
+                  || p.getItemInHand().getType().equals(Material.NETHER_STALK)
+                  || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))) {
             if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.PLANTS)) {
                 return;
             }
@@ -258,35 +261,39 @@ public class SpecialBlockListener implements Listener{
                 switch(p.getItemInHand().getType()) {
                     case BROWN_MUSHROOM:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.BROWN_MUSHROOM, true);
+                                            Material.BROWN_MUSHROOM, true, (byte)0);
                         break;
                     case RED_MUSHROOM:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.RED_MUSHROOM, true);
+                                            Material.RED_MUSHROOM, true, (byte)0);
                         break;
                     case WHEAT:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.CROPS, true);
+                                            Material.CROPS, true, (byte)7);
                         break;
                     case MELON_SEEDS:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.MELON_STEM, true);
+                                            Material.MELON_STEM, true, (byte)7);
                         break;
                     case PUMPKIN_SEEDS:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.PUMPKIN_STEM, true);
+                                            Material.PUMPKIN_STEM, true, (byte)7);
                        break;
                     case CARROT_ITEM:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(),  
-                                            Material.CARROT, true);
+                                            Material.CARROT, true, (byte)7);
                        break;
                     case POTATO_ITEM:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.POTATO, true);
+                                            Material.POTATO, true, (byte)7);
                         break;
                     case CACTUS:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
-                                            Material.CACTUS, false);
+                                            Material.CACTUS, false,(byte)0);
+                        break;
+                    case NETHER_STALK:
+                        bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
+                                            Material.NETHER_WARTS, true,(byte)3);
                         break;
 
                 }
@@ -296,14 +303,14 @@ public class SpecialBlockListener implements Listener{
     }
     
     private static BlockState handleInteract(Block clickedBlock,BlockFace clickedFace, 
-                                             Material materialMatch, boolean editDataValue) {
+                                             Material materialMatch, boolean editDataValue, byte maxDataValue) {
         BlockState blockState;
         if(clickedBlock.getType().equals(materialMatch) ) {
             blockState = clickedBlock.getState();
             if(editDataValue) {
                 byte dataValue = (byte) (blockState.getRawData()- 1);
                 if(dataValue<0) {
-                    dataValue = 7;
+                    dataValue = maxDataValue;
                 }
                 blockState.setRawData(dataValue);
             }
@@ -312,7 +319,7 @@ public class SpecialBlockListener implements Listener{
             blockState = clickedBlock.getRelative(clickedFace).getState();
             if(blockState.getType().equals(Material.AIR)) {
                 blockState.setType(materialMatch);
-                blockState.setRawData((byte)7);
+                blockState.setRawData(maxDataValue);
             }
         }
         return blockState;

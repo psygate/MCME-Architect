@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import java.util.logging.Logger;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,10 +38,13 @@ public class HangingEntityProtectionListener implements Listener{
     
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void HangingBreak(HangingBreakByEntityEvent event) {
-        if(!(event.getRemover() instanceof Player) 
-                || (!PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.HANGING_ENTITY_PROTECTION))) {
+        if((!PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.HANGING_ENTITY_PROTECTION))) {
             return;
         }  
+        if(!(event.getRemover() instanceof Player)) {
+            event.setCancelled(true);
+            return;
+        }
         Player player = (Player) event.getRemover();
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
@@ -57,7 +61,7 @@ public class HangingEntityProtectionListener implements Listener{
         if((!PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.HANGING_ENTITY_PROTECTION))) {
             return;
         }  
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
         if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
             PluginData.getMessageUtil().sendNoPermissionError(player);
@@ -89,10 +93,13 @@ public class HangingEntityProtectionListener implements Listener{
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void EntityDamage(EntityDamageByEntityEvent event) {
         if(event.getEntity() instanceof ItemFrame) {
-            if(!(event.getDamager() instanceof Player) 
-                    || (!PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.HANGING_ENTITY_PROTECTION))) {
+            if((!PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.HANGING_ENTITY_PROTECTION))) {
                 return;
             }  
+            if(!(event.getDamager() instanceof Player)) {
+                event.setCancelled(true);
+                return;
+            }
             Player player = (Player) event.getDamager();
             if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);

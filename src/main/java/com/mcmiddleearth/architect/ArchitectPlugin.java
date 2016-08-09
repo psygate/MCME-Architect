@@ -51,6 +51,8 @@ public class ArchitectPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         pluginInstance = this;
         ProtocolLibUtil.init(this);
         PluginData.getMessageUtil().setPluginName("Architect");
