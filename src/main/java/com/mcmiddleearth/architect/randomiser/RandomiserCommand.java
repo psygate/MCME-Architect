@@ -86,7 +86,7 @@ public class RandomiserCommand extends AbstractArchitectCommand {
                     }
                 }
             }
-            if (!cs.hasPermission(Permission.RANDOMISER_USER.name())) {
+            if (!PluginData.hasPermission(p,Permission.RANDOMISER_USER)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
                 return true;
             }

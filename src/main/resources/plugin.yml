@@ -90,6 +90,7 @@ permissions:
             architect.paintingEditor: true
             architect.armorStandEditor: true
             architect.place.halfDoor: true
+            architect.place.halfBed: true
             architect.place.torch: true
             architect.place.plant: true
             architect.place.pistonExtension: true
@@ -127,6 +128,9 @@ permissions:
         default: op
     architect.place.halfDoor: 
         descriptions: Allows to place half doors
+        default: op
+    architect.place.halfBed: 
+        descriptions: Allows to place half beds
         default: op
     architect.place.torch: 
         descriptions: Allows to place redstone torches

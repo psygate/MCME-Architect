@@ -202,6 +202,7 @@ public class GetCommand extends AbstractArchitectCommand {
         if(!file.exists()) {
             headName = CustomHeadManagerData.getFullName(headName);
             if(headName.equals("")) {
+                PluginData.getMessageUtil().sendErrorMessage(p, "Head not found in MCME Head Collection");
                 return;
             }
             file = new File(CustomHeadManagerData.getAcceptedHeadDir(), headName);
@@ -316,10 +317,10 @@ public class GetCommand extends AbstractArchitectCommand {
         p.getInventory().addItem(addMeta(new ItemStack(Material.PISTON_STICKY_BASE,64),"Wheel", true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.CACTUS, 64),"Placeable Cactus",true));
         p.getInventory().addItem(new ItemStack(Material.DRAGON_EGG));
-        p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_1, 64, (short) 0));
-        p.getInventory().addItem(new ItemStack(Material.HUGE_MUSHROOM_2, 64, (short) 0));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BED, 64),"Half Bed (head)", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BED, 64),"Half Bed (foot)", true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.FURNACE, 64),"Burning Furnace", true));
-        p.getInventory().addItem(addMeta(new ItemStack(Material.REDSTONE_TORCH_ON, 64),"Burning Torch", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.REDSTONE_TORCH_ON, 64),"Unlit Torch", true));
     }
 
     private static ItemStack addMeta(ItemStack item, String displayName, boolean enchant) {

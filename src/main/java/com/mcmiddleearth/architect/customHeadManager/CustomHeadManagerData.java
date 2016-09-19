@@ -136,7 +136,7 @@ public class CustomHeadManagerData {
     }
     
     public static ItemStack getSumittedHead(String name) {
-        File file = new File(submittedHeadDir, name+"."+fileExtension);
+        File file = new File(submittedHeadDir.toString()+"/"+name+"."+fileExtension);
         if(!file.exists()) {
             return null;
         }
@@ -149,7 +149,7 @@ public class CustomHeadManagerData {
     }
     
     public static ItemStack getHead(String name) {
-        File file = new File(acceptedHeadDir, name+"."+fileExtension);
+        File file = new File(acceptedHeadDir.toString()+"/"+name+"."+fileExtension);
         if(!file.exists()) {
             return null;
         }
@@ -168,7 +168,7 @@ public class CustomHeadManagerData {
     public static boolean acceptHead(String name, String newName) {
         CustomHeadData data = getSubmittedHeadData(name);
         if(data!=null) {
-            File file = new File(acceptedHeadDir, newName+"."+fileExtension);
+            File file = new File(acceptedHeadDir.toString()+"/"+newName+"."+fileExtension);
             if(file.exists()) {
                 return false;
             }
@@ -177,8 +177,8 @@ public class CustomHeadManagerData {
                     gallery.remove();
                 }
                 collection.addHead(newName, data);
-                file = new File(submittedHeadDir, name+"."+fileExtension);
-                file.delete();
+                file = new File(submittedHeadDir.toString()+"/"+name+"."+fileExtension);
+                removeFileAndDirectory(file);
                 if(gallery!=null) {
                     gallery.place();
                 }
@@ -189,16 +189,16 @@ public class CustomHeadManagerData {
     }
     
     public static boolean rejectHead(String name) {
-        File file = new File(submittedHeadDir, name+"."+fileExtension);
+        File file = new File(submittedHeadDir.toString()+"/"+name+"."+fileExtension);
         if(file.exists()) {
-            file.delete();
+            removeFileAndDirectory(file);
             return true;
         }
         return false;
     }
     
     public static boolean deleteHead(String name) {
-        File file = new File(acceptedHeadDir, name+"."+fileExtension);
+        File file = new File(acceptedHeadDir.toString()+"/"+name+"."+fileExtension);
         if(file.exists()) {
             if(gallery!=null) {
                 gallery.remove();
@@ -207,15 +207,15 @@ public class CustomHeadManagerData {
             if(gallery!=null) {
                 gallery.place();
             }
-            file.delete();
+            removeFileAndDirectory(file);
             return true;
         }
         return false;
     }
     
     public static boolean renameHead(String oldName, String newName) {
-        File oldFile = new File(acceptedHeadDir, oldName+"."+fileExtension);
-        File newFile = new File(acceptedHeadDir, newName+"."+fileExtension);
+        File oldFile = new File(acceptedHeadDir.toString()+"/"+oldName+"."+fileExtension);
+        File newFile = new File(acceptedHeadDir.toString()+"/"+newName+"."+fileExtension);
         if(oldFile.exists() && !newFile.exists()) {
             CustomHeadData data = getHeadData(oldName);
             if(data.saveToFile(newFile)) {
@@ -224,7 +224,7 @@ public class CustomHeadManagerData {
                 }
                 collection.removeHead(oldName);
                 collection.addHead(newName, data);
-                oldFile.delete();
+                removeFileAndDirectory(oldFile);
                 if(gallery!=null) {
                     gallery.place();
                 }
@@ -232,6 +232,21 @@ public class CustomHeadManagerData {
             }
         }
         return false;
+    }
+    
+    private static void removeFileAndDirectory(File file) {
+Logger.getGlobal().info("1*** "+file.toString());
+        if(!file.isDirectory()) {
+            file.delete();
+            file = file.getParentFile();
+        }
+Logger.getGlobal().info("2*** "+file.toString());
+        while(file.listFiles().length==0 && !file.equals(acceptedHeadDir)
+                                         && !file.equals(submittedHeadDir)) {
+            file.delete();
+            file = file.getParentFile();
+Logger.getGlobal().info("3*** "+file.toString());
+        }
     }
     
     public static CustomHeadData getSubmittedHeadData(String name) {

@@ -26,6 +26,7 @@ public enum Modules {
     
     REDSTONE_TORCH         ("modules.specialBlocks.redstoneTorch"),
     HALF_DOORS             ("modules.specialBlocks.halfDoors"),
+    HALF_BEDS             ("modules.specialBlocks.halfBeds"),
     DOUBLE_SLABS           ("modules.specialBlocks.doubleSlabs"),
     PLANTS                 ("modules.specialBlocks.plants"),
     PISTON_EXTENSIONS      ("modules.specialBlocks.pistonExtenstions"),

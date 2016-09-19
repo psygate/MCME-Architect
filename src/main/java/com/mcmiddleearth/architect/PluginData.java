@@ -58,7 +58,7 @@ public class PluginData {
             config = new WorldConfig(world.getName());
             worldConfigs.put(world.getName(), config);
         }
-        DevUtil.log(4, "isEnabled? "+modul.getModuleKey());
+        DevUtil.log(40, "isEnabled? "+modul.getModuleKey());
         return config.isModuleEnabled(modul,true);
     }
     

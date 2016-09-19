@@ -102,8 +102,8 @@ public class SpecialBlockListener implements Listener{
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
                     event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(p, 
-                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
+//                    PluginData.getMessageUtil().sendErrorMessage(p, 
+//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                 Block b = event.getBlockPlaced();
@@ -137,8 +137,8 @@ public class SpecialBlockListener implements Listener{
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
                     event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(p, 
-                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
+//                    PluginData.getMessageUtil().sendErrorMessage(p, 
+//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                 Block b = event.getBlockPlaced();
@@ -177,8 +177,8 @@ public class SpecialBlockListener implements Listener{
                         PluginData.getMessageUtil().sendNoPermissionError(p);
                         return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
-                    PluginData.getMessageUtil().sendErrorMessage(p, 
-                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
+//                    PluginData.getMessageUtil().sendErrorMessage(p, 
+//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                     float yaw = p.getLocation().getYaw();
@@ -226,6 +226,7 @@ public class SpecialBlockListener implements Listener{
         Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && (EventUtil.isMainHandEvent(event) 
+                    || p.getItemInHand().getType().equals(Material.CACTUS)
                     || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
                     || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))
                 &&(p.getItemInHand().getType().equals(Material.CARROT_ITEM)
@@ -335,27 +336,31 @@ public class SpecialBlockListener implements Listener{
                 return;
             }
             if (p.getInventory().getItemInHand().getItemMeta().hasDisplayName()
-                    && p.getInventory().getItemInHand().getItemMeta().getDisplayName().startsWith("Burning")) {
+                    && p.getInventory().getItemInHand().getItemMeta().getDisplayName().startsWith("Unlit")) {
                 DevUtil.log(2,"torchPlace fired cancelled: " + event.isCancelled());
                 if(event.isCancelled()) {
                     return;
                 }
+                event.setCancelled(true);
                 if(!(PluginData.hasPermission(p, Permission.PLACE_TORCH))) {
                     PluginData.getMessageUtil().sendNoPermissionError(p);
-                    event.setCancelled(true);
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getClickedBlock().getLocation())) {
-                    event.setCancelled(true);
                     PluginData.getMessageUtil().sendErrorMessage(p, 
                             PluginData.getGafferProtectionMessage(p, event.getClickedBlock().getLocation()));
                     return;
                 }
                 Block b = event.getClickedBlock().getRelative(event.getBlockFace());
-                BlockState bs = b.getState();
+                final BlockState bs = b.getState();
                 if(bs.getType().equals(Material.AIR)) {
-                    bs.setType(Material.REDSTONE_TORCH_ON);
+                    bs.setType(Material.REDSTONE_TORCH_OFF);
                     bs.setRawData(getTorchDat(event.getBlockFace()));
-                    bs.update(true,false);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            bs.update(true, false);
+                        }
+                    }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                 }
             }
         }
@@ -397,8 +402,8 @@ public class SpecialBlockListener implements Listener{
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
                     event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(p, 
-                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
+//                    PluginData.getMessageUtil().sendErrorMessage(p, 
+//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                 Block b = event.getBlockPlaced();
@@ -424,8 +429,59 @@ public class SpecialBlockListener implements Listener{
     }
     
     @EventHandler(priority = EventPriority.HIGH)
+    private void bedPlace(PlayerInteractEvent event) {
+        final Player p = event.getPlayer();
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && event.hasBlock()
+                && EventUtil.isMainHandEvent(event)
+                &&(p.getInventory().getItemInHand().getType().equals(Material.BED))) {            
+            if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.HALF_BEDS)) {
+                return;
+            }
+            ItemStack item = p.getItemInHand();
+            if(item.hasItemMeta() && item.getItemMeta().hasDisplayName()
+                                  && item.getItemMeta().getDisplayName().startsWith("Half")) {
+                DevUtil.log(2,"bedPlace fired cancelled: " + event.isCancelled());
+                if(event.isCancelled()) {
+                    return;
+                }
+                event.setCancelled(true);
+                Block block = event.getClickedBlock().getRelative(event.getBlockFace());
+                final BlockState blockState = block.getState();
+                //final BlockState upperBlockState = block.getRelative(0, 1, 0).getState();
+                if(!(PluginData.hasPermission(p, Permission.PLACE_HALF_BED))) {
+                    PluginData.getMessageUtil().sendNoPermissionError(p);
+                } else if(!PluginData.hasGafferPermission(p,event.getClickedBlock().getLocation())) {
+                    PluginData.getMessageUtil().sendErrorMessage(p, 
+                            PluginData.getGafferProtectionMessage(p, event.getClickedBlock().getLocation()));
+                } else {
+                    float yaw = p.getLocation().getYaw();
+                    byte data = (byte)(getDoorDat(yaw)-1);
+                    if(data<0) {
+                        data=3;
+                    }
+                    if(item.getItemMeta().getDisplayName().endsWith("(head)")){
+                        data = (byte) (data+6);
+                    }
+                    if(data<8) {
+                        data = (byte) (data+4);
+                    }
+                    blockState.setType(Material.BED_BLOCK);
+                    blockState.setRawData(data);
+                }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        blockState.update(true, false);
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
     private void doorPlace(PlayerInteractEvent event) {
-        Player p = event.getPlayer();
+        final Player p = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && event.hasBlock()
                 && EventUtil.isMainHandEvent(event)
@@ -441,25 +497,26 @@ public class SpecialBlockListener implements Listener{
                     return;
                 }
                 event.setCancelled(true);
+                Block block = event.getClickedBlock().getRelative(event.getBlockFace());
+                final BlockState blockState = block.getState();
+                final BlockState upperBlockState = block.getRelative(0, 1, 0).getState();
                 if(!(PluginData.hasPermission(p, Permission.PLACE_HALF_DOOR))) {
                     PluginData.getMessageUtil().sendNoPermissionError(p);
-                    return;
                 } else if(!PluginData.hasGafferPermission(p,event.getClickedBlock().getLocation())) {
                     PluginData.getMessageUtil().sendErrorMessage(p, 
                             PluginData.getGafferProtectionMessage(p, event.getClickedBlock().getLocation()));
-                    return;
-                }
-                float yaw = p.getLocation().getYaw();
-                byte data = getDoorDat(yaw);
+                } else {
+                    float yaw = p.getLocation().getYaw();
+                    byte data = getDoorDat(yaw);
 
-                Block block = event.getClickedBlock().getRelative(event.getBlockFace());
-                final BlockState blockState = block.getState();
-                blockState.setType(doorItemToBlock(item.getType()));
-                blockState.setRawData(data);
+                    blockState.setType(doorItemToBlock(item.getType()));
+                    blockState.setRawData(data);
+                }
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         blockState.update(true, false);
+                        upperBlockState.update(true, false);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }
@@ -550,8 +607,8 @@ Logger.getGlobal().info("4");
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
                     event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(p, 
-                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
+//                    PluginData.getMessageUtil().sendErrorMessage(p, 
+//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                 Furnace furnace = (Furnace) event.getBlock().getState();
