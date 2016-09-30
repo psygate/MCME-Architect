@@ -742,4 +742,24 @@ Logger.getGlobal().info("4");
         return null;
     }
 
+    @EventHandler
+    public void cycleDurability(PlayerInteractEvent event) {
+Logger.getGlobal().info("1");
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.ITEM_TEXTURES)) {
+Logger.getGlobal().info("2");
+            if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+Logger.getGlobal().info("3");
+                ItemStack item = event.getItem();
+                if(item.getDurability()>0) {
+Logger.getGlobal().info("4");
+                    item.setDurability((short) (item.getDurability()-1));
+                }
+Logger.getGlobal().info(""+item.getDurability());
+            } else  if(event.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                ItemStack item = event.getItem();
+                item.setDurability((short) (item.getDurability()+1));
+Logger.getGlobal().info(""+item.getDurability());
+            }
+        }
+    }
 }

@@ -16,39 +16,23 @@
  */
 package com.mcmiddleearth.architect.customHeadManager;
 
-import com.google.common.io.BaseEncoding;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.PluginData;
 import static com.mcmiddleearth.pluginutil.ConfigurationUtil.deserializeLocation;
 import static com.mcmiddleearth.pluginutil.ConfigurationUtil.serializeLocation;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.HeadUtil;
-import com.mojang.util.UUIDTypeAdapter;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -88,6 +72,7 @@ public class CustomHeadManagerData {
     public static void load() {
         if(gallery!=null) {
             gallery.remove();
+            gallery = null;
         }
         collection = new CustomHeadCollection();
         List<File> headFiles = getFiles(acceptedHeadDir);
@@ -127,7 +112,7 @@ public class CustomHeadManagerData {
     
     public static void saveGallery() {
         ConfigurationSection config = ArchitectPlugin.getPluginInstance().getConfig();
-        config.set(CONFIG_KEY, serializeLocation(gallery.getLocation()));
+        config.createSection(CONFIG_KEY, serializeLocation(gallery.getLocation()));
         ArchitectPlugin.getPluginInstance().saveConfig();
     }
     
@@ -197,6 +182,36 @@ public class CustomHeadManagerData {
         return false;
     }
     
+    public static boolean addHead(String name, CustomHeadData headData) {
+        if(addHead(name, headData, acceptedHeadDir)) {
+            if(gallery!=null) {
+                gallery.remove();
+            }
+            collection.addHead(name, headData);
+            if(gallery!=null) {
+                gallery.place();
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean addReviewHead(String name, CustomHeadData headData) {
+        return addHead(name, headData, submittedHeadDir);
+    }
+    
+    private static boolean addHead(String name, CustomHeadData headData, File dir) {
+        File file = new File(dir,
+                             name+"."+CustomHeadManagerData.getFileExtension());
+        int index = 0;
+        while(file.exists()) {
+            index++;
+            file = new File(dir,
+                            name+index+"."+CustomHeadManagerData.getFileExtension());
+        }
+        return headData.saveToFile(file);
+    }
+    
     public static boolean deleteHead(String name) {
         File file = new File(acceptedHeadDir.toString()+"/"+name+"."+fileExtension);
         if(file.exists()) {
@@ -235,17 +250,14 @@ public class CustomHeadManagerData {
     }
     
     private static void removeFileAndDirectory(File file) {
-Logger.getGlobal().info("1*** "+file.toString());
         if(!file.isDirectory()) {
             file.delete();
             file = file.getParentFile();
         }
-Logger.getGlobal().info("2*** "+file.toString());
         while(file.listFiles().length==0 && !file.equals(acceptedHeadDir)
                                          && !file.equals(submittedHeadDir)) {
             file.delete();
             file = file.getParentFile();
-Logger.getGlobal().info("3*** "+file.toString());
         }
     }
     
@@ -266,142 +278,28 @@ Logger.getGlobal().info("3*** "+file.toString());
     }
     
     public static void submitHead(Player submitter, UUID owner, String name) {
-        new HeadDataBuilder(submitter, owner, name);
+        new HeadDataBuilderPlayer(submitter, owner, name);
     }
     
     public static void submitHead(Player submitter, String owner, String name) {
-        new HeadDataBuilder(submitter, owner, name);
+        new HeadDataBuilderPlayer(submitter, owner, name);
+    }
+
+    public static void upload(Player sender, String filename, boolean uploadToReviewFolder) {
+        new HeadDataBuilderText(sender, filename, uploadToReviewFolder).start();
+        /*
+        try {
+            URLConnection connection= new URL("https://raw.githubusercontent.com/EriolEandur/MCME-Architect/master/src/main/resources/plugin.yml").openConnection();
+            String type = connection.getContentType();
+            if(type == null || type.startsWith("text/plain")) {
+                return null;
+            } 
+            Object content = connection.getContent();
+        }
+        catch(IOException e) {
+            return null;
+        }
+*/
     }
     
-    private static class HeadDataBuilder {
-        
-        private boolean received;
-        
-        private HttpURLConnection connection;
-
-        private final String mojangSkinUrl = "https://sessionserver.mojang.com/session/minecraft/profile/%s";
-        
-        private final String mojangUuidUrl = "https://api.mojang.com/users/profiles/minecraft/%s";
-        
-        public HeadDataBuilder(final Player submitter, final UUID ownerId, final String name) {
-            fetchCustomHeadData(submitter, ownerId, name);
-        }
-        
-        public HeadDataBuilder(final Player submitter, final String ownerName, final String name) {
-            fetchCustomHeadData(submitter, ownerName, name);
-        }
-        
-        private void fetchCustomHeadData(final Player submitter, final String ownerName, final String name) {
-            received = false; 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if(received) {
-                        try {
-                            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                                String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-                                JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
-                                String uuidString = jsonObject.get("id").getAsString();
-                                UUID ownerId = UUIDTypeAdapter.fromString(uuidString);
-                                fetchCustomHeadData(submitter, ownerId, name);
-                            } else {
-                                PluginData.getMessageUtil().sendErrorMessage(submitter, "Player name not found.");
-                            }
-                            cancel();
-                            return;
-                        } catch (IOException | JsonSyntaxException ex) {
-                            Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
-                        } finally {
-                            cancel();
-                        }
-                        PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Your head has not been submitted.");
-                    }
-                }
-            }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        URL url = new URL(String.format(mojangUuidUrl, ownerName));
-                        connection = (HttpURLConnection) url.openConnection();
-                        connection.setReadTimeout(5000);
-                    } catch (IOException ex) {
-                        Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                        received = true;
-                    }
-                }
-            }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
-        }
-        
-        private void fetchCustomHeadData(final Player submitter, final UUID ownerId, final String name) {
-            received = false; 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if(received) {
-                        try {
-                            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                                String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-                                JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
-                                JsonArray jProperties = jsonObject.getAsJsonArray("properties");
-                                String textures="";
-                                for(JsonElement jProperty : jProperties) {
-                                    if(jProperty.getAsJsonObject().has("name")
-                                            && jProperty.getAsJsonObject().get("name").getAsString().equals("textures")) {
-                                        textures = jProperty.getAsJsonObject().get("value").getAsString();
-                                        break;
-                                    }
-                                }
-                                jsonObject = new JsonParser().parse(new String(BaseEncoding.base64().decode(textures)))
-                                                             .getAsJsonObject();
-                                jsonObject = jsonObject.getAsJsonObject("textures");
-                                jsonObject = jsonObject.getAsJsonObject("SKIN");
-                                String url = jsonObject.get("url").getAsString();
-                                url = BaseEncoding.base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-                                UUID headId = new UUID(ownerId.getMostSignificantBits()+System.currentTimeMillis(),
-                                                       ownerId.getLeastSignificantBits()+System.currentTimeMillis());
-                                CustomHeadData headData = new CustomHeadData(headId, ownerId, url);
-                                //ToDo check for heads with same texture
-                                File file = new File(submittedHeadDir,name+"."+fileExtension);
-                                int index = 0;
-                                while(file.exists()) {
-                                    index++;
-                                    file = new File(submittedHeadDir,name+index+"."+fileExtension);
-                                }
-                                if(headData.saveToFile(file)) {
-                                    PluginData.getMessageUtil().sendInfoMessage(submitter,"Head has been submitted.");
-                                    cancel();
-                                    return;
-                                }
-                            } else {
-                                PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Invalid UUID or too many requests. Wait one minute at last before you try again.");
-                                cancel();
-                                return;
-                                }
-                        } catch (IOException | JsonSyntaxException ex) {
-                            Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
-                        } finally {
-                            cancel();
-                        }
-                        PluginData.getMessageUtil().sendErrorMessage(submitter, "Error. Your head has not been submitted.");
-                    }
-                }
-            }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        URL url = new URL(String.format(mojangSkinUrl, UUIDTypeAdapter.fromUUID(ownerId)));
-                        connection = (HttpURLConnection) url.openConnection();
-                        connection.setReadTimeout(5000);
-                    } catch (IOException ex) {
-                        Logger.getLogger(CustomHeadManagerData.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                        received = true;
-                    }
-                }
-            }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
-        }
-    }
 }

@@ -46,6 +46,7 @@ public enum Permission {
     GET_PLANTS            ("architect.get.plants"),
     GET_MISC              ("architect.get.misc"),
     GET_COMMAND           ("architect.getCommand"),
+    ITEM_TEX_COMMAND      ("architect.itemTexture"),
     NO_PHYSICS_LIST       ("architect.noPhysicsList"),
     WE_SCHEMATICS_VIEWER  ("architect.weSchemViewer"),
     VOXEL_VIEWER          ("architect.voxel.viewer"),

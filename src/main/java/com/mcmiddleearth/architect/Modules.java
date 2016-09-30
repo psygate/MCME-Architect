@@ -46,6 +46,7 @@ public enum Modules {
     RESOURCE_PACK_SWITCHER ("modules.command.resourcePackSwitcher"),
     FULL_BRIGHTNESS        ("modules.command.fullBrightness"),
     SPECIAL_BLOCKS         ("modules.command.getSpecialBlocks"),
+    ITEM_TEXTURES          ("modules.commmand.itemTexture"),
     WE_SCHEMATICS_VIEWER   ("modules.command.weSchemViewer"),
     VOXEL_VIEWER           ("modules.command.voxelViewer"),
     STENCIL_LIST_EDITOR    ("modules.command.stencilListEditor"),

@@ -37,6 +37,9 @@ commands:
    rp:
       description: Switch resource packs by command
       usage: /rp Gondor|Eriador|Lothlorien|Rohan|Moria|Mordor
+   itex:
+      description: Change item texture by durability
+      usage: /itex <durability>
    nophy:
       description: Manage no phyics list
       usage: /nophy list | add | remove
@@ -109,7 +112,8 @@ permissions:
             architect.get.logs: true
             architect.get.slabs: true
             architect.getCommand: true
-            architect.customHeadManager.user: true    
+            architect.customHeadManager.user: true  
+            architect.itemTexture: true
             architect.help: true
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
@@ -153,6 +157,9 @@ permissions:
     architect.interactDragonEgg: 
         descriptions: Allows to interact (teleport) dragon egg; doesn't make sense to give to anyone
         default: false
+    architect.itemTexture:
+        description: Allows to change durability of item in hand to use alternative texture
+        default: op
     architect.get.armor: 
         descriptions: Allows to get coloured leather armor
         default: op

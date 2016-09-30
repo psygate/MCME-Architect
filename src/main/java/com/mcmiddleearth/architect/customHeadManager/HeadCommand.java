@@ -92,7 +92,8 @@ public class HeadCommand extends AbstractArchitectCommand {
         }
         if (args.length < 2 && !args[0].equalsIgnoreCase("setCollection")
                             && !args[0].equalsIgnoreCase("reviewList")
-                            && !args[0].equalsIgnoreCase("reload")) {
+                            && !args[0].equalsIgnoreCase("reload")
+                            && !args[0].equalsIgnoreCase("upload")) {
             PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
             return true;
         }
@@ -119,6 +120,23 @@ public class HeadCommand extends AbstractArchitectCommand {
         //manager commands
         if(!PluginData.hasPermission(player,Permission.CUSTOM_HEAD_MANAGER)) {
             PluginData.getMessageUtil().sendNoPermissionError(player);
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("upload")) {
+            boolean uploadToReviewFolder = false;
+            String filename = "upload.txt";
+            if(args.length>1) {
+                int index = 1;
+                if(!args[1].equalsIgnoreCase("-r")){
+                    filename = args[1];
+                    index++;
+                } 
+                if(args.length>index && args[index].equalsIgnoreCase("-r")) {
+                    uploadToReviewFolder = true;
+                } 
+            }
+            CustomHeadManagerData.upload(player, filename, uploadToReviewFolder);
+            sendHeadsUploaded(player, uploadToReviewFolder);
             return true;
         }
         if(args[0].equalsIgnoreCase("reload")) {
@@ -292,6 +310,14 @@ public class HeadCommand extends AbstractArchitectCommand {
                                        {"/chead list","",": Shows a clickable list of all heads."},
                                        {"/chead submit ","[playername] <headName>",": Submits a head. ","If no [playername] is specified your own head will be submitted."}};
         super.sendHelpMessage(player, page);
+    }
+
+    private void sendHeadsUploaded(Player player, boolean uploadToReviewFolder) {
+        if(uploadToReviewFolder) {
+            PluginData.getMessageUtil().sendInfoMessage(player,"Heads uploaded to review folder.");
+        } else {
+            PluginData.getMessageUtil().sendInfoMessage(player,"Heads uploaded to Custom Head Collection.");
+        }
     }
     
     

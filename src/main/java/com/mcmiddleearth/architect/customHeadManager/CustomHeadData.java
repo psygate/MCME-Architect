@@ -46,6 +46,13 @@ public class CustomHeadData {
         this.texture = texture;
     }
     
+    public CustomHeadData(UUID ownerId, String texture) {
+        this.submittingPlayer = ownerId;
+        this.headId = new UUID(ownerId.getMostSignificantBits()+System.currentTimeMillis(),
+                               ownerId.getLeastSignificantBits()+System.currentTimeMillis());
+        this.texture = texture;
+    }
+        
     public static CustomHeadData fromFile(File file) {
         YamlConfiguration config = new YamlConfiguration();
         try {

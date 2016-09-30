@@ -14,10 +14,13 @@ import com.mcmiddleearth.util.DevUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -47,44 +50,78 @@ public class RpCommand extends AbstractArchitectCommand {
             sendHelpMessage((Player)cs,page);
             return true;
         }
-        String url = "";
+        String urlStr = "";
         String section = "ServerResourcePacks.";
         if(args[0].toLowerCase().startsWith("e")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Eriador");//"http://www.mcmiddleearth.com/content/Eriador.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Eriador");//"http://www.mcmiddleearth.com/content/Eriador.zip";
         } 
         else if(args[0].toLowerCase().startsWith("g")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Gondor");//"http://www.mcmiddleearth.com/content/Gondor.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Gondor");//"http://www.mcmiddleearth.com/content/Gondor.zip";
         } 
         else if(args[0].toLowerCase().startsWith("l")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Lothlorien");//"http://www.mcmiddleearth.com/content/Lothlorien.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Lothlorien");//"http://www.mcmiddleearth.com/content/Lothlorien.zip";
         }
         else if(args[0].toLowerCase().startsWith("r")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Rohan");//"http://www.mcmiddleearth.com/content/Rohan.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Rohan");//"http://www.mcmiddleearth.com/content/Rohan.zip";
         }
         else if(args[0].toLowerCase().startsWith("d")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Dwarf");//"http://www.mcmiddleearth.com/content/Moria.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Dwarf");//"http://www.mcmiddleearth.com/content/Moria.zip";
         }
         else if(args[0].toLowerCase().startsWith("m")) {
-            url = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Mordor");//"http://www.mcmiddleearth.com/content/Mordor.zip";
+            urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Mordor");//"http://www.mcmiddleearth.com/content/Mordor.zip";
+        } else {
+            sendRPNotFoundMessage(cs);
+            return true;
         }
-        try {
-            URLConnection connection= new URL(url).openConnection();
-            String type = connection.getContentType();
-            if(type.startsWith("text/html")) {
-                sendRPNotFoundMessage(cs);
-                return true;
+        new RPSwitcher(urlStr, (Player) cs).start();
+        /*final String url = urlStr;
+        final Player player = (Player) cs;
+        final URLConnection connection = null;
+        final boolean recieved = false;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(recieved) {
+                    try {
+                        String type = connection.getContentType();
+                        if(type == null || type.startsWith("text/html")) {
+                            sendNoConnectionToRPServer(player);
+                        } else {
+                            sendRPSwitchedMessage(player);
+                        }
+                        cancel();
+                    } finally {
+                        cancel();
+                    }
+                }
             }
-        }
-        catch(IOException e) {
-            DevUtil.log(1, "IOExeption with URLconnection");
-            DevUtil.log(e.toString());
-        }
-        ((Player)cs).setResourcePack(url);
+        }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 10, 10);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    connection= new URL(url).openConnection();
+                    connection.setConnectTimeout(2000);
+                    String type = connection.getContentType();
+                    if(type == null || type.startsWith("text/html")) {
+                        sendNoConnectionToRPServer(player);
+                    } else {
+                        sendRPSwitchedMessage(player);
+                    }
+                }
+                catch(IOException e) {
+                    sendNoConnectionToRPServer(player);
+                    DevUtil.log(1, "IOExeption with URLconnection");
+                    DevUtil.log(e.toString());
+                }
+                player.setResourcePack(url);
+            }
+        }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());*/
         return true;
     }
 
     private void sendRPNotFoundMessage(CommandSender cs) {
-        PluginData.getMessageUtil().sendErrorMessage(cs, "Resource pack not found. Current RPs are: Gondor, Rohan, Eriador, Lothlorien. Possibly Moria and Mordor are added sometime.");
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Resource pack not found. For more info use /rp help.");
     }
 
     private void sendNotActivatedMessage(CommandSender cs) {
@@ -119,26 +156,10 @@ public class RpCommand extends AbstractArchitectCommand {
                                        {"/rp r","",": Rohan"},
                                        {"/rp g","",": Gondor"},
                                        {"/rp l","",": Lothlorien"},
-                                       {"/rp d","",": Dwarven (Moria)"}};
+                                       {"/rp d","",": Dwarven (Moria)"},
+                                       {"/rp m","",": Mordor"}};
         super.sendHelpMessage(player, page);
-/*    private void sendHelpMessage(Player player) {
-        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
-                .addSimple("Help for command: "+PluginData.getMessageUtil().STRESSED+"/rp <resourcepack>")
-                .send(player);
-        new FancyMessage(MessageType.INFO, PluginData.getMessageUtil())
-                .addSimple("Switches to a MCME region resource pack. Make sure to have server textures enabled.")
-                .send(player);
-        String[][] rps = new String[][]{{"/rp e",": Eriador"},
-                                       {"/rp r",": Rohan"},
-                                       {"/rp g",": Gondor"},
-                                       {"/rp l",": Lothlorien"},
-                                       {"/rp d",": Dwarven (Moria)"}};
-        for(String[] rp: rps) {
-            new FancyMessage(MessageType.WHITE, PluginData.getMessageUtil())
-                    .addFancy(ChatColor.DARK_AQUA+rp[0]
-                                 +ChatColor.WHITE+rp[1], rp[0],"Click to switch.")
-                    .send(player);
-        }*/
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(player, "Enable server textures enabled to use this command: Disconnect > Edit MCME Server > Server Resource Packs: enabled");
     }
     
 }

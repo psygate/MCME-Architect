@@ -26,6 +26,7 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
 import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.GetCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.ItemTexCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockListener;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
@@ -87,6 +88,7 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("architect", new ArchitectCommand());
         setCommandExecutor("rp", new RpCommand());
         setCommandExecutor("chead", new HeadCommand());
+        setCommandExecutor("itex", new ItemTexCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");
