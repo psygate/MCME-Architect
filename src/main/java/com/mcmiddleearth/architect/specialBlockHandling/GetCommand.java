@@ -65,28 +65,35 @@ public class GetCommand extends AbstractArchitectCommand {
             sendHelpMessage((Player)cs,page);
             return true;
         }
-        if(args[0].toLowerCase().startsWith("log")) {
+        if(args[0].toLowerCase().startsWith("l")) {
             if(!PluginData.hasPermission(p, Permission.GET_LOGS)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getLogs(p);
                 PluginData.getMessageUtil().sendInfoMessage(p, "Given six sided logs!");
             }
-        } else if(args[0].toLowerCase().startsWith("door")) {
+        } else if(args[0].toLowerCase().startsWith("d")) {
             if(!PluginData.hasPermission(p, Permission.GET_DOORS)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getDoors(p);
                 PluginData.getMessageUtil().sendInfoMessage(p, "Given half doors!");
             }
-        } else if(args[0].toLowerCase().startsWith("plant")) {
+        } else if(args[0].toLowerCase().startsWith("p")) {
             if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getPlants(p);
                 PluginData.getMessageUtil().sendInfoMessage(p, "Given plants!");
             }
-        } else if(args[0].toLowerCase().startsWith("mushroom")) {
+        } else if(args[0].toLowerCase().startsWith("f")) {
+            if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
+            } else {
+                getFlowers(p);
+                PluginData.getMessageUtil().sendInfoMessage(p, "Given flowers/gems!");
+            }
+        } else if(args[0].toLowerCase().startsWith("mu")) {
             if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
@@ -99,7 +106,7 @@ public class GetCommand extends AbstractArchitectCommand {
                 }
                 PluginData.getMessageUtil().sendInfoMessage(p, "Given mushroom blocks!");
             }
-        } else if(args[0].toLowerCase().startsWith("head")) {
+        } else if(args[0].toLowerCase().startsWith("h")) {
             if(!PluginData.hasPermission(p, Permission.GET_HEAD)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
@@ -109,14 +116,14 @@ public class GetCommand extends AbstractArchitectCommand {
                     PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                 }
             }
-        } else if(args[0].toLowerCase().startsWith("slab")) {
+        } else if(args[0].toLowerCase().startsWith("s")) {
             if(!PluginData.hasPermission(p, Permission.GET_SLABS)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
                 getSlabs(p, (args.length>1?args[1]:""));
                 PluginData.getMessageUtil().sendInfoMessage(p, "Given double steps!");
             }
-        } else if(args[0].toLowerCase().startsWith("armor")) {
+        } else if(args[0].toLowerCase().startsWith("a")) {
             if(!PluginData.hasPermission(p, Permission.GET_ARMOR)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
@@ -126,7 +133,7 @@ public class GetCommand extends AbstractArchitectCommand {
                     PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                 }
             }
-        } else if(args[0].toLowerCase().startsWith("misc")) {
+        } else if(args[0].toLowerCase().startsWith("m")) {
             if(!PluginData.hasPermission(p, Permission.GET_MISC)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
             } else {
@@ -168,6 +175,19 @@ public class GetCommand extends AbstractArchitectCommand {
         p.getInventory().addItem(addMeta(new ItemStack(Material.BROWN_MUSHROOM, 64),"Placeable Brown Mushroom",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.RED_MUSHROOM, 64),"Placeable RedMushroom",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.NETHER_STALK, 64),"Placeable Onion",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.WATER_LILY, 64),"Placeable Water Lily",true));
+    }
+    
+    private void getFlowers(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.DEAD_BUSH, 64),"Placeable Bush",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.YELLOW_FLOWER, 64),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 0),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 1),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 2),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 3),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 4),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 5),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 6),"Placeable Flower",true));
     }
     
     private void getHugeMushrooms(Player p) {

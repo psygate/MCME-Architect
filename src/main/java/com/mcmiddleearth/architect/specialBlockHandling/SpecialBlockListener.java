@@ -227,8 +227,12 @@ public class SpecialBlockListener implements Listener{
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && (EventUtil.isMainHandEvent(event) 
                     || p.getItemInHand().getType().equals(Material.CACTUS)
+                    || p.getItemInHand().getType().equals(Material.RED_ROSE)
+                    || p.getItemInHand().getType().equals(Material.YELLOW_FLOWER)
+                    || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                     || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
-                    || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))
+                    || p.getItemInHand().getType().equals(Material.RED_MUSHROOM)
+                    || p.getItemInHand().getType().equals(Material.WATER_LILY))
                 &&(p.getItemInHand().getType().equals(Material.CARROT_ITEM)
                   || p.getItemInHand().getType().equals(Material.POTATO_ITEM)
                   || p.getItemInHand().getType().equals(Material.WHEAT)
@@ -236,7 +240,11 @@ public class SpecialBlockListener implements Listener{
                   || p.getItemInHand().getType().equals(Material.PUMPKIN_SEEDS)
                   || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
                   || p.getItemInHand().getType().equals(Material.CACTUS)
+                  || p.getItemInHand().getType().equals(Material.RED_ROSE)
+                  || p.getItemInHand().getType().equals(Material.YELLOW_FLOWER)
+                  || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                   || p.getItemInHand().getType().equals(Material.NETHER_STALK)
+                  || p.getItemInHand().getType().equals(Material.WATER_LILY)
                   || p.getItemInHand().getType().equals(Material.RED_MUSHROOM))) {
             if (!PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.PLANTS)) {
                 return;
@@ -295,6 +303,22 @@ public class SpecialBlockListener implements Listener{
                     case NETHER_STALK:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.NETHER_WARTS, true,(byte)3);
+                        break;
+                    case WATER_LILY:
+                        bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
+                                            Material.WATER_LILY, false,(byte)0);
+                        break;
+                    case RED_ROSE:
+                        bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
+                                            Material.RED_ROSE, false,p.getItemInHand().getData().getData());
+                        break;
+                    case YELLOW_FLOWER:
+                        bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
+                                            Material.YELLOW_FLOWER, false,(byte) 0);
+                        break;
+                    case DEAD_BUSH:
+                        bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
+                                            Material.DEAD_BUSH, false,(byte) 0);
                         break;
 
                 }
@@ -744,21 +768,15 @@ Logger.getGlobal().info("4");
 
     @EventHandler
     public void cycleDurability(PlayerInteractEvent event) {
-Logger.getGlobal().info("1");
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.ITEM_TEXTURES)) {
-Logger.getGlobal().info("2");
             if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-Logger.getGlobal().info("3");
                 ItemStack item = event.getItem();
                 if(item.getDurability()>0) {
-Logger.getGlobal().info("4");
                     item.setDurability((short) (item.getDurability()-1));
                 }
-Logger.getGlobal().info(""+item.getDurability());
             } else  if(event.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 ItemStack item = event.getItem();
                 item.setDurability((short) (item.getDurability()+1));
-Logger.getGlobal().info(""+item.getDurability());
             }
         }
     }
