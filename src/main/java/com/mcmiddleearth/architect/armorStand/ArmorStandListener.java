@@ -110,7 +110,7 @@ public class ArmorStandListener implements Listener {
         } 
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void PlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         if(event.getRightClicked() instanceof ArmorStand) {
             if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.ARMOR_STAND_PROTECTION)) {
