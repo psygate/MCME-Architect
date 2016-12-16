@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -113,6 +114,17 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                 }
                 if(args[0].equalsIgnoreCase("place")) {
                     playerConfig.placeArmorStand(p.getLocation(),true);
+                    return true;
+                }
+                if(args[0].equalsIgnoreCase("place2") && PluginData.hasPermission(p,Permission.RANDOMISER_MATERIALS)) {
+                    for(int i = 0 ; i < NumericUtil.getInt(args[1]);i+=NumericUtil.getInt(args[2])) {
+                        for( int j = 0; j< NumericUtil.getInt(args[1]);j+=NumericUtil.getInt(args[2])) {
+                            playerConfig.placeArmorStand(new Location(p.getWorld(),
+                                                                      p.getLocation().getBlockX()+i,
+                                                                      p.getLocation().getBlockY(),
+                                                                      p.getLocation().getBlockZ()+j),true);
+                    }
+                    }
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("delete")) {

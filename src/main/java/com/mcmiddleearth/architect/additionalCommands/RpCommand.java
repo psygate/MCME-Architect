@@ -10,17 +10,10 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import com.mcmiddleearth.util.DevUtil;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -50,8 +43,12 @@ public class RpCommand extends AbstractArchitectCommand {
             sendHelpMessage((Player)cs,page);
             return true;
         }
-        String urlStr = "";
-        String section = "ServerResourcePacks.";
+        String urlStr = PluginData.getRpUrl(PluginData.matchRpName(args[0]));//"";
+        if(urlStr.equals("")) {
+            sendRPNotFoundMessage(cs);
+            return true;
+        }
+        /*String section = "ServerResourcePacks.";
         if(args[0].toLowerCase().startsWith("e")) {
             urlStr = ArchitectPlugin.getPluginInstance().getConfig().getString(section+"Eriador");//"http://www.mcmiddleearth.com/content/Eriador.zip";
         } 
@@ -72,7 +69,7 @@ public class RpCommand extends AbstractArchitectCommand {
         } else {
             sendRPNotFoundMessage(cs);
             return true;
-        }
+        }*/
         new RPSwitcher(urlStr, (Player) cs).start();
         /*final String url = urlStr;
         final Player player = (Player) cs;

@@ -24,6 +24,7 @@ import com.mcmiddleearth.util.HeadUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -144,6 +145,12 @@ public class CustomHeadManagerData {
         } else {
             return HeadUtil.getCustomHead(name, data.getHeadId(), data.getTexture());
         }
+    }
+    
+    public static Map<String,ItemStack> getHeads() {
+        Map<String, ItemStack> headMap = new HashMap<>();
+        collection.getHeads(headMap);
+        return headMap;
     }
     
     public static String getHeadName(UUID headId) {

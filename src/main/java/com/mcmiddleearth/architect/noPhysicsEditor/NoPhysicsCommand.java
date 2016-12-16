@@ -21,6 +21,17 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.message.FancyMessage;
+import com.mcmiddleearth.pluginutil.message.MessageType;
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -118,6 +129,63 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                         sendMaterialNotNpMessage(p);
                     }
                 }
+            } else if(args[0].equalsIgnoreCase("exception")) {
+                if(args[1].equalsIgnoreCase("set")) {
+                    Region region= null;
+                    try {
+                        region = WorldEdit.getInstance().getSession(p.getName()).getRegion();
+                    } catch (NullPointerException | IncompleteRegionException ex) {}
+                    if(region instanceof CuboidRegion) {
+                        if(args.length>2) {
+                            if(NoPhysicsData.exceptionAreaExists(args[2])) {
+                                sendAreaAlreadyExistsMessage(p);
+                                return true;
+                            }
+                            NoPhysicsData.setExceptionArea(args[2], (CuboidRegion) region);
+                            try {
+                                NoPhysicsData.save();
+                            } catch (IOException ex) {
+                                Logger.getLogger(NoPhysicsCommand.class.getName()).log(Level.SEVERE, null, ex);
+                                PluginData.getMessageUtil().sendIOError(p);
+                                return true;
+                            }
+                            sendAreaSetMessage(p);
+                        } else {
+                            PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
+                        }
+                    } else {
+                        sendInvalidSelection(p);
+                    }
+                } else if(args[1].equalsIgnoreCase("delete")) {
+                    if(args.length>2) {
+                        if(!NoPhysicsData.exceptionAreaExists(args[2])) {
+                            sendAreaNotFoundMessage(p);
+                            return true;
+                        }
+                        NoPhysicsData.deleteExceptionArea(args[2]);
+                        try {
+                            NoPhysicsData.save();
+                        } catch (IOException ex) {
+                            Logger.getLogger(NoPhysicsCommand.class.getName()).log(Level.SEVERE, null, ex);
+                            PluginData.getMessageUtil().sendIOError(p);
+                            return true;
+                        }
+                        sendAreaDeletedMessage(p);
+                    } else {
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
+                    }
+                } else if(args[1].equalsIgnoreCase("list")) {
+                    int page = 1;
+                    if(args.length>2 && NumericUtil.isInt(args[2])){
+                        page = NumericUtil.getInt(args[2]);
+                    }
+                    PluginData.getMessageUtil().sendFancyListMessage(p, 
+                                new FancyMessage(PluginData.getMessageUtil()).addSimple("Redstone Circuit Areas: "),
+                                getExceptionAreaList(),
+                                "/nophy exception list", page);
+                } else {
+                    PluginData.getMessageUtil().sendInvalidSubcommandError(p);
+                }
             } else {
                 PluginData.getMessageUtil().sendInvalidSubcommandError(p);
                 sendHelpMessage(p,1);
@@ -126,6 +194,34 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
         return true;
     }
     
+    private List<FancyMessage> getExceptionAreaList() {
+        List<FancyMessage> list = new ArrayList<>();
+        for(String name: NoPhysicsData.getExceptionAreas().keySet()) {
+            ExceptionArea area = NoPhysicsData.getExceptionAreas().get(name);
+            list.add(new FancyMessage(MessageType.INFO_INDENTED, PluginData.getMessageUtil())
+                          .addFancy(ChatColor.DARK_AQUA+name+": "+ChatColor.WHITE+area.getX()+", "+area.getY()+", "+area.getZ(),
+                                    "/nophy exception delete "+name,
+                                    ChatColor.GOLD+"SizeX: "+(area.getDX()+1)+"; "+"SizeY: "+(area.getDY()+1)+"; "+"SizeZ: "+(area.getDZ()+1)));
+        }
+        return list;
+    }
+    
+    private void sendAreaNotFoundMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Exception area not found.");
+    }
+
+    private void sendAreaAlreadyExistsMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Exception already exists, delete or choose another name.");
+    }
+
+    private void sendAreaDeletedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Exception area deleted.");
+    }
+
+    private void sendAreaSetMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Exception area saved.");
+    }
+
     private void sendNotEnabledErrorMessage(CommandSender cs) {
         PluginData.getMessageUtil().sendErrorMessage(cs, "NoPhysicsList is not enabled for this world.");
     }
@@ -152,6 +248,10 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
 
     private void sendMaterialNotNpMessage(Player p) {
         PluginData.getMessageUtil().sendErrorMessage(p, "Material is not on noPhysics list.");
+    }
+    
+    private void sendInvalidSelection(Player p) {
+        PluginData.getMessageUtil().sendErrorMessage(p, "Make a valid WE selection first.");
     }
     
     @Override
@@ -183,5 +283,6 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                                        {"/noPhy remove "," <world>|-all <material>",": Removes a block"," from no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."}};
         super.sendHelpMessage(player, page);
     }
+
 
 }

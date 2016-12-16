@@ -56,6 +56,42 @@ public class ItemTexCommand extends AbstractArchitectCommand {
             sendHelpMessage((Player)cs,page);
             return true;
         }
+/*        if(args[0].equalsIgnoreCase("add")) {
+            if(!PluginData.hasPermission(p, Permission.ITEM_TEX_MANAGER)) {
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
+                return true;
+            }
+            if(args.length<3) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
+                return true;
+            }
+            if(!NumericUtil.isInt(args[2])) {
+                sendNotANumberMessage(p);
+                return true;
+            }
+            if(SpecialInventoryData.addItem(args[1])) {
+                sendItemAddedMessage(p);
+            } else {
+                sendItemAlreadyExistsMessage(p);
+            }
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("remove")) {
+            if(!PluginData.hasPermission(p, Permission.ITEM_TEX_MANAGER)) {
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
+                return true;
+            }
+            if(args.length<2) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
+                return true;
+            }
+            if(SpecialInventoryData.removeItem(args[1])) {
+                sendItemRemovedMessage(p);
+            } else {
+                sendItemNotFoundMessage(p);
+            }
+            return true;
+        }*/
         if(!NumericUtil.isInt(args[0])) {
             sendNotANumberMessage(p);
             return true;
@@ -71,6 +107,22 @@ public class ItemTexCommand extends AbstractArchitectCommand {
     
     private void sendNotEnabledErrorMessage(CommandSender cs) {
         PluginData.getMessageUtil().sendErrorMessage(cs, "Item textures based on durability are not enabled in this world.");
+    }
+    
+    private void sendItemNotFoundMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Item not found in build inventory");
+    }
+    
+    private void sendItemRemovedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Item removed from build inventory.");
+    }
+    
+    private void sendItemAlreadyExistsMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Item already exists in buid inventory.");
+    }
+    
+    private void sendItemAddedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Item added to build inventory.");
     }
     
     private void sendNoItemMessage(Player p) {

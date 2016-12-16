@@ -16,32 +16,51 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling;
 
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
+import com.mcmiddleearth.util.ResourceRegionsUtil;
+import java.util.HashSet;
 import java.util.logging.Logger;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -631,8 +650,6 @@ Logger.getGlobal().info("4");
                     return;
                 } else if(!PluginData.hasGafferPermission(p,event.getBlock().getLocation())) {
                     event.setCancelled(true);
-//                    PluginData.getMessageUtil().sendErrorMessage(p, 
-//                            PluginData.getGafferProtectionMessage(p, event.getBlock().getLocation()));
                     return;
                 }
                 Furnace furnace = (Furnace) event.getBlock().getState();
@@ -695,6 +712,7 @@ Logger.getGlobal().info("4");
         }
     }
     
+    /*
     @EventHandler(priority = EventPriority.HIGH)
     private void noPhysicsDoors(BlockPhysicsEvent event) {
         Material doorType = event.getBlock().getType();
@@ -707,7 +725,7 @@ Logger.getGlobal().info("4");
                 event.setCancelled(true);
             }
         }
-    }
+    }*/
     
     @EventHandler(priority = EventPriority.HIGH)
     private void noOpenHalfDoors(PlayerInteractEvent event) {
@@ -729,7 +747,7 @@ Logger.getGlobal().info("4");
         }
     }
     
-    private boolean isUpperDoorPart(Block block) {
+    private boolean isUpperDoorPart(Block block) { //doesnt'work for powered doors
         return block.getData()==8 || block.getData()==9; 
     }
 
@@ -766,7 +784,7 @@ Logger.getGlobal().info("4");
         return null;
     }
 
-    @EventHandler
+    /*@EventHandler
     public void cycleDurability(PlayerInteractEvent event) {
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.ITEM_TEXTURES)) {
             if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
@@ -779,5 +797,452 @@ Logger.getGlobal().info("4");
                 item.setDurability((short) (item.getDurability()+1));
             }
         }
+    }*/
+    
+    @EventHandler
+    public void placeSpecialBlock(PlayerInteractEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || event.getPlayer().getInventory().getItemInMainHand()==null
+                || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
+            return;
+        }
+        final Player player = event.getPlayer();
+        final ItemStack handItem = player.getInventory().getItemInMainHand();
+        ItemMeta meta = handItem.getItemMeta();
+        if(!(meta.hasLore() 
+                && meta.getLore().size()>1 
+                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
+            return;
+        }
+        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
+        if(data==null) {
+            PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
+            return;
+        }
+        Block blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
+        if(!blockPlace.isEmpty() && !blockPlace.getType().equals(Material.LONG_GRASS)) {
+            return;
+        }
+        if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
+            return;
+        }
+        event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
+        data.placeBlock(blockPlace, event.getBlockFace(), player.getLocation());
+        final ItemStack[] armor = player.getInventory().getArmorContents();
+        final ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ((PlayerInventory)player.getInventory()).setArmorContents(armor);
+                player.getInventory().setItemInMainHand(handItem);
+                player.getInventory().setItemInOffHand(offHandItem);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+/*Logger.getGlobal().info("specialBlock place 7 main");
+        } else {
+Logger.getGlobal().info("specialBlock place 7 off");
+/*ArrayList<HandlerList> list = HandlerList.getHandlerLists();
+for(HandlerList handlerList : list) {
+    RegisteredListener reg = new RegisteredListener(this, new EventExecutor(){
+        @Override
+        public void execute(Listener listener, Event event) throws EventException {
+            String name = event.getEventName();
+            if(!found.contains(name)) {
+                found.add(name);
+Logger.getGlobal().info("Event found: "+event.getEventName());
+            }
+        }
+    },EventPriority.NORMAL,ArchitectPlugin.getPluginInstance(),false);
+    handlerList.register(reg);
+    //RegisteredListener[] listener = handlerList.getRegisteredListeners();
+  //  for(int i=0; i<listener.length;i++) {
+//Logger.getGlobal().info(listener[i].getListener().toString());
+    //}
+}*/
+        
     }
+    
+/*    static HashSet<String> found = new HashSet<>();
+   
+    @EventHandler
+    public void moveInventoryItem(InventoryMoveItemEvent event) {
+        Logger.getGlobal().info("moveInventory");
+    }
+    @EventHandler
+    public void moveInventoryInteact(InventoryInteractEvent event) {
+        Logger.getGlobal().info("interactInventory");
+    }*/
+    
+    
+    @EventHandler(priority=EventPriority.LOWEST) 
+    public void openSpecialInventory(InventoryCreativeEvent event) {
+        if(event.getSlotType().equals(SlotType.OUTSIDE)
+                && event.getCursor().getType().equals(Material.STONE)
+                && event.getCursor().getAmount()==2) {
+            if(!(event.getWhoClicked() instanceof Player)) {
+                return;
+            }
+            final Player p = (Player) event.getWhoClicked();
+            String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+            if(rpN==null || rpN.equals("")) {
+                rpN = "Gondor";
+            }
+            final String rpName = rpN;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    p.closeInventory();
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            SpecialBlockInventoryData.openInventory(p, rpName);  
+                        }
+                    }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+                }
+            }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void changeDurability(PlayerItemDamageEvent event) {
+        event.setCancelled(true);
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST) 
+    public void avoidDoubleSlab(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !(event.getBlock().getType().equals(Material.DOUBLE_STEP)
+                    || event.getBlock().getType().equals(Material.DOUBLE_STONE_SLAB2)
+                    || event.getBlock().getType().equals(Material.WOOD_DOUBLE_STEP)
+                    || event.getBlock().getType().equals(Material.PURPUR_DOUBLE_SLAB))) {
+            return;
+        }
+        final BlockState blockState = event.getBlock().getState();
+        switch(blockState.getType()) {
+            case DOUBLE_STEP:
+                switch(blockState.getRawData()) {
+                    case 1:
+                        blockState.setType(Material.SANDSTONE);
+                        blockState.setRawData((byte)0);
+                        break;
+                     case 2:
+                        blockState.setType(Material.WOOD);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 3:
+                        blockState.setType(Material.COBBLESTONE);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 4:
+                        blockState.setType(Material.BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 5:
+                        blockState.setType(Material.SMOOTH_BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 6:
+                        blockState.setType(Material.NETHER_BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 7:
+                        blockState.setType(Material.QUARTZ_BLOCK);
+                        blockState.setRawData((byte)0);
+                        break;
+                }
+                break;
+            case DOUBLE_STONE_SLAB2:
+                blockState.setType(Material.RED_SANDSTONE);
+                break;
+            case WOOD_DOUBLE_STEP:
+                byte dv = blockState.getRawData();
+                blockState.setType(Material.WOOD);
+                blockState.setRawData(dv);
+                break;
+            case PURPUR_DOUBLE_SLAB:
+                blockState.setType(Material.PURPUR_BLOCK);
+                break;
+        }
+        blockState.update(true, false);
+    }
+    
+    
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void blockInventories(InventoryOpenEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if (event.getInventory().getType().equals(InventoryType.ANVIL)
+         || event.getInventory().getType().equals(InventoryType.BEACON) 
+         || event.getInventory().getType().equals(InventoryType.BREWING) 
+         || event.getInventory().getType().equals(InventoryType.DISPENSER) 
+         || event.getInventory().getType().equals(InventoryType.HOPPER) 
+         || event.getInventory().getType().equals(InventoryType.DROPPER)){
+            Block block = event.getInventory().getLocation().getBlock();
+            if(!NoPhysicsData.hasNoPhysicsException(block)
+                    || !PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && event.getClickedBlock().getType().equals(Material.ACACIA_FENCE_GATE)
+                && event.getClickedBlock().getData()>7) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void blockArmorAtItemBlocks(PlayerInteractAtEntityEvent event) { //used for item blocks
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if(event.getRightClicked() instanceof ArmorStand
+                && ((ArmorStand)event.getRightClicked()).getCustomName()!=null
+                && ((ArmorStand)event.getRightClicked()).getCustomName()
+                                     .startsWith(SpecialBlockItemBlock.PREFIX)) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void blockPumpkinOrientations(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+            return;
+        }
+        if(event.getBlockPlaced().getType().equals(Material.PUMPKIN)) {
+            event.getBlock().setData((byte)0);
+        }
+    }
+    
+    @EventHandler
+    public void removeItemBlockArmorStand(BlockBreakEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+            return;
+        }
+        Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
+                                    event.getBlock().getY()-1, event.getBlock().getZ()+0.5);
+        for(Entity entity: event.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+            if(entity.getCustomName()!=null
+                    && entity.getCustomName().equals("iBE_"+event.getBlock().getX()+"_"+event.getBlock().getY() 
+                                             +"_"+event.getBlock().getZ())) {
+                entity.remove();
+            }
+        }
+    }
+    
+    /*@EventHandler(priority = EventPriority.LOWEST) 
+    public void interactPoweredDoors(PlayerInteractEvent event) {
+        if(event.hasBlock() && event.getClickedBlock().getType().equals(Material.ACACIA_DOOR)) {
+            Block block = event.getClickedBlock();
+            if(block.getData() > 9) {
+                Block lower = block.getRelative(BlockFace.DOWN);
+                if(lower.getType().equals(block.getType())) {
+                    if(lower.getData()>3) {
+                        closeDoor(lower);
+                    } else {
+                        openDoor(lower);
+                    }
+                }
+            } else if(block.getData()<8) {
+                Block upper = block.getRelative(BlockFace.UP);
+                if(upper.getType().equals(block.getType())) {
+                    if(block.getData()>3) {
+                        closeDoor(block);
+                    } else {
+                        openDoor(block);
+                    }
+                }
+            }
+        }
+    }*/
+    
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void interactAdjacentDoors(PlayerInteractEvent event) {
+        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && isDoorBlock(event.getClickedBlock())) {
+            Block block = event.getClickedBlock();
+            if(isThinWall(block)) {
+//Logger.getGlobal().info("interact Door at thin wall");
+                return;
+            }
+            event.setCancelled(true);
+            if(isUpperDoorBlock(block)) {                       //click at upper door part
+                block = block.getRelative(BlockFace.DOWN);      //check if clicked block is part of full door
+                if(!isDoorBlock(block)) {
+                    return;
+                }
+            } else {                                            //click at lower door part
+                if(!isDoorBlock(block.getRelative(BlockFace.UP))//check for half door
+                    && !isFullDoorBelow(block)) {               //check for 3 block high door
+                    return;
+                }
+            }
+            if(isFullDoorBelow(block)) {
+                block = block.getRelative(BlockFace.DOWN, 2);   //
+            }
+            toggleDoor(block);
+            toggleDoor(block.getRelative(BlockFace.UP));
+            toggleDoor(block.getRelative(BlockFace.UP,2));
+
+            Block block2Lower = getSecondHalf(block);
+            Block block2Upper = block2Lower.getRelative(BlockFace.UP);
+            BlockState block2LowerState = block2Lower.getState();
+            BlockState block2UpperState = block2Upper.getState();
+            if(isDoorBlock(block2Lower) && isDoorBlock(block2Upper) 
+                && (((Door)block2LowerState.getData()).getFacing()
+                            .equals(((Door)block.getState().getData()).getFacing())) //check for same facing
+                && (((Door)block2UpperState.getData()).getHinge()           //check for opposite hinge
+                       !=(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()))) {
+                toggleDoor(block2Lower);
+                toggleDoor(block2Upper);
+                toggleDoor(block2Lower.getRelative(BlockFace.UP,2));
+            }
+        }
+    }
+
+    private boolean isThinWall(Block block) {
+/*Logger.getGlobal().info("***********isThinWall**********");
+Logger.getGlobal().info(""+isDoorBlock(block));
+Logger.getGlobal().info(""+isUpperDoorPart(block));
+Logger.getGlobal().info(""+(block.getData()>9));
+Logger.getGlobal().info(""+block.getType().name());*/
+        if(isUpperDoorBlock(block)) {
+            return isDoorBlock(block) && (block.getType().equals(Material.BIRCH_DOOR) 
+                                          || block.getType().equals(Material.JUNGLE_DOOR))
+                                      && block.getData()>9;                                //check powered state
+        } else {
+            block = block.getRelative(BlockFace.UP);
+            return isUpperDoorBlock(block) && (block.getType().equals(Material.BIRCH_DOOR) 
+                                               || block.getType().equals(Material.JUNGLE_DOOR))
+                                           && block.getData()>9;                                //check powered state
+        }
+    }
+    private boolean isUpperDoorBlock(Block block) {
+        return isDoorBlock(block)
+              && ((Door)block.getState().getData()).isTopHalf();
+    }
+    
+    private boolean isLowerDoorBlock(Block block) {
+        return  isDoorBlock(block)
+                && !isUpperDoorBlock(block);
+    }
+    
+    private boolean isDoorBlock(Block block) {
+        return block.getState().getData() instanceof Door;
+    }
+    
+    private boolean isFullDoorBelow(Block block) {
+        return   isUpperDoorBlock(block.getRelative(BlockFace.DOWN))
+                && isLowerDoorBlock(block.getRelative(BlockFace.DOWN,2));
+    }
+    
+    private Block getSecondHalf(Block block) {
+        if(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()) {
+            switch(((Door) block.getState().getData()).getFacing()) {
+                case NORTH: return block.getRelative(BlockFace.EAST);
+                case EAST: return block.getRelative(BlockFace.SOUTH);
+                case SOUTH: return block.getRelative(BlockFace.WEST);
+                case WEST: return block.getRelative(BlockFace.NORTH);
+            }
+        } else {
+            switch(((Door) block.getState().getData()).getFacing()) {
+                case NORTH: return block.getRelative(BlockFace.WEST);
+                case EAST: return block.getRelative(BlockFace.NORTH);
+                case SOUTH: return block.getRelative(BlockFace.EAST);
+                case WEST: return block.getRelative(BlockFace.SOUTH);
+            }
+        }
+        return null;
+    }
+    
+    private void toggleDoor(Block block) {
+        if(block.getState().getData() instanceof Door
+              && !((Door)block.getState().getData()).isTopHalf()
+              && !(isThinWall(block))) {
+//Logger.getGlobal().info("toggle "+block.getX()+" "+block.getY()+" "+block.getZ());
+            BlockState state = block.getState();
+//Logger.getGlobal().info("dv "+state.getRawData());
+            Door data = (Door) state.getData();
+            data.setOpen(!data.isOpen());
+            state.setData(data);
+            state.update();
+//Logger.getGlobal().info("dv new "+state.getRawData());
+        }
+    }
+    
+    private void closeDoor(Block block) {
+        block.setData((byte)(block.getData()-4), false);
+    }
+    
+    private void openDoor(Block block) {
+        block.setData((byte)(block.getData()+4), false);
+    }
+    
+    
+    /*@EventHandler(priority = EventPriority.LOWEST) 
+    public void blockRedstoneOreChange(PlayerInteractEvent event) {
+        if(event.getAction().equals(Action.LEFT_CLICK_AIR) 
+                || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+            return;
+        }
+        if(event.getClickedBlock().getType().equals(Material.REDSTONE_ORE)) {
+            event.setCancelled(true);
+        }
+    }*/
+    
+    /*@EventHandler(priority = EventPriority.LOWEST) 
+    public void avoidDecayingLeaves(PlayerInteractEvent event) {
+        event.
+    }
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || !(event.getClickedBlock().getType().equals(Material.LEAVES)
+                     || event.getClickedBlock().getType().equals(Material.LEAVES_2))) {
+            return;
+        }
+        final BlockState clickedState=event.getClickedBlock().getState();
+        /*if(clickedState.getRawData()<4) {
+            clickedState.setRawData((byte)(clickedState.getRawData()+4));
+        }
+        while(clickedState.)*/
+        /*final BlockState state = event.getClickedBlock().getState();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                state.update(true, false);
+Logger.getGlobal().info("reset "+state.getRawData()+" "+state.getX()+" "+state.getY()+" "+state.getZ());
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+    }    
+    /*
+    @EventHandler(priority = EventPriority.MONITOR) 
+    public void avoidDecayingLeaves(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+                || !(event.getPlayer().getItemInHand().getType().equals(Material.LEAVES)
+                     || event.getPlayer().getItemInHand().getType().equals(Material.LEAVES_2))) {
+            return;
+        }
+        event.setCancelled(true);
+        //final BlockState state = event.getBlock().getState();
+        /*new BukkitRunnable() {
+            @Override
+            public void run() {
+                state.update(true, false);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);*/
+    //}    
+    
+    
+    
 }

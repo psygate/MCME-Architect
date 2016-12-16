@@ -18,6 +18,7 @@ package com.mcmiddleearth.architect.noPhysicsEditor;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.util.DevUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
@@ -31,7 +32,9 @@ public class NoPhysicsListener implements Listener {
     @EventHandler
     private void noPhysicsList(BlockPhysicsEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
-                && PluginData.isNoPhysicsBlock(event.getBlock())) {
+                && PluginData.isNoPhysicsBlock(event.getBlock())
+                && !NoPhysicsData.hasNoPhysicsException(event.getBlock())) {
+            DevUtil.log("noPhysicsList "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getZ());
             event.setCancelled(true);
         }
     }

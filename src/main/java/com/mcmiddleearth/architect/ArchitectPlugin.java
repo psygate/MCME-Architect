@@ -22,12 +22,18 @@ import com.mcmiddleearth.architect.customHeadManager.CustomHeadListener;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.customHeadManager.HeadCommand;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsCommand;
+import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
 import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.GetCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.InvCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.ItemTexCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockListener;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialHeadInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialItemInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialSavedInventoryData;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
@@ -52,13 +58,19 @@ public class ArchitectPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        
         getConfig().options().copyDefaults(true);
         saveConfig();
         pluginInstance = this;
         ProtocolLibUtil.init(this);
         PluginData.getMessageUtil().setPluginName("Architect");
         PluginData.load();
+        NoPhysicsData.load();
         CustomHeadManagerData.load();
+        SpecialBlockInventoryData.loadInventories();
+        SpecialSavedInventoryData.loadInventories();
+        SpecialItemInventoryData.loadInventory();
+        SpecialHeadInventoryData.loadInventory();
         
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);
@@ -89,6 +101,7 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("rp", new RpCommand());
         setCommandExecutor("chead", new HeadCommand());
         setCommandExecutor("itex", new ItemTexCommand());
+        setCommandExecutor("inv", new InvCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");

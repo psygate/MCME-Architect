@@ -18,6 +18,7 @@ package com.mcmiddleearth.architect.customHeadManager;
 
 import com.mcmiddleearth.util.HeadUtil;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import lombok.Getter;
@@ -199,6 +200,15 @@ public class CustomHeadCollection {
             return null;
         } else {
             return HeadUtil.getCustomHead(headName, data.getHeadId(), data.getTexture());
+        }
+    }
+    
+    public void getHeads(Map<String,ItemStack> headMap) {
+        for(String headName: customHeads.keySet()) {
+            headMap.put(absoluteName()+headName, getHead(headName));
+        }
+        for(CustomHeadCollection subCollection: subCollections.values()) {
+            subCollection.getHeads(headMap);
         }
     }
     
