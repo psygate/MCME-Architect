@@ -421,7 +421,17 @@ Items:
         damage: 53    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(potatoes-half):
+    Barrel(onions):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 57
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 59    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(potatoes, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -431,7 +441,7 @@ Items:
         damage: 41    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(coal-half):
+    Barrel(coal, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -441,7 +451,7 @@ Items:
         damage: 42    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(tomatoes-half):
+    Barrel(tomatoes, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -451,7 +461,7 @@ Items:
         damage: 43    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(wheat-half):
+    Barrel(wheat, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -461,7 +471,7 @@ Items:
         damage: 44    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(meat-half):
+    Barrel(meat, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -471,7 +481,7 @@ Items:
         damage: 45    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(grapes-half):
+    Barrel(grapes, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -481,7 +491,7 @@ Items:
         damage: 46    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(water-half):
+    Barrel(water, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -491,7 +501,7 @@ Items:
         damage: 47    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(apples-half):
+    Barrel(apples, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -501,7 +511,7 @@ Items:
         damage: 52    
         category: Barrel
         type: ITEM_BLOCK
-    Barrel(fish-half):
+    Barrel(fish, half):
         blockMaterial: CACTUS
         blockDataValue: 5
         contentItem: DIAMOND_LEGGINGS
@@ -509,6 +519,16 @@ Items:
         contentHeight: 0.54
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 53    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(onion, half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 57
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 59    
         category: Barrel
         type: ITEM_BLOCK
     Barrel(empty):

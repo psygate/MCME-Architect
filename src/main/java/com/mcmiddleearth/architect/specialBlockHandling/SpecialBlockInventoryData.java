@@ -87,10 +87,16 @@ public class SpecialBlockInventoryData {
     private static void createBlockInventory(File folder) {
         String rpName = folder.getName();
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
-        CustomInventory inventory = new CustomInventory("SpecialBlockInventory");
+        CustomInventory inventory = new CustomInventory("MCME Blocks");
         inventories.put(rpName, inventory);
+        File blockFile = new File(folder,"block.yml");
+        if(blockFile.exists()) {
+            loadFromFile(inventory, rpName, blockFile);
+        }
         for(File file: files) {
-            loadFromFile(inventory, rpName, file);
+            if(!file.equals(blockFile)) {
+                loadFromFile(inventory, rpName, file);
+            }
         }
     }
     
