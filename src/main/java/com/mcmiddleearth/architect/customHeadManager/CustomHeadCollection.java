@@ -203,12 +203,12 @@ public class CustomHeadCollection {
         }
     }
     
-    public void getHeads(Map<String,ItemStack> headMap) {
+    public void getAllHeadsIncludingSubCollections(Map<String,ItemStack> headMap) {
         for(String headName: customHeads.keySet()) {
             headMap.put(absoluteName()+headName, getHead(headName));
         }
         for(CustomHeadCollection subCollection: subCollections.values()) {
-            subCollection.getHeads(headMap);
+            subCollection.getAllHeadsIncludingSubCollections(headMap);
         }
     }
     

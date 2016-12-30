@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 
 /**
  *
  * @author Eriol_Eandur
  */
 
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -101,8 +102,10 @@ public class CustomInventory implements Listener {
                                  ItemStack item, ItemStack currentItem) {
         createCategoryIfNotExists(category, owner, isPublic, item, currentItem);
         CustomInventoryCategory cat = categories.get(category);
-        cat.setCategoryItem(setMenueItemMeta(item,category));
-        cat.setCurrentCategoryItem(setMenueItemMeta(currentItem,category));
+        if(item!=null) 
+            cat.setCategoryItem(setMenueItemMeta(item,category));
+        if(currentItem!=null)
+            cat.setCurrentCategoryItem(setMenueItemMeta(currentItem,category));
     }
     
     private void createCategoryIfNotExists(String category, UUID owner, boolean isPublic, ItemStack item, ItemStack currentItem) {
@@ -145,6 +148,14 @@ Logger.getGlobal().info(cat);
         //fillInventory(inventory, startCategory, 0);
         
         player.openInventory(inventory);
+    }
+    
+    public void deleteCategory(String name) {
+        categories.remove(name);
+    }
+    
+    public CustomInventoryCategory getCategory(String name) {
+        return categories.get(name);
     }
     
     public void destroy() {
@@ -231,7 +242,7 @@ Logger.getGlobal().info(cat);
     void onScroll(final InventoryClickEvent event) {
         if(openInventories.containsKey(event.getInventory())) {
             //int first = inventoryFirstItems.get(event.getInventory());
-            //String category = inventoryCategories.get(event.getInventory());
+            //String category = inventoryCategories.get(event.getInventory());t
             CustomInventoryState state = openInventories.get(event.getInventory());
             if(event.getClick().equals(ClickType.SHIFT_RIGHT)) {
                 state.pageDown();
@@ -362,4 +373,15 @@ Logger.getGlobal().info(cat);
     /*private int menueSize() {
         return (categories.size()%9==0?categories.size():(categories.size()/9+1)*9);
     }*/
+    
+    public boolean contains(String id) {
+        for(CustomInventoryCategory cat: categories.values()) {
+            for(ItemStack item: cat.getItems()) {
+                if(SpecialItemInventoryData.getId(item).equals(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

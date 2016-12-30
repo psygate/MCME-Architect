@@ -188,6 +188,11 @@ Items:
         damage: 21   
         category: Deco
         type: FIVE_FACES
+    Burning Furnace:
+        category: Deco
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 61
+        type: BURNING_FURNACE
     Half Bed (head):
         blockMaterial: BED_BLOCK
         dataValueNorth: 10
@@ -258,20 +263,6 @@ Items:
         damage: 29   
         category: Deco
         type: EIGHT_FACES
-    Brown Mushroom:
-        blockMaterial: BROWN_MUSHROOM
-        dataValue: 0
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 30    
-        category: Plant
-        type: BLOCK
-    Red Mushroom:
-        blockMaterial: RED_MUSHROOM
-        dataValue: 0
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 31    
-        category: Plant
-        type: BLOCK
     Decorated Sandstone:
         blockMaterial: HUGE_MUSHROOM_1
         dataValue: 7
@@ -554,12 +545,15 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 58    
         type: THREE_AXIS
-    Unused Block 3:
-        blockMaterial: HUGE_MUSHROOM_1
-        dataValue: 12
+    Small sandstone (indented):
+        blockMaterial: CACTUS
+        dataValueNorth: 6
+        dataValueSouth: 8
+        dataValueEast: 7
+        dataValueWest: 9
         itemMaterial: DIAMOND_CHESTPLATE
-        damage: 54    
-        type: BLOCK
+        damage: 60    
+        type: FOUR_DIRECTIONS
     Unused Block 4:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 0
@@ -843,6 +837,126 @@ Items:
         damage: 54    
         type: BLOCK
     Unused Block 51:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 52:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 53:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 54:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 55:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 56:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 57:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 58:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 59:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 60:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 61:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 62:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 63:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 64:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 65:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 66:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 67:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 68:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 69:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 70:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 71:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 9
         itemMaterial: DIAMOND_CHESTPLATE

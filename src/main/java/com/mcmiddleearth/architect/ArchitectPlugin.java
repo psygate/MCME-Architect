@@ -29,11 +29,12 @@ import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.GetCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.InvCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.ItemTexCommand;
-import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockListener;
-import com.mcmiddleearth.architect.specialBlockHandling.SpecialHeadInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.SpecialItemInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.SpecialSavedInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
@@ -69,8 +70,9 @@ public class ArchitectPlugin extends JavaPlugin {
         CustomHeadManagerData.load();
         SpecialBlockInventoryData.loadInventories();
         SpecialSavedInventoryData.loadInventories();
-        SpecialItemInventoryData.loadInventory();
+        SpecialItemInventoryData.loadInventories();
         SpecialHeadInventoryData.loadInventory();
+        GetData.load();
         
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.data;
 
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockSixFaces;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockThinWall;
@@ -30,6 +30,10 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoorThreeBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockFiveFaces;
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockBurningFurnace;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import java.io.File;
@@ -41,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -56,9 +61,11 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class SpecialBlockInventoryData {
     
-    public final static String SPECIAL_BLOCK_TAG = "Special MCME Build Block";
+    public final static String SPECIAL_BLOCK_TAG = "MCME Block";
 
-    private static Map<String,CustomInventory> inventories = new HashMap<>();
+    private final static Map<String,CustomInventory> inventories = new HashMap<>();
+    
+    private final static Map<String, SearchInventory> searchInventories = new HashMap<>();
 
     private static List<SpecialBlock> blockList = new ArrayList<>();
     
@@ -87,21 +94,25 @@ public class SpecialBlockInventoryData {
     private static void createBlockInventory(File folder) {
         String rpName = folder.getName();
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
-        CustomInventory inventory = new CustomInventory("MCME Blocks");
+        CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"MCME Blocks - "+rpName);
         inventories.put(rpName, inventory);
+        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks");
+        searchInventories.put(rpName, searchInventory);
         File blockFile = new File(folder,"block.yml");
         if(blockFile.exists()) {
-            loadFromFile(inventory, rpName, blockFile);
+            loadFromFile(rpName, blockFile);
         }
         for(File file: files) {
-            if(!file.equals(blockFile)) {
-                loadFromFile(inventory, rpName, file);
+            if(!file.getName().equals(blockFile.getName())) {
+                loadFromFile(rpName, file);
             }
         }
     }
     
-    private static void loadFromFile(CustomInventory inventory, String rpName, File file) {
+    private static void loadFromFile(String rpName, File file) {
         Logger.getGlobal().info("Loading items into to inventory for resource pack "+rpName+" from "+file.getName());
+        CustomInventory inventory = inventories.get(rpName);
+        SearchInventory searchInventory = searchInventories.get(rpName);
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.load(file);
@@ -180,15 +191,19 @@ public class SpecialBlockInventoryData {
                     case ITEM_BLOCK_TWO_DIRECTIONS:
                         blockData = SpecialBlockItemTwoDirections.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
+                    case BURNING_FURNACE:
+                        blockData = SpecialBlockBurningFurnace.loadFromConfig(section, fullName(rpName, itemKey));
                 }
                 ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                 if(blockData !=null && inventoryItem!=null) {
                     String category = section.getString("category","Block");
                     blockList.add(blockData);
                     inventory.add(inventoryItem, category);
+                    searchInventory.add(inventoryItem);
                 } else {
                     Logger.getLogger(SpecialBlockInventoryData.class.getName())
                         .log(Level.WARNING, "Invalid config data while loading Special MCME Block '"+itemKey+"'. Block skipped.");
+                    Logger.getGlobal().info("block Data: "+blockData+" - item: "+inventoryItem);
                 }
             }
         }
@@ -225,6 +240,17 @@ public class SpecialBlockInventoryData {
         }
     }
     
+    public static void openSearchInventory(Player p, String resourcePack, String search) {
+        SearchInventory inv = searchInventories.get(resourcePack);
+        if(inv==null) {
+            inv = searchInventories.get("Gondor");
+        }
+        if(inv!=null) {
+            inv.open(p, search);
+//Logger.getGlobal().info("Inventory 3");
+        }
+    }
+    
     public static boolean hasBlockInventory(String rpName) {
         return inventories.containsKey(rpName);
     }
@@ -238,18 +264,18 @@ public class SpecialBlockInventoryData {
         return null;
     }
     
-    private static ItemStack loadItemFromConfig(ConfigurationSection config, String id, String rp) {
+    private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {
         Material itemMat = Material.matchMaterial(config.getString("itemMaterial",""));
-        short dam = (short) config.getInt("damage");
+        short dam = (short) config.getInt("damage",0);
         String displayName = (String) config.get("display");
         if(displayName==null) {
-            displayName = id;
+            displayName = name;
         }
         if(itemMat!=null) {
             ItemStack item = new ItemStack(itemMat,1,dam);
             ItemMeta im = item.getItemMeta();
             im.setDisplayName(displayName);
-            im.setLore(Arrays.asList(new String[]{SPECIAL_BLOCK_TAG, fullName(rp,id)}));
+            im.setLore(Arrays.asList(new String[]{SPECIAL_BLOCK_TAG, fullName(rp,name)}));
             im.spigot().setUnbreakable(true);
             im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -259,7 +285,7 @@ public class SpecialBlockInventoryData {
         return null;
     }
     
-    private static String fullName(String rpName, String id) {
-        return rpName+"/"+id;
+    private static String fullName(String rpName, String name) {
+        return rpName+"/"+name;
     }
 }

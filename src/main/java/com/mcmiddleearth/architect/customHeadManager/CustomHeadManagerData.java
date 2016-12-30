@@ -149,7 +149,7 @@ public class CustomHeadManagerData {
     
     public static Map<String,ItemStack> getHeads() {
         Map<String, ItemStack> headMap = new HashMap<>();
-        collection.getHeads(headMap);
+        collection.getAllHeadsIncludingSubCollections(headMap);
         return headMap;
     }
     

@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling;
 
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
@@ -26,8 +27,6 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
-import java.util.HashSet;
-import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,7 +36,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,21 +45,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Door;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -100,7 +94,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+/*    @EventHandler(priority = EventPriority.HIGH)
     private void logPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
 
@@ -274,7 +268,7 @@ public class SpecialBlockListener implements Listener{
                 /*if(event.isCancelled()) {
                     return;
                 }*/
-                if(!(PluginData.hasPermission(p, Permission.PLACE_PLANT))) {
+             /*   if(!(PluginData.hasPermission(p, Permission.PLACE_PLANT))) {
                     PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
@@ -631,7 +625,7 @@ Logger.getGlobal().info("4");
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
     }
     
-    @EventHandler(priority = EventPriority.HIGH)
+    /*@EventHandler(priority = EventPriority.HIGH)
     public void placeFurnace(BlockPlaceEvent event) {
         final Player p = event.getPlayer();
         if(event.getBlock().getType().equals(Material.FURNACE)) {
@@ -668,9 +662,9 @@ Logger.getGlobal().info("4");
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
             }
         }
-    }
+    }*/
     
-    @EventHandler(priority = EventPriority.HIGH)
+    /*@EventHandler(priority = EventPriority.HIGH)
     public void protectFurnaceInventory(InventoryOpenEvent event) {
         HumanEntity player = event.getPlayer();
         if(!(player instanceof Player)) {
@@ -691,9 +685,9 @@ Logger.getGlobal().info("4");
                 event.setCancelled(true);
             }
         }
-    }
+    }*/
     
-    private byte getDoorDat(float yaw) {
+    /*private byte getDoorDat(float yaw) {
         if ((yaw >= -225 && yaw < -135)
                 || (yaw >= 135 && yaw <= 225)) {
             return 3;
@@ -710,7 +704,7 @@ Logger.getGlobal().info("4");
         } else {
             return 0;
         }
-    }
+    }*/
     
     /*
     @EventHandler(priority = EventPriority.HIGH)
@@ -761,7 +755,7 @@ Logger.getGlobal().info("4");
                 || blockType.equals(Material.DARK_OAK_DOOR);
     }
 
-    private boolean isDoorItem(Material blockType) {
+    /*private boolean isDoorItem(Material blockType) {
         return blockType.equals(Material.WOOD_DOOR)
                 || blockType.equals(Material.IRON_DOOR)
                 || blockType.equals(Material.SPRUCE_DOOR_ITEM)
@@ -782,7 +776,7 @@ Logger.getGlobal().info("4");
             case DARK_OAK_DOOR_ITEM: return Material.DARK_OAK_DOOR;                
         }
         return null;
-    }
+    }*/
 
     /*@EventHandler
     public void cycleDurability(PlayerInteractEvent event) {
@@ -804,6 +798,7 @@ Logger.getGlobal().info("4");
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || event.getPlayer().getInventory().getItemInMainHand()==null
+                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
                 || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
             return;
         }
@@ -815,6 +810,17 @@ Logger.getGlobal().info("4");
                 && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
             return;
         }
+        event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
+        final ItemStack[] armor = player.getInventory().getArmorContents();
+        final ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ((PlayerInventory)player.getInventory()).setArmorContents(armor);
+                player.getInventory().setItemInMainHand(handItem);
+                player.getInventory().setItemInOffHand(offHandItem);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
         SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
         if(data==null) {
             PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
@@ -827,18 +833,7 @@ Logger.getGlobal().info("4");
         if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
             return;
         }
-        event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
         data.placeBlock(blockPlace, event.getBlockFace(), player.getLocation());
-        final ItemStack[] armor = player.getInventory().getArmorContents();
-        final ItemStack offHandItem = player.getInventory().getItemInOffHand();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ((PlayerInventory)player.getInventory()).setArmorContents(armor);
-                player.getInventory().setItemInMainHand(handItem);
-                player.getInventory().setItemInOffHand(offHandItem);
-            }
-        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
 /*Logger.getGlobal().info("specialBlock place 7 main");
         } else {
 Logger.getGlobal().info("specialBlock place 7 off");
@@ -974,8 +969,8 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
-        if (event.getInventory().getType().equals(InventoryType.ANVIL)
-         || event.getInventory().getType().equals(InventoryType.BEACON) 
+        if (//event.getInventory().getType().equals(InventoryType.ANVIL)
+          event.getInventory().getType().equals(InventoryType.BEACON) 
          || event.getInventory().getType().equals(InventoryType.BREWING) 
          || event.getInventory().getType().equals(InventoryType.DISPENSER) 
          || event.getInventory().getType().equals(InventoryType.HOPPER) 

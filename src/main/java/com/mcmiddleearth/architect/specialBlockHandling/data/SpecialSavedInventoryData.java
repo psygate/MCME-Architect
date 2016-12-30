@@ -14,9 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.data;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryCategory;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryState;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,7 +45,7 @@ import org.bukkit.inventory.PlayerInventory;
  */
 public class SpecialSavedInventoryData {
     
-    private static Map<String,CustomInventory> inventories = new HashMap<>();
+    private static final Map<String,CustomInventory> inventories = new HashMap<>();
 
     private static final File configFolder = new File(ArchitectPlugin.getPluginInstance()
                                                        .getDataFolder(),"inventories/saved");
@@ -66,7 +71,7 @@ public class SpecialSavedInventoryData {
     private static void createBlockInventory(File folder) {
         String rpName = folder.getName();
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
-        CustomInventory inventory = new CustomInventory("Custom Inventory");
+        CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"Custom Inventory");
         inventories.put(rpName, inventory);
         for(File file: files) {
             loadFromFile(inventory, rpName, file);
@@ -105,7 +110,11 @@ public class SpecialSavedInventoryData {
         ConfigurationSection categoryConfig = config.createSection("category");
         categoryConfig.set("isPrivate", isPrivate);
         categoryConfig.set("owner", player.getUniqueId().toString());
-        categoryConfig.set("item", player.getInventory().getItemInOffHand());
+        ItemStack categoryItem = player.getInventory().getItemInOffHand();
+        if(categoryItem==null || categoryItem.getType().equals(Material.AIR)){
+            categoryItem = new ItemStack(Material.GOLD_NUGGET,1);
+        }
+        categoryConfig.set("item", categoryItem);
         //ConfigurationSection itemsConfig = config.createSection("items");
         List<ItemStack> items = new ArrayList<>();
         PlayerInventory inventory = player.getInventory();
@@ -130,6 +139,18 @@ public class SpecialSavedInventoryData {
         }
     }
     
+    public static void deleteInventory(String categoryName, String rpName) {
+        File folder = new File(configFolder,rpName);
+        File file = new File(folder,categoryName+".yml");
+        if(file.exists()) {
+            file.delete();
+        }
+        CustomInventory customInv = inventories.get(rpName);
+        if(customInv!=null)  {
+            customInv.deleteCategory(categoryName);
+        }
+    }
+    
     public static boolean categoryExists(String categoryName, String rpName) {
         File folder = new File(configFolder,rpName);
         if(!folder.exists()) {
@@ -139,10 +160,14 @@ public class SpecialSavedInventoryData {
         return file.exists();
     }
     
+    public static CustomInventoryCategory getCategory(String categoryName, String rpName) {
+        return inventories.get(rpName).getCategory(categoryName);
+    }
+    
     public static void openInventory(Player p, String resourcePack) {
         CustomInventory inv = inventories.get(resourcePack);
-Logger.getGlobal().info("savedInv: "+inventories.size());
-Logger.getGlobal().info("savedInv: "+inventories.keySet().iterator().next());
+//Logger.getGlobal().info("savedInv: "+inventories.size());
+//Logger.getGlobal().info("savedInv: "+inventories.keySet().iterator().next());
 
         if(inv==null) {
             inv = inventories.get("Gondor");

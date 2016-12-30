@@ -107,7 +107,7 @@ Logger.getGlobal().info("loadnophy "+name+" "+world);
                 exceptionAreas.put(name,new RedstoneCircuitArea(world,minPoint,maxPoint));
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(NoPhysicsData.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(NoPhysicsData.class.getName()).log(Level.WARNING,"No physics exception data file not found.");
         }
     }
 }

@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -32,11 +31,11 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class CustomInventoryState {
     
-    final static Material pagingMaterial = Material.GOLD_HELMET;
-    final static short pageUp = 1;
-    final static short pageDown = 2;
-    final static short pageLeft = 3;
-    final static short pageRight = 4;
+    final static public Material pagingMaterial = Material.GOLD_HELMET;
+    final static public short pageUp = 1;
+    final static public short pageDown = 2;
+    final static public short pageLeft = 3;
+    final static public short pageRight = 4;
     
     private final Map<String,CustomInventoryCategory> categories;
 
@@ -98,7 +97,7 @@ Logger.getGlobal().info(cat);
                 inventory.setItem(slotIndex, item);
                 slotIndex++;
             } else {
-Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
+//Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
             }
         }
         if(!isLastCategoryVisible()) {
@@ -111,19 +110,23 @@ Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
                 category = 
             }*/
             List<ItemStack> items = category.getItems();
+//Logger.getGlobal().info("Visible slots "+visibleItemSlots());
             for (int i = upperLeftItem; i < upperLeftItem + visibleItemSlots()
                                       && i < items.size(); i++) {
-                    if(slotIndex==CustomInventory.CATEGORY_SLOTS+8 && !isFirstItemVisible()) { 
-                        inventory.setItem(slotIndex, newPagingItem(pagingMaterial,pageUp, "page up"));
-                    } else {
-                        inventory.setItem(slotIndex, items.get(i));
+                    if(slotIndex==CustomInventory.CATEGORY_SLOTS+8 && !isFirstItemVisible()) { //leave pageUp slot empty if needed
+                        slotIndex++;
                     }
+                    inventory.setItem(slotIndex, items.get(i));
                     slotIndex++;
                 }
+            if(!isFirstItemVisible()) {
+                //inventory.setItem(slotIndex, newPagingItem(pagingMaterial,pageUp, "page up"));
+                inventory.setItem(CustomInventory.CATEGORY_SLOTS+8,
+                                  newPagingItem(pagingMaterial,pageUp, "page up"));
+            }
             if(!isLastItemVisible()) {
                 inventory.setItem(CustomInventory.CATEGORY_SLOTS+CustomInventory.ITEM_SLOTS-1,
                                   newPagingItem(pagingMaterial,pageDown, "page down"));
-                slotIndex++;
             }
         }
     }
@@ -199,15 +202,24 @@ Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
         if(!isLastItemVisible()) {
             upperLeftItem += visibleItemSlots();
         }
+//Logger.getGlobal().info("pageDown "+upperLeftItem);
     }
     
     public void pageUp() {
         if(!isFirstItemVisible()) {
-            upperLeftItem -= visibleItemSlots();
+            if(isLastItemVisible()) {
+                upperLeftItem -=visibleItemSlots()-1;
+            } else {
+                upperLeftItem -= visibleItemSlots();
+            }
+            if(upperLeftItem==1) {
+                upperLeftItem=0;
+            }
             if(upperLeftItem<0) {
                 upperLeftItem = 0 ;
             }
         }
+//Logger.getGlobal().info("pageUp "+upperLeftItem);
     }
     
     public boolean isPageUpSlot(int slot) {
@@ -346,7 +358,7 @@ Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
         meta.spigot().setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-    item.setItemMeta(meta);
+        item.setItemMeta(meta);
         return item;
     }
 }

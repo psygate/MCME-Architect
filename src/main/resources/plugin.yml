@@ -71,6 +71,8 @@ permissions:
             architect.armorStandEditor.delete: true
             architect.bannerEditor.delete: true
             architect.inventory.reload: true
+            architect.inventory.other: true
+            architect.get.other: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -81,6 +83,8 @@ permissions:
             architect.voxel.viewer: true
             architect.voxel.stencilListEditor: true
             architect.randomiser.user: true
+            architect.get.public: true
+            architect.inventory.save: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -88,6 +92,7 @@ permissions:
             architect.ranks.adventurer: true
             architect.bannerEditor.save: true
             architect.armorStandEditor.trusted: true
+            architect.get.private: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
         default: op
@@ -102,9 +107,6 @@ permissions:
             architect.place.plant: true
             architect.place.pistonExtension: true
             architect.place.burningFurnace: true
-            architect.get.plants: true
-            architect.get.misc: true
-            architect.get.doors: true
             architect.interactDragonEgg: true
             architect.fullBrightness: true
             architect.resourcePackSwitcher: true
@@ -112,9 +114,6 @@ permissions:
             architect.place.sixSidedLog: true
             architect.get.armor: true
             architect.get.head: true
-            architect.get.food: true
-            architect.get.logs: true
-            architect.get.slabs: true
             architect.getCommand: true
             architect.customHeadManager.user: true  
             architect.itemTexture: true
@@ -129,6 +128,12 @@ permissions:
         default: op
     architect.inventory:
         description: Allows to open Architect's special build inventories
+        default: op
+    architect.inventory.save:
+        description: Allows to create custom build inventories
+        default: op
+    architect.inventory.other:
+        description: Allows to delete custom build inventories created by other players
         default: op
     architect.inventory.reload:
         description: Allows to reload Architect's special build inventories from config files
@@ -184,23 +189,14 @@ permissions:
     architect.get.head: 
         descriptions: Allows to get players head
         default: op
-    architect.get.food: 
-        descriptions: Allows to get food-like custom heads 
+    architect.get.public: 
+        descriptions: Allows to create public item sets for /get command
         default: op
-    architect.get.logs: 
-        descriptions: Allows to get six sided logs
+    architect.get.private: 
+        descriptions: Allows to create private item sets for /get command
         default: op
-    architect.get.doors: 
-        descriptions: Allows to get half doors
-        default: op
-    architect.get.slabs: 
-        descriptions: Allows to get double slabs
-        default: op
-    architect.get.plants: 
-        descriptions: Allows to get special plants
-        default: op
-    architect.get.misc: 
-        descriptions: Allows to get miscellaneous items
+    architect.get.other: 
+        descriptions: Allows to delete/publish/unpublish item sets created by other players
         default: op
     architect.getCommand: 
         descriptions: Allows to use command /get
