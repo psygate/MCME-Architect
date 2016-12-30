@@ -41,8 +41,8 @@ public abstract class AbstractArchitectCommand implements CommandExecutor{
         return null;
     }
     
-    protected String helpHeader = "This is a template and should be overrided.";
-    protected String[][] help = new String[][]{{"no ","help ","found ","here."}};
+    protected String helpHeader = "This is a template and should be overridden.";
+    protected String[][] help = new String[][]{{"command"," arguments",": short description"," long description (tooltip)"}};
     
     protected void sendHelpMessage(Player player, int page) {
         List<FancyMessage> helpList = new ArrayList<>();

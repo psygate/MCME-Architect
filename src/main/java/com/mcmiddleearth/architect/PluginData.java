@@ -35,6 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -45,6 +46,8 @@ import org.bukkit.plugin.Plugin;
 public class PluginData {
     
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
+    
+    private static final Map<String, String> rpUrls = new HashMap<>();
     
     @Getter
     private static final MessageUtil messageUtil = new MessageUtil();
@@ -58,11 +61,16 @@ public class PluginData {
             config = new WorldConfig(world.getName());
             worldConfigs.put(world.getName(), config);
         }
-        DevUtil.log(4, "isEnabled? "+modul.getModuleKey());
+        DevUtil.log(40, "isEnabled? "+modul.getModuleKey());
         return config.isModuleEnabled(modul,true);
     }
     
     public static void load(){
+        ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
+                                                       .getConfigurationSection("ServerResourcePacks");
+        for(String rpKey: rpConfig.getKeys(false)) {
+            rpUrls.put(rpKey, rpConfig.getString(rpKey));
+        }
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));
         for(File file: configFiles) {
@@ -169,5 +177,30 @@ public class PluginData {
                 return "";
             }
         }
+    }
+    
+    public static String getRpUrl(String rpKey) {
+        if(rpUrls.containsKey(rpKey)) {
+            return rpUrls.get(rpKey);
+            }
+        return "";
+    }
+    
+    public static String getRpName(String rpUrl) {
+        for(String search: rpUrls.keySet()) {
+            if(rpUrls.get(search).equalsIgnoreCase(rpUrl)) {
+                return search;
+            }
+        }
+        return "";
+    }
+    
+    public static String matchRpName(String rpKey) {
+        for(String search: rpUrls.keySet()) {
+            if(search.toLowerCase().startsWith(rpKey.toLowerCase())) {
+                return search;
+            }
+        }
+        return "";
     }
 }

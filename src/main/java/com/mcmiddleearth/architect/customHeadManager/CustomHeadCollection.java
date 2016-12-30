@@ -18,9 +18,9 @@ package com.mcmiddleearth.architect.customHeadManager;
 
 import com.mcmiddleearth.util.HeadUtil;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -125,16 +125,13 @@ public class CustomHeadCollection {
     }
     
     public String getFullName(String headName) {
-Logger.getGlobal().info("Search for - "+headName);
         while(headName.startsWith("/")) {
             headName = headName.substring(1);
         }
         int separator = headName.indexOf("/");
         if(separator==-1) {
             if(customHeads.containsKey(headName)) {
-Logger.getGlobal().info("Found 1");
             String foundName = absoluteName()+headName;
-Logger.getGlobal().info("Full name - "+foundName);
             return foundName;
             }
             separator = headName.length();
@@ -143,23 +140,19 @@ Logger.getGlobal().info("Full name - "+foundName);
         CustomHeadCollection subCollection = subCollections.get(firstName);
         if(subCollection!=null 
                 && (separator == headName.length() || subCollection.contains(headName.substring(separator+1)))) {
-Logger.getGlobal().info("Found 2");
             String foundName = absoluteName()+headName;
-Logger.getGlobal().info("Full name - "+foundName);
             return foundName;
         } 
         for(String search: subCollections.navigableKeySet()) {
-Logger.getGlobal().info("Search in SubCollection - "+search+" - for head - "+headName);
             String fullName = subCollections.get(search).getFullName(headName);
             if(!fullName.equals("")) {
                 return fullName;
             }
         }
-Logger.getGlobal().info("Not found");
         return "";
     }
     
-    private String absoluteName() {
+    public String absoluteName() { //public for dev output only
             String result = "";
             for(String str:absoluteName) {
                 result+=str+"/";
@@ -207,6 +200,15 @@ Logger.getGlobal().info("Not found");
             return null;
         } else {
             return HeadUtil.getCustomHead(headName, data.getHeadId(), data.getTexture());
+        }
+    }
+    
+    public void getAllHeadsIncludingSubCollections(Map<String,ItemStack> headMap) {
+        for(String headName: customHeads.keySet()) {
+            headMap.put(absoluteName()+headName, getHead(headName));
+        }
+        for(CustomHeadCollection subCollection: subCollections.values()) {
+            subCollection.getAllHeadsIncludingSubCollections(headMap);
         }
     }
     

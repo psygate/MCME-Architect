@@ -1,6 +1,6 @@
 name: MCME-Architect
 main: com.mcmiddleearth.architect.ArchitectPlugin
-version: 1.1.0
+version: 2.0.0
 author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
@@ -37,6 +37,12 @@ commands:
    rp:
       description: Switch resource packs by command
       usage: /rp Gondor|Eriador|Lothlorien|Rohan|Moria|Mordor
+   itex:
+      description: Change item texture by durability
+      usage: /itex <durability>
+   inv:
+      description: Open special build inventory
+      usage: /inv b[lock] | i[tem] 
    nophy:
       description: Manage no phyics list
       usage: /nophy list | add | remove
@@ -62,6 +68,11 @@ permissions:
             architect.noPhysicsList: true
             architect.voxel.delete: true
             architect.customHeadManager.manager: true
+            architect.armorStandEditor.delete: true
+            architect.bannerEditor.delete: true
+            architect.inventory.reload: true
+            architect.inventory.other: true
+            architect.get.other: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -72,6 +83,8 @@ permissions:
             architect.voxel.viewer: true
             architect.voxel.stencilListEditor: true
             architect.randomiser.user: true
+            architect.get.public: true
+            architect.inventory.save: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -79,6 +92,7 @@ permissions:
             architect.ranks.adventurer: true
             architect.bannerEditor.save: true
             architect.armorStandEditor.trusted: true
+            architect.get.private: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
         default: op
@@ -88,13 +102,11 @@ permissions:
             architect.paintingEditor: true
             architect.armorStandEditor: true
             architect.place.halfDoor: true
+            architect.place.halfBed: true
             architect.place.torch: true
             architect.place.plant: true
             architect.place.pistonExtension: true
             architect.place.burningFurnace: true
-            architect.get.plants: true
-            architect.get.misc: true
-            architect.get.doors: true
             architect.interactDragonEgg: true
             architect.fullBrightness: true
             architect.resourcePackSwitcher: true
@@ -102,14 +114,29 @@ permissions:
             architect.place.sixSidedLog: true
             architect.get.armor: true
             architect.get.head: true
-            architect.get.food: true
-            architect.get.logs: true
-            architect.get.slabs: true
             architect.getCommand: true
-            architect.customHeadManager.user: true    
+            architect.customHeadManager.user: true  
+            architect.itemTexture: true
+            architect.inventory: true
+            architect.inventory.open: true
             architect.help: true
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
+        default: op
+    architect.inventory.open:
+        description: Allows to open inventories of dispensers, droppers, hoppers, brewing stands, beacons and anvils
+        default: op
+    architect.inventory:
+        description: Allows to open Architect's special build inventories
+        default: op
+    architect.inventory.save:
+        description: Allows to create custom build inventories
+        default: op
+    architect.inventory.other:
+        description: Allows to delete custom build inventories created by other players
+        default: op
+    architect.inventory.reload:
+        description: Allows to reload Architect's special build inventories from config files
         default: op
     architect.help:
         description: Allows to use comand /architect help
@@ -125,6 +152,9 @@ permissions:
         default: op
     architect.place.halfDoor: 
         descriptions: Allows to place half doors
+        default: op
+    architect.place.halfBed: 
+        descriptions: Allows to place half beds
         default: op
     architect.place.torch: 
         descriptions: Allows to place redstone torches
@@ -147,29 +177,26 @@ permissions:
     architect.interactDragonEgg: 
         descriptions: Allows to interact (teleport) dragon egg; doesn't make sense to give to anyone
         default: false
+    architect.itemTexture:
+        description: Allows to change durability of item in hand to use alternative texture
+        default: op
+    architect.itemTexture:
+        description: Allow to open special build inventories
+        default: op
     architect.get.armor: 
         descriptions: Allows to get coloured leather armor
         default: op
     architect.get.head: 
         descriptions: Allows to get players head
         default: op
-    architect.get.food: 
-        descriptions: Allows to get food-like custom heads 
+    architect.get.public: 
+        descriptions: Allows to create public item sets for /get command
         default: op
-    architect.get.logs: 
-        descriptions: Allows to get six sided logs
+    architect.get.private: 
+        descriptions: Allows to create private item sets for /get command
         default: op
-    architect.get.doors: 
-        descriptions: Allows to get half doors
-        default: op
-    architect.get.slabs: 
-        descriptions: Allows to get double slabs
-        default: op
-    architect.get.plants: 
-        descriptions: Allows to get special plants
-        default: op
-    architect.get.misc: 
-        descriptions: Allows to get miscellaneous items
+    architect.get.other: 
+        descriptions: Allows to delete/publish/unpublish item sets created by other players
         default: op
     architect.getCommand: 
         descriptions: Allows to use command /get
@@ -195,10 +222,13 @@ permissions:
         descriptions: Allows to use Banner Editor (except save command)
         default: op
     architect.bannerEditor.save: 
-        descriptions: Allows to save Banner Editor files
+        descriptions: Allows to save Banner Editor files and delete own banner files
         default: op
         children:
             architect.bannerEditor: true
+    architect.bannerEditor.delete: 
+        descriptions: Allows to delete Banner Editor files saved by other players
+        default: op
     architect.paintingEditor: 
         descriptions: Allows to use Painting Editor
         default: op
@@ -209,10 +239,13 @@ permissions:
         descriptions: Allows to use Armor Stand Editor (except storing and deleting files)
         default: op
     architect.armorStandEditor.trusted: 
-        descriptions: Allows to store and delete Armor Stand Editor files
+        descriptions: Allows to store Armor Stand Editor files and delete own files
         default: op
         children:
             architect.armorStandEditor: true
+    architect.armorStandEditor.delete: 
+        descriptions: Allows to delete Armor Stand Editor files created by other players
+        default: op
     architect.randomiser.allowMaterials: 
         descriptions: Allows to change allowed materials for command /random
         default: op

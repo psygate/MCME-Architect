@@ -26,6 +26,7 @@ public enum Modules {
     
     REDSTONE_TORCH         ("modules.specialBlocks.redstoneTorch"),
     HALF_DOORS             ("modules.specialBlocks.halfDoors"),
+    HALF_BEDS             ("modules.specialBlocks.halfBeds"),
     DOUBLE_SLABS           ("modules.specialBlocks.doubleSlabs"),
     PLANTS                 ("modules.specialBlocks.plants"),
     PISTON_EXTENSIONS      ("modules.specialBlocks.pistonExtenstions"),
@@ -45,6 +46,7 @@ public enum Modules {
     RESOURCE_PACK_SWITCHER ("modules.command.resourcePackSwitcher"),
     FULL_BRIGHTNESS        ("modules.command.fullBrightness"),
     SPECIAL_BLOCKS         ("modules.command.getSpecialBlocks"),
+    ITEM_TEXTURES          ("modules.commmand.itemTexture"),
     WE_SCHEMATICS_VIEWER   ("modules.command.weSchemViewer"),
     VOXEL_VIEWER           ("modules.command.voxelViewer"),
     STENCIL_LIST_EDITOR    ("modules.command.stencilListEditor"),

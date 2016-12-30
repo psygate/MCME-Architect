@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -115,25 +116,51 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                     playerConfig.placeArmorStand(p.getLocation(),true);
                     return true;
                 }
+                if(args[0].equalsIgnoreCase("place2") && PluginData.hasPermission(p,Permission.RANDOMISER_MATERIALS)) {
+                    for(int i = 0 ; i < NumericUtil.getInt(args[1]);i+=NumericUtil.getInt(args[2])) {
+                        for( int j = 0; j< NumericUtil.getInt(args[1]);j+=NumericUtil.getInt(args[2])) {
+                            playerConfig.placeArmorStand(new Location(p.getWorld(),
+                                                                      p.getLocation().getBlockX()+i,
+                                                                      p.getLocation().getBlockY(),
+                                                                      p.getLocation().getBlockZ()+j),true);
+                    }
+                    }
+                    return true;
+                }
                 if(args[0].equalsIgnoreCase("delete")) {
                     if(args.length>1) {
+                        if(!playerConfig.existsFile(args[1])) {
+                            PluginData.getMessageUtil().sendFileNotFoundError(cs);
+                            return true;
+                        }
+                        if(!(PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR_DELETE) 
+                                || playerConfig.isCreator(args[1], p.getUniqueId()))) {
+                            PluginData.getMessageUtil().sendNoPermissionError(cs);
+                            return true;
+                        }
                         if(playerConfig.deleteFile(args[1])) {
                             sendFileDeletedMessage(cs);
                         }
                         else {
                             sendDeleteErrorMessage(cs);
                         }
+                    } else {
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                     }
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("save")) {
+                    if(!playerConfig.hasCopiedArmorStand()) {
+                        sendCopyFirstMessage(cs);
+                        return true;
+                    }
                     if(args.length>2) {
                         String description = args[2];
                         for(int i = 3;i<args.length;i++) {
                             description = description + " " + args[i];
                         }
                         try {
-                            if(playerConfig.saveArmorStand(args[1],description)) {
+                            if(playerConfig.saveArmorStand(args[1],description, p.getUniqueId())) {
                                 sendSavedMessage(cs);
                             }
                             else {
@@ -200,47 +227,6 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
         return newConfig;
     }
         
-/*    private void showFiles(CommandSender cs, ArmorStandEditorConfig playerConfig, String folder, int page) {
-        File[] files = playerConfig.getFiles(folder);
-        int maxPage=(files.length-1)/10+1;
-        if(maxPage<1) {
-            maxPage = 1;
-        }
-        if(page>maxPage) {
-            page = maxPage;
-        }
-        sendHeaderMessage(cs, folder, page, maxPage);
-        if(!folder.equals("")) {
-            PluginData.getMessageUtil().sendClickableMessage((Player) cs, "   ..","/armor files");
-        }
-        for(int i = (page-1)*10; i<files.length && i<(page-1)*10+10;i++) {
-                //backward order: int i = files.length-1-(page-1)*10; i >= 0 && i > files.length-1-(page-1)*10-10; i--) {
-            sendEntryMessage(cs, folder, files[i], playerConfig.getDescription(files[i]));
-        }
-    }
-    
-    private void sendHeaderMessage(CommandSender cs, String folder, int page, int maxPage) {
-        PluginData.getMessageUtil().sendInfoMessage(cs, "Saved armor stand files "
-                       +(!folder.equals("")?"in folder "+ folder+" ":"")+"[page " +page+"/"+maxPage+"]");
-    }
-
-    private void sendEntryMessage(CommandSender cs, String folder, File file, String description) {
-        String name;
-        String command;
-        if(file.isDirectory()) {
-            name = file.getName();
-            command = "/armor files "+folder+"/"+name;
-        }
-        else {
-            name = file.getName().substring(0, file.getName().lastIndexOf('.'));
-            command = "/armor p "+folder+"/"+name;
-        }
-        while(name.length()<15) {
-            name = name.concat(" ");
-        }
-        PluginData.getMessageUtil().sendClickableMessage((Player)cs, "   "+name+description, command);
-    }*/
-    
     private void sendInfoMessage(CommandSender cs, ArmorStandEditorConfig playerConfig) {
                     PluginData.getMessageUtil().sendInfoMessage(cs, "Current Armor Stand Editor mode: ");
                     switch(playerConfig.getEditorMode()) {
@@ -338,6 +324,10 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
         PluginData.getMessageUtil().sendErrorMessage(cs, "File already exists. Delete first.");
     }
 
+    private void sendCopyFirstMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "Copy an armor stand first. Use '/armor c' and click with stick at an armor stand.");
+    }
+
     private void sendIOErrorMessage(CommandSender cs) {
         PluginData.getMessageUtil().sendErrorMessage(cs, "IO error. Nothing was saved.");
     }
@@ -382,8 +372,8 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
         help = new String[][]{{"/armor parts","",": Shows help about armor stand parts."},
                               {"/armor place","",": Places copied armor stand."},
                               {"/armor clear","",": Clears copied armor stand."},
-                              {"/armor save ","<filename> <description>",": Save armor stand."},
-                              {"/armor files ","[folder]",": Show saved armor stands."}};
+                              {"/armor save ","<filename> <description>",": Saves armor stand."},
+                              {"/armor files ","[folder]",": Shows saved armor stands."}};
         helpList.addAll(Arrays.asList(help));
             for(ArmorStandEditorMode mode: ArmorStandEditorMode.values()) {
                 helpList.add(new String[]{"/armor "+mode.getName(),mode.getArguments(),mode.getHelpText()});

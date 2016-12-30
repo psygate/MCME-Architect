@@ -145,7 +145,7 @@ public class VvCommand extends AbstractArchitectCommand {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Voxel Viewer -";
         help = new String[][]{{"/vv stencil ","[directory] [#page]",": Views stencils."},
                                        {"/vv ", "[list] [directory] [#page]",": Views stencil lists."},
-                                       {"/vv delete ","<filename>",": Deletes a voxel file."}};
+                                       {"/vv delete ","<filename>",": Deletes a voxel file. You have to specify the full filename with extension. Extension for stencil lists is '.txt' and for stencils '.vstencil'."}};
         super.sendHelpMessage(player, page);
     }
     

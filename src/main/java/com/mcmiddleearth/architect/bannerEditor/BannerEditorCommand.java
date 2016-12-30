@@ -82,7 +82,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                             description = description + args[i]+" ";
                         }
                         try {
-                            if(playerConfig.saveBanner(p.getItemInHand(), args[1], description)) {
+                            if(playerConfig.saveBanner(p.getItemInHand(), args[1], description, ((Player)cs).getUniqueId())) {
                                 sendBannerSavedMessage(cs);
                             } else {
                                 sendFileExistsMessage(cs);
@@ -91,6 +91,23 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                             PluginData.getMessageUtil().sendIOError(cs);
                             Logger.getLogger(BannerEditorCommand.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                    }
+                    return true;
+                } else if(args[0].equalsIgnoreCase("delete")) {
+                    if(args.length<2) {
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
+                        return true;
+                    }
+                    if(!(PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR_DELETE)
+                            || playerConfig.isCreator(args[1],((Player)cs).getUniqueId()))) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                        return true;
+                    }
+                    if(playerConfig.deleteFile(args[1])) {
+                        sendFileDeletedMessage(cs);
+                    }
+                    else {
+                        sendDeleteErrorMessage(cs);
                     }
                     return true;
                 } else if(args[0].equalsIgnoreCase("load")) {
@@ -203,6 +220,14 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
         PluginData.getMessageUtil().sendErrorMessage(cs, "Banner file not found or no valid banner data in file.");
     }
     
+    private void sendFileDeletedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "File deleted.");
+    }
+
+    private void sendDeleteErrorMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "File not found or directory not empty.");
+    }
+
     @Override
     public String getHelpPermission() {
         return Permission.BANNER_EDITOR.getPermissionNode();
@@ -230,8 +255,8 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
         List<String[]> helpList = new ArrayList<>();
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Banner Editor -";
         help = new String[][]{{"/banner files ","[folder]",": Shows saved banners."},
-                              {"/banner save ","<filname> <description>",": Saves banner."},
-                              {"/banner load ","<filname>",": Loads banner."}};
+                              {"/banner save ","<filename> <description>",": Saves banner."},
+                              {"/banner load ","<filename>",": Loads banner."}};
         helpList.addAll(Arrays.asList(help));
             for(BannerEditorMode mode: BannerEditorMode.values()) {
                 helpList.add(new String[]{"/banner "+mode.getName(),mode.getArguments(),mode.getHelpText()});

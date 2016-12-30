@@ -16,11 +16,11 @@
  */
 package com.mcmiddleearth.architect.customHeadManager;
 
+import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.HeadUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -115,11 +115,13 @@ public class CustomHeadGallery {
     
     private void removeMainGallery() {
         int headNumber = collection.getMainHeadNumber();
+        DevUtil.log(30,"r**"+headNumber+"**"+collection.absoluteName());
         if(headNumber<1) {
             return;
         }
         for(int iX = 0; iX<getMainWidth()/2;iX++) {
             for(int iZ = 0; iZ<getMainHeight()/2;iZ++) {
+                DevUtil.log(31,"h**"+iX+"**"+iZ+"**REMOVED");
                 removeHead(iX, iZ);
             }
         }
@@ -127,6 +129,7 @@ public class CustomHeadGallery {
     
     private void placeMainGallery() {
         int headNumber = collection.getMainHeadNumber();
+        DevUtil.log(30,"p**"+headNumber+"**"+collection.absoluteName());
         if(headNumber<1) {
             return;
         }
@@ -136,6 +139,7 @@ public class CustomHeadGallery {
                 if(currentHeadName==null) {
                     return;
                 }
+                DevUtil.log(31,"h**"+iX+"**"+iZ+"**"+currentHeadName);
                 placeHead(iX, iZ, collection.getHead(currentHeadName));
                 currentHeadName = collection.getCustomHeads().higherKey(currentHeadName);
             }
