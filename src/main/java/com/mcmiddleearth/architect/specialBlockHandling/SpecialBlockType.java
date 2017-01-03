@@ -34,6 +34,7 @@ public enum SpecialBlockType {
     WALL_COMBI,
     ITEM_BLOCK,
     ITEM_BLOCK_TWO_DIRECTIONS,
+    ITEM_BLOCK_FOUR_DIRECTIONS,
     DOOR,
     THIN_WALL,
     DOOR_THREE_BLOCKS,

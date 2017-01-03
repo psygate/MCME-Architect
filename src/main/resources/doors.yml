@@ -1,0 +1,134 @@
+Categories:
+    Door:
+        itemMaterial: GOLD_HELMET
+        damage: 7        
+        damageCurrent: 8
+Items:
+    Iron Half Door:
+        blockMaterial: IRON_DOOR_BLOCK
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 14   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Oak Half Door:
+        blockMaterial: WOODEN_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 15   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Spruce Half Door:
+        blockMaterial: SPRUCE_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 16   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Birch Half Door:
+        blockMaterial: BIRCH_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 17   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Jungle Half Door:
+        blockMaterial: JUNGLE_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 18   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Acacia Half Door:
+        blockMaterial: ACACIA_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 19   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Dark Oak Half Door:
+        blockMaterial: DARK_OAK_DOOR
+        dataValueNorth: 1
+        dataValueSouth: 3
+        dataValueEast: 2
+        dataValueWest: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 20   
+        category: Door
+        type: FOUR_DIRECTIONS
+    Palace Door:
+        blockMaterial: SPRUCE_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 35   
+        category: Door
+        type: DOOR_FOUR_BLOCKS
+    Iron Bars Door:
+        blockMaterial: ACACIA_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 36    
+        category: Door
+        type: DOOR
+    Nice Door:
+        blockMaterial: ACACIA_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        category: Door
+        powered: true
+        damage: 37    
+        type: DOOR
+    Rich Door:
+        blockMaterial: WOODEN_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        category: Door
+        powered: true
+        damage: 62    
+        type: DOOR
+    Thin Stone Wall:
+        blockMaterial: JUNGLE_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 38    
+        category: Door
+        type: THIN_WALL
+    Thin Stone Wall Window:
+        blockMaterial: JUNGLE_DOOR
+        alternateType: true
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 39    
+        category: Door
+        type: THIN_WALL
+    Thin Sandstone Wall:
+        blockMaterial: BIRCH_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 63    
+        category: Door
+        type: THIN_WALL
+    Thin Sandstone Wall Window:
+        blockMaterial: BIRCH_DOOR
+        alternateType: true
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 64    
+        category: Door
+        type: THIN_WALL
+    Barn Door:
+        blockMaterial: DARK_OAK_DOOR
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 40    
+        category: Door
+        type: DOOR_THREE_BLOCKS

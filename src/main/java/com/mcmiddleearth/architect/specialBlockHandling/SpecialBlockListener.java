@@ -27,6 +27,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,6 +35,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -51,6 +53,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -869,6 +872,19 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         Logger.getGlobal().info("interactInventory");
     }*/
     
+    @EventHandler(priority=EventPriority.LOWEST)  
+    public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+            event.setCancelled(true);
+            final Player p = (Player) event.getPlayer();
+            String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+            if(rpN==null || rpN.equals("")) {
+                rpN = "Gondor";
+            }
+            SpecialBlockInventoryData.openInventory(p, rpN);
+        }
+    }
+    
     
     @EventHandler(priority=EventPriority.LOWEST) 
     public void openSpecialInventory(InventoryCreativeEvent event) {
@@ -965,6 +981,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockInventories(InventoryOpenEvent event) {
+Logger.getGlobal().info("open inventory "+event.getInventory().getType().name());
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
                 || !(event.getPlayer() instanceof Player)) {
             return;
@@ -974,6 +991,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
          || event.getInventory().getType().equals(InventoryType.BREWING) 
          || event.getInventory().getType().equals(InventoryType.DISPENSER) 
          || event.getInventory().getType().equals(InventoryType.HOPPER) 
+         || event.getInventory().getHolder() instanceof ShulkerBox 
          || event.getInventory().getType().equals(InventoryType.DROPPER)){
             Block block = event.getInventory().getLocation().getBlock();
             if(!NoPhysicsData.hasNoPhysicsException(block)
@@ -1011,11 +1029,12 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     }
     
     @EventHandler(priority = EventPriority.LOWEST) 
-    public void blockPumpkinOrientations(BlockPlaceEvent event) {
+    public void blockVanillaOrientations(BlockPlaceEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
             return;
         }
-        if(event.getBlockPlaced().getType().equals(Material.PUMPKIN)) {
+        if(event.getBlockPlaced().getType().equals(Material.PUMPKIN) 
+                || event.getBlockPlaced().getType().equals(Material.ENDER_PORTAL_FRAME) ) {
             event.getBlock().setData((byte)0);
         }
     }

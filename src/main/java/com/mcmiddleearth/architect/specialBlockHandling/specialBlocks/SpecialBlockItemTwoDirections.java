@@ -25,7 +25,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.ArmorStand;
 
 /**
  *
@@ -137,9 +136,9 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         switch(getBlockFace(playerLoc.getYaw())) {
             case WEST:
             case EAST:
-                loc.setYaw(loc.getYaw()+90);
+                loc.setYaw(loc.getYaw()-90);
         }
-Logger.getGlobal().info(""+loc.getYaw());
+//Logger.getGlobal().info(""+loc.getYaw());
         return loc;
     }
 }
