@@ -23,6 +23,10 @@ Categories:
         itemMaterial: GOLD_HELMET
         damage: 17        
         damageCurrent: 18
+    Net:
+        itemMaterial: GOLD_HELMET
+        damage: 11
+        damageCurrent: 12
     Misc:
         itemMaterial: GOLD_HELMET
         damage: 11        
@@ -96,6 +100,27 @@ Items:
         dataValue: 2
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 2    
+        category: Deco
+        type: BLOCK
+    Moss:
+        blockMaterial: REDSTONE_WIRE
+        dataValue: 3
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 65    
+        category: Deco
+        type: BLOCK
+    Dirt patches:
+        blockMaterial: REDSTONE_WIRE
+        dataValue: 4
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 66    
+        category: Deco
+        type: BLOCK
+    Puddle:
+        blockMaterial: REDSTONE_WIRE
+        dataValue: 5
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 67    
         category: Deco
         type: BLOCK
     Smooth Full Stone:
@@ -185,7 +210,7 @@ Items:
         dataValueWest: 2
         dataValueDown: 0
         itemMaterial: DIAMOND_CHESTPLATE
-        damage: 21   
+        damage: 21
         category: Deco
         type: FIVE_FACES
     Burning Furnace:
@@ -193,26 +218,6 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 61
         type: BURNING_FURNACE
-    Half Bed (head):
-        blockMaterial: BED_BLOCK
-        dataValueNorth: 10
-        dataValueSouth: 8
-        dataValueEast: 11
-        dataValueWest: 9
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 22   
-        category: Deco
-        type: FOUR_DIRECTIONS
-    Half Bed (feet):
-        blockMaterial: BED_BLOCK
-        dataValueNorth: 2
-        dataValueSouth: 0
-        dataValueEast: 3
-        dataValueWest: 1
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 23   
-        category: Deco
-        type: FOUR_DIRECTIONS
     Weathered Sandstone Bricks:
         blockMaterial: HUGE_MUSHROOM_1
         dataValue: 0
@@ -276,6 +281,18 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 33    
         type: TWO_AXIS
+    Sandstone with Bricks:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValue: 10
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 68    
+        type: BLOCK
+    Small and Large Sandstone:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValue: 14
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 69    
+        type: BLOCK
     The Eye:
         blockMaterial: PORTAL
         dataValueNorth: 1
@@ -358,37 +375,69 @@ Items:
         type: ITEM_BLOCK
     Coal Slab:
         blockMaterial: STONE_SLAB2
-        dataValue: 0
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 8
         contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 8   
+        type: ITEM_BLOCK
+    Coal Slab (upper):
+        blockMaterial: STONE_SLAB2
+        blockDataValue: 8
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 90
+        contentHeight: 0.8125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 48   
         type: ITEM_BLOCK
     Dirt Slab:
         blockMaterial: STONE_SLAB2
-        dataValue: 0
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 9
         contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 9   
+        type: ITEM_BLOCK
+    Dirt Slab (upper):
+        blockMaterial: STONE_SLAB2
+        blockDataValue: 8
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 91
+        contentHeight: 0.8125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 49   
         type: ITEM_BLOCK
     Gravel Slab:
         blockMaterial: STONE_SLAB2
-        dataValue: 0
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 10
         contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 10   
+        type: ITEM_BLOCK
+    Gravel Slab (upper):
+        blockMaterial: STONE_SLAB2
+        blockDataValue: 8
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 92
+        contentHeight: 0.8125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 50   
         type: ITEM_BLOCK
     Sand Slab:
         blockMaterial: STONE_SLAB2
-        dataValue: 0
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 11
         contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 11   
+        type: ITEM_BLOCK
+    Sand Slab (upper):
+        blockMaterial: STONE_SLAB2
+        blockDataValue: 8
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 93
+        contentHeight: 0.8125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 51   
         type: ITEM_BLOCK
@@ -554,6 +603,280 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 60    
         type: FOUR_DIRECTIONS
+    High Chair:
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 82
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 82    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Half Bed (head):
+        blockMaterial: BED_BLOCK
+        dataValueNorth: 10
+        dataValueSouth: 8
+        dataValueEast: 11
+        dataValueWest: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 22   
+        category: Deco
+        type: FOUR_DIRECTIONS
+    Green Bed (feet):
+        blockMaterial: BED_BLOCK
+        dataValueNorth: 2
+        dataValueSouth: 0
+        dataValueEast: 3
+        dataValueWest: 1
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 23   
+        category: Deco
+        type: FOUR_DIRECTIONS
+    Green Bed (head):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 83
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 83    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Blue Bed (feet):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 84
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 84    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Grey Bed (head):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 85
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 85    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Grey Bed (feet):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 86
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 86    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Blue Bed (half):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 87
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 87    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Grey Bed (half):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 88
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 88    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Green Bed (half):
+        blockMaterial: STONE_SLAB2
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 89
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 89    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Red Stool:
+        blockMaterial: DAYLIGHT_DETECTOR_INVERTED
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 94
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 94    
+        type: ITEM_BLOCK
+    Wooden Stool:
+        blockMaterial: DAYLIGHT_DETECTOR_INVERTED
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 95
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 95    
+        type: ITEM_BLOCK
+    Cutlery:
+        blockMaterial: RAILS
+        dataValue: 1
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 96
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 96    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Rough Carpet:
+        blockMaterial: DIODE_BLOCK_OFF
+        dataValue: 4
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 70   
+        category: Deco
+        type: BLOCK
+    Two Candles (unlit):
+        blockMaterial: DIODE_BLOCK_OFF
+        dataValueNorth: 2
+        dataValueSouth: 0
+        dataValueEast: 3
+        dataValueWest: 1
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 71   
+        category: Deco
+        type: FOUR_DIRECTIONS
+    Brown Plate:
+        blockMaterial: RAILS
+        dataValue: 1
+        blockDataValue: 1
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 97
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 97    
+        type: ITEM_BLOCK
+    White Plate:
+        blockMaterial: RAILS
+        dataValue: 1
+        blockDataValue: 1
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 98
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 98    
+        type: ITEM_BLOCK
+    DA Banner 1:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 99
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 99    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 2:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 100
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 100    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 3:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 101
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 101    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 4:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 102
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 102    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 5:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 103
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 103    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 1 (thin):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 104
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 104    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 2 (thin):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 105
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 105    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 3 (thin):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 106
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 106    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 4 (thin):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 107
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 107    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    DA Banner 5 (thin):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 108
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 108    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
     Unused Block 4:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 0

@@ -34,6 +34,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.customInventories.Custom
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockBurningFurnace;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import java.io.File;
@@ -190,6 +191,9 @@ public class SpecialBlockInventoryData {
                         break;
                     case ITEM_BLOCK_TWO_DIRECTIONS:
                         blockData = SpecialBlockItemTwoDirections.loadFromConfig(section, fullName(rpName,itemKey));
+                        break;
+                    case ITEM_BLOCK_FOUR_DIRECTIONS:
+                        blockData = SpecialBlockItemFourDirections.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
                     case BURNING_FURNACE:
                         blockData = SpecialBlockBurningFurnace.loadFromConfig(section, fullName(rpName, itemKey));
