@@ -612,28 +612,26 @@ Items:
         itemMaterial: DIAMOND_LEGGINGS
         damage: 82    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
-    Half Bed (head):
+    Green Bed (head):
         blockMaterial: BED_BLOCK
-        dataValueNorth: 10
-        dataValueSouth: 8
-        dataValueEast: 11
-        dataValueWest: 9
+        contentItem: DIAMOND_CHESTPLATE
+        contentDamage: 22
+        contentHeight: 0.3125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 22   
         category: Deco
-        type: FOUR_DIRECTIONS
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
     Green Bed (feet):
         blockMaterial: BED_BLOCK
-        dataValueNorth: 2
-        dataValueSouth: 0
-        dataValueEast: 3
-        dataValueWest: 1
+        contentItem: DIAMOND_CHESTPLATE
+        contentDamage: 23
+        contentHeight: 0.3125
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 23   
         category: Deco
-        type: FOUR_DIRECTIONS
-    Green Bed (head):
-        blockMaterial: STONE_SLAB2
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Blue Bed (head):
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 83
         contentHeight: 0.3125
@@ -642,7 +640,7 @@ Items:
         damage: 83    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Blue Bed (feet):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 84
         contentHeight: 0.3125
@@ -651,7 +649,7 @@ Items:
         damage: 84    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Grey Bed (head):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 85
         contentHeight: 0.3125
@@ -660,7 +658,7 @@ Items:
         damage: 85    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Grey Bed (feet):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 86
         contentHeight: 0.3125
@@ -669,7 +667,7 @@ Items:
         damage: 86    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Blue Bed (half):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 87
         contentHeight: 0.3125
@@ -678,7 +676,7 @@ Items:
         damage: 87    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Grey Bed (half):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 88
         contentHeight: 0.3125
@@ -687,7 +685,7 @@ Items:
         damage: 88    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
     Green Bed (half):
-        blockMaterial: STONE_SLAB2
+        blockMaterial: BED_BLOCK
         contentItem: DIAMOND_LEGGINGS
         contentDamage: 89
         contentHeight: 0.3125
