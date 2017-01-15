@@ -47,8 +47,9 @@ public class ResourceRegionsUtil {
             Object regionObject = rmClass.getMethod("getRegion",String.class,String.class)
                                          .invoke(null,p.getWorld().getName(), region);
             packUrl = (String) regionObject.getClass().getMethod("getPackUrl").invoke(regionObject);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
-            Logger.getLogger(InvCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
+            Logger.getLogger(InvCommand.class.getName()).log(Level.WARNING, "No resource region found.", ex);
+            return "";
         }
         return packUrl;
     }

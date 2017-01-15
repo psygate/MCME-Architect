@@ -875,17 +875,17 @@ Items:
         itemMaterial: DIAMOND_LEGGINGS
         damage: 108    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
-    Unused Block 4:
-        blockMaterial: HUGE_MUSHROOM_2
-        dataValue: 0
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 54    
-        type: BLOCK
-    Unused Block 5:
-        blockMaterial: HUGE_MUSHROOM_2
+    Granite:
+        blockMaterial: STONE
         dataValue: 1
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 54    
+        type: BLOCK
+    Observer:
+        blockMaterial: OBSERVER
+        dataValue: 9
+        itemMaterial: OBSERVER
+        damage: 0    
         type: BLOCK
     Unused Block 6:
         blockMaterial: HUGE_MUSHROOM_2

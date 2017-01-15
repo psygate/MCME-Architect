@@ -37,6 +37,16 @@ public enum Permission {
     PLACE_SIX_SIDED_LOG   ("architect.place.sixSidedLog"),
     BURNING_FURNACE       ("architect.place.burningFurnace"),
     INTERACT_EGG          ("architect.interactDragonEgg"),
+
+//DELETE in final version
+    GET_FOOD              ("architect.get.food"),
+    GET_LOGS              ("architect.get.logs"),
+    GET_DOORS             ("architect.get.doors"),
+    GET_SLABS             ("architect.get.slabs"),
+    GET_PLANTS            ("architect.get.plants"),
+    GET_MISC              ("architect.get.misc"),
+//END DELETE
+    
     GET_ARMOR             ("architect.get.armor"),
     GET_HEAD              ("architect.get.head"),
     GET_CREATE_PUBLIC     ("architect.get.public"),
