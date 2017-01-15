@@ -40,12 +40,24 @@ public class InvCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender cs, Command command, String label, String[] args) {
+        if(args[0].equalsIgnoreCase("reload")) {
+            if((cs instanceof Player) && !PluginData.hasPermission((Player)cs,Permission.INV_RELOAD_COMMAND)) {
+                PluginData.getMessageUtil().sendNoPermissionError(cs);
+                return true;
+            }
+            SpecialBlockInventoryData.loadInventories();
+            SpecialItemInventoryData.loadInventories();
+            SpecialHeadInventoryData.loadInventory();
+            SpecialSavedInventoryData.loadInventories();
+            sendInventoryLoadedMessage(cs);
+            return true;
+        }
         if (!(cs instanceof Player)) {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
         Player p = (Player) cs;
-        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             sendNotEnabledErrorMessage(cs);
             return true;
         }
@@ -61,25 +73,13 @@ public class InvCommand extends AbstractArchitectCommand {
             sendHelpMessage((Player)cs,page);
             return true;
         }
-        if(args[0].equalsIgnoreCase("reload")) {
-            if(!PluginData.hasPermission(p,Permission.INV_RELOAD_COMMAND)) {
-                PluginData.getMessageUtil().sendNoPermissionError(p);
-                return true;
-            }
-            SpecialBlockInventoryData.loadInventories();
-            SpecialItemInventoryData.loadInventories();
-            SpecialHeadInventoryData.loadInventory();
-            SpecialSavedInventoryData.loadInventories();
-            sendInventoryLoadedMessage(p);
-            return true;
-        }
         if(args[0].startsWith("h")) {
-            if(args.length>1 && args[1].equalsIgnoreCase("search")) {
-                if(args.length<3) {
+            if(args.length>1 && args[1].startsWith("s:")) {
+                /*if(args.length<3) {
                     PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                     return true;
-                }
-                SpecialHeadInventoryData.openSearchInventory(p,args[2]);
+                }*/
+                SpecialHeadInventoryData.openSearchInventory(p,args[1].substring(2));
                 return true;
             }
             SpecialHeadInventoryData.openInventory(p);
@@ -150,13 +150,15 @@ public class InvCommand extends AbstractArchitectCommand {
             return true;
         }
         boolean search = false;
+        String searchText = "";
         if(args.length>adaptIndex(1,rpIndex) && (args[0].startsWith("b") || args[0].startsWith("i"))) {
-            if(args[adaptIndex(1,rpIndex)].equalsIgnoreCase("search")) {
+            if(args[adaptIndex(1,rpIndex)].startsWith("s:")) {
                 search=true;
-                if(args.length<=adaptIndex(2,rpIndex)) {
+                searchText = args[adaptIndex(1,rpIndex)].substring(2);
+                /*if(args.length<=adaptIndex(2,rpIndex)) {
                     PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                     return true;
-                }
+                }*/
             }
         }
         /*if(searchIndex==0) {
@@ -174,7 +176,7 @@ public class InvCommand extends AbstractArchitectCommand {
                 return true;
             }
             if(search) {
-                SpecialBlockInventoryData.openSearchInventory(p, rpName, args[adaptIndex(2,rpIndex)]);
+                SpecialBlockInventoryData.openSearchInventory(p, rpName, searchText);//args[adaptIndex(2,rpIndex)]);
             } else {
                 SpecialBlockInventoryData.openInventory(p, rpName);
             }
@@ -186,7 +188,7 @@ public class InvCommand extends AbstractArchitectCommand {
                 return true;
             }
             if(search) {
-                SpecialItemInventoryData.openSearchInventory(p, rpName, args[adaptIndex(2,rpIndex)]);
+                SpecialItemInventoryData.openSearchInventory(p, rpName, searchText);//args[adaptIndex(2,rpIndex)]);
             } else {
                 SpecialItemInventoryData.openInventory(p, rpName);
             }
@@ -256,8 +258,8 @@ public class InvCommand extends AbstractArchitectCommand {
         PluginData.getMessageUtil().sendErrorMessage(cs, "Resource pack not found.");
     }
     
-    private void sendInventoryLoadedMessage(Player p) {
-        PluginData.getMessageUtil().sendInfoMessage(p, "Special Blocks inventory reloaded");
+    private void sendInventoryLoadedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "Special Blocks inventory reloaded");
     }
 
     private void sendInventorySavedMessage(Player p) {
@@ -287,11 +289,11 @@ public class InvCommand extends AbstractArchitectCommand {
 
     @Override
     public String getShortDescription() {
-        return ": Handles custom buid inventories.";
+        return ": Handles MCME custom inventories.";
     }
     @Override
     public String getUsageDescription() {
-        return " b|reload [rp]: TBD. \n "
+        return ": Opens block, item and head inventories. Creates and manages custom block inventories.\n "
                 +ChatColor.WHITE+"Click for detailed help.";
     }
     
@@ -300,4 +302,20 @@ public class InvCommand extends AbstractArchitectCommand {
         return "/inv help";
     }
 
+    @Override
+    protected void sendHelpMessage(Player player, int page) {
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"command /inv ... -";
+        help = new String[][]{
+                   {"/inv b"," [rp:<rpName>] [s:<search>]",": Open MCME block inventory.","Without optional parameter [rp:<rpName>] that inventory is opened which matches to the resource region you are in. Optional parameter [s:<search>] opens an inventory with all blocks which names contain <search>."},
+                   {"/inv i"," [rp:<rpName>] [s:<search>]",": Open MCME item inventory.","Without optional parameter [rp:<rpName>] that inventory is opened which matches to the resource region you are in. Optional parameter [s:<search>] opens an inventory with all items which names contain <search>."},
+                   {"/inv c"," [rp:<rpName>]",": Open custom block inventory.","Without optional parameter [rp:<rpName>] that inventory is opened which matches to the resource region you are in. If you are not in a resource region (plotworld, Themed-builds) inventory for Gondor pack opens."},
+                   {"/inv h"," [s:<search>]",": Open MCME head inventory."," Heads don't depend on resource packs, so no additional resource pack parameter here. Optional parameter [s:<search>] opens an inventory with all heads which names contain <search>."},
+                   {"/inv create"," [rp:<rpName>] <name>",": Saves your inventory"," as a new custom block inventory. This is meant for Project leaders for example to create inventories with all blocks needed for a plot build."},
+                   {"/get delete"," [rp:<rpName>] <name>",": Deletes a previously created (with /inv create) customized inventory."},
+                   {"/get reload","",": Reloads all inventories from config files."},
+                };
+        super.sendHelpMessage(player, page);
+    }
+
+    
 }

@@ -27,7 +27,6 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
-import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,6 +58,7 @@ import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Door;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -97,7 +97,8 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-/*    @EventHandler(priority = EventPriority.HIGH)
+//DELETE in final version
+    @EventHandler(priority = EventPriority.HIGH)
     private void logPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
 
@@ -268,10 +269,10 @@ public class SpecialBlockListener implements Listener{
             if (p.getItemInHand().getItemMeta().hasDisplayName()
                     && p.getItemInHand().getItemMeta().getDisplayName().startsWith("Placeable")) {
                 DevUtil.log(2,"vegPlace fired cancelled: " + event.isCancelled());
-                /*if(event.isCancelled()) {
+                if(event.isCancelled()) {
                     return;
-                }*/
-             /*   if(!(PluginData.hasPermission(p, Permission.PLACE_PLANT))) {
+                }
+                if(!(PluginData.hasPermission(p, Permission.PLACE_PLANT))) {
                     PluginData.getMessageUtil().sendNoPermissionError(p);
                     event.setCancelled(true);
                     return;
@@ -421,7 +422,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGH)
+    /*@EventHandler(priority = EventPriority.HIGH)
     private void doubleSlabPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.getItemInHand().getType().equals(Material.STEP)
@@ -466,7 +467,7 @@ public class SpecialBlockListener implements Listener{
                 bs.update(true,false);
             }
         }
-    }
+    }*/
     
     @EventHandler(priority = EventPriority.HIGH)
     private void bedPlace(PlayerInteractEvent event) {
@@ -607,28 +608,7 @@ Logger.getGlobal().info("4");
         }
     }*/
 
-    @EventHandler
-    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
-        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
-            return;
-        }
-        final Block block = event.getBlock();
-        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Furnace furnace = (Furnace) block.getState();
-                FurnaceInventory inventory = furnace.getInventory();
-                ItemStack item =inventory.getResult();
-                inventory.setResult(null);
-                inventory.setSmelting(new ItemStack(smelting));
-                furnace.setBurnTime(Short.MAX_VALUE);
-                furnace.update(true, false);
-            }
-        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-    }
-    
-    /*@EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void placeFurnace(BlockPlaceEvent event) {
         final Player p = event.getPlayer();
         if(event.getBlock().getType().equals(Material.FURNACE)) {
@@ -665,7 +645,7 @@ Logger.getGlobal().info("4");
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
             }
         }
-    }*/
+    }
     
     /*@EventHandler(priority = EventPriority.HIGH)
     public void protectFurnaceInventory(InventoryOpenEvent event) {
@@ -690,7 +670,7 @@ Logger.getGlobal().info("4");
         }
     }*/
     
-    /*private byte getDoorDat(float yaw) {
+    private byte getDoorDat(float yaw) {
         if ((yaw >= -225 && yaw < -135)
                 || (yaw >= 135 && yaw <= 225)) {
             return 3;
@@ -707,7 +687,7 @@ Logger.getGlobal().info("4");
         } else {
             return 0;
         }
-    }*/
+    }
     
     /*
     @EventHandler(priority = EventPriority.HIGH)
@@ -723,6 +703,67 @@ Logger.getGlobal().info("4");
             }
         }
     }*/
+    
+    private boolean isDoorItem(Material blockType) {
+        return blockType.equals(Material.WOOD_DOOR)
+                || blockType.equals(Material.IRON_DOOR)
+                || blockType.equals(Material.SPRUCE_DOOR_ITEM)
+                || blockType.equals(Material.BIRCH_DOOR_ITEM)
+                || blockType.equals(Material.JUNGLE_DOOR_ITEM)
+                || blockType.equals(Material.ACACIA_DOOR_ITEM)
+                || blockType.equals(Material.DARK_OAK_DOOR_ITEM);
+    }
+    
+    private Material doorItemToBlock(Material itemMaterial) {
+        switch(itemMaterial) {
+            case WOOD_DOOR: return Material.WOODEN_DOOR;
+            case IRON_DOOR: return Material.IRON_DOOR_BLOCK;
+            case SPRUCE_DOOR_ITEM: return Material.SPRUCE_DOOR;                
+            case BIRCH_DOOR_ITEM: return Material.BIRCH_DOOR;                
+            case JUNGLE_DOOR_ITEM: return Material.JUNGLE_DOOR;                
+            case ACACIA_DOOR_ITEM: return Material.ACACIA_DOOR;                
+            case DARK_OAK_DOOR_ITEM: return Material.DARK_OAK_DOOR;                
+        }
+        return null;
+    }
+
+    /*@EventHandler
+    public void cycleDurability(PlayerInteractEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.ITEM_TEXTURES)) {
+            if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                ItemStack item = event.getItem();
+                if(item.getDurability()>0) {
+                    item.setDurability((short) (item.getDurability()-1));
+                }
+            } else  if(event.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                ItemStack item = event.getItem();
+                item.setDurability((short) (item.getDurability()+1));
+            }
+        }
+    }*/
+//END DELETE
+    
+    
+    @EventHandler
+    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
+        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
+            return;
+        }
+        final Block block = event.getBlock();
+        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Furnace furnace = (Furnace) block.getState();
+                FurnaceInventory inventory = furnace.getInventory();
+                ItemStack item =inventory.getResult();
+                inventory.setResult(null);
+                inventory.setSmelting(new ItemStack(smelting));
+                furnace.setBurnTime(Short.MAX_VALUE);
+                furnace.update(true, false);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+    }
     
     @EventHandler(priority = EventPriority.HIGH)
     private void noOpenHalfDoors(PlayerInteractEvent event) {
@@ -758,47 +799,9 @@ Logger.getGlobal().info("4");
                 || blockType.equals(Material.DARK_OAK_DOOR);
     }
 
-    /*private boolean isDoorItem(Material blockType) {
-        return blockType.equals(Material.WOOD_DOOR)
-                || blockType.equals(Material.IRON_DOOR)
-                || blockType.equals(Material.SPRUCE_DOOR_ITEM)
-                || blockType.equals(Material.BIRCH_DOOR_ITEM)
-                || blockType.equals(Material.JUNGLE_DOOR_ITEM)
-                || blockType.equals(Material.ACACIA_DOOR_ITEM)
-                || blockType.equals(Material.DARK_OAK_DOOR_ITEM);
-    }
-    
-    private Material doorItemToBlock(Material itemMaterial) {
-        switch(itemMaterial) {
-            case WOOD_DOOR: return Material.WOODEN_DOOR;
-            case IRON_DOOR: return Material.IRON_DOOR_BLOCK;
-            case SPRUCE_DOOR_ITEM: return Material.SPRUCE_DOOR;                
-            case BIRCH_DOOR_ITEM: return Material.BIRCH_DOOR;                
-            case JUNGLE_DOOR_ITEM: return Material.JUNGLE_DOOR;                
-            case ACACIA_DOOR_ITEM: return Material.ACACIA_DOOR;                
-            case DARK_OAK_DOOR_ITEM: return Material.DARK_OAK_DOOR;                
-        }
-        return null;
-    }*/
-
-    /*@EventHandler
-    public void cycleDurability(PlayerInteractEvent event) {
-        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.ITEM_TEXTURES)) {
-            if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                ItemStack item = event.getItem();
-                if(item.getDurability()>0) {
-                    item.setDurability((short) (item.getDurability()-1));
-                }
-            } else  if(event.getAction().equals(Action.LEFT_CLICK_AIR)) {
-                ItemStack item = event.getItem();
-                item.setDurability((short) (item.getDurability()+1));
-            }
-        }
-    }*/
-    
     @EventHandler
     public void placeSpecialBlock(PlayerInteractEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || event.getPlayer().getInventory().getItemInMainHand()==null
                 || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
@@ -874,7 +877,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority=EventPriority.LOWEST)  
     public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
-        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
             final Player p = (Player) event.getPlayer();
             String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
@@ -888,30 +891,32 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority=EventPriority.LOWEST) 
     public void openSpecialInventory(InventoryCreativeEvent event) {
-        if(event.getSlotType().equals(SlotType.OUTSIDE)
-                && event.getCursor().getType().equals(Material.STONE)
-                && event.getCursor().getAmount()==2) {
-            if(!(event.getWhoClicked() instanceof Player)) {
-                return;
-            }
-            final Player p = (Player) event.getWhoClicked();
-            String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
-            if(rpN==null || rpN.equals("")) {
-                rpN = "Gondor";
-            }
-            final String rpName = rpN;
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    p.closeInventory();
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            SpecialBlockInventoryData.openInventory(p, rpName);  
-                        }
-                    }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+        if(PluginData.isModuleEnabled(event.getWhoClicked().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
+            if(event.getSlotType().equals(SlotType.OUTSIDE)
+                    && event.getCursor().getType().equals(Material.STONE)
+                    && event.getCursor().getAmount()==2) {
+                if(!(event.getWhoClicked() instanceof Player)) {
+                    return;
                 }
-            }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+                final Player p = (Player) event.getWhoClicked();
+                String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+                if(rpN==null || rpN.equals("")) {
+                    rpN = "Gondor";
+                }
+                final String rpName = rpN;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        p.closeInventory();
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                SpecialBlockInventoryData.openInventory(p, rpName);  
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+            }
         }
     }
     
@@ -922,7 +927,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.HIGHEST) 
     public void avoidDoubleSlab(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
                 || !(event.getBlock().getType().equals(Material.DOUBLE_STEP)
                     || event.getBlock().getType().equals(Material.DOUBLE_STONE_SLAB2)
                     || event.getBlock().getType().equals(Material.WOOD_DOUBLE_STEP)
@@ -981,8 +986,8 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockInventories(InventoryOpenEvent event) {
-Logger.getGlobal().info("open inventory "+event.getInventory().getType().name());
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+//Logger.getGlobal().info("open inventory "+event.getInventory().getType().name());
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1003,7 +1008,7 @@ Logger.getGlobal().info("open inventory "+event.getInventory().getType().name())
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1016,7 +1021,7 @@ Logger.getGlobal().info("open inventory "+event.getInventory().getType().name())
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockArmorAtItemBlocks(PlayerInteractAtEntityEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1030,7 +1035,7 @@ Logger.getGlobal().info("open inventory "+event.getInventory().getType().name())
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockVanillaOrientations(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             return;
         }
         if(event.getBlockPlaced().getType().equals(Material.PUMPKIN) 
@@ -1041,7 +1046,7 @@ Logger.getGlobal().info("open inventory "+event.getInventory().getType().name())
     
     @EventHandler
     public void removeItemBlockArmorStand(BlockBreakEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             return;
         }
         Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,

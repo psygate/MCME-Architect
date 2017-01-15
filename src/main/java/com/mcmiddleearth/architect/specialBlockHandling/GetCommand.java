@@ -20,7 +20,6 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.architect.armorStand.ArmorStandEditorConfig;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.pluginutil.FileUtil;
@@ -35,8 +34,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 /**
@@ -56,7 +57,7 @@ public class GetCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
-        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             sendNotEnabledErrorMessage(cs);
             return true;
         }
@@ -110,6 +111,65 @@ public class GetCommand extends AbstractArchitectCommand {
         if(args.length<2 || args[1].equals("-o")) {
             if(!GetData.exists(args[0])) {
                     //|| (!GetData.isOwn(p, args[0]) && GetData.isPrivate(args[0]))) {
+
+// DELETE in final version //
+                        // old get commands for pre-release 
+                if(args[0].toLowerCase().startsWith("l")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_LOGS)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        getLogs(p);
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given six sided logs!");
+                    }
+                    return true;
+                } else if(args[0].toLowerCase().startsWith("d")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_DOORS)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        getDoors(p);
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given half doors!");
+                    }
+                    return true;
+                } else if(args[0].toLowerCase().startsWith("p")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        getPlants(p);
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given plants!");
+                    }
+                    return true;
+                } else if(args[0].toLowerCase().startsWith("f")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        getFlowers(p);
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given flowers/gems!");
+                    }
+                    return true;
+                } else if(args[0].toLowerCase().startsWith("mu")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_PLANTS)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        if(args.length>1 && args[1].equalsIgnoreCase("red")) {
+                            getHugeMushroomsSpecial(p,Material.HUGE_MUSHROOM_2);
+                        } else if(args.length>1 && args[1].equalsIgnoreCase("brown")) {
+                            getHugeMushroomsSpecial(p,Material.HUGE_MUSHROOM_1);
+                        } else  {
+                            getHugeMushrooms(p);
+                        }
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given mushroom blocks!");
+                    }
+                    return true;
+                } else if(args[0].toLowerCase().startsWith("m")) {
+                    if(!PluginData.hasPermission(p, Permission.GET_MISC)) {
+                        PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    } else {
+                        getMiscellaneous(p);
+                        PluginData.getMessageUtil().sendInfoMessage(p, "Given miscellaneous blocks!");
+                    }
+                    return true;
+                }
+// END DELETE in final version //                
                 sendItemSetNotFoundError(cs);
             } else {
                 giveItems(p, GetData.getItems(args[0]), args.length>1);
@@ -328,7 +388,7 @@ public class GetCommand extends AbstractArchitectCommand {
     }
     @Override
     public String getUsageDescription() {
-        return " <block group>: Gives you a collection of special blocks. \n "
+        return ": Get special blocks for building directly into your inventory. Also manages kits of blocks for private and public use.\n "
                 +ChatColor.WHITE+"Click for detailed help.";
     }
     
@@ -340,14 +400,109 @@ public class GetCommand extends AbstractArchitectCommand {
     @Override
     protected void sendHelpMessage(Player player, int page) {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"command /get ... -";
-        help = new String[][]{{"/get logs","",": Get six sided logs, useful for trees."},
-                                       {"/get doors","",": Get half doors."},
-                                       {"/get plants","",": Get placeable plants."},
-                                       {"/get head"," <head or folder name>",": Get head"," from the MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
-                                       {"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
-                                       {"/get armor"," <color>",": Get dyed leather armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black."},
-                                       {"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."}};
+        help = new String[][]{
+                   {"/get ","<kitName> [-o]",": Get a kit of special blocks."," With -o flag your quickbar items are replaced (overwritten) with the items from the kit. Otherwise the kit items are placed at free slots."},
+                   {"/get logs","",": Get six sided logs, useful for trees."},
+                   {"/get doors","",": Get half doors."},
+                   {"/get plants","",": Get placeable plants."},
+                   {"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
+                   {"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."},
+                   {"/get list"," #page",": Shows a list of all item kits visible to you"," (public kits and your own private ones)"},
+                   {"/get head"," <head or folder name>",": Get heads"," from the MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
+                   {"/get armor"," <color>",": Get dyed leather armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black."},
+                   {"/get pcreate"," <kitName>",": Create a private item kit."," /get list shows this kit to you only. But everyone who knows it can use it. Each player may create 10 private kits. Private kits of a player are deleted when a player didn't log in for more than 100 days."},
+                   {"/get create"," <kitName>",": Create a public item kit"," shown to everyone with /get list."},
+                   {"/get publish"," <kitName>",": Make an item kit public."},
+                   {"/get unpublish"," <kitName>",": Make an item kit public."}};
         super.sendHelpMessage(player, page);
     }
+    
+//DELETE in final version
+    
+    private void getLogs(Player p) {
+        boolean enchant = false;
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG, 64, (short) 0,(byte) 0),"Six Sided Oak Wood", enchant));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG, 64, (short) 0,(byte) 1),"Six Sided Spruce Wood", enchant));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG, 64, (short) 0,(byte) 2),"Six Sided Birch Wood", enchant));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG, 64, (short) 0,(byte) 3),"Six Sided Jungle Wood", enchant));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG_2, 64, (short) 0,(byte) 0),"Six Sided Acacia Wood", enchant));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.LOG_2, 64, (short) 0,(byte) 1),"Six Sided Dark Oak Wood", enchant));
+    }
+    
+    private void getDoors(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.WOOD_DOOR, 64),"Half Oak Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.IRON_DOOR, 64),"Half Iron Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.SPRUCE_DOOR_ITEM, 64),"Half Spruce Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BIRCH_DOOR_ITEM, 64),"Half Birch Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.JUNGLE_DOOR_ITEM, 64),"Half Jungle Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.ACACIA_DOOR_ITEM, 64),"Half Acacia Door",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.DARK_OAK_DOOR_ITEM, 64),"Half Dark Oak Door",true));
+    }
+
+    private void getPlants(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.CARROT_ITEM, 64),"Placeable Carrot",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.POTATO_ITEM, 64),"Placeable Potato",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.WHEAT, 64),"Placeable Wheat",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.MELON_SEEDS, 64),"Placeable Melon Plant",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.PUMPKIN_SEEDS, 64),"Placeable Pumpkin Plant",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BROWN_MUSHROOM, 64),"Placeable Brown Mushroom",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_MUSHROOM, 64),"Placeable RedMushroom",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.NETHER_STALK, 64),"Placeable Onion",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.WATER_LILY, 64),"Placeable Water Lily",true));
+    }
+    
+    private void getFlowers(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.DEAD_BUSH, 64),"Placeable Bush",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.YELLOW_FLOWER, 64),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 0),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 1),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 2),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 3),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 4),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 5),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.RED_ROSE, 64, (short) 0, (byte) 6),"Placeable Flower",true));
+    }
+    
+    private void getHugeMushrooms(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.INSIDE.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_2, 64),MushroomBlocks.ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.STEM_ALL.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.HUGE_MUSHROOM_1, 64),MushroomBlocks.STEM.getDisplayName(),true));
+    }
+    
+    private void getHugeMushroomsSpecial(Player p, Material kind) {
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NET.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.NWT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.SET.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.ST.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.SWT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.WT.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.T.getDisplayName(),true));
+        p.getInventory().addItem(addMeta(new ItemStack(kind, 64),MushroomBlocks.ET.getDisplayName(),true));
+    }
+    
+    private void getMiscellaneous(Player p) {
+        p.getInventory().addItem(addMeta(new ItemStack(Material.PISTON_BASE,64),"Table", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.PISTON_STICKY_BASE,64),"Wheel", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.CACTUS, 64),"Placeable Cactus",true));
+        p.getInventory().addItem(new ItemStack(Material.DRAGON_EGG));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BED, 64),"Half Bed (head)", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.BED, 64),"Half Bed (foot)", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.FURNACE, 64),"Burning Furnace", true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.REDSTONE_TORCH_ON, 64),"Unlit Torch", true));
+    }
+
+    private static ItemStack addMeta(ItemStack item, String displayName, boolean enchant) {
+        ItemMeta metaData = item.getItemMeta();
+        if(enchant) {
+            metaData.addEnchant(Enchantment.DURABILITY, 1, true);
+        }
+        metaData.setDisplayName(displayName);
+        item.setItemMeta(metaData);
+        return item;
+    }
+//END DELETE
 
 }

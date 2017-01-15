@@ -60,7 +60,7 @@ public abstract class AbstractArchitectCommand implements CommandExecutor{
                             PluginData.getMessageUtil()
                                     .hoverFormat(line[0]+line[1]+": "
                                                 +hoverText
-                                                +" \n "+ChatColor.WHITE+"Click to use.",":",true)));
+                                                +" \n "+ChatColor.WHITE+"Click to use.",": ",true)));
         }
         PluginData.getMessageUtil().sendFancyListMessage(player, header, helpList, 
                                                          getHelpCommand(), page);
