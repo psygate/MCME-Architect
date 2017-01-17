@@ -18,7 +18,6 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -44,7 +43,7 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
                         Material[] blockMaterial, 
                         byte[] blockDataValue,
                         Material contentItem,
-                        short contentDamage,
+                        Short[] contentDamage,
                         double contentHeight) {
         super(id, Material.AIR, (byte) 0, contentItem, contentDamage, 
                   contentHeight, SpecialBlockType.ITEM_BLOCK_FOUR_DIRECTIONS);
@@ -78,10 +77,11 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
         dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
 
         Material materialContent = matchMaterial(config.getString("contentItem",""));
-        short contentDamage = (short) config.getInt("contentDamage");
+        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
         double contentHeight = config.getDouble("contentHeight",0);
         return new SpecialBlockItemFourDirections(id, materialFaces, dataFaces, 
-                                                     materialContent, contentDamage, 
+                                                     materialContent, 
+                                                     contentDamage, 
                                                      contentHeight);
     }
 

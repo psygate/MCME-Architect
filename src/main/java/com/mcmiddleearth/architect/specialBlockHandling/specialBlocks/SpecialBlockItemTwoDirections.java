@@ -18,7 +18,6 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -44,7 +43,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
                         Material[] blockMaterial, 
                         byte[] blockDataValue,
                         Material contentItem,
-                        short contentDamage,
+                        Short[] contentDamage,
                         double contentHeight) {
         super(id, Material.AIR, (byte) 0, contentItem, contentDamage, 
                   contentHeight, SpecialBlockType.ITEM_BLOCK_TWO_DIRECTIONS);
@@ -74,8 +73,8 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         dataAxis[1] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);
         //return new SpecialBlockTwoAxis(id, materialAxis, dataAxis);
         Material materialContent = matchMaterial(config.getString("contentItem",""));
-        short contentDamage = (short) config.getInt("contentDamage");
-        /*Material[] materialContentAxis = new Material[2];
+        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
+            /*Material[] materialContentAxis = new Material[2];
         materialContentAxis[0] = matchMaterial(config.getString("contentItemX",""));
         materialContentAxis[1] = matchMaterial(config.getString("contentItemZ",""));
         for(int i=0; i<materialContentAxis.length;i++) {
@@ -91,8 +90,8 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         contentDamageAxis[1] = (short) config.getInt("contentDamageZ",contentDamage);*/
         double contentHeight = config.getDouble("contentHeight",0);
         return new SpecialBlockItemTwoDirections(id, materialAxis, dataAxis, 
-                                                     materialContent, contentDamage, 
-                                                     contentHeight);
+                                                     materialContent, 
+                                                     contentDamage, contentHeight);
     }
     
     /*@Override

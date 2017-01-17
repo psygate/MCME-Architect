@@ -887,12 +887,173 @@ Items:
         itemMaterial: OBSERVER
         damage: 0    
         type: BLOCK
-    Unused Block 6:
-        blockMaterial: HUGE_MUSHROOM_2
-        dataValue: 2
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 54    
-        type: BLOCK
+    Clothesline (sheet1):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 109
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 109    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (sheet2):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 110
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 110    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (sheet3):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 111
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 111    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (shirt green):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 112
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 112    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (shirth blue long):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 113
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 113    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (shirt brown long):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 114
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 114    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (shirt red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 115
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 115    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (pant light brown):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 116
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 116    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (pant green):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 117
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 117    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (pant brown long):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 118
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 118    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline:
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 119
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 119    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
+    Clothesline (random):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 109,110, 111, 112,113,114, 115,116,117,118
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 109    
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Curtain:
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueEast: 9
+        dataValueWest: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 120, 121
+        contentHeight: 0.3125
+        category: Deco
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 120    
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
     Unused Block 7:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 3
