@@ -27,6 +27,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,7 +37,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -927,7 +927,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.HIGHEST) 
     public void avoidDoubleSlab(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !(event.getBlock().getType().equals(Material.DOUBLE_STEP)
                     || event.getBlock().getType().equals(Material.DOUBLE_STONE_SLAB2)
                     || event.getBlock().getType().equals(Material.WOOD_DOUBLE_STEP)
@@ -987,7 +987,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockInventories(InventoryOpenEvent event) {
 //Logger.getGlobal().info("open inventory "+event.getInventory().getType().name());
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1008,7 +1008,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1021,7 +1021,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockArmorAtItemBlocks(PlayerInteractAtEntityEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
@@ -1035,7 +1035,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockVanillaOrientations(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
             return;
         }
         if(event.getBlockPlaced().getType().equals(Material.PUMPKIN) 
@@ -1046,19 +1046,56 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler
     public void removeItemBlockArmorStand(BlockBreakEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
             return;
         }
         Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
-                                    event.getBlock().getY()-1, event.getBlock().getZ()+0.5);
-        for(Entity entity: event.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
-            if(entity.getCustomName()!=null
-                    && entity.getCustomName().equals("iBE_"+event.getBlock().getX()+"_"+event.getBlock().getY() 
-                                             +"_"+event.getBlock().getZ())) {
-                entity.remove();
+                                    event.getBlock().getY(), event.getBlock().getZ()+0.5);
+Logger.getGlobal().info("remove");
+        SpecialBlockItemBlock.removeArmorStands(loc);
+    }
+    
+    @EventHandler
+    public void cycleBlockItem(PlayerInteractEvent event) {
+        if(!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
+                || event.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
+            return;
+        }
+        ArmorStand armorStand = SpecialBlockItemBlock.getArmorStand(event.getClickedBlock().getLocation());
+        if(armorStand!=null
+                    && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
+            if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.SPECIAL_BLOCKS_PLACE)) {
+                if(!PluginData.hasGafferPermission(event.getPlayer(),
+                                                 event.getClickedBlock().getLocation())) {
+                    PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(), 
+                            PluginData.getGafferProtectionMessage(event.getPlayer(), 
+                                                 event.getClickedBlock().getLocation()));
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            if(armorStand.getCustomName() != null 
+                    && armorStand.getCustomName().startsWith(SpecialBlockItemBlock.PREFIX)) {
+                ItemStack item = armorStand.getHelmet();
+                //item.setDurability((short)((item.getDurability()+1)%Short.MAX_VALUE));
+                String id = SpecialBlockItemBlock.getIdFromArmorStandName(armorStand.getCustomName());
+                SpecialBlockItemBlock itemBlock 
+                        = (SpecialBlockItemBlock) SpecialBlockInventoryData.getSpecialBlock(id);
+                if(itemBlock==null) {
+                    return;
+                }
+                short dura;
+                if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    dura = itemBlock.getNextDurability(item.getDurability());
+                } else {
+                    dura = itemBlock.getPreviousDurability(item.getDurability());
+                }
+                item.setDurability(dura);
+                armorStand.setHelmet(item);
             }
         }
     }
+    
     
     /*@EventHandler(priority = EventPriority.LOWEST) 
     public void interactPoweredDoors(PlayerInteractEvent event) {

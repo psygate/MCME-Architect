@@ -16,9 +16,12 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.pluginutil.NumericUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +29,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -37,16 +41,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static final String PREFIX = "iBE_";
+    public static final String ID_DELIMITER = "_id_";
     
     private Material contentItem;
-    private short contentDamage;
+    private Short[] contentDamage;
     private double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
                         Material blockMaterial, 
                         byte blockDataValue,
                         Material contentItem,
-                        short contentDamage,
+                        Short[] contentDamage,
                         double contentHeight) {
         this(id, blockMaterial, blockDataValue, contentItem, contentDamage, contentHeight,
                 SpecialBlockType.ITEM_BLOCK);
@@ -56,7 +61,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
                         Material blockMaterial, 
                         byte blockDataValue,
                         Material contentItem,
-                        short contentDamage,
+                        Short[] contentDamage,
                         double contentHeight,
                         SpecialBlockType type) {
         super(id, blockMaterial, blockDataValue, type);
@@ -72,23 +77,26 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         }
         byte barrelData = (byte) config.getInt("blockDataValue",0);
         Material contentItem = matchMaterial(config.getString("contentItem",""));
-        short contentDamage = (short) config.getInt("contentDamage",0);
+        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
         double contentHeight = config.getDouble("contentHeight",0);
-        return new SpecialBlockItemBlock(id, barrelMaterial, barrelData, contentItem, contentDamage, contentHeight);
+        return new SpecialBlockItemBlock(id, barrelMaterial, barrelData, contentItem, 
+                                         contentDamage, contentHeight);
     }
     
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
         super.placeBlock(blockPlace, blockFace, playerLoc);
         Location loc = getArmorStandLocation(blockPlace, blockFace, playerLoc);
+        removeArmorStands(blockPlace.getLocation());
         final ArmorStand armor = (ArmorStand) blockPlace.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
         armor.setVisible(false);
         armor.setGravity(false);
-        armor.setCustomName(PREFIX+blockPlace.getX()+"_"+blockPlace.getY()+"_"+blockPlace.getZ());
+        armor.setCustomName(getArmorStandName(blockPlace)+ID_DELIMITER+getId());
         new BukkitRunnable() {
             @Override
             public void run() {
-                ItemStack item = new ItemStack(contentItem,1,contentDamage);
+                ItemStack item = new ItemStack(contentItem,1,
+                                               contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
                 armor.setHelmet(item);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
@@ -97,5 +105,67 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     protected Location getArmorStandLocation(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         return new Location(blockPlace.getWorld(), blockPlace.getX()+0.5, 
                                     blockPlace.getY()-2+contentHeight, blockPlace.getZ()+0.5);
+    }
+    
+    protected static String getArmorStandName(Block blockPlace) {
+        return PREFIX+blockPlace.getX()+"_"+blockPlace.getY()+"_"+blockPlace.getZ();
+    }
+    
+    public static String getIdFromArmorStandName(String name) {
+        return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length());
+    }
+    
+    public short getNextDurability(short currentDurability) {
+        for(int i=0;i<contentDamage.length;i++) {
+            if(contentDamage[i]==currentDurability) {
+                return ((i+1)<contentDamage.length?contentDamage[i+1]:contentDamage[0]);
+            }
+        }
+        return contentDamage[0];
+    }
+    
+    public short getPreviousDurability(short currentDurability) {
+        for(int i=0;i<contentDamage.length;i++) {
+            if(contentDamage[i]==currentDurability) {
+                return ((i-1)>=0?contentDamage[i-1]:contentDamage[contentDamage.length-1]);
+            }
+        }
+        return contentDamage[0];
+    }
+    
+    protected static Short[] getContentDamage(String data) {
+        Scanner scanner = new Scanner(data);
+            scanner.useDelimiter(",");
+            List<Short> contentDamageList = new ArrayList<>();
+            while(scanner.hasNext()) {
+                String dataValue = scanner.next();
+                if(NumericUtil.isShort(dataValue)) {
+                    short value = (short) NumericUtil.getShort(dataValue);
+                    contentDamageList.add(value);
+                }
+            }
+        return contentDamageList.toArray(new Short[contentDamageList.size()]);
+    }
+    
+    public static void removeArmorStands(Location loc) {
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+Logger.getGlobal().info("Entity "+entity.getCustomName());                
+Logger.getGlobal().info("Search "+getArmorStandName(loc.getBlock()));                
+            if(entity instanceof ArmorStand && entity.getCustomName()!=null
+                    && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
+Logger.getGlobal().info("removed");                
+                entity.remove();
+            }
+        }
+    }
+    
+    public static ArmorStand getArmorStand(Location loc) {
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+            if(entity instanceof ArmorStand && entity.getCustomName()!=null
+                    && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
+                return (ArmorStand) entity;
+            }
+        }
+        return null;
     }
 }
