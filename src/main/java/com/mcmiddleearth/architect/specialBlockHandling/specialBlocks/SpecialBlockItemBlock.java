@@ -149,11 +149,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static void removeArmorStands(Location loc) {
         for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
-Logger.getGlobal().info("Entity "+entity.getCustomName());                
-Logger.getGlobal().info("Search "+getArmorStandName(loc.getBlock()));                
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
                     && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
-Logger.getGlobal().info("removed");                
                 entity.remove();
             }
         }

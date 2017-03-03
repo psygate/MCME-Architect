@@ -1051,7 +1051,6 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         }
         Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
                                     event.getBlock().getY(), event.getBlock().getZ()+0.5);
-Logger.getGlobal().info("remove");
         SpecialBlockItemBlock.removeArmorStands(loc);
     }
     

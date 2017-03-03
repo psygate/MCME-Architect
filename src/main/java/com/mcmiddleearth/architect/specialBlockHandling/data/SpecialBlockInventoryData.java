@@ -34,6 +34,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.customInventories.Custom
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockBurningFurnace;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoubleY;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
 import com.mcmiddleearth.pluginutil.FileUtil;
@@ -99,7 +100,7 @@ public class SpecialBlockInventoryData {
         inventories.put(rpName, inventory);
         SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks");
         searchInventories.put(rpName, searchInventory);
-        File blockFile = new File(folder,"block.yml");
+        File blockFile = new File(folder,"categories.yml");
         if(blockFile.exists()) {
             loadFromFile(rpName, blockFile);
         }
@@ -197,6 +198,8 @@ public class SpecialBlockInventoryData {
                         break;
                     case BURNING_FURNACE:
                         blockData = SpecialBlockBurningFurnace.loadFromConfig(section, fullName(rpName, itemKey));
+                    case DOUBLE_Y_BLOCK:
+                        blockData = SpecialBlockDoubleY.loadFromConfig(section, fullName(rpName, itemKey));
                 }
                 ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                 if(blockData !=null && inventoryItem!=null) {
