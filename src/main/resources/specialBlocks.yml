@@ -80,6 +80,15 @@ Categories:
         damage: 11        
         damageCurrent: 12
 Items:
+    oak_planks:
+     blockMaterial: WOOD
+     dataValue: 0
+     itemMaterial: DIAMOND_CHESTPLATE
+     damage: 1
+     display: Oak planks [5:0]
+     category: Block
+     type: BLOCK
+      
     Meat:
         blockMaterial: CACTUS
         dataValue: 0
@@ -115,6 +124,13 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 66    
         category: Deco
+        type: BLOCK
+    Thin Tree:
+        blockMaterial: CHORUS_PLANT
+        dataValue: 0
+        itemMaterial: CHORUS_PLANT
+        damage: 0    
+        category: Plant
         type: BLOCK
     Puddle:
         blockMaterial: REDSTONE_WIRE
@@ -1054,18 +1070,21 @@ Items:
         itemMaterial: DIAMOND_LEGGINGS
         damage: 120    
         type: ITEM_BLOCK_FOUR_DIRECTIONS
-    Unused Block 7:
-        blockMaterial: HUGE_MUSHROOM_2
+    Double Plant:
+        lowerMaterial: DOUBLE_PLANT
+        upperMaterial: DOUBLE_PLANT
+        lowerDataValue: 5
+        upperDataValue: 10
         dataValue: 3
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 54    
-        type: BLOCK
-    Unused Block 8:
-        blockMaterial: HUGE_MUSHROOM_2
-        dataValue: 4
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 54    
-        type: BLOCK
+        type: DOUBLE_Y_BLOCK
+    Stairs:
+        itemMaterial: WOOD_STAIRS
+        type: VANILLA
+    Step:
+        itemMaterial: WOOD_STEP
+        type: VANILLA
     Unused Block 9:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 5

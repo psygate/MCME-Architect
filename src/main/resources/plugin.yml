@@ -65,7 +65,7 @@ permissions:
             architect.ranks.designer: true
             architect.randomiser.allowMaterials: true
             architect.reload: true
-            architect.noPhysicsList: true
+            architect.noPhysicsList.edit: true
             architect.voxel.delete: true
             architect.customHeadManager.manager: true
             architect.armorStandEditor.delete: true
@@ -85,6 +85,7 @@ permissions:
             architect.randomiser.user: true
             architect.get.public: true
             architect.inventory.save: true
+            architect.noPhysicsList.exception: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -100,6 +101,7 @@ permissions:
             architect.hangingEntityEditor: true
             architect.bannerEditor: true
             architect.paintingEditor: true
+            architect.cycleBlocks: true
             architect.armorStandEditor: true
             architect.place.halfDoor: true
             architect.place.halfBed: true
@@ -120,6 +122,7 @@ permissions:
             architect.inventory: true
             architect.inventory.open: true
             architect.help: true
+            architect.noPhysicsList.view: true
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
         default: op
@@ -201,8 +204,16 @@ permissions:
     architect.getCommand: 
         descriptions: Allows to use command /get
         default: op
-    architect.noPhysicsList: 
-        descriptions: Allows to get coloured leather armor
+    architect.noPhysicsList.edit: 
+        descriptions: Allows to edit the no-physics list
+        default: op
+        children:
+            architect.noPhysicsList.view: true
+    architect.noPhysicsList.exception: 
+        descriptions: Allows to manage no-physics exception areas
+        default: op
+    architect.noPhysicsList.view: 
+        descriptions: Allows to view the no-physics list
         default: op
     architect.weSchemViewer: 
         descriptions: Allows to use command /schlist
@@ -231,6 +242,9 @@ permissions:
         default: op
     architect.paintingEditor: 
         descriptions: Allows to use Painting Editor
+        default: op
+    architect.cycleBlocks: 
+        descriptions: Allows to cycle plant growth stages by clicking with stick
         default: op
     architect.hangingEntityEditor: 
         descriptions: Allows to edit hanging Entities

@@ -17,11 +17,14 @@
 package com.mcmiddleearth.architect.specialBlockHandling.data;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.util.ZipUtil;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +53,8 @@ public class SpecialItemInventoryData {
     private final static Map<String, SearchInventory> searchInventories = new HashMap<>();
 
     //private static List<ItemStack> itemList = new ArrayList<>();
+    
+    private static final String configLocator = "item_inventories";
     
     private static final File configFolder = new File(ArchitectPlugin.getPluginInstance()
                                                        .getDataFolder(),"inventories/item");
@@ -164,6 +169,10 @@ public class SpecialItemInventoryData {
         }
         return null;
     }*/
+    
+    public static synchronized void downloadConfig(String rpName, InputStream in) throws IOException {
+        ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
+    }
     
     private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {
         Material itemMat = Material.matchMaterial(config.getString("itemMaterial",""));

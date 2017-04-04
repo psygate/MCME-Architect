@@ -16,7 +16,6 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
-import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,17 +23,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockFiveFaces extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockFiveFaces extends SpecialBlockOrientable {
     
     private SpecialBlockFiveFaces(String id, 
                         Material[] material, 
@@ -97,4 +91,5 @@ public class SpecialBlockFiveFaces extends SpecialBlock {
         }
         return state;
     }
+    
 }

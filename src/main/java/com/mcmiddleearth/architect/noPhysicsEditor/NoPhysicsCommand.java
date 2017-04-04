@@ -76,6 +76,10 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     }
                 }
             } else if(args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
+                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EDIT)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    return true;
+                }
                 if(args.length<3) {
                     PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
                     sendHelpMessage(p,1);
@@ -130,6 +134,10 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     }
                 }
             } else if(args[0].equalsIgnoreCase("exception")) {
+                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EXCEPT)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    return true;
+                }
                 if(args[1].equalsIgnoreCase("set")) {
                     Region region= null;
                     try {
@@ -280,7 +288,10 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"No Physics List Editor -";
         help = new String[][]{{"/noPhy list ","<world>|-all",": Shows no physics list.","You may use '-all' instead of a worldname to show the no physics lists of all worlds."},
                                        {"/noPhy add ","<world>|-all <material>",": Adds a block"," to no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."},
-                                       {"/noPhy remove "," <world>|-all <material>",": Removes a block"," from no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."}};
+                                       {"/noPhy remove ","<world>|-all <material>",": Removes a block"," from no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."},
+                                       {"/noPhy exception set ","<name>",": Creates ", "a new exception area."},
+                                       {"/noPhy exception delete "," <name>",": Deletes ", "an exception area."},
+                                       {"/noPhy exception list "," [#page]",": Displays a list", " of all exception areas."}};
         super.sendHelpMessage(player, page);
     }
 

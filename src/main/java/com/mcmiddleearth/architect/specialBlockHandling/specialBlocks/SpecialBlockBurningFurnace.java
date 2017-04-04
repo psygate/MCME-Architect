@@ -71,5 +71,12 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
     }
-    
+
+    @Override
+    public boolean matches(Block block) {
+        BlockState state = block.getState();
+        return state instanceof Furnace
+                && ((Furnace)state).getBurnTime()>0;
+    }
+
 }

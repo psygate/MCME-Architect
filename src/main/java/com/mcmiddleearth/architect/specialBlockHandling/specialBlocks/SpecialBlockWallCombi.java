@@ -17,8 +17,6 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,11 +28,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockWallCombi extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockWallCombi extends SpecialBlockOrientable {
     
     private SpecialBlockWallCombi(String id, 
                         Material[] material, 

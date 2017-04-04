@@ -37,6 +37,8 @@ public enum SpecialBlockType {
     ITEM_BLOCK_FOUR_DIRECTIONS,
     DOOR,
     THIN_WALL,
+    DOUBLE_Y_BLOCK,
+    VANILLA,
     DOOR_THREE_BLOCKS,
     DOOR_FOUR_BLOCKS;//("threeAxis");
     

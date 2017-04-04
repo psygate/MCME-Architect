@@ -16,20 +16,14 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoor;
-import com.mcmiddleearth.architect.specialBlockHandling.*;
-import com.mcmiddleearth.architect.specialBlockHandling.*;
-import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.util.DevUtil;
+import com.mcmiddleearth.util.DoorUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.material.Door;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -59,4 +53,17 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
         placeDoor(blockPlace, playerLoc, getMaterial(), true, true, hingeRight);
     }
     
+   @Override
+    public boolean matches(Block block) {
+        if(getMaterial().equals(block.getType())) {
+           if(DoorUtil.isLowerDoorBlock(block)) {
+               block = block.getRelative(BlockFace.UP);
+               if(!DoorUtil.isUpperDoorBlock(block)) {
+                   return false;
+               }
+           }
+           return hingeRight == (((Door)block.getState()).getHinge());
+        }
+        return false;
+    }
 }

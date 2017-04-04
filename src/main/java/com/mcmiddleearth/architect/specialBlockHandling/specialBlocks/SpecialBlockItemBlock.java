@@ -22,7 +22,6 @@ import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,8 +42,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     public static final String PREFIX = "iBE_";
     public static final String ID_DELIMITER = "_id_";
     
-    private Material contentItem;
-    private Short[] contentDamage;
+    protected Material contentItem;
+    protected Short[] contentDamage;
     private double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
@@ -149,11 +148,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static void removeArmorStands(Location loc) {
         for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
-Logger.getGlobal().info("Entity "+entity.getCustomName());                
-Logger.getGlobal().info("Search "+getArmorStandName(loc.getBlock()));                
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
                     && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
-Logger.getGlobal().info("removed");                
                 entity.remove();
             }
         }
@@ -168,4 +164,23 @@ Logger.getGlobal().info("removed");
         }
         return null;
     }
+    
+    @Override
+    public boolean matches(Block block) {
+        if(super.matches(block)) {
+            ArmorStand holder = getArmorStand(block.getLocation());
+            if(holder!=null) {
+                ItemStack content = holder.getHelmet();
+                if(content.getType().equals(contentItem)) {
+                    for(short damage: contentDamage) {
+                        if(damage == content.getDurability()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

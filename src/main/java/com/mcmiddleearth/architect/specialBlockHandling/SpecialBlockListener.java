@@ -26,6 +26,7 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
+import com.mcmiddleearth.util.DoorUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
 import java.util.logging.Logger;
 import org.bukkit.GameMode;
@@ -53,6 +54,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -770,14 +772,14 @@ Logger.getGlobal().info("4");
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Player p = event.getPlayer();
             Material blockType = event.getClickedBlock().getType();
-            if (isDoor(blockType)) {
+            if (DoorUtil.isDoor(blockType)) {
                 if(PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.HALF_DOORS)) {
                     DevUtil.log(2,"noOpenHalfDoors fired cancelled: " + event.isCancelled());
                     if(event.isCancelled()) {
                         return;
                     }
                     Block above = event.getClickedBlock().getRelative(BlockFace.UP);
-                    if(!isUpperDoorPart(event.getClickedBlock()) && !(isDoor(above.getType()) && isUpperDoorPart(above))){
+                    if(!DoorUtil.isUpperDoorPart(event.getClickedBlock()) && !(DoorUtil.isDoor(above.getType()) && DoorUtil.isUpperDoorPart(above))){
                         event.setCancelled(true);
                     }
                 }
@@ -785,20 +787,6 @@ Logger.getGlobal().info("4");
         }
     }
     
-    private boolean isUpperDoorPart(Block block) { //doesnt'work for powered doors
-        return block.getData()==8 || block.getData()==9; 
-    }
-
-    private boolean isDoor(Material blockType) {
-        return blockType.equals(Material.WOODEN_DOOR)
-                || blockType.equals(Material.IRON_DOOR_BLOCK)
-                || blockType.equals(Material.SPRUCE_DOOR)
-                || blockType.equals(Material.BIRCH_DOOR)
-                || blockType.equals(Material.JUNGLE_DOOR)
-                || blockType.equals(Material.ACACIA_DOOR)
-                || blockType.equals(Material.DARK_OAK_DOOR);
-    }
-
     @EventHandler
     public void placeSpecialBlock(PlayerInteractEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
@@ -816,6 +804,10 @@ Logger.getGlobal().info("4");
                 && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
             return;
         }
+        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
+        if(data == null || data.getType().equals(SpecialBlockType.VANILLA)) {
+            return;
+        }
         event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
         final ItemStack[] armor = player.getInventory().getArmorContents();
         final ItemStack offHandItem = player.getInventory().getItemInOffHand();
@@ -827,7 +819,6 @@ Logger.getGlobal().info("4");
                 player.getInventory().setItemInOffHand(offHandItem);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
         if(data==null) {
             PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
             return;
@@ -983,6 +974,28 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         blockState.update(true, false);
     }
     
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false) 
+    public void flintBlock(PlayerInteractEvent event) {
+Logger.getGlobal().info("1");
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
+                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || !event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
+                || !EventUtil.isMainHandEvent(event)) {
+Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
+            return;
+        }
+Logger.getGlobal().info("3");
+        Block block = event.getClickedBlock();
+        String rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
+        if(rpName.equals("")) {
+            PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
+        }
+        ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
+        if(item!=null) {
+Logger.getGlobal().info("4");
+            event.getPlayer().getInventory().addItem(item);
+        }
+    }
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockInventories(InventoryOpenEvent event) {
@@ -1051,7 +1064,6 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         }
         Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
                                     event.getBlock().getY(), event.getBlock().getZ()+0.5);
-Logger.getGlobal().info("remove");
         SpecialBlockItemBlock.removeArmorStands(loc);
     }
     
@@ -1126,125 +1138,47 @@ Logger.getGlobal().info("remove");
     @EventHandler(priority = EventPriority.LOWEST) 
     public void interactAdjacentDoors(PlayerInteractEvent event) {
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && isDoorBlock(event.getClickedBlock())) {
+                && event.getHand().equals(EquipmentSlot.HAND)
+                && DoorUtil.isDoorBlock(event.getClickedBlock())) {
             Block block = event.getClickedBlock();
-            if(isThinWall(block)) {
-//Logger.getGlobal().info("interact Door at thin wall");
+            if(DoorUtil.isThinWall(block)) {
                 return;
             }
             event.setCancelled(true);
-            if(isUpperDoorBlock(block)) {                       //click at upper door part
+            if(DoorUtil.isUpperDoorBlock(block)) {                       //click at upper door part
                 block = block.getRelative(BlockFace.DOWN);      //check if clicked block is part of full door
-                if(!isDoorBlock(block)) {
+                if(!DoorUtil.isDoorBlock(block)) {
                     return;
                 }
             } else {                                            //click at lower door part
-                if(!isDoorBlock(block.getRelative(BlockFace.UP))//check for half door
-                    && !isFullDoorBelow(block)) {               //check for 3 block high door
+                if(!DoorUtil.isDoorBlock(block.getRelative(BlockFace.UP))//check for half door
+                    && !DoorUtil.isFullDoorBelow(block)) {               //check for 3 block high door
                     return;
                 }
             }
-            if(isFullDoorBelow(block)) {
+            if(DoorUtil.isFullDoorBelow(block)) {
                 block = block.getRelative(BlockFace.DOWN, 2);   //
             }
-            toggleDoor(block);
-            toggleDoor(block.getRelative(BlockFace.UP));
-            toggleDoor(block.getRelative(BlockFace.UP,2));
+            DoorUtil.toggleDoor(block);
+            DoorUtil.toggleDoor(block.getRelative(BlockFace.UP));
+            DoorUtil.toggleDoor(block.getRelative(BlockFace.UP,2));
 
-            Block block2Lower = getSecondHalf(block);
+            Block block2Lower = DoorUtil.getSecondHalf(block);
             Block block2Upper = block2Lower.getRelative(BlockFace.UP);
             BlockState block2LowerState = block2Lower.getState();
             BlockState block2UpperState = block2Upper.getState();
-            if(isDoorBlock(block2Lower) && isDoorBlock(block2Upper) 
+            if(DoorUtil.isDoorBlock(block2Lower) && DoorUtil.isDoorBlock(block2Upper) 
                 && (((Door)block2LowerState.getData()).getFacing()
                             .equals(((Door)block.getState().getData()).getFacing())) //check for same facing
                 && (((Door)block2UpperState.getData()).getHinge()           //check for opposite hinge
                        !=(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()))) {
-                toggleDoor(block2Lower);
-                toggleDoor(block2Upper);
-                toggleDoor(block2Lower.getRelative(BlockFace.UP,2));
+                DoorUtil.toggleDoor(block2Lower);
+                DoorUtil.toggleDoor(block2Upper);
+                DoorUtil.toggleDoor(block2Lower.getRelative(BlockFace.UP,2));
             }
         }
     }
 
-    private boolean isThinWall(Block block) {
-/*Logger.getGlobal().info("***********isThinWall**********");
-Logger.getGlobal().info(""+isDoorBlock(block));
-Logger.getGlobal().info(""+isUpperDoorPart(block));
-Logger.getGlobal().info(""+(block.getData()>9));
-Logger.getGlobal().info(""+block.getType().name());*/
-        if(isUpperDoorBlock(block)) {
-            return isDoorBlock(block) && (block.getType().equals(Material.BIRCH_DOOR) 
-                                          || block.getType().equals(Material.JUNGLE_DOOR))
-                                      && block.getData()>9;                                //check powered state
-        } else {
-            block = block.getRelative(BlockFace.UP);
-            return isUpperDoorBlock(block) && (block.getType().equals(Material.BIRCH_DOOR) 
-                                               || block.getType().equals(Material.JUNGLE_DOOR))
-                                           && block.getData()>9;                                //check powered state
-        }
-    }
-    private boolean isUpperDoorBlock(Block block) {
-        return isDoorBlock(block)
-              && ((Door)block.getState().getData()).isTopHalf();
-    }
-    
-    private boolean isLowerDoorBlock(Block block) {
-        return  isDoorBlock(block)
-                && !isUpperDoorBlock(block);
-    }
-    
-    private boolean isDoorBlock(Block block) {
-        return block.getState().getData() instanceof Door;
-    }
-    
-    private boolean isFullDoorBelow(Block block) {
-        return   isUpperDoorBlock(block.getRelative(BlockFace.DOWN))
-                && isLowerDoorBlock(block.getRelative(BlockFace.DOWN,2));
-    }
-    
-    private Block getSecondHalf(Block block) {
-        if(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()) {
-            switch(((Door) block.getState().getData()).getFacing()) {
-                case NORTH: return block.getRelative(BlockFace.EAST);
-                case EAST: return block.getRelative(BlockFace.SOUTH);
-                case SOUTH: return block.getRelative(BlockFace.WEST);
-                case WEST: return block.getRelative(BlockFace.NORTH);
-            }
-        } else {
-            switch(((Door) block.getState().getData()).getFacing()) {
-                case NORTH: return block.getRelative(BlockFace.WEST);
-                case EAST: return block.getRelative(BlockFace.NORTH);
-                case SOUTH: return block.getRelative(BlockFace.EAST);
-                case WEST: return block.getRelative(BlockFace.SOUTH);
-            }
-        }
-        return null;
-    }
-    
-    private void toggleDoor(Block block) {
-        if(block.getState().getData() instanceof Door
-              && !((Door)block.getState().getData()).isTopHalf()
-              && !(isThinWall(block))) {
-//Logger.getGlobal().info("toggle "+block.getX()+" "+block.getY()+" "+block.getZ());
-            BlockState state = block.getState();
-//Logger.getGlobal().info("dv "+state.getRawData());
-            Door data = (Door) state.getData();
-            data.setOpen(!data.isOpen());
-            state.setData(data);
-            state.update();
-//Logger.getGlobal().info("dv new "+state.getRawData());
-        }
-    }
-    
-    private void closeDoor(Block block) {
-        block.setData((byte)(block.getData()-4), false);
-    }
-    
-    private void openDoor(Block block) {
-        block.setData((byte)(block.getData()+4), false);
-    }
-    
     
     /*@EventHandler(priority = EventPriority.LOWEST) 
     public void blockRedstoneOreChange(PlayerInteractEvent event) {

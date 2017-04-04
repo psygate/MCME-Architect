@@ -384,4 +384,15 @@ Logger.getGlobal().info(cat);
         }
         return false;
     }
+    
+    public ItemStack getItem(String id) {
+        for(CustomInventoryCategory cat: categories.values()) {
+            for(ItemStack item: cat.getItems()) {
+                if(SpecialItemInventoryData.getId(item).equals(id)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 }
