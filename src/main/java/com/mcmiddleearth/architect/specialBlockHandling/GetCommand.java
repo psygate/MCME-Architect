@@ -222,10 +222,10 @@ public class GetCommand extends AbstractArchitectCommand {
             }
             return true; //can't happen
         }
-        if(args.length<3) {
+        /*if(args.length<2) {
             PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
             return true;
-        }
+        }*/
         if(args[0].equalsIgnoreCase("pcreate")) {
             if(!PluginData.hasPermission(p, Permission.GET_CREATE_PRIVATE)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
@@ -402,11 +402,11 @@ public class GetCommand extends AbstractArchitectCommand {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"command /get ... -";
         help = new String[][]{
                    {"/get ","<kitName> [-o]",": Get a kit of special blocks."," With -o flag your quickbar items are replaced (overwritten) with the items from the kit. Otherwise the kit items are placed at free slots."},
-                   {"/get logs","",": Get six sided logs, useful for trees."},
-                   {"/get doors","",": Get half doors."},
-                   {"/get plants","",": Get placeable plants."},
-                   {"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
-                   {"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."},
+                   //{"/get logs","",": Get six sided logs, useful for trees."},
+                   //{"/get doors","",": Get half doors."},
+                   //{"/get plants","",": Get placeable plants."},
+                   //{"/get slabs"," [#data value]",": Get double slabs",". If no data value argument is specified you will get all double slabs."},
+                   //{"/get misc","",": Get miscellaneous blocks",". Piston tables, burning furnaces,..."},
                    {"/get list"," #page",": Shows a list of all item kits visible to you"," (public kits and your own private ones)"},
                    {"/get head"," <head or folder name>",": Get heads"," from the MCME Head Collection. If a folder name is specified you will get all heads in that folder."},
                    {"/get armor"," <color>",": Get dyed leather armor",". Color must be hex RGB code. For example 'FF0000' for red and '000000' for black."},

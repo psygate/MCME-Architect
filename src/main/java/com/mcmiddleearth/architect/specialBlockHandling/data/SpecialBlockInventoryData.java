@@ -30,6 +30,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoorThreeBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockFiveFaces;
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
@@ -37,9 +38,12 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoubleY;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
 import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.util.ZipUtil;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +53,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -71,8 +76,10 @@ public class SpecialBlockInventoryData {
 
     private static List<SpecialBlock> blockList = new ArrayList<>();
     
+    private static final String configLocator = "inventories";
+    
     private static final File configFolder = new File(ArchitectPlugin.getPluginInstance()
-                                                       .getDataFolder(),"inventories/block");
+                                                       .getDataFolder(),configLocator+"/block");
     
     static {
         if(!configFolder.exists()) {
@@ -85,6 +92,12 @@ public class SpecialBlockInventoryData {
                 inv.destroy();
             }
             inventories.clear();
+        }
+        if(!searchInventories.isEmpty()) {
+            for(SearchInventory inv:searchInventories.values()) {
+                inv.destroy();
+            }
+            searchInventories.clear();
         }
         blockList = new ArrayList<>();
         File[] files = configFolder.listFiles(FileUtil.getDirFilter());
@@ -135,7 +148,7 @@ public class SpecialBlockInventoryData {
         }
         ConfigurationSection itemConfig = config.getConfigurationSection("Items");
         if(itemConfig==null) {
-            itemConfig = config;
+            return;
         }
         for(String itemKey: itemConfig.getKeys(false)) {
             if(getSpecialBlock(fullName(rpName, itemKey))!=null) {
@@ -198,8 +211,13 @@ public class SpecialBlockInventoryData {
                         break;
                     case BURNING_FURNACE:
                         blockData = SpecialBlockBurningFurnace.loadFromConfig(section, fullName(rpName, itemKey));
+                        break;
                     case DOUBLE_Y_BLOCK:
                         blockData = SpecialBlockDoubleY.loadFromConfig(section, fullName(rpName, itemKey));
+                        break;
+                    case VANILLA:
+                        blockData = SpecialBlockVanilla.loadFromConfig(section, fullName(rpName, itemKey));
+                        break;
                 }
                 ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                 if(blockData !=null && inventoryItem!=null) {
@@ -271,6 +289,22 @@ public class SpecialBlockInventoryData {
         return null;
     }
     
+    public static ItemStack getItem(Block block, String rpName) {
+        Material material = block.getType();
+        byte dataValue = block.getData();
+        for(SpecialBlock data: blockList) {
+            if(rpName(data.getId()).equals(rpName)
+                    && data.matches(block)) {
+                return inventories.get(rpName).getItem(data.getId());
+            }
+        }
+        return new ItemStack(block.getType(),1,(short)0,block.getData());
+    }
+    
+    public static synchronized void downloadConfig(String rpName, InputStream in) throws IOException {
+        ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
+    }
+    
     private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {
         Material itemMat = Material.matchMaterial(config.getString("itemMaterial",""));
         short dam = (short) config.getInt("damage",0);
@@ -289,10 +323,14 @@ public class SpecialBlockInventoryData {
             item.setItemMeta(im);
             return item;
         }
-        return null;
+        return new ItemStack(Material.STONE);
     }
     
     private static String fullName(String rpName, String name) {
         return rpName+"/"+name;
+    }
+    
+    private static String rpName(String id) {
+        return id.substring(0,id.indexOf("/"));
     }
 }

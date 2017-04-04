@@ -28,11 +28,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockEightFaces extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockEightFaces extends SpecialBlockOrientable {
     
     private SpecialBlockEightFaces(String id, 
                         Material[] material, 
@@ -114,4 +110,5 @@ public class SpecialBlockEightFaces extends SpecialBlock {
         }
         return state;
     }
+    
 }

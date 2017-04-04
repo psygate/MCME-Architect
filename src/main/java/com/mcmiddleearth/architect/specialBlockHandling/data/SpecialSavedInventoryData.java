@@ -71,7 +71,7 @@ public class SpecialSavedInventoryData {
     private static void createBlockInventory(File folder) {
         String rpName = folder.getName();
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
-        CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"Custom Inventory");
+        CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"Saved Inventories - "+rpName);
         inventories.put(rpName, inventory);
         for(File file: files) {
             loadFromFile(inventory, rpName, file);

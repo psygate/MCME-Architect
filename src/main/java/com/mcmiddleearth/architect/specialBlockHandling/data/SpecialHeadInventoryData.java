@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.specialBlockHandling.data;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadCollection;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryState;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,16 +33,28 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SpecialHeadInventoryData {
     
-    private final static CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"MCME Head Collection");
+    private static CustomInventory inventory;
     
-    private final static SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"heads");
+    private static SearchInventory searchInventory;
 
+    static {
+        createInventories();
+    }
+    
     public static void loadInventory() {
+        if(inventory!=null) {
+            inventory.destroy();
+        }
+        if(searchInventory!=null) {
+            searchInventory.destroy();
+        }
+        createInventories();
         for(String name: CustomHeadManagerData.getCollection().getSubCollections().keySet()) {
             CustomHeadCollection collection = CustomHeadManagerData.getCollection()
                                                                    .getSubCollection(name);
             Map<String, ItemStack> heads = new HashMap<>();
             collection.getAllHeadsIncludingSubCollections(heads);
+//Logger.getGlobal().info("Loading head collection: "+name+ " count: "+heads.size());
             for(ItemStack head: heads.values()) {
                 inventory.add(head, name);
                 searchInventory.add(head);
@@ -49,7 +62,9 @@ public class SpecialHeadInventoryData {
             if(!heads.isEmpty()) {
                 ItemStack categoryItem = heads.values().iterator().next();
                 inventory.setCategoryItems(name, null, true, 
-                                           categoryItem.clone(), null);
+                                           categoryItem.clone(), 
+                                           new ItemStack(CustomInventoryState.pagingMaterial,1,
+                                                 CustomInventoryState.pageDown));
             }
         }
     }
@@ -61,6 +76,11 @@ public class SpecialHeadInventoryData {
     
     public static void openSearchInventory(Player p, String search) {
         searchInventory.open(p, search);
+    }
+    
+    private static void createInventories() {
+        inventory = new CustomInventory(ChatColor.WHITE+"MCME Head Collection");
+        searchInventory = new SearchInventory(ChatColor.WHITE+"heads");
     }
     
 }

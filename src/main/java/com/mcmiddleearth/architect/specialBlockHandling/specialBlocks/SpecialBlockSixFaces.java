@@ -29,11 +29,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockSixFaces extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockSixFaces extends SpecialBlockOrientable {
     
     private SpecialBlockSixFaces(String id, 
                         Material[] material, 
@@ -102,4 +98,5 @@ public class SpecialBlockSixFaces extends SpecialBlock {
         }
         return state;
     }
+    
 }

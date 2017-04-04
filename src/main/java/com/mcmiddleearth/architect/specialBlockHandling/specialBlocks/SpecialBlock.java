@@ -85,7 +85,7 @@ public class SpecialBlock {
                         DevUtil.log("Special block place x2: ID "+state.getType()+" - DV "+state.getRawData());
                         tempState.update(true, false);
                     }
-                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 5);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
     }
@@ -173,5 +173,10 @@ public class SpecialBlock {
             case UP: return BlockFace.DOWN;
             default: return BlockFace.UP;
         }
+    }
+    
+    public boolean matches(Block block) {
+        return material.equals(block.getType())
+                && dataValue == block.getData();
     }
 }

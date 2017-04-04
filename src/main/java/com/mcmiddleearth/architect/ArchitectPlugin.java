@@ -13,6 +13,7 @@ import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
 import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
+import com.mcmiddleearth.architect.additionalListeners.StickBlockCycleListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
@@ -86,6 +87,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
+        pluginManager.registerEvents(new StickBlockCycleListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand

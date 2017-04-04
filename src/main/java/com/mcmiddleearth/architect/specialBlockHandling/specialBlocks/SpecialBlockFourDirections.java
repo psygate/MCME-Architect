@@ -28,11 +28,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockFourDirections extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockFourDirections extends SpecialBlockOrientable {
     
     private SpecialBlockFourDirections(String id, 
                         Material[] material, 

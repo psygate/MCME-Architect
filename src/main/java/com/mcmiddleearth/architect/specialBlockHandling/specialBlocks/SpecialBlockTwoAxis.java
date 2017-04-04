@@ -17,7 +17,6 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,11 +28,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockTwoAxis extends SpecialBlock {
-    
-    private final Material[] material;
-    
-    private final byte[] dataValue;
+public class SpecialBlockTwoAxis extends SpecialBlockOrientable {
     
     private SpecialBlockTwoAxis(String id, 
                         Material[] material, 

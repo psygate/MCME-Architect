@@ -80,6 +80,15 @@ Categories:
         damage: 11        
         damageCurrent: 12
 Items:
+    oak_planks:
+     blockMaterial: WOOD
+     dataValue: 0
+     itemMaterial: DIAMOND_CHESTPLATE
+     damage: 1
+     display: Oak planks [5:0]
+     category: Block
+     type: BLOCK
+      
     Meat:
         blockMaterial: CACTUS
         dataValue: 0
@@ -1070,12 +1079,12 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 54    
         type: DOUBLE_Y_BLOCK
-    Unused Block 8:
-        blockMaterial: HUGE_MUSHROOM_2
-        dataValue: 4
-        itemMaterial: DIAMOND_CHESTPLATE
-        damage: 54    
-        type: BLOCK
+    Stairs:
+        itemMaterial: WOOD_STAIRS
+        type: VANILLA
+    Step:
+        itemMaterial: WOOD_STEP
+        type: VANILLA
     Unused Block 9:
         blockMaterial: HUGE_MUSHROOM_2
         dataValue: 5

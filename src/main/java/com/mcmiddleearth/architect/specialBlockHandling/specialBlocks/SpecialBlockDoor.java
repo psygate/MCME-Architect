@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.util.DevUtil;
+import com.mcmiddleearth.util.DoorUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -126,6 +127,20 @@ public class SpecialBlockDoor extends SpecialBlock {
         } else {
             return false;
         }
+    }
+    
+   @Override
+    public boolean matches(Block block) {
+        if(getMaterial().equals(block.getType())) {
+           if(DoorUtil.isLowerDoorBlock(block)) {
+               block = block.getRelative(BlockFace.UP);
+               if(!DoorUtil.isUpperDoorBlock(block)) {
+                   return false;
+               }
+           }
+           return powered == (block.getData()>9);
+        }
+        return false;
     }
 
 }

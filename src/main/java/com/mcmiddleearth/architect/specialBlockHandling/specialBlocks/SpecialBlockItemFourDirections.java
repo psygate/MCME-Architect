@@ -18,12 +18,15 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
+import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock.getArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -75,7 +78,6 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
-
         Material materialContent = matchMaterial(config.getString("contentItem",""));
         Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
         double contentHeight = config.getDouble("contentHeight",0);
@@ -126,4 +128,29 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
 //Logger.getGlobal().info(""+loc.getYaw());
         return loc;
     }
+    
+    @Override
+    public boolean matches(Block block) {
+        for(Material mat: material) {
+            if(mat.equals(block.getType())) {
+                for(byte data: dataValue) {
+                    if(data == block.getData()) {
+                        ArmorStand holder = getArmorStand(block.getLocation());
+                        if(holder!=null) {
+                            ItemStack content = holder.getHelmet();
+                            if(content.getType().equals(contentItem)) {
+                                for(short damage: contentDamage) {
+                                    if(damage == content.getDurability()) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

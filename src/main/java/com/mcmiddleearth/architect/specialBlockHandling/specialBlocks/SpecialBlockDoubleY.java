@@ -40,7 +40,7 @@ public class SpecialBlockDoubleY extends SpecialBlock{
     private SpecialBlockDoubleY(String id, 
                         Material lowerMaterial, Material upperMaterial,
                         byte lowerData, byte upperData) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.DOOR);
+        super(id, Material.AIR, (byte) 0, SpecialBlockType.DOUBLE_Y_BLOCK);
         this.lowerMaterial = lowerMaterial;
         this.upperMaterial = upperMaterial;
         this.lowerData = lowerData;
@@ -89,4 +89,15 @@ public class SpecialBlockDoubleY extends SpecialBlock{
         return state;
     }
     
+   @Override
+    public boolean matches(Block block) {
+        return ((lowerMaterial.equals(block.getType())
+                && lowerData == block.getData()
+                && upperMaterial.equals(block.getRelative(BlockFace.UP).getType())
+                && upperData == block.getRelative(BlockFace.UP).getData())
+            || (upperMaterial.equals(block.getType())
+                && upperData == block.getData()
+                && lowerMaterial.equals(block.getRelative(BlockFace.DOWN).getType())
+                && lowerData == block.getRelative(BlockFace.DOWN).getData()));
+    }
 }
