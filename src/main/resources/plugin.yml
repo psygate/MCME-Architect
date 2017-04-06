@@ -116,6 +116,12 @@ permissions:
             architect.place.sixSidedLog: true
             architect.get.armor: true
             architect.get.head: true
+            architect.get.plants: true
+            architect.get.misc: true
+            architect.get.doors: true
+            architect.get.slabs: true
+            architect.get.food: true
+            architect.get.logs: true
             architect.getCommand: true
             architect.customHeadManager.user: true  
             architect.itemTexture: true
@@ -188,6 +194,24 @@ permissions:
         default: op
     architect.get.armor: 
         descriptions: Allows to get coloured leather armor
+        default: op
+    architect.get.logs: 
+        descriptions: Allows to get six sided logs
+        default: op
+    architect.get.doors: 
+        descriptions: Allows to get half doors
+        default: op
+    architect.get.plants: 
+        descriptions: Allows to get plants
+        default: op
+    architect.get.misc: 
+        descriptions: Allows to get miscellanious items
+        default: op
+    architect.get.food: 
+        descriptions: Allows to get food items
+        default: op
+    architect.get.slabs: 
+        descriptions: Allows to get double slabs
         default: op
     architect.get.head: 
         descriptions: Allows to get players head

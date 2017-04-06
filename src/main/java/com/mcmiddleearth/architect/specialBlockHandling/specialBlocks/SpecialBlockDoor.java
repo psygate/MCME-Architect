@@ -26,6 +26,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -61,7 +62,8 @@ public class SpecialBlockDoor extends SpecialBlock {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
+        final Location playerLoc = player.getLocation();
         placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, false);
     }
     
@@ -135,6 +137,10 @@ public class SpecialBlockDoor extends SpecialBlock {
            if(DoorUtil.isLowerDoorBlock(block)) {
                block = block.getRelative(BlockFace.UP);
                if(!DoorUtil.isUpperDoorBlock(block)) {
+                   return false;
+               }
+           } else {
+               if(!DoorUtil.isLowerDoorBlock(block.getRelative(BlockFace.DOWN))) {
                    return false;
                }
            }

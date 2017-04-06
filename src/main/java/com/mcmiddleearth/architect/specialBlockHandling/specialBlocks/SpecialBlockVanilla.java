@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -53,7 +54,7 @@ public class SpecialBlockVanilla extends SpecialBlock {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
     }
     
     @Override

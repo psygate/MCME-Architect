@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -68,11 +69,12 @@ public class SpecialBlockDoubleY extends SpecialBlock{
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
-        super.placeBlock(blockPlace, BlockFace.DOWN,playerLoc);
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
+        final Location playerLoc = player.getLocation();
+        super.placeBlock(blockPlace, BlockFace.DOWN,player);
         Block upper = blockPlace.getRelative(BlockFace.UP);
         if(upper.isEmpty()) {
-            super.placeBlock(upper, BlockFace.UP,playerLoc);
+            super.placeBlock(upper, BlockFace.UP,player);
         }
     }
     

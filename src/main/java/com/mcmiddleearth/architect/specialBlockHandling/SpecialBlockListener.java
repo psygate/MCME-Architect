@@ -830,7 +830,7 @@ Logger.getGlobal().info("4");
         if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
             return;
         }
-        data.placeBlock(blockPlace, event.getBlockFace(), player.getLocation());
+        data.placeBlock(blockPlace, event.getBlockFace(), player);
 /*Logger.getGlobal().info("specialBlock place 7 main");
         } else {
 Logger.getGlobal().info("specialBlock place 7 off");
@@ -976,15 +976,15 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false) 
     public void flintBlock(PlayerInteractEvent event) {
-Logger.getGlobal().info("1");
+//Logger.getGlobal().info("1");
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || !event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
                 || !EventUtil.isMainHandEvent(event)) {
-Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
+//Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
             return;
         }
-Logger.getGlobal().info("3");
+//Logger.getGlobal().info("3");
         Block block = event.getClickedBlock();
         String rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
         if(rpName.equals("")) {
@@ -992,7 +992,7 @@ Logger.getGlobal().info("3");
         }
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
         if(item!=null) {
-Logger.getGlobal().info("4");
+//Logger.getGlobal().info("4");
             event.getPlayer().getInventory().addItem(item);
         }
     }

@@ -17,6 +17,7 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -83,8 +85,13 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
-        super.placeBlock(blockPlace, blockFace, playerLoc);
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
+        final Location playerLoc = player.getLocation();
+        if(!PluginData.moreEntitiesAllowed(blockPlace)) {
+            PluginData.getMessageUtil().sendErrorMessage(player, "Can't place. Already too many entities (paintings, item frames, item blocks and armorstands) around here.");
+            return;
+        }
+        super.placeBlock(blockPlace, blockFace, player);
         Location loc = getArmorStandLocation(blockPlace, blockFace, playerLoc);
         removeArmorStands(blockPlace.getLocation());
         final ArmorStand armor = (ArmorStand) blockPlace.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);

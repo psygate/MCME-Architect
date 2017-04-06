@@ -26,6 +26,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -65,7 +66,8 @@ public class SpecialBlockDoorThreeBlocks extends SpecialBlockDoor {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
+        final Location playerLoc = player.getLocation();
         placeDoor(blockPlace, playerLoc, lowerMaterial, powered, false, false);
         placeHalfDoor(blockPlace.getRelative(BlockFace.UP,2), playerLoc, upperMaterial);
     }

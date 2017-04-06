@@ -291,7 +291,7 @@ public class InvCommand extends AbstractArchitectCommand {
             for(int i = 0; i<=NumericUtil.getInt(args[2]);i+=3) {
                 for(int j=0; j<NumericUtil.getInt(args[2]);j+=3) {
                     
-                    data.placeBlock(start.getRelative(i,0,j), BlockFace.UP, start.getLocation());
+                    data.placeBlock(start.getRelative(i,0,j), BlockFace.UP, (Player)sender);
                 }
             }
         }
