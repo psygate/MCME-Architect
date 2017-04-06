@@ -265,7 +265,7 @@ public class GetCommand extends AbstractArchitectCommand {
         for(int i=start; i<args.length;i++) {
             result = result+args[i]+" ";
         }
-        return result.substring(0,result.length()-1);
+        return result;
     }
     
     private void getHeads(Player p, String headName) {

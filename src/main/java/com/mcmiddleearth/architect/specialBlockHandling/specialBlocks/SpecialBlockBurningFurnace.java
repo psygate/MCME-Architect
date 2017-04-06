@@ -25,6 +25,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -43,7 +44,8 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, BlockFace blockFace, Location playerLoc) {
+    public void placeBlock(final Block blockPlace, BlockFace blockFace, Player player) {
+        final Location playerLoc = player.getLocation();
         final BlockState state = blockPlace.getState();
         state.setType(Material.BURNING_FURNACE);
         switch(getBlockFace(playerLoc.getYaw())) {

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -55,6 +57,12 @@ public class PluginData {
     @Getter
     private static final Set<UUID> afkPlayerList = new HashSet<>();
     
+    @Getter
+    private static int entityStandLimit = 1000;
+    
+    @Getter
+    private static int entityLimitRadius = 80;
+    
     public static boolean isModuleEnabled(World world, Modules modul) {
         WorldConfig config = worldConfigs.get(world.getName());
         if(config == null) {
@@ -70,6 +78,12 @@ public class PluginData {
                                                        .getConfigurationSection("ServerResourcePacks");
         for(String rpKey: rpConfig.getKeys(false)) {
             rpUrls.put(rpKey, rpConfig.getString(rpKey));
+        }
+        ConfigurationSection entityConfig = ArchitectPlugin.getPluginInstance().getConfig()
+                                                       .getConfigurationSection("EntityLimit");
+        if(entityConfig!=null) {
+            entityStandLimit = entityConfig.getInt("number",1000);
+            entityLimitRadius = entityConfig.getInt("radius",80);
         }
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));
@@ -202,5 +216,13 @@ public class PluginData {
             }
         }
         return "";
+    }
+    
+    public static boolean moreEntitiesAllowed(Block block) {
+        Collection<Entity> entities = block.getWorld().getNearbyEntities(block.getLocation(), 
+                                                                            entityLimitRadius, 
+                                                                            200, 
+                                                                            entityLimitRadius);
+        return entities.size()<entityStandLimit;
     }
 }

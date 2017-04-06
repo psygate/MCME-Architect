@@ -18,11 +18,13 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.util.DoorUtil;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 
 /**
@@ -49,7 +51,8 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
     }
     
     @Override
-    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Location playerLoc) {
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
+        final Location playerLoc = player.getLocation();
         placeDoor(blockPlace, playerLoc, getMaterial(), true, true, hingeRight);
     }
     
@@ -61,8 +64,18 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
                if(!DoorUtil.isUpperDoorBlock(block)) {
                    return false;
                }
+           } else {
+               if(!DoorUtil.isLowerDoorBlock(block.getRelative(BlockFace.DOWN))) {
+                   return false;
+               }
            }
-           return hingeRight == (((Door)block.getState()).getHinge());
+           if(block.getData()<8) {
+               return false;
+           }
+           if(block.getState() instanceof Door) {
+            return hingeRight == (((Door)block.getState()).getHinge());
+           }
+//Logger.getGlobal().info("Schould be door: "+block.getState().toString());
         }
         return false;
     }

@@ -92,17 +92,20 @@ public class GetData {
 
     public static void delete(String arg) {
         sets.remove(arg);
+        save();
     }
 
     public static void publish(String arg) {
         if(sets.containsKey(arg)) {
             sets.get(arg).isPrivate=false;
+            save();
         }
     }
 
     public static void unpublish(String arg) {
         if(sets.containsKey(arg)) {
             sets.get(arg).isPrivate=true;
+            save();
         }
     }
 
