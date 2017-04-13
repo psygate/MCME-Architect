@@ -298,7 +298,38 @@ public class SpecialBlockInventoryData {
                 return inventories.get(rpName).getItem(data.getId());
             }
         }
-        return new ItemStack(block.getType(),1,(short)0,block.getData());
+        return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));
+    }
+    
+    private static ItemStack getHandItem(ItemStack item) {
+        switch(item.getType()) {
+            case SIGN_POST:
+            case WALL_SIGN:
+                return new ItemStack(Material.SIGN,1);
+            case WALL_BANNER:
+            case STANDING_BANNER:
+                return new ItemStack(Material.BANNER,1);
+            case BED_BLOCK:
+                return new ItemStack(Material.BED,1);
+            case CAKE_BLOCK:
+                return new ItemStack(Material.CAKE,1);
+            case WOODEN_DOOR:
+                return new ItemStack(Material.WOOD_DOOR,1);
+            case SPRUCE_DOOR:
+                return new ItemStack(Material.SPRUCE_DOOR_ITEM,1);
+            case BIRCH_DOOR:
+                return new ItemStack(Material.BIRCH_DOOR_ITEM,1);
+            case JUNGLE_DOOR:
+                return new ItemStack(Material.JUNGLE_DOOR_ITEM,1);
+            case ACACIA_DOOR:
+                return new ItemStack(Material.ACACIA_DOOR_ITEM,1);
+            case DARK_OAK_DOOR:
+                return new ItemStack(Material.DARK_OAK_DOOR_ITEM,1);
+            case CAULDRON:
+                return new ItemStack(Material.CAULDRON_ITEM,1);
+            default:
+                return item;
+        }
     }
     
     public static synchronized void downloadConfig(String rpName, InputStream in) throws IOException {
