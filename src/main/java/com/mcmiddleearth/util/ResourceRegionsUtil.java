@@ -34,11 +34,13 @@ public class ResourceRegionsUtil {
     public static String getResourceRegionsUrl(Player p) {
         List<MetadataValue> data = p.getMetadata("Region");
         if(data.isEmpty()) {
+//Logger.getGlobal().info("Emtpy resource data");
             return "";
         }
         String region = data.get(0).asString();
         Plugin regionsPlugin = data.get(0).getOwningPlugin();
         if(regionsPlugin==null) {
+//Logger.getGlobal().info("no regions plugin");
             return "";
         }
         String packUrl="";
@@ -47,6 +49,7 @@ public class ResourceRegionsUtil {
             Object regionObject = rmClass.getMethod("getRegion",String.class,String.class)
                                          .invoke(null,p.getWorld().getName(), region);
             packUrl = (String) regionObject.getClass().getMethod("getPackUrl").invoke(regionObject);
+//Logger.getGlobal().info("pack url "+packUrl);
         } catch (NullPointerException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
             Logger.getLogger(InvCommand.class.getName()).log(Level.WARNING, "No resource region found.", ex);
             return "";

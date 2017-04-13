@@ -59,23 +59,20 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
    @Override
     public boolean matches(Block block) {
         if(getMaterial().equals(block.getType())) {
-           if(DoorUtil.isLowerDoorBlock(block)) {
-               block = block.getRelative(BlockFace.UP);
-               if(!DoorUtil.isUpperDoorBlock(block)) {
-                   return false;
-               }
-           } else {
-               if(!DoorUtil.isLowerDoorBlock(block.getRelative(BlockFace.DOWN))) {
-                   return false;
-               }
-           }
-           if(block.getData()<8) {
-               return false;
-           }
-           if(block.getState() instanceof Door) {
-            return hingeRight == (((Door)block.getState()).getHinge());
-           }
-//Logger.getGlobal().info("Schould be door: "+block.getState().toString());
+            if(DoorUtil.isLowerDoorBlock(block)) {
+                block = block.getRelative(BlockFace.UP);
+                if(!DoorUtil.isUpperDoorBlock(block)) {
+                    return false;
+                }
+            } else {
+                if(!DoorUtil.isLowerDoorBlock(block.getRelative(BlockFace.DOWN))) {
+                    return false;
+                }
+            }
+            if(block.getData()<8) {
+                return false;
+            }
+            return hingeRight == (block.getData()%2==1);
         }
         return false;
     }

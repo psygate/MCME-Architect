@@ -63,21 +63,27 @@ public class StickBlockCycleListener implements Listener {
             switch(block.getType()) {
                 case CROPS:
                 case SNOW:
-                    state.setRawData((byte)(((state.getRawData()+change)%8)));
+                case PUMPKIN_STEM:
+                case MELON_STEM:
+                    state.setRawData((byte)(((8+state.getRawData()+change)%8)));
+                    break;
+                case CAKE_BLOCK:
+                    state.setRawData((byte)(((7+state.getRawData()+change)%7)));
                     break;
                 case POTATO:
                 case CARROT:
                     if(state.getRawData()>3) {
-                        state.setRawData((byte)(((state.getRawData()+change)%4)+4));
+                        state.setRawData((byte)(((4+state.getRawData()+change)%4)+4));
                     } else {
-                        state.setRawData((byte)(((state.getRawData()+change)%4)));
+                        state.setRawData((byte)(((4+state.getRawData()+change)%4)));
                     }
                     break;
                 case BEETROOT_BLOCK:
-                    state.setRawData((byte)(((state.getRawData()+change)%4)));
+                case CAULDRON:
+                    state.setRawData((byte)(((4+state.getRawData()+change)%4)));
                     break;
                 case VINE:
-                    state.setRawData((byte)(((state.getRawData()+change)%16)));
+                    state.setRawData((byte)(((16+state.getRawData()+change)%16)));
                     break;
                 default:
                     return;

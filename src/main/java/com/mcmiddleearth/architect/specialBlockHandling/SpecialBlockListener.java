@@ -992,14 +992,14 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         }
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
         if(item!=null) {
-//Logger.getGlobal().info("4");
+//Logger.getGlobal().info("4 "+item);
+            event.setCancelled(true);
             event.getPlayer().getInventory().addItem(item);
         }
     }
     
     @EventHandler(priority = EventPriority.LOWEST) 
     public void blockInventories(InventoryOpenEvent event) {
-//Logger.getGlobal().info("open inventory "+event.getInventory().getType().name());
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !(event.getPlayer() instanceof Player)) {
             return;
