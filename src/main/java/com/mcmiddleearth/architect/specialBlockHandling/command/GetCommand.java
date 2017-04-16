@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.command;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
+import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
@@ -29,6 +30,7 @@ import com.mcmiddleearth.pluginutil.message.MessageType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -286,9 +288,10 @@ public class GetCommand extends AbstractArchitectCommand {
             file = new File(CustomHeadManagerData.getAcceptedHeadDir(), headName);
         }
         if(file.exists() && file.isDirectory()) {
-            File[] headFiles = file.listFiles(FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()));
+            List<File> headFiles = FileUtil.getFilesRecursive(file,FileUtil.getFileExtFilter(CustomHeadManagerData.getFileExtension()));
             for(File headFile:headFiles) {
-                String headFilename = headFile.getName().substring(0,headFile.getName().lastIndexOf('.'));
+                String headFilename = FileUtil.getRelativePath(headFile, file);
+                headFilename = headFilename.substring(0,headFilename.lastIndexOf('.'));
                 ItemStack head = CustomHeadManagerData.getHead(headName+'/'+headFilename);
                 p.getInventory().addItem(head);
             }

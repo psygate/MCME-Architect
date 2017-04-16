@@ -71,6 +71,24 @@ public class RedstoneCircuitArea extends ExceptionArea {
                 || material.equals(Material.DISPENSER)                  //23
                 || material.equals(Material.DROPPER)                    //158
                 || material.equals(Material.HOPPER)                     //154
+                || material.equals(Material.WHITE_SHULKER_BOX)          //
+                || material.equals(Material.GRAY_SHULKER_BOX)          //
+                || material.equals(Material.BLACK_SHULKER_BOX)          //
+                || material.equals(Material.RED_SHULKER_BOX)          //
+                || material.equals(Material.BLUE_SHULKER_BOX)          //
+                || material.equals(Material.ORANGE_SHULKER_BOX)          //
+                || material.equals(Material.YELLOW_SHULKER_BOX)          //
+                || material.equals(Material.GREEN_SHULKER_BOX)          //
+                || material.equals(Material.PINK_SHULKER_BOX)          //
+                || material.equals(Material.BROWN_SHULKER_BOX)          //
+                || material.equals(Material.MAGENTA_SHULKER_BOX)          //
+                || material.equals(Material.LIGHT_BLUE_SHULKER_BOX)          //
+                || material.equals(Material.LIME_SHULKER_BOX)          //
+                || material.equals(Material.CYAN_SHULKER_BOX)          //
+                || material.equals(Material.PURPLE_SHULKER_BOX)          //
+                || material.equals(Material.SILVER_SHULKER_BOX)          //
+                || material.equals(Material.ENCHANTMENT_TABLE)          //
+                || material.equals(Material.BEACON)          //
                 || material.equals(Material.ANVIL);                                  
     }
     

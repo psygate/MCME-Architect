@@ -13,7 +13,7 @@ import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
 import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
-import com.mcmiddleearth.architect.additionalListeners.StickBlockCycleListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.StickBlockCycleListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
@@ -27,15 +27,19 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
 import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
-import com.mcmiddleearth.architect.specialBlockHandling.GetCommand;
-import com.mcmiddleearth.architect.specialBlockHandling.InvCommand;
-import com.mcmiddleearth.architect.specialBlockHandling.ItemTexCommand;
+import com.mcmiddleearth.architect.signEditor.SignCommand;
+import com.mcmiddleearth.architect.signEditor.SignListener;
+import com.mcmiddleearth.architect.specialBlockHandling.command.GetCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.command.InvCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.command.ItemBlockCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.SpecialBlockListener;
 import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.InventoryListener;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
@@ -88,6 +92,9 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
         pluginManager.registerEvents(new StickBlockCycleListener(), this);
+        pluginManager.registerEvents(new SignListener(), this);
+        pluginManager.registerEvents(new DoorListener(), this);
+        pluginManager.registerEvents(new InventoryListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
@@ -104,8 +111,10 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("architect", new ArchitectCommand());
         setCommandExecutor("rp", new RpCommand());
         setCommandExecutor("chead", new HeadCommand());
-        setCommandExecutor("itex", new ItemTexCommand());
+//        setCommandExecutor("itex", new ItemTexCommand());
         setCommandExecutor("inv", new InvCommand());
+        setCommandExecutor("itemblock", new ItemBlockCommand());
+        setCommandExecutor("sign", new SignCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");

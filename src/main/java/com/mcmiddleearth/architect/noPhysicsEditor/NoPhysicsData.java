@@ -102,7 +102,7 @@ public class NoPhysicsData {
                 Vector maxPoint = new Vector(maxX,maxY,maxZ);
                 UUID world = UUID.fromString(scanner.next());
                 String name = scanner.nextLine().substring(1);
-Logger.getGlobal().info("loadnophy "+name+" "+world);
+//Logger.getGlobal().info("loadnophy "+name+" "+world);
                 if(world==null) continue;
                 exceptionAreas.put(name,new RedstoneCircuitArea(world,minPoint,maxPoint));
             }

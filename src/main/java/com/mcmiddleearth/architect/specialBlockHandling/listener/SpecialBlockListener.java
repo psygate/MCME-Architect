@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.specialBlockHandling;
+package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
@@ -22,11 +22,11 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
+import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
+import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.DoorUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
 import java.util.logging.Logger;
 import org.bukkit.GameMode;
@@ -36,30 +36,26 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -69,6 +65,13 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class SpecialBlockListener implements Listener{
  
+    /**
+     * Handles player interaction with dragon eggs if module DRAGON_EGG is enabled in 
+     * world config file. Teleportation of the egg is blocked.
+     * Players need creative mode, permission INTERACT_EGG and build permission from 
+     * TheGaffer plugin to interact with a dragon egg.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void eggInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
@@ -99,7 +102,321 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-//DELETE in final version
+    /**
+     * If module BURNING_FURNACE is enabled in world config file
+     * prolongs buring time of furnaces every time a smelting item is finished.
+     * Also a new smelting item is placed in the furnace. This keeps furnaces burning
+     * until the smelting item is taken out of the furnace by a player.
+     * @param event 
+     */
+    @EventHandler
+    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
+        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
+            return;
+        }
+        final Block block = event.getBlock();
+        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Furnace furnace = (Furnace) block.getState();
+                FurnaceInventory inventory = furnace.getInventory();
+                ItemStack item =inventory.getResult();
+                inventory.setResult(null);
+                inventory.setSmelting(new ItemStack(smelting));
+                furnace.setBurnTime(Short.MAX_VALUE);
+                furnace.update(true, false);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+    }
+    
+    @EventHandler
+    public void furnaceOnOff(InventoryClickEvent event) {
+        if (!PluginData.isModuleEnabled(event.getInventory().getLocation().getWorld(), Modules.BURNING_FURNACE)) {
+            return;
+        }
+        InventoryHolder holder = event.getInventory().getHolder();
+        if(holder instanceof Furnace && event.getSlot()==0 && event.getResult().equals(Result.ALLOW)) {
+            Furnace furnace = (Furnace) holder;
+            ItemStack current = event.getCurrentItem();
+            ItemStack cursor = event.getCursor();
+            if(current.getType().equals(Material.AIR)) {
+                event.setCurrentItem(new ItemStack(Material.RAW_FISH));
+                furnace.setBurnTime(Short.MAX_VALUE);
+            } else {
+                event.setCurrentItem(new ItemStack(Material.AIR));
+                furnace.setBurnTime((short)0);
+            }
+            event.setCancelled(true);
+/*Logger.getGlobal().info("slot type "+ event.getSlotType());            
+Logger.getGlobal().info("slot  "+ event.getSlot());            
+Logger.getGlobal().info("slot raw "+ event.getRawSlot());            
+Logger.getGlobal().info("click "+ event.getClick());            
+Logger.getGlobal().info("result "+ event.getResult());            
+Logger.getGlobal().info("action "+ event.getAction());            
+Logger.getGlobal().info("current "+ event.getCurrentItem());            
+Logger.getGlobal().info("cursor "+ event.getCursor());*/
+        }
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_PLACE is enabled in world config file
+     * handles placement of blocks from the MCME custom inventories.
+     * @param event 
+     */
+    @EventHandler
+    public void placeSpecialBlock(PlayerInteractEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || event.getPlayer().getInventory().getItemInMainHand()==null
+                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
+                || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
+            return;
+        }
+        final Player player = event.getPlayer();
+        final ItemStack handItem = player.getInventory().getItemInMainHand();
+        ItemMeta meta = handItem.getItemMeta();
+        if(!(meta.hasLore() 
+                && meta.getLore().size()>1 
+                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
+            return;
+        }
+        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
+        if(data == null || data.getType().equals(SpecialBlockType.VANILLA)) {
+            return;
+        }
+        event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
+        final ItemStack[] armor = player.getInventory().getArmorContents();
+        final ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ((PlayerInventory)player.getInventory()).setArmorContents(armor);
+                player.getInventory().setItemInMainHand(handItem);
+                player.getInventory().setItemInOffHand(offHandItem);
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+        if(data==null) {
+            PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
+            return;
+        }
+        Block blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
+        if(!blockPlace.isEmpty() && !blockPlace.getType().equals(Material.LONG_GRASS)) {
+            return;
+        }
+        if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
+            return;
+        }
+        data.placeBlock(blockPlace, event.getBlockFace(), player);
+/*Logger.getGlobal().info("specialBlock place 7 main");
+        } else {
+Logger.getGlobal().info("specialBlock place 7 off");
+/*ArrayList<HandlerList> list = HandlerList.getHandlerLists();
+for(HandlerList handlerList : list) {
+    RegisteredListener reg = new RegisteredListener(this, new EventExecutor(){
+        @Override
+        public void execute(Listener listener, Event event) throws EventException {
+            String name = event.getEventName();
+            if(!found.contains(name)) {
+                found.add(name);
+Logger.getGlobal().info("Event found: "+event.getEventName());
+            }
+        }
+    },EventPriority.NORMAL,ArchitectPlugin.getPluginInstance(),false);
+    handlerList.register(reg);
+    //RegisteredListener[] listener = handlerList.getRegisteredListeners();
+  //  for(int i=0; i<listener.length;i++) {
+//Logger.getGlobal().info(listener[i].getListener().toString());
+    //}
+}*/
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_PLACE is enabled in world config file
+     * prevents changes of item durability.
+     * @param event 
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void blockChangeDurability(PlayerItemDamageEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+                event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void blockPressurePlate(EntityInteractEvent event) {
+Logger.getGlobal().info("EntityInteract");
+        if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+                event.setCancelled(true);
+        }
+    }
+    
+    
+    
+    /**
+     * If module SPECIAL_BLOCK_PLACE is enabled in world config file
+     * prevents creation of a double slab block when stacking two half slabs.
+     * Instead a corresponding full block is placed.
+     * @param event 
+     */
+    @EventHandler(priority = EventPriority.HIGHEST) 
+    public void avoidDoubleSlab(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                || !(event.getBlock().getType().equals(Material.DOUBLE_STEP)
+                    || event.getBlock().getType().equals(Material.DOUBLE_STONE_SLAB2)
+                    || event.getBlock().getType().equals(Material.WOOD_DOUBLE_STEP)
+                    || event.getBlock().getType().equals(Material.PURPUR_DOUBLE_SLAB))) {
+            return;
+        }
+        final BlockState blockState = event.getBlock().getState();
+        switch(blockState.getType()) {
+            case DOUBLE_STEP:
+                switch(blockState.getRawData()) {
+                    case 1:
+                        blockState.setType(Material.SANDSTONE);
+                        blockState.setRawData((byte)0);
+                        break;
+                     case 2:
+                        blockState.setType(Material.WOOD);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 3:
+                        blockState.setType(Material.COBBLESTONE);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 4:
+                        blockState.setType(Material.BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 5:
+                        blockState.setType(Material.SMOOTH_BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 6:
+                        blockState.setType(Material.NETHER_BRICK);
+                        blockState.setRawData((byte)0);
+                        break;
+                    case 7:
+                        blockState.setType(Material.QUARTZ_BLOCK);
+                        blockState.setRawData((byte)0);
+                        break;
+                }
+                break;
+            case DOUBLE_STONE_SLAB2:
+                blockState.setType(Material.RED_SANDSTONE);
+                break;
+            case WOOD_DOUBLE_STEP:
+                byte dv = blockState.getRawData();
+                blockState.setType(Material.WOOD);
+                blockState.setRawData(dv);
+                break;
+            case PURPUR_DOUBLE_SLAB:
+                blockState.setType(Material.PURPUR_BLOCK);
+                break;
+        }
+        blockState.update(true, false);
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_FLINT is enabled in world config file
+     * gives a player a block in inventory when right-clicking the corresponding
+     * block with stick in hand.
+     * @param event 
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false) 
+    public void flintBlock(PlayerInteractEvent event) {
+//Logger.getGlobal().info("1");
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
+                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || !event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
+                || !EventUtil.isMainHandEvent(event)) {
+//Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
+            return;
+        }
+//Logger.getGlobal().info("3");
+        Block block = event.getClickedBlock();
+        String rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
+        if(rpName.equals("")) {
+            PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
+        }
+        ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
+        if(item!=null) {
+//Logger.getGlobal().info("4 "+item);
+            event.setCancelled(true);
+            event.getPlayer().getInventory().addItem(item);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST) //TODO make configurable
+    public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                || !(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && event.getClickedBlock().getType().equals(Material.ACACIA_FENCE_GATE)
+                && event.getClickedBlock().getData()>7) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST) //TODO make configurable
+    public void blockVanillaOrientations(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+            return;
+        }
+        if(event.getBlockPlaced().getType().equals(Material.PUMPKIN) 
+                || event.getBlockPlaced().getType().equals(Material.ENDER_PORTAL_FRAME) ) {
+            event.getBlock().setData((byte)0);
+        }
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_PLACE is enabled in world config file
+     * prevents player from changing armor stands used for item blocks.
+     * @param event 
+     */
+    @EventHandler(priority = EventPriority.LOWEST) 
+    public void blockArmorAtItemBlocks(PlayerInteractAtEntityEvent event) { //used for item blocks
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                || !(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if(event.getRightClicked() instanceof ArmorStand
+                && ((ArmorStand)event.getRightClicked()).getCustomName()!=null
+                && ((ArmorStand)event.getRightClicked()).getCustomName()
+                                     .startsWith(SpecialBlockItemBlock.PREFIX)) {
+            event.setCancelled(true);
+        }
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_PLACE is enabled in world config file
+     * handles removing of armor stands associated to an item block when the 
+     * item block is removed.
+     * @param event 
+     */
+    @EventHandler
+    public void removeItemBlockArmorStand(BlockBreakEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+            return;
+        }
+        Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
+                                    event.getBlock().getY(), event.getBlock().getZ()+0.5);
+        SpecialBlockItemBlock.removeArmorStands(loc);
+    }
+
+    
+/***********************************************************************************************
+/* Methods for old special blocks like six sided logs. Will no longer be needed once there are *
+/* custom inventories for all                                                                  *
+/***********************************************************************************************/
+    
+    /**
+     * If module SIX_SIDED_LOG is enabled in world config file
+     * handles placing of six sided logs.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void logPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
@@ -136,6 +453,11 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
+    /**
+     * If module SIX_SIDED_LOG is enabled in world config file
+     * handles placing of huge mushroom blocks.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void giantMushroomPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
@@ -176,6 +498,11 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
+    /**
+     * If module PISTON_EXTENSIONS is enabled in world config file
+     * handles placing of piston extensions.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void pistonPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
@@ -217,6 +544,14 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
+    /**
+     * Determines the correct data value for a piston extension or furnace block 
+     * depending on player orientation.
+     * @param yaw of the player who wants to place the block
+     * @param pitch of the player who wants to place the block
+     * @param type piston base or sticky piston base
+     * @return 
+     */
     private static byte getPistonOrFurnaceDat(float yaw, float pitch, Material type) {
         byte dat = 0;
         while(yaw>180) yaw-=360;
@@ -240,6 +575,13 @@ public class SpecialBlockListener implements Listener{
         return dat;
     }
     
+    /**
+     * If module PLANTS is enabled in world config file
+     * handles placing of pants independent of ground below.
+     * If a block is clicked with a corresponding material in hand the data
+     * value of the block is changed instead of placing a new block.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void vegPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
@@ -346,6 +688,15 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
+    /**
+     * Handles placing and data value editing of plants. 
+     * @param clickedBlock block the Player clicked at
+     * @param clickedFace block Face the Placer clicked at, in this direction the new block will be placed
+     * @param materialMatch If his material is found data value of that block is changed instead of placing a new block
+     * @param editDataValue If editing of data value is allowed.
+     * @param maxDataValue Maximum for data value.
+     * @return 
+     */
     private static BlockState handleInteract(Block clickedBlock,BlockFace clickedFace, 
                                              Material materialMatch, boolean editDataValue, byte maxDataValue) {
         BlockState blockState;
@@ -369,6 +720,11 @@ public class SpecialBlockListener implements Listener{
         return blockState;
     }
 
+    /**
+     * If module REDSTONE_TORCH is enabled in world config file
+     * handles placing of redstone torches.
+     * @param event 
+     */
     @EventHandler(priority = EventPriority.HIGH)
     private void torchPlace(PlayerInteractEvent event) {
         Player p = event.getPlayer();
@@ -424,7 +780,7 @@ public class SpecialBlockListener implements Listener{
         }
     }
     
-    /*@EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     private void doubleSlabPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
         if (p.getItemInHand().getType().equals(Material.STEP)
@@ -469,7 +825,7 @@ public class SpecialBlockListener implements Listener{
                 bs.update(true,false);
             }
         }
-    }*/
+    }
     
     @EventHandler(priority = EventPriority.HIGH)
     private void bedPlace(PlayerInteractEvent event) {
@@ -744,441 +1100,6 @@ Logger.getGlobal().info("4");
         }
     }*/
 //END DELETE
-    
-    
-    @EventHandler
-    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
-        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
-            return;
-        }
-        final Block block = event.getBlock();
-        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Furnace furnace = (Furnace) block.getState();
-                FurnaceInventory inventory = furnace.getInventory();
-                ItemStack item =inventory.getResult();
-                inventory.setResult(null);
-                inventory.setSmelting(new ItemStack(smelting));
-                furnace.setBurnTime(Short.MAX_VALUE);
-                furnace.update(true, false);
-            }
-        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-    }
-    
-    @EventHandler(priority = EventPriority.HIGH)
-    private void noOpenHalfDoors(PlayerInteractEvent event) {
-        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            Player p = event.getPlayer();
-            Material blockType = event.getClickedBlock().getType();
-            if (DoorUtil.isDoor(blockType)) {
-                if(PluginData.isModuleEnabled(event.getClickedBlock().getWorld(), Modules.HALF_DOORS)) {
-                    DevUtil.log(2,"noOpenHalfDoors fired cancelled: " + event.isCancelled());
-                    if(event.isCancelled()) {
-                        return;
-                    }
-                    Block above = event.getClickedBlock().getRelative(BlockFace.UP);
-                    if(!DoorUtil.isUpperDoorPart(event.getClickedBlock()) && !(DoorUtil.isDoor(above.getType()) && DoorUtil.isUpperDoorPart(above))){
-                        event.setCancelled(true);
-                    }
-                }
-            }
-        }
-    }
-    
-    @EventHandler
-    public void placeSpecialBlock(PlayerInteractEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                || event.getPlayer().getInventory().getItemInMainHand()==null
-                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
-                || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
-            return;
-        }
-        final Player player = event.getPlayer();
-        final ItemStack handItem = player.getInventory().getItemInMainHand();
-        ItemMeta meta = handItem.getItemMeta();
-        if(!(meta.hasLore() 
-                && meta.getLore().size()>1 
-                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
-            return;
-        }
-        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
-        if(data == null || data.getType().equals(SpecialBlockType.VANILLA)) {
-            return;
-        }
-        event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
-        final ItemStack[] armor = player.getInventory().getArmorContents();
-        final ItemStack offHandItem = player.getInventory().getItemInOffHand();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ((PlayerInventory)player.getInventory()).setArmorContents(armor);
-                player.getInventory().setItemInMainHand(handItem);
-                player.getInventory().setItemInOffHand(offHandItem);
-            }
-        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-        if(data==null) {
-            PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
-            return;
-        }
-        Block blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
-        if(!blockPlace.isEmpty() && !blockPlace.getType().equals(Material.LONG_GRASS)) {
-            return;
-        }
-        if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
-            return;
-        }
-        data.placeBlock(blockPlace, event.getBlockFace(), player);
-/*Logger.getGlobal().info("specialBlock place 7 main");
-        } else {
-Logger.getGlobal().info("specialBlock place 7 off");
-/*ArrayList<HandlerList> list = HandlerList.getHandlerLists();
-for(HandlerList handlerList : list) {
-    RegisteredListener reg = new RegisteredListener(this, new EventExecutor(){
-        @Override
-        public void execute(Listener listener, Event event) throws EventException {
-            String name = event.getEventName();
-            if(!found.contains(name)) {
-                found.add(name);
-Logger.getGlobal().info("Event found: "+event.getEventName());
-            }
-        }
-    },EventPriority.NORMAL,ArchitectPlugin.getPluginInstance(),false);
-    handlerList.register(reg);
-    //RegisteredListener[] listener = handlerList.getRegisteredListeners();
-  //  for(int i=0; i<listener.length;i++) {
-//Logger.getGlobal().info(listener[i].getListener().toString());
-    //}
-}*/
-        
-    }
-    
-/*    static HashSet<String> found = new HashSet<>();
-   
-    @EventHandler
-    public void moveInventoryItem(InventoryMoveItemEvent event) {
-        Logger.getGlobal().info("moveInventory");
-    }
-    @EventHandler
-    public void moveInventoryInteact(InventoryInteractEvent event) {
-        Logger.getGlobal().info("interactInventory");
-    }*/
-    
-    @EventHandler(priority=EventPriority.LOWEST)  
-    public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
-        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
-            event.setCancelled(true);
-            final Player p = (Player) event.getPlayer();
-            String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
-            if(rpN==null || rpN.equals("")) {
-                rpN = "Gondor";
-            }
-            SpecialBlockInventoryData.openInventory(p, rpN);
-        }
-    }
-    
-    
-    @EventHandler(priority=EventPriority.LOWEST) 
-    public void openSpecialInventory(InventoryCreativeEvent event) {
-        if(PluginData.isModuleEnabled(event.getWhoClicked().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
-            if(event.getSlotType().equals(SlotType.OUTSIDE)
-                    && event.getCursor().getType().equals(Material.STONE)
-                    && event.getCursor().getAmount()==2) {
-                if(!(event.getWhoClicked() instanceof Player)) {
-                    return;
-                }
-                final Player p = (Player) event.getWhoClicked();
-                String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
-                if(rpN==null || rpN.equals("")) {
-                    rpN = "Gondor";
-                }
-                final String rpName = rpN;
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        p.closeInventory();
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                SpecialBlockInventoryData.openInventory(p, rpName);  
-                            }
-                        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-                    }
-                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-            }
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void changeDurability(PlayerItemDamageEvent event) {
-        event.setCancelled(true);
-    }
-    
-    @EventHandler(priority = EventPriority.HIGHEST) 
-    public void avoidDoubleSlab(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !(event.getBlock().getType().equals(Material.DOUBLE_STEP)
-                    || event.getBlock().getType().equals(Material.DOUBLE_STONE_SLAB2)
-                    || event.getBlock().getType().equals(Material.WOOD_DOUBLE_STEP)
-                    || event.getBlock().getType().equals(Material.PURPUR_DOUBLE_SLAB))) {
-            return;
-        }
-        final BlockState blockState = event.getBlock().getState();
-        switch(blockState.getType()) {
-            case DOUBLE_STEP:
-                switch(blockState.getRawData()) {
-                    case 1:
-                        blockState.setType(Material.SANDSTONE);
-                        blockState.setRawData((byte)0);
-                        break;
-                     case 2:
-                        blockState.setType(Material.WOOD);
-                        blockState.setRawData((byte)0);
-                        break;
-                    case 3:
-                        blockState.setType(Material.COBBLESTONE);
-                        blockState.setRawData((byte)0);
-                        break;
-                    case 4:
-                        blockState.setType(Material.BRICK);
-                        blockState.setRawData((byte)0);
-                        break;
-                    case 5:
-                        blockState.setType(Material.SMOOTH_BRICK);
-                        blockState.setRawData((byte)0);
-                        break;
-                    case 6:
-                        blockState.setType(Material.NETHER_BRICK);
-                        blockState.setRawData((byte)0);
-                        break;
-                    case 7:
-                        blockState.setType(Material.QUARTZ_BLOCK);
-                        blockState.setRawData((byte)0);
-                        break;
-                }
-                break;
-            case DOUBLE_STONE_SLAB2:
-                blockState.setType(Material.RED_SANDSTONE);
-                break;
-            case WOOD_DOUBLE_STEP:
-                byte dv = blockState.getRawData();
-                blockState.setType(Material.WOOD);
-                blockState.setRawData(dv);
-                break;
-            case PURPUR_DOUBLE_SLAB:
-                blockState.setType(Material.PURPUR_BLOCK);
-                break;
-        }
-        blockState.update(true, false);
-    }
-    
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false) 
-    public void flintBlock(PlayerInteractEvent event) {
-//Logger.getGlobal().info("1");
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
-                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                || !event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
-                || !EventUtil.isMainHandEvent(event)) {
-//Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
-            return;
-        }
-//Logger.getGlobal().info("3");
-        Block block = event.getClickedBlock();
-        String rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
-        if(rpName.equals("")) {
-            PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
-        }
-        ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
-        if(item!=null) {
-//Logger.getGlobal().info("4 "+item);
-            event.setCancelled(true);
-            event.getPlayer().getInventory().addItem(item);
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOWEST) 
-    public void blockInventories(InventoryOpenEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !(event.getPlayer() instanceof Player)) {
-            return;
-        }
-        if (//event.getInventory().getType().equals(InventoryType.ANVIL)
-          event.getInventory().getType().equals(InventoryType.BEACON) 
-         || event.getInventory().getType().equals(InventoryType.BREWING) 
-         || event.getInventory().getType().equals(InventoryType.DISPENSER) 
-         || event.getInventory().getType().equals(InventoryType.HOPPER) 
-         || event.getInventory().getHolder() instanceof ShulkerBox 
-         || event.getInventory().getType().equals(InventoryType.DROPPER)){
-            Block block = event.getInventory().getLocation().getBlock();
-            if(!NoPhysicsData.hasNoPhysicsException(block)
-                    || !PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)) {
-                event.setCancelled(true);
-            }
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOWEST) 
-    public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !(event.getPlayer() instanceof Player)) {
-            return;
-        }
-        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && event.getClickedBlock().getType().equals(Material.ACACIA_FENCE_GATE)
-                && event.getClickedBlock().getData()>7) {
-            event.setCancelled(true);
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOWEST) 
-    public void blockArmorAtItemBlocks(PlayerInteractAtEntityEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !(event.getPlayer() instanceof Player)) {
-            return;
-        }
-        if(event.getRightClicked() instanceof ArmorStand
-                && ((ArmorStand)event.getRightClicked()).getCustomName()!=null
-                && ((ArmorStand)event.getRightClicked()).getCustomName()
-                                     .startsWith(SpecialBlockItemBlock.PREFIX)) {
-            event.setCancelled(true);
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOWEST) 
-    public void blockVanillaOrientations(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
-            return;
-        }
-        if(event.getBlockPlaced().getType().equals(Material.PUMPKIN) 
-                || event.getBlockPlaced().getType().equals(Material.ENDER_PORTAL_FRAME) ) {
-            event.getBlock().setData((byte)0);
-        }
-    }
-    
-    @EventHandler
-    public void removeItemBlockArmorStand(BlockBreakEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
-            return;
-        }
-        Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
-                                    event.getBlock().getY(), event.getBlock().getZ()+0.5);
-        SpecialBlockItemBlock.removeArmorStands(loc);
-    }
-    
-    @EventHandler
-    public void cycleBlockItem(PlayerInteractEvent event) {
-        if(!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
-                || event.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
-            return;
-        }
-        ArmorStand armorStand = SpecialBlockItemBlock.getArmorStand(event.getClickedBlock().getLocation());
-        if(armorStand!=null
-                    && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
-            if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.SPECIAL_BLOCKS_PLACE)) {
-                if(!PluginData.hasGafferPermission(event.getPlayer(),
-                                                 event.getClickedBlock().getLocation())) {
-                    PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(), 
-                            PluginData.getGafferProtectionMessage(event.getPlayer(), 
-                                                 event.getClickedBlock().getLocation()));
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            if(armorStand.getCustomName() != null 
-                    && armorStand.getCustomName().startsWith(SpecialBlockItemBlock.PREFIX)) {
-                ItemStack item = armorStand.getHelmet();
-                //item.setDurability((short)((item.getDurability()+1)%Short.MAX_VALUE));
-                String id = SpecialBlockItemBlock.getIdFromArmorStandName(armorStand.getCustomName());
-                SpecialBlockItemBlock itemBlock 
-                        = (SpecialBlockItemBlock) SpecialBlockInventoryData.getSpecialBlock(id);
-                if(itemBlock==null) {
-                    return;
-                }
-                short dura;
-                if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    dura = itemBlock.getNextDurability(item.getDurability());
-                } else {
-                    dura = itemBlock.getPreviousDurability(item.getDurability());
-                }
-                item.setDurability(dura);
-                armorStand.setHelmet(item);
-            }
-        }
-    }
-    
-    
-    /*@EventHandler(priority = EventPriority.LOWEST) 
-    public void interactPoweredDoors(PlayerInteractEvent event) {
-        if(event.hasBlock() && event.getClickedBlock().getType().equals(Material.ACACIA_DOOR)) {
-            Block block = event.getClickedBlock();
-            if(block.getData() > 9) {
-                Block lower = block.getRelative(BlockFace.DOWN);
-                if(lower.getType().equals(block.getType())) {
-                    if(lower.getData()>3) {
-                        closeDoor(lower);
-                    } else {
-                        openDoor(lower);
-                    }
-                }
-            } else if(block.getData()<8) {
-                Block upper = block.getRelative(BlockFace.UP);
-                if(upper.getType().equals(block.getType())) {
-                    if(block.getData()>3) {
-                        closeDoor(block);
-                    } else {
-                        openDoor(block);
-                    }
-                }
-            }
-        }
-    }*/
-    
-    @EventHandler(priority = EventPriority.LOWEST) 
-    public void interactAdjacentDoors(PlayerInteractEvent event) {
-        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && event.getHand().equals(EquipmentSlot.HAND)
-                && DoorUtil.isDoorBlock(event.getClickedBlock())) {
-            Block block = event.getClickedBlock();
-            if(DoorUtil.isThinWall(block)) {
-                return;
-            }
-            event.setCancelled(true);
-            if(DoorUtil.isUpperDoorBlock(block)) {                       //click at upper door part
-                block = block.getRelative(BlockFace.DOWN);      //check if clicked block is part of full door
-                if(!DoorUtil.isDoorBlock(block)) {
-                    return;
-                }
-            } else {                                            //click at lower door part
-                if(!DoorUtil.isDoorBlock(block.getRelative(BlockFace.UP))//check for half door
-                    && !DoorUtil.isFullDoorBelow(block)) {               //check for 3 block high door
-                    return;
-                }
-            }
-            if(DoorUtil.isFullDoorBelow(block)) {
-                block = block.getRelative(BlockFace.DOWN, 2);   //
-            }
-            DoorUtil.toggleDoor(block);
-            DoorUtil.toggleDoor(block.getRelative(BlockFace.UP));
-            DoorUtil.toggleDoor(block.getRelative(BlockFace.UP,2));
-
-            Block block2Lower = DoorUtil.getSecondHalf(block);
-            Block block2Upper = block2Lower.getRelative(BlockFace.UP);
-            BlockState block2LowerState = block2Lower.getState();
-            BlockState block2UpperState = block2Upper.getState();
-            if(DoorUtil.isDoorBlock(block2Lower) && DoorUtil.isDoorBlock(block2Upper) 
-                && (((Door)block2LowerState.getData()).getFacing()
-                            .equals(((Door)block.getState().getData()).getFacing())) //check for same facing
-                && (((Door)block2UpperState.getData()).getHinge()           //check for opposite hinge
-                       !=(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()))) {
-                DoorUtil.toggleDoor(block2Lower);
-                DoorUtil.toggleDoor(block2Upper);
-                DoorUtil.toggleDoor(block2Lower.getRelative(BlockFace.UP,2));
-            }
-        }
-    }
-
     
     /*@EventHandler(priority = EventPriority.LOWEST) 
     public void blockRedstoneOreChange(PlayerInteractEvent event) {

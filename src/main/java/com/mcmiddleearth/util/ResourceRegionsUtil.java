@@ -16,7 +16,7 @@
  */
 package com.mcmiddleearth.util;
 
-import com.mcmiddleearth.architect.specialBlockHandling.InvCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.command.InvCommand;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.logging.Level;
