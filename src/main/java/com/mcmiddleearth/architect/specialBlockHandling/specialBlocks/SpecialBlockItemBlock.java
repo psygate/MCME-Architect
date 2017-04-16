@@ -23,6 +23,7 @@ import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -154,9 +155,15 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     }
     
     public static void removeArmorStands(Location loc) {
-        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+        removeArmorStands(loc, 0.5, 2, true);
+    }
+    
+    public static void removeArmorStands(Location loc, double xzRadius, double yRadius, boolean exactMatch) {
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, xzRadius, yRadius, xzRadius)) {
+//Logger.getGlobal().info("found "+entity);
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
-                    && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
+                    && (!exactMatch || entity.getCustomName().startsWith(getArmorStandName(loc.getBlock())))) {
+//Logger.getGlobal().info("removed ");
                 entity.remove();
             }
         }

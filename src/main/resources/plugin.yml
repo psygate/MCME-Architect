@@ -37,9 +37,9 @@ commands:
    rp:
       description: Switch resource packs by command
       usage: /rp Gondor|Eriador|Lothlorien|Rohan|Moria|Mordor
-   itex:
-      description: Change item texture by durability
-      usage: /itex <durability>
+   itemblock:
+      description: Remove all item block armor stands in a radius
+      usage: /itemblock remove <radius>
    inv:
       description: Open special build inventory
       usage: /inv b[lock] | i[tem] 
@@ -52,6 +52,9 @@ commands:
    chead:
       description: Manage custom heads
       usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
+   sign:
+      description: Edit signs
+      usage: /sign <#line> <line text>
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -86,6 +89,7 @@ permissions:
             architect.get.public: true
             architect.inventory.save: true
             architect.noPhysicsList.exception: true
+            architect.itemBlockRemove: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -124,11 +128,11 @@ permissions:
             architect.get.logs: true
             architect.getCommand: true
             architect.customHeadManager.user: true  
-            architect.itemTexture: true
             architect.inventory: true
             architect.inventory.open: true
             architect.help: true
             architect.noPhysicsList.view: true
+            architect.signEditor: true
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
         default: op
@@ -188,6 +192,9 @@ permissions:
         default: false
     architect.itemTexture:
         description: Allows to change durability of item in hand to use alternative texture
+        default: op
+    architect.itemBlockRemove:
+        description: Allows to remove item block armor stands in a radius
         default: op
     architect.itemTexture:
         description: Allow to open special build inventories
@@ -272,6 +279,9 @@ permissions:
         default: op
     architect.hangingEntityEditor: 
         descriptions: Allows to edit hanging Entities
+        default: op
+    architect.signEditor: 
+        descriptions: Allows to use Sign Stand Editor
         default: op
     architect.armorStandEditor: 
         descriptions: Allows to use Armor Stand Editor (except storing and deleting files)

@@ -24,7 +24,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 
 /**
  *
@@ -46,6 +49,8 @@ public class WorldConfig {
                                                        +defaultWorldConfigName+"."+cfgExtension);
     
     private static final String NO_PHYSICS_LIST = "noPhysicsList";
+    
+    private static final String INVENTORY_ACCESS = "inventoryAccess";
     
     private final List<Integer> npList;
     
@@ -78,6 +83,7 @@ public class WorldConfig {
                     config.set(modul.getModuleKey(), true);
                 }
                 config.set(NO_PHYSICS_LIST, new ArrayList<Integer>());
+                createInventoryAccess();
                 try {
                     config.save(defaultConfig);
                 } catch (IOException ex) {
@@ -85,6 +91,10 @@ public class WorldConfig {
                 }
             }
             npList = config.getIntegerList(NO_PHYSICS_LIST);
+            saveConfigFile();
+        }
+        if(config.getConfigurationSection(INVENTORY_ACCESS)==null) {
+            createInventoryAccess();
             saveConfigFile();
         }
     }
@@ -137,5 +147,36 @@ public class WorldConfig {
             return true;
         }
         return false;
+    }
+    
+    public InventoryAccess getInventoryAccess(Inventory inventory) {
+        ConfigurationSection section = config.getConfigurationSection(INVENTORY_ACCESS);
+        String key=section.getString(inventory.getType().name());
+        if(key==null) {
+            section.set(inventory.getType().name(),InventoryAccess.TRUE);
+            saveConfigFile();
+            return InventoryAccess.TRUE;
+        }
+        return InventoryAccess.valueOf(key);
+    }
+    
+    private void createInventoryAccess() {
+        ConfigurationSection section = config.createSection(INVENTORY_ACCESS);
+        section.set(InventoryType.ANVIL.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.BEACON.name(), InventoryAccess.EXCEPTION.name());
+        section.set(InventoryType.BREWING.name(), InventoryAccess.BUILDER.name());
+        section.set(InventoryType.CHEST.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.CRAFTING.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.CREATIVE.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.DISPENSER.name(), InventoryAccess.EXCEPTION.name());
+        section.set(InventoryType.DROPPER.name(), InventoryAccess.EXCEPTION.name());
+        section.set(InventoryType.ENCHANTING.name(), InventoryAccess.EXCEPTION.name());
+        section.set(InventoryType.ENDER_CHEST.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.FURNACE.name(), InventoryAccess.BUILDER.name());
+        section.set(InventoryType.HOPPER.name(), InventoryAccess.EXCEPTION.name());
+        section.set(InventoryType.PLAYER.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.WORKBENCH.name(), InventoryAccess.TRUE.name());
+        section.set(InventoryType.MERCHANT.name(), InventoryAccess.TRUE.name());
+        section.set("SHULKER_BOX", InventoryAccess.EXCEPTION.name());
     }
  }

@@ -108,6 +108,7 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                 if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR_TRUSTED)
                         && (args[0].equalsIgnoreCase("place")
                           ||args[0].equalsIgnoreCase("delete")
+                          ||args[0].equalsIgnoreCase("rename")
                           ||args[0].equalsIgnoreCase("save"))) {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
@@ -143,6 +144,28 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                         }
                         else {
                             sendDeleteErrorMessage(cs);
+                        }
+                    } else {
+                        PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
+                    }
+                    return true;
+                }
+                if(args[0].equalsIgnoreCase("rename")) {
+                    if(args.length>2) {
+                        if(!playerConfig.existsFile(args[1])) {
+                            PluginData.getMessageUtil().sendFileNotFoundError(cs);
+                            return true;
+                        }
+                        if(!(PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR_DELETE) 
+                                || playerConfig.isCreator(args[1], p.getUniqueId()))) {
+                            PluginData.getMessageUtil().sendNoPermissionError(cs);
+                            return true;
+                        }
+                        if(playerConfig.renameFile(args[1],args[2])) {
+                            sendFileRenamedMessage(cs);
+                        }
+                        else {
+                            sendRenameErrorMessage(cs);
                         }
                     } else {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
@@ -338,6 +361,14 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
 
     private void sendDeleteErrorMessage(CommandSender cs) {
         PluginData.getMessageUtil().sendErrorMessage(cs, "File not found or directory not empty.");
+    }
+
+    private void sendFileRenamedMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "File renamed.");
+    }
+
+    private void sendRenameErrorMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendErrorMessage(cs, "File could not be renamed.");
     }
 
     private void sendNotActivatedMessage(CommandSender cs) {

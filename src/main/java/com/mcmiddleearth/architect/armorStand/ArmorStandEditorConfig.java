@@ -187,12 +187,24 @@ public class ArmorStandEditorConfig {
         file = new File(dataDir, filename);
         if(file.exists() && file.isDirectory()) {
             if(file.listFiles().length==0) {
-                file.delete();
-                result = true;
+                return file.delete();
             }
             else {
                 result = false;
             }
+        }
+        return result;
+    }
+    
+    public boolean renameFile(String filename, String newName) {
+        boolean result = false;
+        File file = new File(dataDir, filename+".yml");
+        File newFile = new File(dataDir, newName+".yml");
+        if(file.exists() && !newFile.exists()) {
+            return file.renameTo(newFile);
+        }
+        else {
+            result =  false;
         }
         return result;
     }

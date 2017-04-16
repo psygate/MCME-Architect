@@ -36,9 +36,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -130,6 +133,16 @@ public class PluginData {
             DevUtil.log(rule+" "+world.getGameRuleValue(rule));
         }
     }   
+    
+    public static InventoryAccess getInventoryAccess(Inventory inventory) {
+        InventoryHolder holder = inventory.getHolder();
+        Location loc = inventory.getLocation();
+        if(loc == null) {
+            return InventoryAccess.TRUE;
+        }
+        return worldConfigs.get(loc.getWorld().getName())
+                           .getInventoryAccess(inventory);
+    }
     
     public static boolean isNoPhysicsBlock(Block block) {
         return worldConfigs.get(block.getWorld().getName()).isNoPhysicsBlock(block.getTypeId());

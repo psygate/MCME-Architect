@@ -33,6 +33,9 @@ public enum Modules {
     SIX_SIDED_LOGS         ("modules.specialBlocks.sixSidedLogs"),
     DRAGON_EGG             ("modules.specialBlocks.dragonEgg"),
     BURNING_FURNACE        ("modules.specialBlocks.burningFurnace"),
+    INVENTORY_ACCESS       ("modules.specialBlocks.inventoryAccess"),
+    SPECIAL_BLOCKS_PLACE   ("modules.specialBlocks.place"),
+    SPECIAL_BLOCKS_FLINT   ("modules.specialBlocks.flint"),
 
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),
     MONSTER_SPAWN_BLOCKING ("modules.environment.monsterSpawnBlocking"),
@@ -42,12 +45,11 @@ public enum Modules {
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
     
+    SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),
     RESOURCE_PACK_SWITCHER ("modules.command.resourcePackSwitcher"),
     FULL_BRIGHTNESS        ("modules.command.fullBrightness"),
     SPECIAL_BLOCKS_GET     ("modules.command.getSpecialBlocks"),
-    SPECIAL_BLOCKS_PLACE   ("modules.specialBlocks.place"),
-    SPECIAL_BLOCKS_FLINT   ("modules.specialBlocks.flint"),
     ITEM_TEXTURES          ("modules.commmand.itemTexture"),
     WE_SCHEMATICS_VIEWER   ("modules.command.weSchemViewer"),
     VOXEL_VIEWER           ("modules.command.voxelViewer"),
