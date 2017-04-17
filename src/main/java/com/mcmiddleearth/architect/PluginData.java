@@ -66,6 +66,8 @@ public class PluginData {
     @Getter
     private static int entityLimitRadius = 80;
     
+    private final static String ENITIY_LIMIT_SECTION = "EntityLimit";
+    
     public static boolean isModuleEnabled(World world, Modules modul) {
         WorldConfig config = worldConfigs.get(world.getName());
         if(config == null) {
@@ -83,11 +85,15 @@ public class PluginData {
             rpUrls.put(rpKey, rpConfig.getString(rpKey));
         }
         ConfigurationSection entityConfig = ArchitectPlugin.getPluginInstance().getConfig()
-                                                       .getConfigurationSection("EntityLimit");
-        if(entityConfig!=null) {
-            entityStandLimit = entityConfig.getInt("number",1000);
-            entityLimitRadius = entityConfig.getInt("radius",80);
+                                                       .getConfigurationSection(ENITIY_LIMIT_SECTION);
+        if(entityConfig==null) {
+            entityConfig = ArchitectPlugin.getPluginInstance().getConfig().createSection(ENITIY_LIMIT_SECTION);
+            entityConfig.set("number", 500);
+            entityConfig.set("radius", 80);
+            ArchitectPlugin.getPluginInstance().saveConfig();
         }
+        entityStandLimit = entityConfig.getInt("number",500);
+        entityLimitRadius = entityConfig.getInt("radius",80);
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));
         for(File file: configFiles) {
@@ -142,6 +148,11 @@ public class PluginData {
         }
         return worldConfigs.get(loc.getWorld().getName())
                            .getInventoryAccess(inventory);
+    }
+    
+    public static boolean getNoInteraction(Block block) {
+        return worldConfigs.get(block.getLocation().getWorld().getName())
+                           .getNoInteraction(block.getState());
     }
     
     public static boolean isNoPhysicsBlock(Block block) {

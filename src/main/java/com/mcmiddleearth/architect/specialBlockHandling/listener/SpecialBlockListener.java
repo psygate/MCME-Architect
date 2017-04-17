@@ -132,7 +132,8 @@ public class SpecialBlockListener implements Listener{
     
     @EventHandler
     public void furnaceOnOff(InventoryClickEvent event) {
-        if (!PluginData.isModuleEnabled(event.getInventory().getLocation().getWorld(), Modules.BURNING_FURNACE)) {
+        Location loc = event.getInventory().getLocation();
+        if (loc == null || !PluginData.isModuleEnabled(loc.getWorld(), Modules.BURNING_FURNACE)) {
             return;
         }
         InventoryHolder holder = event.getInventory().getHolder();
@@ -348,14 +349,13 @@ Logger.getGlobal().info("EntityInteract");
     }
     
     @EventHandler(priority = EventPriority.LOWEST) //TODO make configurable
-    public void blockPoweredAcaciaFenceGate(PlayerInteractEvent event) { //used for item blocks
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+    public void blockPlayerInteraction(PlayerInteractEvent event) { //used for item blocks
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.BLOCK_PLAYER_INTERACTION)
                 || !(event.getPlayer() instanceof Player)) {
             return;
         }
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && event.getClickedBlock().getType().equals(Material.ACACIA_FENCE_GATE)
-                && event.getClickedBlock().getData()>7) {
+                && PluginData.getNoInteraction(event.getClickedBlock())) {
             event.setCancelled(true);
         }
     }
