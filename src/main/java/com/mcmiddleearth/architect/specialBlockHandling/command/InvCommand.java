@@ -288,8 +288,8 @@ public class InvCommand extends AbstractArchitectCommand {
             SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(args[1]);
             Block start = ((Player)sender).getLocation().getBlock();
             start = start.getRelative(BlockFace.SOUTH);
-            for(int i = 0; i<=NumericUtil.getInt(args[2]);i+=3) {
-                for(int j=0; j<NumericUtil.getInt(args[2]);j+=3) {
+            for(int i = 0; i<=NumericUtil.getInt(args[2]);i+=NumericUtil.getInt(args[3])) {
+                for(int j=0; j<NumericUtil.getInt(args[2]);j+=NumericUtil.getInt(args[3])) {
                     
                     data.placeBlock(start.getRelative(i,0,j), BlockFace.UP, (Player)sender);
                 }

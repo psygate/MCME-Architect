@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.util;
 
+import com.mcmiddleearth.architect.PluginData;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -44,14 +45,14 @@ public class DoorUtil {
 
     public static boolean isThinWall(Block block) {
         if(isUpperDoorBlock(block)) {
-            return isDoorBlock(block) && !(block.getType().equals(Material.IRON_DOOR_BLOCK) 
-                                          || block.getType().equals(Material.BIRCH_DOOR))
-                                      && block.getData()>9;                                //check powered state
+            return isDoorBlock(block) && PluginData.getNoInteraction(block);//!(block.getType().equals(Material.IRON_DOOR_BLOCK) 
+                                          //|| block.getType().equals(Material.BIRCH_DOOR))
+                                      //&& block.getData()>9;                                //check powered state
         } else {
             block = block.getRelative(BlockFace.UP);
-            return isUpperDoorBlock(block) && !(block.getType().equals(Material.BIRCH_DOOR) 
-                                               || block.getType().equals(Material.IRON_DOOR_BLOCK))
-                                           && block.getData()>9;                                //check powered state
+            return isUpperDoorBlock(block) && PluginData.getNoInteraction(block);//!(block.getType().equals(Material.BIRCH_DOOR) 
+                                               //|| block.getType().equals(Material.IRON_DOOR_BLOCK))
+                                           //&& block.getData()>9;                                //check powered state
         }
     }
     public static boolean isUpperDoorBlock(Block block) {

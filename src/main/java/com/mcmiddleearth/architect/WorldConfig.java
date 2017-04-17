@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect;
 
+import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryType;
@@ -51,6 +54,8 @@ public class WorldConfig {
     private static final String NO_PHYSICS_LIST = "noPhysicsList";
     
     private static final String INVENTORY_ACCESS = "inventoryAccess";
+    
+    private static final String NO_INTERACTION = "noInteraction";
     
     private final List<Integer> npList;
     
@@ -84,6 +89,7 @@ public class WorldConfig {
                 }
                 config.set(NO_PHYSICS_LIST, new ArrayList<Integer>());
                 createInventoryAccess();
+                createNoInteraction();
                 try {
                     config.save(defaultConfig);
                 } catch (IOException ex) {
@@ -95,6 +101,10 @@ public class WorldConfig {
         }
         if(config.getConfigurationSection(INVENTORY_ACCESS)==null) {
             createInventoryAccess();
+            saveConfigFile();
+        }
+        if(config.getConfigurationSection(NO_INTERACTION)==null) {
+            createNoInteraction();
             saveConfigFile();
         }
     }
@@ -178,5 +188,54 @@ public class WorldConfig {
         section.set(InventoryType.WORKBENCH.name(), InventoryAccess.TRUE.name());
         section.set(InventoryType.MERCHANT.name(), InventoryAccess.TRUE.name());
         section.set("SHULKER_BOX", InventoryAccess.EXCEPTION.name());
+    }
+    
+    public boolean getNoInteraction(BlockState state) {
+        ConfigurationSection section = config.getConfigurationSection(NO_INTERACTION);
+        String data = section.getString(state.getType().name());
+        if(data!=null) {
+            String[] values = data.split(";");
+            for(String value: values) {
+                int first= -1, last=-1;
+                if(value.contains("-") && value.lastIndexOf("-")+1<value.length()) {
+                    String firstPart = value.substring(0,value.indexOf("-"));
+                    String lastPart = value.substring(value.lastIndexOf("-")+1);
+                    if(NumericUtil.isInt(firstPart)) {
+                        first = NumericUtil.getInt(firstPart);
+                    }
+                    if(NumericUtil.isInt(lastPart)) {
+                        last = NumericUtil.getInt(lastPart);
+                    } else {
+                        last = first;
+                    }
+                } else {
+                    if(NumericUtil.isInt(value)) {
+                        first = NumericUtil.getInt(value);
+                        last = first;
+                    }
+                }
+                if(state.getRawData()>=first && state.getRawData()<=last) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+    private void createNoInteraction() {
+        ConfigurationSection section = config.createSection(NO_INTERACTION);
+        section.set(Material.FENCE_GATE.name(), "8-15");
+        section.set(Material.SPRUCE_FENCE_GATE.name(), "0-15");
+        section.set(Material.BIRCH_FENCE_GATE.name(), "8-15");
+        section.set(Material.JUNGLE_FENCE_GATE.name(), "0-15");
+        section.set(Material.ACACIA_FENCE_GATE.name(), "0-15");
+        section.set(Material.DARK_OAK_FENCE_GATE.name(), "0-15");
+        section.set(Material.ACACIA_FENCE_GATE.name(), "0-15");
+        section.set(Material.WOODEN_DOOR.name(), "10-11");
+        section.set(Material.JUNGLE_DOOR.name(), "10-11");
+        section.set(Material.SPRUCE_DOOR.name(), "10-11");
+        section.set(Material.ACACIA_DOOR.name(), "10-11");
+        section.set(Material.DARK_OAK_DOOR.name(), "10-11");
     }
  }
