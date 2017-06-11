@@ -16,11 +16,11 @@
  */
 package com.mcmiddleearth.util;
 
-import com.comphenix.protocol.PacketType;
+/*import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.injector.PacketConstructor;
+import com.comphenix.protocol.injector.PacketConstructor;*/
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ProtocolLibUtil {
   
-    private static ProtocolLibConnection connector;
+/*    private static ProtocolLibConnection connector;
     
     private static JavaPlugin pluginInstance;
     
@@ -75,7 +75,7 @@ public class ProtocolLibUtil {
                             DevUtil.log(2,"y "+arrayToString(ints.read(1)));
                         }
                     }
-                }); */
+                }); /****
             }
             catch(NoClassDefFoundError | Exception e) {
                 Logger.getLogger(ProtocolLibUtil.class.getName()).log(Level.WARNING, "ProtocolLib is missing.", e);
@@ -107,7 +107,7 @@ public class ProtocolLibUtil {
                     PacketContainer chunkPacket = chunkPacketConstructor.createPacket(chunk,true,par3);
                     try {
                         protocolManager.sendServerPacket(player, chunkPacket, false);
-                    } catch (/*InvocationTargetException |*/ Exception e) {
+                    } catch ( Exception e) {
                         throw new RuntimeException("Cannot send chunk packet " + chunkPacket, e);
                     }
                 }
@@ -227,5 +227,5 @@ public class ProtocolLibUtil {
     public static boolean isInitiated() {
         return connector != null;
     }
-
+*/
 }

@@ -38,6 +38,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoubleY;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMobSpawnerBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.ZipUtil;
@@ -121,6 +122,12 @@ public class SpecialBlockInventoryData {
             if(!file.getName().equals(blockFile.getName())) {
                 loadFromFile(rpName, file);
             }
+        }
+        if(inventory.isEmpty()) {
+            inventories.remove(rpName);
+            searchInventories.remove(rpName);
+            inventory.destroy();
+            searchInventory.destroy();
         }
     }
     
@@ -209,6 +216,9 @@ public class SpecialBlockInventoryData {
                     case ITEM_BLOCK_FOUR_DIRECTIONS:
                         blockData = SpecialBlockItemFourDirections.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
+                    case MOB_SPAWNER_BLOCK:
+                        blockData = SpecialBlockMobSpawnerBlock.loadFromConfig(section, fullName(rpName,itemKey));
+                        break;
                     case BURNING_FURNACE:
                         blockData = SpecialBlockBurningFurnace.loadFromConfig(section, fullName(rpName, itemKey));
                         break;
@@ -220,7 +230,7 @@ public class SpecialBlockInventoryData {
                         break;
                 }
                 ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
-                if(blockData !=null && inventoryItem!=null) {
+                if(blockData !=null && inventoryItem!=null && !inventoryItem.getType().equals(Material.AIR)) {
                     String category = section.getString("category","Block");
                     blockList.add(blockData);
                     inventory.add(inventoryItem, category);
@@ -234,7 +244,7 @@ public class SpecialBlockInventoryData {
         }
     }
     
-    public static void openInventory(Player p, String resourcePack) {
+    public static boolean openInventory(Player p, String resourcePack) {
         /*else {
             resourcePack = resourcePack.toLowerCase();
         }
@@ -260,20 +270,24 @@ public class SpecialBlockInventoryData {
         if(inv==null) {
             inv = inventories.get("Gondor");
         }
-        if(inv!=null) {
+        if(inv!=null && !inv.isEmpty()) {
             inv.open(p);
+            return true;
         }
+        return false;
     }
     
-    public static void openSearchInventory(Player p, String resourcePack, String search) {
+    public static boolean openSearchInventory(Player p, String resourcePack, String search) {
         SearchInventory inv = searchInventories.get(resourcePack);
-        if(inv==null) {
+        /*if(inv==null) {
             inv = searchInventories.get("Gondor");
-        }
-        if(inv!=null) {
+        }*/
+        if(inv!=null && !inv.isEmpty()) {
             inv.open(p, search);
+            return true;
 //Logger.getGlobal().info("Inventory 3");
         }
+        return false;
     }
     
     public static boolean hasBlockInventory(String rpName) {
@@ -332,8 +346,8 @@ public class SpecialBlockInventoryData {
         }
     }
     
-    public static synchronized void downloadConfig(String rpName, InputStream in) throws IOException {
-        ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
+    public static synchronized int downloadConfig(String rpName, InputStream in) throws IOException {
+        return ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
     }
     
     private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {

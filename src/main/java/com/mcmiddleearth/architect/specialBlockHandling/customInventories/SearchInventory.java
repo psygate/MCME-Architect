@@ -202,4 +202,8 @@ public class SearchInventory implements Listener {
         }
     }
 
+    public boolean isEmpty() {
+        return items.size()>0;
+    }
+
 }

@@ -84,7 +84,7 @@ public class SpecialBlock {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        DevUtil.log("Special block place x2: ID "+state.getType()+" - DV "+state.getRawData());
+                        DevUtil.log("Special block place x2: loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
                         tempState.update(true, false);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 5);

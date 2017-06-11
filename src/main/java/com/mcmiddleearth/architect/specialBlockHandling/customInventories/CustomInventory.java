@@ -395,4 +395,13 @@ Logger.getGlobal().info(cat);
         }
         return null;
     }
+    
+    public boolean isEmpty() {
+        for(CustomInventoryCategory cat: categories.values()) {
+            if(cat.getItems().size()>0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

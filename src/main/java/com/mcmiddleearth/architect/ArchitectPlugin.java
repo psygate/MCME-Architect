@@ -68,7 +68,7 @@ public class ArchitectPlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
         pluginInstance = this;
-        ProtocolLibUtil.init(this);
+        //ProtocolLibUtil.init(this);
         PluginData.getMessageUtil().setPluginName("Architect");
         PluginData.load();
         NoPhysicsData.load();

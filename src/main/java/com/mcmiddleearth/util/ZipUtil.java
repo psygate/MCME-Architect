@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,14 +33,18 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtil {
 
-    public static synchronized void extract(String sourceURL, InputStream in, 
+    public static synchronized int extract(String sourceURL, InputStream in, 
                                String matchStart, File outPath) throws IOException{
+        int downloadedFiles = 0;
         URL url = new URL(sourceURL);
         BufferedOutputStream dest = null;
         ZipInputStream zin = null;
 //Logger.getGlobal().info("outpath "+outPath.getAbsolutePath());
-        File temp = new File(outPath,"temp");
 //Logger.getGlobal().info("temp "+temp.getAbsolutePath());
+        if(!outPath.exists()) {
+            outPath.mkdir();
+        }
+        File temp = new File(outPath,"temp");
         if(temp.exists()) {
             File[] files = temp.listFiles();
             for(File file: files) {
@@ -89,13 +90,14 @@ public class ZipUtil {
                 entry = zin.getNextEntry();
             }
 //Logger.getGlobal().info("search for "+matchStart);
-            for(File file: outPath.listFiles()) {
-                file.delete();
-            }
 //Logger.getGlobal().info("temp later "+temp);
             File[] files = temp.listFiles();
 //Logger.getGlobal().info("temp files "+files);
             if(files!=null) {
+                downloadedFiles = files.length;
+                for(File file: outPath.listFiles()) {
+                    file.delete();
+                }
                 for(File file: temp.listFiles()) {
 //Logger.getGlobal().info("toPath "+file.toPath());
 //Logger.getGlobal().info("fromPath "+new File(outPath,file.getName()));
@@ -109,9 +111,10 @@ public class ZipUtil {
             if(zin!=null) zin.close();
             if(dest!=null) dest.close();
         }
+        return downloadedFiles;
     }
     
-    private static Path download(String sourceURL, String targetDirectory) throws IOException
+    /*private static Path download(String sourceURL, String targetDirectory) throws IOException
     {
         URL url = new URL(sourceURL);
         String fileName = sourceURL.substring(sourceURL.lastIndexOf('/') + 1, sourceURL.length());
@@ -119,6 +122,6 @@ public class ZipUtil {
         Files.copy(url.openStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
         return targetPath;
-    }
+    }*/
 
 }
