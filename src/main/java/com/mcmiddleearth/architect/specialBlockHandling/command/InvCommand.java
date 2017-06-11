@@ -98,7 +98,8 @@ public class InvCommand extends AbstractArchitectCommand {
                                     public void run() {
                                         PluginData.getMessageUtil().sendInfoMessage(sender, "Downloading config files for rp "+rpName+".");
                                         try {
-                                            SpecialBlockInventoryData.downloadConfig(rpName,inputStream);
+                                            int count = SpecialBlockInventoryData.downloadConfig(rpName,inputStream);
+                                            PluginData.getMessageUtil().scheduleInfoMessage(sender, "Downloaded "+count+" block inventory files for rp "+rpName+".");
                                         } catch (IOException ex) {
                                             Logger.getLogger(ZipUtil.class.getName()).log(Level.SEVERE, null, ex);
                                             PluginData.getMessageUtil()
@@ -106,7 +107,8 @@ public class InvCommand extends AbstractArchitectCommand {
                                                                        +rpName+".");
                                         }
                                         try {
-                                            SpecialItemInventoryData.downloadConfig(rpName,inputStream);
+                                            int count = SpecialItemInventoryData.downloadConfig(rpName,inputStream);
+                                            PluginData.getMessageUtil().scheduleInfoMessage(sender, "Downloaded "+count+" item inventory files for rp "+rpName+".");
                                         } catch (IOException ex) {
                                             PluginData.getMessageUtil()
                                                       .scheduleErrorMessage(sender, "Error while downloading item config files for rp "
@@ -258,14 +260,18 @@ public class InvCommand extends AbstractArchitectCommand {
             }
         }*/
         if(args[0].startsWith("b")) {
-            if(!SpecialBlockInventoryData.hasBlockInventory(rpName)) {
+            /*if(!SpecialBlockInventoryData.hasBlockInventory(rpName)) {
                 sendBlockInventoryNotFound(p);
                 return true;
-            }
+            }*/
             if(search) {
-                SpecialBlockInventoryData.openSearchInventory(p, rpName, searchText);//args[adaptIndex(2,rpIndex)]);
+                if(!SpecialBlockInventoryData.openSearchInventory(p, rpName, searchText)) {//;//args[adaptIndex(2,rpIndex)]);
+                    sendBlockInventoryNotFound(p);
+                }
             } else {
-                SpecialBlockInventoryData.openInventory(p, rpName);
+                if(!SpecialBlockInventoryData.openInventory(p, rpName)) {
+                    sendBlockInventoryNotFound(p);
+                }
             }
             return true;
         } 

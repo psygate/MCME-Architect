@@ -80,6 +80,13 @@ Categories:
         damage: 11        
         damageCurrent: 12
 Items:
+    testMobSpawner:
+        contentItem: DIAMOND_CHESTPLATE
+        contentDamage: 195
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 195    
+        category: Inter
+        type: MOB_SPAWNER_BLOCK
     oak_planks:
      blockMaterial: WOOD
      dataValue: 0
@@ -88,7 +95,6 @@ Items:
      display: Oak planks [5:0]
      category: Block
      type: BLOCK
-      
     Meat:
         blockMaterial: CACTUS
         dataValue: 0
@@ -319,6 +325,16 @@ Items:
         itemMaterial: DIAMOND_CHESTPLATE
         damage: 34    
         type: FOUR_DIRECTIONS
+    Axe(wall):
+        blockMaterial: SUGAR_CANE_BLOCK
+        blockDataValue: 0
+        contentItem: DIAMOND_SWORD
+        contentDamage: 0
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_SWORD
+        damage: 0    
+        category: Inter
+        type: ITEM_BLOCK_FOUR_DIRECTIONS
     Barrel(potatoes):
         blockMaterial: CACTUS
         blockDataValue: 5

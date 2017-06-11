@@ -89,8 +89,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
         if(!PluginData.moreEntitiesAllowed(blockPlace)) {
-            PluginData.getMessageUtil().sendErrorMessage(player, "Can't place. Already too many entities (paintings, item frames, item blocks and armorstands) around here.");
-            return;
+            int count = PluginData.countNearbyEntities(blockPlace);
+            PluginData.getMessageUtil().sendErrorMessage(player, "WARNING! Already "+count+" entities (paintings, item frames, item blocks and armorstands) around here. Placing more will cause lag.");
         }
         super.placeBlock(blockPlace, blockFace, player);
         Location loc = getArmorStandLocation(blockPlace, blockFace, playerLoc);

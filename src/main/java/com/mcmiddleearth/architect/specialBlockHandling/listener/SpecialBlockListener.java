@@ -51,6 +51,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -169,6 +170,7 @@ Logger.getGlobal().info("cursor "+ event.getCursor());*/
     public void placeSpecialBlock(PlayerInteractEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                || !event.getHand().equals(EquipmentSlot.HAND)
                 || event.getPlayer().getInventory().getItemInMainHand()==null
                 || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
                 || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
@@ -246,7 +248,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockPressurePlate(EntityInteractEvent event) {
-Logger.getGlobal().info("EntityInteract");
+//Logger.getGlobal().info("EntityInteract");
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
                 event.setCancelled(true);
         }
@@ -348,7 +350,7 @@ Logger.getGlobal().info("EntityInteract");
         }
     }
     
-    @EventHandler(priority = EventPriority.LOWEST) //TODO make configurable
+    @EventHandler(priority = EventPriority.LOWEST) 
     public void blockPlayerInteraction(PlayerInteractEvent event) { //used for item blocks
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.BLOCK_PLAYER_INTERACTION)
                 || !(event.getPlayer() instanceof Player)) {
@@ -370,6 +372,20 @@ Logger.getGlobal().info("EntityInteract");
             event.getBlock().setData((byte)0);
         }
     }
+    
+ /**   @EventHandler(priority = EventPriority.LOWEST) //TODO make configurable
+    public void blockRedstoneInteraction(PlayerInteractEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+            return;
+        }
+        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && (event.getClickedBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF) 
+                    || (event.getClickedBlock().getType().equals(Material.REDSTONE_COMPARATOR_ON) )
+                    || (event.getClickedBlock().getType().equals(Material.DIODE_BLOCK_OFF) )
+                    || (event.getClickedBlock().getType().equals(Material.DIODE_BLOCK_ON) ))) {
+            event.setCancelled(true);
+        }
+    }*/
     
     /**
      * If module SPECIAL_BLOCK_PLACE is enabled in world config file

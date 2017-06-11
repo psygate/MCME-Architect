@@ -19,8 +19,6 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.ProtocolLibUtil;
 import com.mcmiddleearth.pluginutil.VoxelUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -103,7 +101,7 @@ public class VoxelBiomeBrushListener implements Listener{
     }
     
     private void refreshChunks(List<Chunk> chunkList, Player player) {
-        int bulkSize = 4;
+        /*int bulkSize = 4;
         if(!ProtocolLibUtil.isInitiated()) {
             DevUtil.log("Protokol not init");
             return;

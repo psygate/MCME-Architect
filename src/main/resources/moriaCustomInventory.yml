@@ -1,0 +1,372 @@
+Categories:
+    Workshop:
+        itemMaterial: LEATHER_HELMET
+        damage: 1
+        damageCurrent: 2
+    Interior:
+        itemMaterial: LEATHER_HELMET
+        damage: 1
+        damageCurrent: 2
+    Deco:
+        itemMaterial: LEATHER_HELMET
+        damage: 1
+        damageCurrent: 2
+    Misc:
+        itemMaterial: LEATHER_HELMET
+        damage: 1
+        damageCurrent: 2
+        
+Items:
+# MAX durability of Diamond Boots: 430
+    Netherwart0:
+        blockMaterial: NETHER_WARTS
+        dataValue: 0
+        itemMaterial: NETHER_STALK
+        damage: 0
+        display: Netherwart [115:0]
+        category: Misc
+        type: BLOCK 
+    Netherwart1:
+        blockMaterial: NETHER_WARTS
+        dataValue: 0
+        itemMaterial: NETHER_STALK
+        damage: 0
+        display: Torn rope [115:1]
+        category: Misc
+        type: BLOCK 
+    Netherwart2:
+        blockMaterial: NETHER_WARTS
+        dataValue: 0
+        itemMaterial: NETHER_STALK
+        damage: 0
+        display: Bag [115:2]
+        category: Misc
+        type: BLOCK 
+    Netherwart3:
+        blockMaterial: NETHER_WARTS
+        dataValue: 0
+        itemMaterial: NETHER_STALK
+        damage: 0
+        display: Statue/Decoration [115:3]
+        category: Interior
+        type: BLOCK 
+    Beetroot1:
+        blockMaterial: BEETROOT
+        dataValueNorth: 0
+        dataValueSouth: 0
+        dataValueWest: 1
+        dataValueEast: 1
+        itemMaterial: ANVIL
+        damage: 0
+        display: Saw [207:1+2]
+        category: Workshop
+        type: BLOCK_FOUR_DIRECTIONS
+    Crops0:
+        blockMaterial: CROPS
+        dataValue: 0
+        itemMaterial: WHEAT
+        damage: 0
+        display: Plate [59:0]
+        category: Interior
+        type: BLOCK 
+    Crops1:
+        blockMaterial: CROPS
+        dataValue: 1
+        itemMaterial: WHEAT
+        damage: 0
+        display: Pot [59:1]
+        category: Interior
+        type: BLOCK 
+    Crops2:
+        blockMaterial: CROPS
+        dataValue: 2
+        itemMaterial: WHEAT
+        damage: 0
+        display: Cup [59:2]
+        category: Interior
+        type: BLOCK 
+    Crops3:
+        blockMaterial: CROPS
+        dataValue: 3
+        itemMaterial: WHEAT
+        damage: 0
+        display: Bottle [59:3]
+        category: Interior
+        type: BLOCK 
+    Crops4:
+        blockMaterial: CROPS
+        dataValue: 4
+        itemMaterial: WHEAT
+        damage: 0
+        display: Jar filling [59:4]
+        category: Interior
+        type: BLOCK 
+    Crops5:
+        blockMaterial: CROPS
+        dataValue: 5
+        itemMaterial: WHEAT
+        damage: 0
+        display: Small jar [59:5]
+        category: Interior
+        type: BLOCK 
+    Carrots0:
+        blockMaterial: CARROT
+        dataValue: 0
+        itemMaterial: CARROT_ITEM
+        damage: 0
+        display: Small box [141:0]
+        category: Interior
+        type: BLOCK 
+    Carrots1:
+        blockMaterial: CARROT
+        dataValue: 1
+        itemMaterial: CARROT_ITEM
+        damage: 0
+        display: Paper [141:1]
+        category: Interior
+        type: BLOCK 
+    Carrots2:
+        blockMaterial: CARROT
+        dataValue: 2
+        itemMaterial: CARROT_ITEM
+        damage: 0
+        display: Map [141:2]
+        category: Interior
+        type: BLOCK 
+    Carrots3:
+        blockMaterial: CARROT
+        dataValue: 3
+        itemMaterial: CARROT_ITEM
+        damage: 0
+        display: Skin [141:3]
+        category: Interior
+        type: BLOCK 
+    Carrots4:
+        blockMaterial: CARROT
+        dataValue: 4
+        itemMaterial: CARROT_ITEM
+        damage: 0
+        display: Scale [141:4]
+        category: Interior
+        type: BLOCK 
+    Sapling0:
+        blockMaterial: SAPLING
+        dataValue: 0
+        itemMaterial: SAPLING
+        damage: 0
+        display: Lamb [6:0]
+        category: Misc
+        type: BLOCK 
+    Sapling1:
+        blockMaterial: SAPLING
+        dataValue: 1
+        itemMaterial: SAPLING
+        damage: 0
+        display: Hanging Brazier [6:1]
+        category: Misc
+        type: BLOCK 
+    Sapling2:
+        blockMaterial: SAPLING
+        dataValue: 2
+        itemMaterial: SAPLING
+        damage: 0
+        display: Hook [6:2]
+        category: Misc
+        type: BLOCK 
+    Sapling3:
+        blockMaterial: SAPLING
+        dataValue: 3
+        itemMaterial: SAPLING
+        damage: 0
+        display: Chandelier [6:3]
+        category: Misc
+        type: BLOCK 
+    Sapling4:
+        blockMaterial: SAPLING
+        dataValue: 4
+        itemMaterial: SAPLING
+        damage: 0
+        display: Reel [6:4]
+        category: Workshop
+        type: BLOCK 
+    Sapling5:
+        blockMaterial: SAPLING
+        dataValue: 5
+        itemMaterial: SAPLING
+        damage: 0
+        display: Candle [6:5]
+        category: Misc
+        type: BLOCK 
+    Sapling8:
+        blockMaterial: SAPLING
+        dataValueNorth: 8
+        dataValueSouth: 8
+        dataValueWest: 9
+        dataValueEast: 10
+        itemMaterial: SAPLING
+        damage: 0
+        display: Grate [6:8+9+10]
+        category: Misc
+        type: BLOCK_FOUR_DIRECTIONS 
+    Sapling11:
+        blockMaterial: SAPLING
+        dataValue: 11
+        itemMaterial: SAPLING
+        damage: 0
+        display: Arrows [6:11]
+        category: Workshop
+        type: BLOCK 
+    Sapling12:
+        blockMaterial: SAPLING
+        dataValue: 12
+        itemMaterial: SAPLING
+        damage: 0
+        display: Spears [6:12]
+        category: Workshop
+        type: BLOCK 
+    Sapling13:
+        blockMaterial: SAPLING
+        dataValue: 13
+        itemMaterial: SAPLING
+        damage: 0
+        display: Weapons [6:13]
+        category: Workshop
+        type: BLOCK 
+    Melon:
+        blockMaterial: MELON_BLOCK
+        dataValue: 0
+        itemMaterial: MELON
+        damage: 0
+        display: Shelves [103:0]
+        category: Interior
+        type: BLOCK 
+    Pumkin0:
+        blockMaterial: PUMKIN
+        dataValue: 0
+        itemMaterial: PUMKIN_SEEDS
+        damage: 0
+        display: Foundry output [86:0]
+        category: Workshop
+        type: BLOCK 
+    Pumkin1:
+        blockMaterial: PUMKIN
+        dataValueX: 1
+        dataValueY: 2
+        dataValueZ: 3
+        itemMaterial: PUMKIN_SEEDS
+        damage: 0
+        display: Small logs [86:1,2,3]
+        category: Workshop
+        type: BLOCK_THREE_AXIS
+    Cactus0:
+        blockMaterial: CACTUS
+        dataValue: 0
+        itemMaterial: CACTUS
+        damage: 0
+        display: Meat [81:0]
+        category: Interior
+        type: BLOCK 
+    Cactus1:
+        blockMaterial: CACTUS
+        dataValue: 1
+        itemMaterial: CACTUS
+        damage: 0
+        display: Table [81:1]
+        category: Interior
+        type: BLOCK 
+    Cactus2:
+        blockMaterial: CACTUS
+        dataValueX: 2
+        dataValueY: 3
+        dataValueZ: 4
+        itemMaterial: CACTUS
+        damage: 0
+        display: Barrel [81:2,3,4]
+        category: Interior
+        type: BLOCK_THREE_AXIS 
+    Cactus5:
+        blockMaterial: CACTUS
+        dataValue: 5
+        itemMaterial: CACTUS
+        damage: 0
+        display: Emtpy box [81:5]
+        category: Interior
+        type: BLOCK 
+    Cactus6:
+        blockMaterial: CACTUS
+        dataValueNorth: 6
+        dataValueSouth: 7
+        dataValueWest: 8
+        dataValueEast: 9
+        itemMaterial: CACTUS
+        damage: 0
+        display: Chair [81:6,7,8,9]
+        category: Interior
+        type: BLOCK_FOUR_DIRECTIONS
+    Cactus10:
+        blockMaterial: CACTUS
+        dataValue: 10
+        itemMaterial: CACTUS
+        damage: 0
+        display: Bell [81:10]
+        category: Interior
+        type: BLOCK 
+    Cactus11:
+        blockMaterial: CACTUS
+        dataValue: 11
+        itemMaterial: CACTUS
+        damage: 0
+        display: Supports [81:11]
+        category: Workshop
+        type: BLOCK 
+    Cactus12:
+        blockMaterial: CACTUS
+        dataValue: 12
+        itemMaterial: CACTUS
+        damage: 0
+        display: Military crate [81:12]
+        category: Workshop
+        type: BLOCK 
+    Cactus13:
+        blockMaterial: CACTUS
+        dataValue: 13
+        itemMaterial: CACTUS
+        damage: 0
+        display: Brazier [81:13]
+        category: Workshop
+        type: BLOCK 
+    ChorusFlower0:
+        blockMaterial: CHORUS_FLOWER
+        dataValue: 0
+        itemMaterial: CHORUS_FLOWER
+        damage: 0
+        display: Bellows [200:0]
+        category: Workshop
+        type: BLOCK 
+    ChorusFlower1:
+        blockMaterial: CHORUS_FLOWER
+        dataValueNorth: 1
+        dataValueSouth: 2
+        dataValueWest: 3
+        dataValueEast: 4
+        itemMaterial: CHORUS_FLOWER
+        damage: 0
+        display: Supports side [200:1,2,3,4]
+        category: Workshop
+        type: BLOCK_FOUR_DIRECTIONS
+    ChorusFlower5:
+        blockMaterial: CHORUS_FLOWER
+        dataValue: 5
+        itemMaterial: CHORUS_FLOWER
+        damage: 0
+        display: Pipe Mouth [200:5]
+        category: Workshop
+        type: BLOCK 
+    ChorusPlant0:
+        blockMaterial: CHORUS_PLANT
+        dataValue: 0
+        itemMaterial: CHORUS_PLANT
+        damage: 0
+        display: Rusty pipe [199:0]
+        category: Workshop
+        type: BLOCK 

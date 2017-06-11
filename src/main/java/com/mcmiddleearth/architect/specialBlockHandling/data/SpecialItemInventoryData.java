@@ -88,6 +88,12 @@ public class SpecialItemInventoryData {
         for(File file: files) {
             loadFromFile(inventory, rpName, file);
         }
+        if(inventory.isEmpty()) {
+            inventories.remove(rpName);
+            searchInventories.remove(rpName);
+            inventory.destroy();
+            searchInventory.destroy();
+        }
     }
     
     private static void loadFromFile(CustomInventory inventory, String rpName, File file) {
@@ -135,25 +141,29 @@ public class SpecialItemInventoryData {
         }
     }
     
-    public static void openInventory(Player p, String resourcePack) {
+    public static boolean openInventory(Player p, String resourcePack) {
         CustomInventory inv = inventories.get(resourcePack);
-        if(inv==null) {
+        /*if(inv==null) {
             inv = inventories.get("Gondor");
-        }
-        if(inv!=null) {
+        }*/
+        if(inv!=null && !inv.isEmpty()) {
             inv.open(p);
+            return true;
         }
+        return false;
     }
     
-    public static void openSearchInventory(Player p, String resourcePack, String search) {
+    public static boolean openSearchInventory(Player p, String resourcePack, String search) {
         SearchInventory inv = searchInventories.get(resourcePack);
         if(inv==null) {
             inv = searchInventories.get("Gondor");
         }
-        if(inv!=null) {
+        if(inv!=null && !inv.isEmpty()) {
             inv.open(p, search);
+            return true;
 //Logger.getGlobal().info("Inventory 3");
         }
+        return false;
     }
     
     
@@ -170,8 +180,8 @@ public class SpecialItemInventoryData {
         return null;
     }*/
     
-    public static synchronized void downloadConfig(String rpName, InputStream in) throws IOException {
-        ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
+    public static synchronized int downloadConfig(String rpName, InputStream in) throws IOException {
+        return ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
     }
     
     private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {

@@ -26,6 +26,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInvento
 import com.mcmiddleearth.util.ResourceRegionsUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,7 +60,9 @@ public class InventoryListener implements Listener{
             if(rpN==null || rpN.equals("")) {
                 rpN = "Gondor";
             }
-            SpecialBlockInventoryData.openInventory(p, rpN);
+            if(!SpecialBlockInventoryData.openInventory(p, rpN)) {
+                sendNoInventoryError(p,rpN);
+            }
         }
     }
     
@@ -94,7 +97,9 @@ public class InventoryListener implements Listener{
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                SpecialBlockInventoryData.openInventory(p, rpName);  
+                                if(!SpecialBlockInventoryData.openInventory(p, rpName)) {
+                                    sendNoInventoryError(p,rpName);
+                                }  
                             }
                         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                     }
@@ -175,4 +180,7 @@ public class InventoryListener implements Listener{
     }*/
     
 
+    private void sendNoInventoryError(CommandSender p, String rp) {
+        PluginData.getMessageUtil().sendErrorMessage(p, "No custom inventory found for rp \""+rp+"\".");
+    }
 }

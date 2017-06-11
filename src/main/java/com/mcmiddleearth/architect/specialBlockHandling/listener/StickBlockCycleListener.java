@@ -22,6 +22,7 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -45,7 +46,7 @@ public class StickBlockCycleListener implements Listener {
         Block block = event.getClickedBlock();
         if((event.getAction().equals(Action.RIGHT_CLICK_BLOCK )
                        || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
-              && p.getInventory().getItemInHand().getType().equals(Material.STICK)
+              && p.getInventory().getItemInMainHand().getType().equals(Material.STICK)
               && EventUtil.isMainHandEvent(event)) {
             if(!PluginData.isModuleEnabled(p.getWorld(),Modules.CYCLE_BLOCKS)) {
                 sendNotEnabledErrorMessage(p);
@@ -84,14 +85,23 @@ public class StickBlockCycleListener implements Listener {
                     break; this was for potato and carrot in new gondor pack*/
                 case BEETROOT_BLOCK:
                 case CAULDRON:
+                case NETHER_WARTS:
                     state.setRawData((byte)(((4+state.getRawData()+change)%4)));
                     break;
                 case VINE:
+                case CACTUS:
                     state.setRawData((byte)(((16+state.getRawData()+change)%16)));
+                    break;
+                case CHORUS_FLOWER:
+                    state.setRawData((byte)(((6+state.getRawData()+change)%6)));
+                    break;
+                case MOB_SPAWNER:
+                    //TODO: item cycling for mob spawner blocks
                     break;
                 default:
                     return;
             }
+//Logger.getGlobal().info("Block cycle state change! "+state.getType()+" "+state.getX()+" "+state.getY()+" "+state.getZ());
             event.setCancelled(true);
             state.update(true, false);
         }

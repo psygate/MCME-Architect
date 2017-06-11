@@ -237,5 +237,9 @@ public class WorldConfig {
         section.set(Material.SPRUCE_DOOR.name(), "10-11");
         section.set(Material.ACACIA_DOOR.name(), "10-11");
         section.set(Material.DARK_OAK_DOOR.name(), "10-11");
+        section.set(Material.DIODE_BLOCK_ON.name(), "0-15");
+        section.set(Material.DIODE_BLOCK_OFF.name(), "0-15");
+        section.set(Material.REDSTONE_COMPARATOR_ON.name(), "0-15");
+        section.set(Material.REDSTONE_COMPARATOR_OFF.name(), "0-15");
     }
  }
