@@ -204,12 +204,20 @@ Logger.getGlobal().info("cursor "+ event.getCursor());*/
             return;
         }
         Block blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
-        if(!blockPlace.isEmpty() && !blockPlace.getType().equals(Material.LONG_GRASS)) {
+        if(!blockPlace.isEmpty() 
+                && !blockPlace.getType().equals(Material.LONG_GRASS)
+                && !blockPlace.getType().equals(Material.FIRE)
+                && !blockPlace.getType().equals(Material.LAVA)
+                && !blockPlace.getType().equals(Material.STATIONARY_LAVA)
+                && !blockPlace.getType().equals(Material.WATER)
+                && !blockPlace.getType().equals(Material.STATIONARY_WATER)
+                ) {
             return;
         }
         if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
             return;
         }
+//Logger.getGlobal().info(""+data.getType());
         data.placeBlock(blockPlace, event.getBlockFace(), player);
 /*Logger.getGlobal().info("specialBlock place 7 main");
         } else {

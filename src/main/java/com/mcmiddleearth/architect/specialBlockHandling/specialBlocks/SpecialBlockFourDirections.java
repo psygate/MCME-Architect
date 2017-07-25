@@ -30,10 +30,11 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockFourDirections extends SpecialBlockOrientable {
     
-    private SpecialBlockFourDirections(String id, 
+    protected SpecialBlockFourDirections(String id, 
                         Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.FOUR_DIRECTIONS);
+                        byte[] dataValue,
+                        SpecialBlockType type) {
+        super(id, Material.AIR, (byte) 0, type);
         this.material = material;
         this.dataValue = dataValue;
     }
@@ -59,7 +60,7 @@ public class SpecialBlockFourDirections extends SpecialBlockOrientable {
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
-        return new SpecialBlockFourDirections(id, materialFaces, dataFaces);
+        return new SpecialBlockFourDirections(id, materialFaces, dataFaces, SpecialBlockType.FOUR_DIRECTIONS);
     }
     
     @Override

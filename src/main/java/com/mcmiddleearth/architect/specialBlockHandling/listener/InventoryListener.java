@@ -134,21 +134,29 @@ public class InventoryListener implements Listener{
                 event.setCancelled(true);
                 return;
             case BUILDER:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)
-                        || !PluginData.hasGafferPermission(player,loc)) {
-                    PluginData.getMessageUtil().sendErrorMessage(player, 
+                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(player);
+                    event.setCancelled(true);
+                    return;
+                }
+                if(!PluginData.hasGafferPermission(player,loc)) {
+                        PluginData.getMessageUtil().sendErrorMessage(player, 
                             PluginData.getGafferProtectionMessage(player, loc));
                     event.setCancelled(true);
                 }
                 return;
             case EXCEPTION:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)
-                        || !PluginData.hasGafferPermission((Player)event.getPlayer(), 
+                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)){
+                    PluginData.getMessageUtil().sendNoPermissionError(player);
+                    event.setCancelled(true);
+                    return;
+                }
+                if(!PluginData.hasGafferPermission((Player)event.getPlayer(), 
                                                           event.getInventory().getLocation())
                         || !NoPhysicsData.hasNoPhysicsException(event.getInventory()
                                                                      .getLocation().getBlock())) {
-                    PluginData.getMessageUtil().sendErrorMessage(player, 
-                            PluginData.getGafferProtectionMessage(player, loc));
+                    //PluginData.getMessageUtil().sendErrorMessage(player, 
+                    //        PluginData.getGafferProtectionMessage(player, loc));
                     event.setCancelled(true);
                 }
         }
@@ -183,4 +191,5 @@ public class InventoryListener implements Listener{
     private void sendNoInventoryError(CommandSender p, String rp) {
         PluginData.getMessageUtil().sendErrorMessage(p, "No custom inventory found for rp \""+rp+"\".");
     }
+   
 }

@@ -61,7 +61,7 @@ public class SpecialItemInventoryData {
     
     static {
         if(!configFolder.exists()) {
-            configFolder.mkdir();
+            configFolder.mkdirs();
         }
     }
     public static void loadInventories() {
@@ -73,8 +73,10 @@ public class SpecialItemInventoryData {
         }
         //itemList = new ArrayList<>();
         File[] files = configFolder.listFiles(FileUtil.getDirFilter());
-        for(File file: files) {
-            createItemInventory(file);
+        if(files!=null) {
+            for(File file: files) {
+                createItemInventory(file);
+            }
         }
     }
     

@@ -21,9 +21,14 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -97,6 +102,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         removeArmorStands(blockPlace.getLocation());
         final ArmorStand armor = (ArmorStand) blockPlace.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
         armor.setVisible(false);
+        //armor.setMarker(true); makes items vanish near the edge of screen but doesn't remove push time
         armor.setGravity(false);
         armor.setCustomName(getArmorStandName(blockPlace)+ID_DELIMITER+getId());
         new BukkitRunnable() {
@@ -177,6 +183,56 @@ Logger.getGlobal().info("removed "+entity.getCustomName());
             }
         }
         return null;
+    }
+    
+    public static List<ItemBlockStat> getStatistic(Location loc, double xzRadius, double yRadius) {
+        List<ItemBlockStat> stats = new ArrayList<>();
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, xzRadius, yRadius, xzRadius)) {
+//Logger.getGlobal().info("found "+entity);
+            if(entity instanceof ArmorStand && entity.getCustomName()!=null
+                    && ((ArmorStand)entity).getHelmet()!=null) {
+                ItemStack content = ((ArmorStand)entity).getHelmet();
+                boolean found = false;
+                for(ItemBlockStat entry: stats) {
+                    if(entry.getItem().getType().equals(content.getType()) 
+                            && entry.getItem().getDurability()==content.getDurability()) {
+                        entry.increase();
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) {
+                    stats.add(new ItemBlockStat(content));
+                }
+//Logger.getGlobal().info("removed "+entity.getCustomName());
+            }
+        }
+        Collections.sort(stats);
+        return stats;
+    }
+    
+    public static class ItemBlockStat implements Comparable<ItemBlockStat>{
+        
+        @Getter
+        private int count;
+
+        @Getter
+        private final ItemStack item;
+
+
+        public ItemBlockStat(ItemStack item) {
+            this.item = item;
+            count = 1;
+        }
+        
+        public void increase() {
+            count++;
+        }
+        
+        @Override
+        public int compareTo(ItemBlockStat otherStat) {
+            return count==otherStat.getCount()?0:(count<otherStat.getCount()?-1:1);
+        }
     }
     
     @Override
