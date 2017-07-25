@@ -20,13 +20,9 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.architect.armorStand.ArmorStandEditorMode;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,6 +55,31 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
                 page = NumericUtil.getInt(args[1]);
             }
             sendHelpMessage((Player)cs,page);
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("stats")) {
+            if(args.length<2) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
+                return true;
+            }
+            if(!NumericUtil.isInt(args[1])) {
+                sendNotANumberMessage(p);
+                return true;
+            }
+            int radius = NumericUtil.getInt(args[1]);
+            int radiusY = radius;
+            if(args.length>2 && NumericUtil.isInt(args[2])) {
+                radiusY = NumericUtil.getInt(args[2]);
+            }
+            List<SpecialBlockItemBlock.ItemBlockStat> stats = SpecialBlockItemBlock.getStatistic(p.getLocation(), 
+                                                                              radius, radiusY);
+            PluginData.getMessageUtil().sendInfoMessage(p, "Item block statistics:");
+            for(SpecialBlockItemBlock.ItemBlockStat itemStat: stats) {
+                PluginData.getMessageUtil().sendIndentedInfoMessage(p,
+                        "Type: "+itemStat.getItem().getType()
+                       +" Durability: "+itemStat.getItem().getDurability()
+                       +" Number: "+itemStat.getCount());
+            }
             return true;
         }
         if(!args[0].equalsIgnoreCase("remove")) {

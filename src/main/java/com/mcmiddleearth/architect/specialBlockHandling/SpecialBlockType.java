@@ -24,6 +24,7 @@ public enum SpecialBlockType {
     
     BLOCK         ,//("normal"),
     FOUR_DIRECTIONS,//("fourFaced"),
+    MATCH_ORIENTATION,//("fourFaced"),
     FIVE_FACES     ,//("sixFaces"),
     SIX_FACES     ,//("sixFaces"),
     EIGHT_FACES,

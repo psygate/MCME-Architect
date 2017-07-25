@@ -52,7 +52,7 @@ public class SpecialSavedInventoryData {
     
     static {
         if(!configFolder.exists()) {
-            configFolder.mkdir();
+            configFolder.mkdirs();
         }
     }
     public static void loadInventories() {
@@ -63,8 +63,10 @@ public class SpecialSavedInventoryData {
             inventories.clear();
         }
         File[] files = configFolder.listFiles(FileUtil.getDirFilter());
-        for(File file: files) {
-            createBlockInventory(file);
+        if(files!=null) {
+            for(File file: files) {
+                createBlockInventory(file);
+            }
         }
     }
     

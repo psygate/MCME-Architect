@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryType;
@@ -161,13 +162,34 @@ public class WorldConfig {
     
     public InventoryAccess getInventoryAccess(Inventory inventory) {
         ConfigurationSection section = config.getConfigurationSection(INVENTORY_ACCESS);
+        if(inventory.getType().name().equals("SHULKER_BOX")) {
+            String key = section.getString(inventory.getType().name());
+            if(key==null) {
+                ConfigurationSection shulkerConfig 
+                        = section.getConfigurationSection(inventory.getType().name());
+                if(shulkerConfig==null) {
+                    return createNewInventoryConfigEntry(section,inventory.getType().name());
+                }
+                key = shulkerConfig.getString("ID"+((ShulkerBox)inventory.getHolder())
+                                            .getRawData());
+                if(key==null) {
+                    return createNewInventoryConfigEntry(shulkerConfig,
+                                "ID"+((ShulkerBox)inventory.getHolder()).getRawData());
+                }
+            }
+            return InventoryAccess.valueOf(key);
+        }
         String key=section.getString(inventory.getType().name());
         if(key==null) {
-            section.set(inventory.getType().name(),InventoryAccess.TRUE);
-            saveConfigFile();
-            return InventoryAccess.TRUE;
+            return createNewInventoryConfigEntry(section,inventory.getType().name());
         }
         return InventoryAccess.valueOf(key);
+    }
+        
+    public InventoryAccess createNewInventoryConfigEntry(ConfigurationSection section, String key) {
+        section.set(key,InventoryAccess.TRUE);
+        saveConfigFile();
+        return InventoryAccess.TRUE;
     }
     
     private void createInventoryAccess() {

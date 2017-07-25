@@ -38,9 +38,11 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoubleY;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMatchOrientation;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMobSpawnerBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
 import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ZipUtil;
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +86,7 @@ public class SpecialBlockInventoryData {
     
     static {
         if(!configFolder.exists()) {
-            configFolder.mkdir();
+            configFolder.mkdirs();
         }
     }
     public static void loadInventories() {
@@ -102,8 +104,10 @@ public class SpecialBlockInventoryData {
         }
         blockList = new ArrayList<>();
         File[] files = configFolder.listFiles(FileUtil.getDirFilter());
-        for(File file: files) {
-            createBlockInventory(file);
+        if(files!=null) {
+            for(File file: files) {
+                createBlockInventory(file);
+            }
         }
     }
     
@@ -161,11 +165,17 @@ public class SpecialBlockInventoryData {
             if(getSpecialBlock(fullName(rpName, itemKey))!=null) {
                 Logger.getLogger(SpecialBlockInventoryData.class.getName())
                     .log(Level.WARNING, "Double custom block ID "+fullName(rpName,itemKey)+"'. Block skipped.");
+                DevUtil.log("Error. Double custom block ID "+fullName(rpName,itemKey)+"'. Block skipped.");
             } else {
                 SpecialBlockType type;
                 ConfigurationSection section = itemConfig.getConfigurationSection(itemKey);
                 try {
-                    type = SpecialBlockType.valueOf(section.getString("type"));
+                    String typeName = section.getString("type");
+                    if(typeName==null) {
+                        typeName="VANILLA";
+                        DevUtil.log("Waring, missing block type for: "+fullName(rpName,itemKey));
+                    }
+                    type = SpecialBlockType.valueOf(typeName);
                 } catch( IllegalArgumentException e) { 
                     type = SpecialBlockType.INVALID;
                 }
@@ -191,6 +201,9 @@ public class SpecialBlockInventoryData {
                         break;
                     case FOUR_DIRECTIONS:
                         blockData = SpecialBlockFourDirections.loadFromConfig(section, fullName(rpName,itemKey));
+                        break;
+                    case MATCH_ORIENTATION:
+                        blockData = SpecialBlockMatchOrientation.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
                     case WALL_COMBI:
                         blockData = SpecialBlockWallCombi.loadFromConfig(section, fullName(rpName,itemKey));
