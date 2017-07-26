@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -49,7 +51,7 @@ public class WorldConfig {
     @Getter
     private static final String defaultWorldConfigName = "defaultWorldConfig";
     
-    private static final File defaultConfig = new File(worldConfigDir+File.separator
+    private static final File defaultConfigFile = new File(worldConfigDir+File.separator
                                                        +defaultWorldConfigName+"."+cfgExtension);
     
     private static final String NO_PHYSICS_LIST = "noPhysicsList";
@@ -58,11 +60,11 @@ public class WorldConfig {
     
     private static final String NO_INTERACTION = "noInteraction";
     
-    private final List<Integer> npList;
+    private List<Integer> npList;
     
     private final String worldName;
     
-    private YamlConfiguration config;
+    private YamlConfiguration worldConfig,defaultConfig;
 
     static {
         if(!worldConfigDir.exists()) {
@@ -71,17 +73,32 @@ public class WorldConfig {
     }
     
     public WorldConfig(String worldName){
+        this.worldName = worldName;
         if(!worldConfigDir.exists()) {
             worldConfigDir.mkdirs();
         }
-        this.worldName = worldName;
-        File configFile = new File(worldConfigDir+File.separator+worldName+"."+cfgExtension);
-        if(configFile.exists()) {
-            config = YamlConfiguration.loadConfiguration(configFile);
-            npList = config.getIntegerList(NO_PHYSICS_LIST);
-        } else { 
-            if(defaultConfig.exists()) {
-                config = YamlConfiguration.loadConfiguration(defaultConfig);
+        if(defaultConfigFile.exists()) {
+            defaultConfig = YamlConfiguration.loadConfiguration(defaultConfigFile);
+        } else {
+            defaultConfig = createDefaultConfig();
+            saveDefaultConfig();
+        }
+        File configFile = getConfigFile();
+        if(!configFile.exists()) {
+            worldConfig = new YamlConfiguration();
+            worldConfig.set("WorldConfiguration","Values in this file will override values in defaultWorldConfig.yml file.");
+            try {
+                worldConfig.save(configFile);
+            } catch (IOException ex) {
+                Logger.getLogger(WorldConfig.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            worldConfig = YamlConfiguration.loadConfiguration(configFile);
+        }
+        updateNoPhysicsList();
+        /*} else { 
+            if(defaultConfigFile.exists()) {
+                config = YamlConfiguration.loadConfiguration(defaultConfigFile);
             }
             else {
                 config = new YamlConfiguration();
@@ -92,7 +109,7 @@ public class WorldConfig {
                 createInventoryAccess();
                 createNoInteraction();
                 try {
-                    config.save(defaultConfig);
+                    config.save(defaultConfigFile);
                 } catch (IOException ex) {
                     Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -107,25 +124,70 @@ public class WorldConfig {
         if(config.getConfigurationSection(NO_INTERACTION)==null) {
             createNoInteraction();
             saveConfigFile();
+        }*/
+    }
+    
+    private File getConfigFile() {
+        return new File(worldConfigDir+File.separator+worldName+"."+cfgExtension);
+    }
+    private YamlConfiguration createDefaultConfig() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("DefaultConfiguration","Values in this file will be used for all worlds if not overriden in <worldName>.yml configuration file.");
+        for(Modules modul : Modules.values()) {
+            config.set(modul.getModuleKey(), true);
+        }
+        config.set(NO_PHYSICS_LIST, new ArrayList<Integer>());
+        createInventoryAccess(config);
+        createNoInteraction(config);
+        return config;
+    }
+    
+    /*public final void saveConfigFile(){
+        worldConfig.set(NO_PHYSICS_LIST, npList);
+        File file = new File(worldConfigDir+"/"+worldName+"."+cfgExtension);
+        try {
+            worldConfig.save(file);
+        } catch (IOException ex) {
+            Logger.getLogger(WorldConfig.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }*/
+    
+    private void saveDefaultConfig() {
+        try {
+            defaultConfig.save(defaultConfigFile);
+        } catch (IOException ex) {
+            Logger.getLogger(WorldConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public final void saveConfigFile(){
-        config.set(NO_PHYSICS_LIST, npList);
-        File file = new File(worldConfigDir+"/"+worldName+"."+cfgExtension);
+    private void saveWorldConfig() {
         try {
-            config.save(file);
+            worldConfig.save(getConfigFile());
         } catch (IOException ex) {
             Logger.getLogger(WorldConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public boolean isModuleEnabled(Modules module, boolean defaultValue) {
-        if(!config.contains(module.getModuleKey())) {
-            config.set(module.getModuleKey(), defaultValue);
-            saveConfigFile();
+        if(worldConfig.contains(module.getModuleKey())) {
+            return worldConfig.getBoolean(module.getModuleKey());
         }
-        return config.getBoolean(module.getModuleKey());
+        if(defaultConfig.contains(module.getModuleKey())) {
+            return defaultConfig.getBoolean(module.getModuleKey());
+        }
+        defaultConfig.set(module.getModuleKey(), defaultValue);
+        saveDefaultConfig();
+        return defaultValue;
+    }
+    
+    private void updateNoPhysicsList() {
+        if(worldConfig.contains(NO_PHYSICS_LIST)) {
+            npList = worldConfig.getIntegerList(NO_PHYSICS_LIST);
+        } else if(defaultConfig.contains(NO_PHYSICS_LIST)){
+            npList = defaultConfig.getIntegerList(NO_PHYSICS_LIST);
+        } else {
+            npList = new ArrayList<>();
+        }
     }
     
     public boolean isNoPhysicsBlock(int typeId) {
@@ -142,29 +204,121 @@ public class WorldConfig {
         return result;
     }
 
-    public boolean addToNpList(int blockId) {
-        if(!isNoPhysicsBlock(blockId)) {
+    public boolean addToNpList(int blockId, boolean setDefault) {
+        boolean isNP = isNoPhysicsBlock(blockId);
+        if(setDefault) {
+            addToDefaultNPConfig(blockId);
+        }
+        if(!isNP) {
             npList.add(blockId);
-            saveConfigFile();
+            if(worldConfig.contains(NO_PHYSICS_LIST)) {
+                updateWorldNPConfig();
+            } else {
+                if(!setDefault) {
+                    createWorldNPConfig();
+                }
+            }
+        }
+        checkDeleteWorldNPConfig();
+        return !isNP;
+        /*if(!isNoPhysicsBlock(blockId)) {
+            npList.add(blockId);
+            saveNoPhyisicList();
             return true;
         }
-        return false;
+        return false;*/
     }
     
-    public boolean removeFromNpList(int blockId) {
-        if(isNoPhysicsBlock(blockId)) {
+    public boolean removeFromNpList(int blockId, boolean setDefault) {
+        boolean isNP = isNoPhysicsBlock(blockId);
+        if(setDefault) {
+            removeFromDefaultNPConfig(blockId);
+        }
+        if(isNP) {
+            npList.remove(npList.indexOf(blockId));
+            if(worldConfig.contains(NO_PHYSICS_LIST)) {
+                updateWorldNPConfig();
+            } else {
+                if(!setDefault) {
+                    createWorldNPConfig();
+                }
+            }
+        }
+        checkDeleteWorldNPConfig();
+        return isNP;
+        /*if(isNoPhysicsBlock(blockId)) {
             npList.remove(npList.indexOf(blockId));
             saveConfigFile();
             return true;
         }
-        return false;
+        return false;*/
+    }
+    
+    private void addToDefaultNPConfig(int blockId) {
+        List<Integer> defaultList = defaultConfig.getIntegerList(NO_PHYSICS_LIST);
+        if(!defaultList.contains(blockId)) {
+            defaultList.add(blockId);
+            defaultConfig.set(NO_PHYSICS_LIST, defaultList);
+            saveDefaultConfig();
+        }
+    }
+    
+    private void removeFromDefaultNPConfig(int blockId) {
+        List<Integer> defaultList = defaultConfig.getIntegerList(NO_PHYSICS_LIST);
+        if(defaultList.contains(blockId)) {
+            defaultList.remove(defaultList.indexOf(blockId));
+            defaultConfig.set(NO_PHYSICS_LIST, defaultList);
+            saveDefaultConfig();
+        }
+    }
+    
+    private void updateWorldNPConfig() {
+        worldConfig.set(NO_PHYSICS_LIST, npList);
+        saveWorldConfig();
+    }
+    
+    private void createWorldNPConfig() {
+        updateWorldNPConfig();
+    }
+    
+    private void checkDeleteWorldNPConfig() {
+        Set<Integer> worldNP = new HashSet<>();
+        worldNP.addAll(worldConfig.getIntegerList(NO_PHYSICS_LIST));
+        Set<Integer> defaultNP = new HashSet<>();
+        defaultNP.addAll(defaultConfig.getIntegerList(NO_PHYSICS_LIST));
+        if(worldNP.equals(defaultNP)) {
+            worldConfig.set(NO_PHYSICS_LIST, null);
+            saveWorldConfig();
+        }
     }
     
     public InventoryAccess getInventoryAccess(Inventory inventory) {
-        ConfigurationSection section = config.getConfigurationSection(INVENTORY_ACCESS);
+        boolean defaultValue = false;
+        ConfigurationSection section = worldConfig.getConfigurationSection(INVENTORY_ACCESS);
+        if(section==null) {
+            defaultValue = true;
+            section = defaultConfig.getConfigurationSection(INVENTORY_ACCESS);
+            if(section==null) {
+                return InventoryAccess.TRUE;
+            }
+        }
         if(inventory.getType().name().equals("SHULKER_BOX")) {
-            String key = section.getString(inventory.getType().name());
-            if(key==null) {
+            InventoryAccess result = getShulkerAccess(section, inventory);
+            if(result == null && !defaultValue) {
+                defaultValue = true;
+                section = defaultConfig.getConfigurationSection(INVENTORY_ACCESS);
+                if(section==null) {
+                    return InventoryAccess.TRUE;
+                }
+                result = getShulkerAccess(section, inventory);
+            } 
+            return result==null?InventoryAccess.TRUE:result;
+        }
+        /*    if(key == null) {
+                section.set(inventory.getType().name(), "TRUE");
+                saveDefaultConfig();
+                return InventoryAccess.TRUE;
+            //}
                 ConfigurationSection shulkerConfig 
                         = section.getConfigurationSection(inventory.getType().name());
                 if(shulkerConfig==null) {
@@ -178,21 +332,49 @@ public class WorldConfig {
                 }
             }
             return InventoryAccess.valueOf(key);
+        }*/
+        String configValue = section.getString(inventory.getType().name());
+        if(configValue == null && !defaultValue) {
+            defaultValue = true;
+            section = defaultConfig.getConfigurationSection(INVENTORY_ACCESS);
+            if(section == null) {
+                return InventoryAccess.TRUE;
+            }
+            configValue = section.getString(inventory.getType().name());
+            if(configValue == null) {
+                return createNewInventoryConfigEntry(section,inventory.getType().name());
+            }
         }
-        String key=section.getString(inventory.getType().name());
-        if(key==null) {
-            return createNewInventoryConfigEntry(section,inventory.getType().name());
-        }
-        return InventoryAccess.valueOf(key);
+        return InventoryAccess.valueOf(configValue);
     }
         
-    public InventoryAccess createNewInventoryConfigEntry(ConfigurationSection section, String key) {
-        section.set(key,InventoryAccess.TRUE);
-        saveConfigFile();
+    private InventoryAccess getShulkerAccess(ConfigurationSection section, Inventory inventory) {
+        String key = inventory.getType().name();
+        String configValue=null;
+        if(section.isConfigurationSection(key)) {
+            ConfigurationSection shulkerConfig 
+                    = section.getConfigurationSection(key);
+            configValue = shulkerConfig.getString("id"+((ShulkerBox)inventory.getHolder())
+                                       .getTypeId());
+//Logger.getGlobal().info("Config id: "+configValue);
+            if(configValue == null) {
+                configValue = shulkerConfig.getString("default");
+//Logger.getGlobal().info("Config default: "+configValue);
+            }
+        } else {
+            configValue = section.getString(key);
+//Logger.getGlobal().info("Config string: "+configValue);
+        }
+        return configValue==null?null:InventoryAccess.valueOf(configValue);
+    }
+    
+    private InventoryAccess createNewInventoryConfigEntry(ConfigurationSection section, String key) {
+        section.set(key,InventoryAccess.TRUE.name());
+        saveDefaultConfig();
         return InventoryAccess.TRUE;
     }
     
-    private void createInventoryAccess() {
+    private void createInventoryAccess(ConfigurationSection config) {
         ConfigurationSection section = config.createSection(INVENTORY_ACCESS);
         section.set(InventoryType.ANVIL.name(), InventoryAccess.TRUE.name());
         section.set(InventoryType.BEACON.name(), InventoryAccess.EXCEPTION.name());
@@ -209,12 +391,28 @@ public class WorldConfig {
         section.set(InventoryType.PLAYER.name(), InventoryAccess.TRUE.name());
         section.set(InventoryType.WORKBENCH.name(), InventoryAccess.TRUE.name());
         section.set(InventoryType.MERCHANT.name(), InventoryAccess.TRUE.name());
-        section.set("SHULKER_BOX", InventoryAccess.EXCEPTION.name());
+        ConfigurationSection shulker = section.createSection("SHULKER_BOX");
+        shulker.set("default", InventoryAccess.TRUE.name());
     }
     
     public boolean getNoInteraction(BlockState state) {
-        ConfigurationSection section = config.getConfigurationSection(NO_INTERACTION);
+        boolean defaultValue = false;
+        ConfigurationSection section = worldConfig.getConfigurationSection(NO_INTERACTION);
+        if(section==null) {
+            defaultValue = true;
+            section = defaultConfig.getConfigurationSection(NO_INTERACTION);
+        }
+        if(section==null) {
+            return false;
+        }
         String data = section.getString(state.getType().name());
+        if(data==null && !defaultValue) {
+            section = defaultConfig.getConfigurationSection(NO_INTERACTION);
+            if(section==null) {
+                return false;
+            }
+            data = section.getString(state.getType().name());
+        }
         if(data!=null) {
             String[] values = data.split(";");
             for(String value: values) {
@@ -245,7 +443,7 @@ public class WorldConfig {
     }
     
     
-    private void createNoInteraction() {
+    private void createNoInteraction(ConfigurationSection config) {
         ConfigurationSection section = config.createSection(NO_INTERACTION);
         section.set(Material.FENCE_GATE.name(), "8-15");
         section.set(Material.SPRUCE_FENCE_GATE.name(), "0-15");

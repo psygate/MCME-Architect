@@ -68,13 +68,18 @@ public class PluginData {
     private final static String ENITIY_LIMIT_SECTION = "EntityLimit";
     
     public static boolean isModuleEnabled(World world, Modules modul) {
-        WorldConfig config = worldConfigs.get(world.getName());
-        if(config == null) {
-            config = new WorldConfig(world.getName());
-            worldConfigs.put(world.getName(), config);
-        }
+        WorldConfig config = getOrCreateWorldConfig(world.getName());
         DevUtil.log(40, "isEnabled? "+modul.getModuleKey());
         return config.isModuleEnabled(modul,true);
+    }
+
+    private static WorldConfig getOrCreateWorldConfig(String worldName) {
+        WorldConfig config = worldConfigs.get(worldName);
+        if(config == null) {
+            config = new WorldConfig(worldName);
+            worldConfigs.put(worldName, config);
+        }
+        return config;
     }
     
     public static void load(){
@@ -93,12 +98,15 @@ public class PluginData {
         }
         entityStandLimit = entityConfig.getInt("number",500);
         entityLimitRadius = entityConfig.getInt("radius",80);
+        worldConfigs.clear();
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));
-        for(File file: configFiles) {
-            String worldName = FileUtil.getShortName(file);
-            if(!worldName.equalsIgnoreCase(WorldConfig.getDefaultWorldConfigName())) {
-                worldConfigs.put(worldName, new WorldConfig(worldName));
+        if(configFiles!=null) {
+            for(File file: configFiles) {
+                String worldName = FileUtil.getShortName(file);
+                if(!worldName.equalsIgnoreCase(WorldConfig.getDefaultWorldConfigName())) {
+                    getOrCreateWorldConfig(worldName);
+                }
             }
         }
         for(World world: Bukkit.getWorlds()) {
@@ -106,17 +114,18 @@ public class PluginData {
         }
     }
     
-    public static void save() throws IOException{
+    /*public static void save() throws IOException{
         for(WorldConfig config:worldConfigs.values()) {
             config.saveConfigFile();
         }
-    }
+    }*/
     
     public static boolean hasPermission(Player player, Permission perm) {
         return player.hasPermission(perm.getPermissionNode());
     }
     
     public static void configureWorld(World world) {
+        getOrCreateWorldConfig(world.getName());
         boolean allowMonsters = true;
         boolean allowAnimals = true;
         if (PluginData.isModuleEnabled(world, Modules.ANIMAL_SPAWN_BLOCKING)) {
@@ -145,32 +154,39 @@ public class PluginData {
         if(loc == null) {
             return InventoryAccess.TRUE;
         }
-        return worldConfigs.get(loc.getWorld().getName())
-                           .getInventoryAccess(inventory);
+        WorldConfig config = getOrCreateWorldConfig(loc.getWorld().getName());
+        return config.getInventoryAccess(inventory);
     }
     
     public static boolean getNoInteraction(Block block) {
-        return worldConfigs.get(block.getLocation().getWorld().getName())
-                           .getNoInteraction(block.getState());
+        WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
+        return config.getNoInteraction(block.getState());
     }
     
     public static boolean isNoPhysicsBlock(Block block) {
-        return worldConfigs.get(block.getWorld().getName()).isNoPhysicsBlock(block.getTypeId());
+        WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
+        return config.isNoPhysicsBlock(block.getTypeId());
     }
     
     public static String getNpList(String worldName) {
-        return worldConfigs.get(worldName).getNpListAsString();
+        WorldConfig config = getOrCreateWorldConfig(worldName);
+        return config.getNpListAsString();
     }
 
-    public static boolean addNpBlock(String worldName, int blockId) {
-        return worldConfigs.get(worldName).addToNpList(blockId);
+    public static boolean addNpBlock(String worldName, int blockId, boolean setDefault) {
+        WorldConfig config = getOrCreateWorldConfig(worldName);
+        return config.addToNpList(blockId, setDefault);
     }
     
-    public static boolean removeNpBlock(String worldName, int blockId) {
-        return worldConfigs.get(worldName).removeFromNpList(blockId);
+    public static boolean removeNpBlock(String worldName, int blockId, boolean setDefault) {
+        WorldConfig config = getOrCreateWorldConfig(worldName);
+        return config.removeFromNpList(blockId, setDefault);
     }
     
     public static Set<String> getWorldNames() {
+        for(World world: Bukkit.getWorlds()) {
+            getOrCreateWorldConfig(world.getName());
+        }
         return worldConfigs.keySet();
     }
     

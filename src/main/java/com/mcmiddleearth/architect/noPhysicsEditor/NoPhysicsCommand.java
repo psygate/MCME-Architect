@@ -101,9 +101,9 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                 if(args[1].equalsIgnoreCase("-all")) {
                     for(String worldName: PluginData.getWorldNames()) {
                         if(args[0].equalsIgnoreCase("add")) {
-                            materialAdded = materialAdded | PluginData.addNpBlock(worldName,blockId);
+                            materialAdded = materialAdded | PluginData.addNpBlock(worldName,blockId, true);
                         } else {
-                            materialRemoved = materialRemoved | PluginData.removeNpBlock(worldName,blockId);
+                            materialRemoved = materialRemoved | PluginData.removeNpBlock(worldName,blockId, true);
                         }
                     }
                 }
@@ -114,9 +114,9 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                         return true;
                     }
                     if(args[0].equalsIgnoreCase("add")) {
-                        materialAdded = materialAdded | PluginData.addNpBlock(world.getName(),blockId);
+                        materialAdded = materialAdded | PluginData.addNpBlock(world.getName(),blockId, false);
                     } else {
-                        materialRemoved = materialRemoved | PluginData.removeNpBlock(world.getName(),blockId);
+                        materialRemoved = materialRemoved | PluginData.removeNpBlock(world.getName(),blockId, false);
                     }
                 }
                 if(args[0].equalsIgnoreCase("add")) {
