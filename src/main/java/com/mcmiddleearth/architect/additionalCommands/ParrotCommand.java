@@ -35,11 +35,9 @@ public class ParrotCommand extends AbstractArchitectCommand {
             return true;
         }
         Player player = (Player)sender;
-        if(sender instanceof Player && args.length>0 && args[0].equalsIgnoreCase("parrot")) {
-            ((Player)sender).setShoulderEntityLeft(null);
-            ((Player)sender).setShoulderEntityRight(null);
-            PluginData.getMessageUtil().sendInfoMessage(sender, "Parrots removed.");
-        }
+        ((Player)sender).setShoulderEntityLeft(null);
+        ((Player)sender).setShoulderEntityRight(null);
+        PluginData.getMessageUtil().sendInfoMessage(sender, "Parrots removed.");
         return true;
     }
 

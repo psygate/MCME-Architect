@@ -62,11 +62,6 @@ public class FbtCommand extends AbstractArchitectCommand {
             final PotionEffect effect = new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1, false, false);
             player.addPotionEffect(effect);
             sendOnMessage(player);
-            if(sender instanceof Player && args.length>0 && args[0].equalsIgnoreCase("parrot")) {
-                ((Player)sender).setShoulderEntityLeft(null);
-                ((Player)sender).setShoulderEntityRight(null);
-                PluginData.getMessageUtil().sendInfoMessage(sender, "Parrots removed.");
-            }
             return true;
         }
     }
