@@ -39,10 +39,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <!--<repository>
+         <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
-        </repository>-->
+          </repository>
         <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/artifactory/repo</url>
@@ -91,11 +91,11 @@
             <version>1.16.12</version>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>
+          <dependency>
             <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>3.7.0-BETA</version>
-        </dependency>-->
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>LATEST</version>
+          </dependency>
         <dependency>
             <groupId>com.mcmiddleearth</groupId>
             <artifactId>PluginUtils</artifactId>

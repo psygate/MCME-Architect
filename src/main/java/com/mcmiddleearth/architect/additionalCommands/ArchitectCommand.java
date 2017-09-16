@@ -140,6 +140,19 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                     PluginData.getMessageUtil().sendNoPrefixInfoMessage(sender, "- "+name);
                 }
             }
+        /*} else  if (args[0].toLowerCase().startsWith("saveworld")) {
+            if(args.length<2) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
+                return true;
+                }
+            World world = Bukkit.getWorld(args[1]);
+            if(world!=null) {
+                world.save();
+                PluginData.getMessageUtil().sendInfoMessage(sender, "World '"+world.getName()+"' saved.");
+                return true;
+            }
+            PluginData.getMessageUtil().sendErrorMessage(sender,"World not found.");
+            return true;*/
         } else if (args[0].equalsIgnoreCase("version")) {
             PluginData.getMessageUtil().sendInfoMessage(sender, "Version: "+ ArchitectPlugin.getPluginInstance()
                                                      .getDescription().getVersion());

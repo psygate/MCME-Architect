@@ -33,6 +33,14 @@ public class FbtCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        /*if(args.length>0 && args[0].equalsIgnoreCase("regenerate")) {
+            Location loc = ((Player)sender).getLocation();
+            BlockState state = loc.getBlock().getState();
+            state.setTypeId(64);
+            state.setRawData((byte)6);
+            state.update(true, false);
+            return true;
+        }*/
         if (!(sender instanceof Player)) {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;

@@ -67,10 +67,15 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Furnace furnace = (Furnace) blockPlace.getState();
-                furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                final Furnace furnace = (Furnace) blockPlace.getState();
                 furnace.setBurnTime(Short.MAX_VALUE);
                 furnace.update(true, false); 
+                new BukkitRunnable() {
+                    @Override
+                    public void run(){
+                        furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
     }

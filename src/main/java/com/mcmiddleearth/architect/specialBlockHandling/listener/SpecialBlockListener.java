@@ -117,16 +117,23 @@ public class SpecialBlockListener implements Listener{
         }
         final Block block = event.getBlock();
         final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
+        final Furnace furnace = (Furnace) block.getState();
+        furnace.setBurnTime(Short.MAX_VALUE);
+        furnace.update(true, false);
+//Logger.getLogger(this.getClass().getName()).info("smelting "+ smelting.toString());
         new BukkitRunnable() {
             @Override
             public void run() {
-                Furnace furnace = (Furnace) block.getState();
                 FurnaceInventory inventory = furnace.getInventory();
-                ItemStack item =inventory.getResult();
-                inventory.setResult(null);
+                inventory.setResult(new ItemStack(Material.AIR));
                 inventory.setSmelting(new ItemStack(smelting));
-                furnace.setBurnTime(Short.MAX_VALUE);
-                furnace.update(true, false);
+                inventory.setFuel(new ItemStack(Material.COAL));
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+//Logger.getLogger(this.getClass().getName()).info("burnTime "+ ((Furnace)block.getState()).getBurnTime());
+                    }
+                }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
     }
@@ -139,17 +146,38 @@ public class SpecialBlockListener implements Listener{
         }
         InventoryHolder holder = event.getInventory().getHolder();
         if(holder instanceof Furnace && event.getSlot()==0 && event.getResult().equals(Result.ALLOW)) {
-            Furnace furnace = (Furnace) holder;
+            event.setCancelled(true);
+            final Furnace furnace = (Furnace) holder;
             ItemStack current = event.getCurrentItem();
             ItemStack cursor = event.getCursor();
+            ItemStack smelting = new ItemStack(Material.RAW_FISH);
+            ItemStack fuel = new ItemStack(Material.COAL);
             if(current.getType().equals(Material.AIR)) {
-                event.setCurrentItem(new ItemStack(Material.RAW_FISH));
+                //event.setCurrentItem(new ItemStack(Material.RAW_FISH));
                 furnace.setBurnTime(Short.MAX_VALUE);
+                if(isSmeltingItem(cursor)) {
+                    smelting = cursor;
+                }
+                //furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                //furnace.getInventory().setFuel(new ItemStack(Material.COAL));
             } else {
-                event.setCurrentItem(new ItemStack(Material.AIR));
-                furnace.setBurnTime((short)0);
+                //event.setCurrentItem(new ItemStack(Material.AIR));
+                furnace.setBurnTime((short)2);
+                smelting = new ItemStack(Material.AIR);
+                fuel = new ItemStack(Material.AIR);
             }
-            event.setCancelled(true);
+            furnace.update(true,false);
+            final ItemStack finalSmelting = smelting;
+            final ItemStack finalFuel = fuel;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    furnace.getInventory().setSmelting(finalSmelting);
+                    furnace.getInventory().setFuel(finalFuel);
+                }
+            }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+//Logger.getLogger(this.getClass().getName()).info("burn "+ furnace.getBurnTime());
+//Logger.getGlobal().info("burn "+ furnace.getBurnTime());
 /*Logger.getGlobal().info("slot type "+ event.getSlotType());            
 Logger.getGlobal().info("slot  "+ event.getSlot());            
 Logger.getGlobal().info("slot raw "+ event.getRawSlot());            
@@ -157,10 +185,24 @@ Logger.getGlobal().info("click "+ event.getClick());
 Logger.getGlobal().info("result "+ event.getResult());            
 Logger.getGlobal().info("action "+ event.getAction());            
 Logger.getGlobal().info("current "+ event.getCurrentItem());            
-Logger.getGlobal().info("cursor "+ event.getCursor());*/
+Logger.getGlobal().info("cursor "+ event.getCursor());
+*/
         }
     }
     
+    private boolean isSmeltingItem(ItemStack item) {
+        switch(item.getType()) {
+            case RAW_FISH:
+            case RAW_BEEF:
+            case RAW_CHICKEN:
+            case RABBIT:
+            case PORK:
+            case MUTTON:
+                return true;
+            default: 
+                return false;
+       }
+    }
     /**
      * If module SPECIAL_BLOCK_PLACE is enabled in world config file
      * handles placement of blocks from the MCME custom inventories.
@@ -1019,10 +1061,15 @@ Logger.getGlobal().info("4");
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Furnace furnace = (Furnace) block.getState();
-                        furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                        final Furnace furnace = (Furnace) block.getState();
                         furnace.setBurnTime(Short.MAX_VALUE);
                         furnace.update(true, false); 
+                        new BukkitRunnable() {
+                            @Override
+                            public void run(){
+                                furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
             }

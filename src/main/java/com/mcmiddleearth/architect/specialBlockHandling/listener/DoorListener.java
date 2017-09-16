@@ -138,4 +138,72 @@ public class DoorListener implements Listener{
         }
     }*/
     
+    /*@EventHandler
+    public void movePlayer(PlayerMoveEvent event) {
+        Location loc = event.getFrom();
+//Logger.getGlobal().info("From: "+loc.getBlockX()+" "+loc.getBlockZ());
+        loc = event.getTo();
+//Logger.getGlobal().info("To: "+loc.getBlockX()+" "+loc.getBlockZ());
+    }
+    private static Set<Player> asyncPlayers = new HashSet<>();
+    
+    public static void addOpenHalfDoorListener() {
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager.addPacketListener(new PacketAdapter(ArchitectPlugin.getPluginInstance(),
+                ListenerPriority.NORMAL, 
+                PacketType.Play.Client.POSITION,
+                PacketType.Play.Client.POSITION_LOOK) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (event.getPacketType() == PacketType.Play.Client.POSITION
+                        || event.getPacketType() == PacketType.Play.Client.POSITION_LOOK) {
+                    PacketContainer packet = event.getPacket();
+                    StructureModifier<Double> position = packet.getDoubles();
+                    Location loc = new Location(event.getPlayer().getWorld(),
+                                                position.getValues().get(0),
+                                                position.getValues().get(1),
+                                                position.getValues().get(2));
+//Logger.getGlobal().info("Position: "+loc.getBlockX()+" "+loc.getBlockZ());
+                    if(event.getPacketType()==PacketType.Play.Client.POSITION) {
+                        loc.setYaw(event.getPlayer().getLocation().getYaw());
+                        loc.setPitch(event.getPlayer().getLocation().getPitch());
+                    } else {
+                        StructureModifier<Float> look = packet.getFloat();
+                        loc.setYaw(look.getValues().get(0));
+                        loc.setPitch(look.getValues().get(1));
+                    }
+                    Block block = loc.getBlock();
+                    if(block.getTypeId()==64 && block.getData()==(byte)5 ) {
+                        if(!asyncPlayers.contains(event.getPlayer())) {
+//Logger.getGlobal().info("added");
+                            asyncPlayers.add(event.getPlayer());
+                        }
+                    } else {
+                        if(asyncPlayers.contains(event.getPlayer())) {
+//Logger.getGlobal().info("removed");
+                            asyncPlayers.remove(event.getPlayer());
+                            event.getPlayer().teleport(loc);
+                        }
+                    }
+                }
+            }
+        });          
+        protocolManager.addPacketListener(
+        new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, 
+                  PacketType.Play.Server.POSITION) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                if (event.getPacketType() == 
+                        PacketType.Play.Server.POSITION) {
+                    Player player = event.getPlayer();
+                    //PacketContainer packet = event.getPacket();
+                    //Block door = player.getLocation().getBlock();
+//Logger.getGlobal().info("is half door: "+DoorUtil.isDoorBlock(door));
+                    if(asyncPlayers.contains(player)) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        });
+    }*/
 }
