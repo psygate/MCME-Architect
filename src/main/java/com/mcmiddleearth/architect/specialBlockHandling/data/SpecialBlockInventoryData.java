@@ -285,7 +285,8 @@ public class SpecialBlockInventoryData {
         }*/
         CustomInventory inv = inventories.get(resourcePack);
         if(inv==null) {
-            inv = inventories.get("Gondor");
+            DevUtil.log("block inventory not found for "+resourcePack);
+            //inv = inventories.get("Gondor");
         }
         if(inv!=null && !inv.isEmpty()) {
             inv.open(p);
@@ -296,10 +297,11 @@ public class SpecialBlockInventoryData {
     
     public static boolean openSearchInventory(Player p, String resourcePack, String search) {
         SearchInventory inv = searchInventories.get(resourcePack);
-        /*if(inv==null) {
-            inv = searchInventories.get("Gondor");
-        }*/
-        if(inv!=null && !inv.isEmpty()) {
+        if(inv==null) {
+            DevUtil.log(search+" search inventory not found for "+resourcePack);
+            //inv = searchInventories.get("Gondor");
+        }
+        if(inv!=null) {
             inv.open(p, search);
             return true;
 //Logger.getGlobal().info("Inventory 3");
