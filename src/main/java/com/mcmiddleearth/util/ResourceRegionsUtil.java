@@ -51,7 +51,7 @@ public class ResourceRegionsUtil {
             packUrl = (String) regionObject.getClass().getMethod("getPackUrl").invoke(regionObject);
 //Logger.getGlobal().info("pack url "+packUrl);
         } catch (NullPointerException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException ex) {
-            Logger.getLogger(InvCommand.class.getName()).log(Level.WARNING, "No resource region found.", ex);
+            Logger.getLogger(InvCommand.class.getName()).log(Level.WARNING, "No resource region found.");
             return "";
         }
         return packUrl;

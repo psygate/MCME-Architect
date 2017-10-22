@@ -28,7 +28,6 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
-import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,7 +37,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -46,15 +44,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.FurnaceInventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -103,64 +97,6 @@ public class SpecialBlockListener implements Listener{
         }
     }
 
-    /**
-     * If module BURNING_FURNACE is enabled in world config file
-     * prolongs buring time of furnaces every time a smelting item is finished.
-     * Also a new smelting item is placed in the furnace. This keeps furnaces burning
-     * until the smelting item is taken out of the furnace by a player.
-     * @param event 
-     */
-    @EventHandler
-    public void furnaceProlongBurning(FurnaceSmeltEvent event) {
-        if (!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BURNING_FURNACE)) {
-            return;
-        }
-        final Block block = event.getBlock();
-        final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Furnace furnace = (Furnace) block.getState();
-                FurnaceInventory inventory = furnace.getInventory();
-                ItemStack item =inventory.getResult();
-                inventory.setResult(null);
-                inventory.setSmelting(new ItemStack(smelting));
-                furnace.setBurnTime(Short.MAX_VALUE);
-                furnace.update(true, false);
-            }
-        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-    }
-    
-    @EventHandler
-    public void furnaceOnOff(InventoryClickEvent event) {
-        Location loc = event.getInventory().getLocation();
-        if (loc == null || !PluginData.isModuleEnabled(loc.getWorld(), Modules.BURNING_FURNACE)) {
-            return;
-        }
-        InventoryHolder holder = event.getInventory().getHolder();
-        if(holder instanceof Furnace && event.getSlot()==0 && event.getResult().equals(Result.ALLOW)) {
-            Furnace furnace = (Furnace) holder;
-            ItemStack current = event.getCurrentItem();
-            ItemStack cursor = event.getCursor();
-            if(current.getType().equals(Material.AIR)) {
-                event.setCurrentItem(new ItemStack(Material.RAW_FISH));
-                furnace.setBurnTime(Short.MAX_VALUE);
-            } else {
-                event.setCurrentItem(new ItemStack(Material.AIR));
-                furnace.setBurnTime((short)0);
-            }
-            event.setCancelled(true);
-/*Logger.getGlobal().info("slot type "+ event.getSlotType());            
-Logger.getGlobal().info("slot  "+ event.getSlot());            
-Logger.getGlobal().info("slot raw "+ event.getRawSlot());            
-Logger.getGlobal().info("click "+ event.getClick());            
-Logger.getGlobal().info("result "+ event.getResult());            
-Logger.getGlobal().info("action "+ event.getAction());            
-Logger.getGlobal().info("current "+ event.getCurrentItem());            
-Logger.getGlobal().info("cursor "+ event.getCursor());*/
-        }
-    }
-    
     /**
      * If module SPECIAL_BLOCK_PLACE is enabled in world config file
      * handles placement of blocks from the MCME custom inventories.
@@ -422,6 +358,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      */
     @EventHandler
     public void removeItemBlockArmorStand(BlockBreakEvent event) {
+//Logger.getGlobal().info("remove Item Block"+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ());
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
             return;
         }
@@ -429,6 +366,39 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                                     event.getBlock().getY(), event.getBlock().getZ()+0.5);
         SpecialBlockItemBlock.removeArmorStands(loc);
     }
+    
+    
+    /*
+    Doesn't work as VehicleBlockCollision Events are called by rideabel minecarts only.
+    
+    @EventHandler
+    public void blockVehicleProtection(VehicleBlockCollisionEvent event) {
+Logger.getGlobal().info("blockVehicle"+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ());
+        if(!PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
+            return;
+        }
+        if(event.getBlock().getType().equals(Material.WATER_LILY)) {
+            final BlockState state = event.getBlock().getState();
+            final int[] counter = new int[]{30};
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    BlockState current = state.getBlock().getState();
+                    if(state.getType()!=current.getType()) {
+                        state.update(true, false);
+                        counter[0] = counter[0]-1;
+                        if(counter[0]==0) {
+Logger.getGlobal().info("blockVehicle cancel fail"+state.getBlock().getX()+" "+state.getBlock().getY()+" "+state.getBlock().getZ());
+                            this.cancel();
+                        }
+                    } else {
+                        this.cancel();
+Logger.getGlobal().info("blockVehicle cancel success"+state.getBlock().getX()+" "+state.getBlock().getY()+" "+state.getBlock().getZ());
+                    }
+                }
+            }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 50, 50);
+        }
+    }*/
 
     
 /***********************************************************************************************
@@ -1019,10 +989,15 @@ Logger.getGlobal().info("4");
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Furnace furnace = (Furnace) block.getState();
-                        furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                        final Furnace furnace = (Furnace) block.getState();
                         furnace.setBurnTime(Short.MAX_VALUE);
                         furnace.update(true, false); 
+                        new BukkitRunnable() {
+                            @Override
+                            public void run(){
+                                furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);
             }

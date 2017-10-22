@@ -64,12 +64,13 @@ public class SpecialBlockDoor extends SpecialBlock {
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, false);
+        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, false, false);
     }
     
     protected void placeDoor(final Block blockPlace, final Location playerLoc,
                              Material material, final boolean powered,
-                             final boolean fixedHinge, final boolean hingeRight) {
+                             final boolean fixedHinge, final boolean hingeRight,
+                             final boolean open) {
         final BlockState lowerState = blockPlace.getState();
         lowerState.setType(material);
         final BlockState upperState = blockPlace.getRelative(BlockFace.UP).getState();
@@ -87,8 +88,17 @@ public class SpecialBlockDoor extends SpecialBlock {
                     Door lowerDoorData = (Door) tempLowerState.getData();
                     Door upperDoorData = (Door) tempUpperState.getData();
                     upperDoorData.setTopHalf(true);
-                    final BlockFace facing = getOppositeBlockFace(getBlockFace(playerLoc.getYaw()));
+                    float yaw = playerLoc.getYaw();
+                    if(open) {
+                        if(hingeRight) {
+                            yaw += 90;
+                        } else {
+                            yaw -= 90;
+                        }
+                    }
+                    final BlockFace facing = getBlockFace(yaw);//getOppositeBlockFace(getBlockFace(yaw));
                     lowerDoorData.setFacingDirection(facing);
+                    lowerDoorData.setOpen(open);
                     tempLowerState.setData(lowerDoorData);
                     boolean hinge;
                     if(fixedHinge) {

@@ -108,11 +108,11 @@ public class DoorUtil {
         }
     }
     
-    public static void closeDoor(Block block) {
+    private static void closeDoor(Block block) {
         block.setData((byte)(block.getData()-4), false);
     }
     
-    public static void openDoor(Block block) {
+    private static void openDoor(Block block) {
         block.setData((byte)(block.getData()+4), false);
     }
     

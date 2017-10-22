@@ -20,7 +20,6 @@ import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import com.mcmiddleearth.util.DevUtil;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -184,10 +183,11 @@ public class PluginData {
     }
     
     public static Set<String> getWorldNames() {
+        Set<String> names = new HashSet<>();
         for(World world: Bukkit.getWorlds()) {
-            getOrCreateWorldConfig(world.getName());
+            names.add(world.getName());//getOrCreateWorldConfig(world.getName());
         }
-        return worldConfigs.keySet();
+        return names;//worldConfigs.keySet();
     }
     
     public static boolean setAFK(UUID player) {

@@ -8,6 +8,7 @@ package com.mcmiddleearth.architect;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
+import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
 import com.mcmiddleearth.architect.additionalCommands.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
@@ -39,11 +40,11 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventor
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.FurnaceListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.InventoryListener;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
-import com.mcmiddleearth.util.ProtocolLibUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -69,6 +70,7 @@ public class ArchitectPlugin extends JavaPlugin {
         saveConfig();
         pluginInstance = this;
         //ProtocolLibUtil.init(this);
+        //DoorListener.addOpenHalfDoorListener();
         PluginData.getMessageUtil().setPluginName("Architect");
         PluginData.load();
         NoPhysicsData.load();
@@ -87,6 +89,8 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new NoPhysicsListener(), this);
         pluginManager.registerEvents(new FbtListener(), this);
         pluginManager.registerEvents(new SpecialBlockListener(), this);
+        pluginManager.registerEvents(new FurnaceListener(), this);
+        //pluginManager.registerEvents(new TestListener(), this);
         pluginManager.registerEvents(new VoxelBiomeBrushListener(), this);
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
@@ -115,6 +119,7 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("inv", new InvCommand());
         setCommandExecutor("itemblock", new ItemBlockCommand());
         setCommandExecutor("sign", new SignCommand());
+        setCommandExecutor("parrot", new ParrotCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         getLogger().info("MCME-Architect Enabled!");

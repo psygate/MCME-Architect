@@ -169,7 +169,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
 //Logger.getGlobal().info("found "+entity);
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
                     && (!exactMatch || entity.getCustomName().startsWith(getArmorStandName(loc.getBlock())))) {
-Logger.getGlobal().info("removed "+entity.getCustomName());
+//Logger.getGlobal().info("removed "+entity.getCustomName());
                 entity.remove();
             }
         }

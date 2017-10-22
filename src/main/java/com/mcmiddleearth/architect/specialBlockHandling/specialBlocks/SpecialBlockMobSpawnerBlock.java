@@ -119,15 +119,15 @@ public class SpecialBlockMobSpawnerBlock extends SpecialBlock {
             //NBTTagBuilder poseDataBuilder = new NBTTagBuilder();
             //poseDataBuilder.setFloatList("Head", 0f,40f,0f);
             NBTTagBuilder spawnDataBuilder = new NBTTagBuilder();
-            /*Object emptyTag = new NBTTagBuilder().getTag();
+            Object emptyTag = new NBTTagBuilder().getTag();
             spawnDataBuilder.setString("id","minecraft:armor_stand")
                             .setBoolean("Invisible", true)
                             .setBoolean("Marker", true)
                             .setTagList("ArmorItems",emptyTag, emptyTag, emptyTag, itemDataBuilder.getTag());
-                            //.setTag("Pose",poseDataBuilder.getTag());*/
-            spawnDataBuilder.setString("id", "minecraft:item")
+                            //.setTag("Pose",poseDataBuilder.getTag());
+            /*spawnDataBuilder.setString("id", "minecraft:item")
                     .setShort("Age", (short) -32768)
-                    .setTag("Item", itemDataBuilder.getTag());
+                    .setTag("Item", itemDataBuilder.getTag());*/
             NBTTagBuilder blockDataBuilder = new NBTTagBuilder();
             blockDataBuilder.setShort("RequiredPlayerRange", (short) 0)
                             .setShort("MaxNearbyEntities", (short) 87)

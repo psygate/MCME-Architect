@@ -18,11 +18,14 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutil.message.MessageUtil;
+import java.util.logging.Logger;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.potion.PotionEffectType;
 
 /**
@@ -40,4 +43,21 @@ public class FbtListener implements Listener{
             PluginData.getMessageUtil().sendInfoMessage(player, "Fullbright is not allowed in this world!");
         }
     }
+    
+    /*public static Chunk chunk;
+    
+    @EventHandler
+    public void unloadChunk(ChunkUnloadEvent event) {
+        if(event.getChunk().equals(chunk)) {
+            Logger.getGlobal().info("unloaded");
+        }
+    }
+    
+    @EventHandler
+    public void loadChunk(ChunkLoadEvent event) {
+        if(event.getChunk().equals(chunk)) {
+            Logger.getGlobal().info("loaded");
+        }
+    }*/
+
 }
