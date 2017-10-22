@@ -84,7 +84,7 @@ public class DoorListener implements Listener{
                     return;
                 }
             } else {                                            //click at lower door part
-                if(!DoorUtil.isDoorBlock(block.getRelative(BlockFace.UP))//check for half door
+                if(!DoorUtil.isUpperDoorBlock(block.getRelative(BlockFace.UP))//check for half door
                     && !DoorUtil.isFullDoorBelow(block)) {               //check for 3 block high door
                     return;
                 }

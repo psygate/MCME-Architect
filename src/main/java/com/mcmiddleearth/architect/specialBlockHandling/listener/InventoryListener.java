@@ -35,6 +35,7 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -58,7 +59,12 @@ public class InventoryListener implements Listener{
             final Player p = (Player) event.getPlayer();
             String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
             if(rpN==null || rpN.equals("")) {
-                rpN = "Gondor";
+                ItemStack handItem = p.getInventory().getItemInMainHand();
+                rpN = getRpName(handItem);
+                if(rpN.equals("")) {
+                    handItem = p.getInventory().getItemInOffHand();
+                    rpN = getRpName(handItem);
+                }
             }
             if(!SpecialBlockInventoryData.openInventory(p, rpN)) {
                 sendNoInventoryError(p,rpN);
@@ -66,6 +72,20 @@ public class InventoryListener implements Listener{
         }
     }
     
+    private String getRpName(ItemStack item) {
+        String rpN="";
+        if(item.hasItemMeta()
+                && item.getItemMeta().hasDisplayName()) {
+            String displayName = item.getItemMeta().getDisplayName();
+            if(displayName.indexOf(' ')>0) {
+                displayName = displayName.substring(0,displayName.indexOf(' '));
+            }
+            if(!PluginData.getRpUrl(displayName).equalsIgnoreCase("")) {
+                rpN = displayName;
+            }
+        } 
+        return rpN;
+    }
     
     /**
      * If module SPECIAL_BLOCK_GET is enabled in world config file
@@ -87,7 +107,7 @@ public class InventoryListener implements Listener{
                 final Player p = (Player) event.getWhoClicked();
                 String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
                 if(rpN==null || rpN.equals("")) {
-                    rpN = "Gondor";
+                    return; //+++rpN = "Gondor";
                 }
                 final String rpName = rpN;
                 new BukkitRunnable() {
@@ -189,7 +209,11 @@ public class InventoryListener implements Listener{
     
 
     private void sendNoInventoryError(CommandSender p, String rp) {
-        PluginData.getMessageUtil().sendErrorMessage(p, "No custom inventory found for rp \""+rp+"\".");
+        if(rp.equals("")) {
+            PluginData.getMessageUtil().sendErrorMessage(p, "Custom inventory not found.");
+        } else {
+            PluginData.getMessageUtil().sendErrorMessage(p, "No custom inventory found for rp \""+rp+"\".");
+        }
     }
    
 }

@@ -23,6 +23,7 @@ package com.mcmiddleearth.architect.specialBlockHandling;
 public enum SpecialBlockType {
     
     BLOCK         ,//("normal"),
+    OPEN_HALF_DOOR, //("open half doors")
     FOUR_DIRECTIONS,//("fourFaced"),
     MATCH_ORIENTATION,//("fourFaced"),
     FIVE_FACES     ,//("sixFaces"),

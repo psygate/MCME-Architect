@@ -19,6 +19,9 @@ package com.mcmiddleearth.architect.additionalCommands;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.additionalListeners.FbtListener;
+import java.util.logging.Logger;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,14 +36,30 @@ public class FbtCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        /*if(args.length>0 && args[0].equalsIgnoreCase("regenerate")) {
-            Location loc = ((Player)sender).getLocation();
+        /*Location loc = ((Player)sender).getLocation();
+        int i = loc.getChunk().getX();
+        int j = loc.getChunk().getZ();
+        FbtListener.chunk = loc.getChunk();
+        if(args.length>0 && args[0].equalsIgnoreCase("refresh")) 
             BlockState state = loc.getBlock().getState();
             state.setTypeId(64);
             state.setRawData((byte)6);
-            state.update(true, false);
-            return true;
-        }*/
+            state.update(true, false);*/
+/*Logger.getGlobal().info(""+loc.getWorld().refreshChunk(i, j));
+        if(args.length>0 && args[0].equalsIgnoreCase("regenerate")) 
+Logger.getGlobal().info(""+loc.getWorld().regenerateChunk(i, j));
+        if(args.length>0 && args[0].equalsIgnoreCase("save")) 
+Logger.getGlobal().info("save "); loc.getWorld().save();
+        if(args.length>0 && args[0].equalsIgnoreCase("unload")) 
+Logger.getGlobal().info(""+loc.getWorld().unloadChunk(i, j, true, true));
+        if(args.length>0 && args[0].equalsIgnoreCase("unloadf")) 
+Logger.getGlobal().info(""+loc.getWorld().unloadChunk(i, j, true, false));
+        if(args.length>0 && args[0].equalsIgnoreCase("qunload")) 
+Logger.getGlobal().info(""+loc.getWorld().unloadChunkRequest(i, j, true));
+        if(args.length>0 && args[0].equalsIgnoreCase("qunloadf")) 
+Logger.getGlobal().info("unloadRequest "+loc.getWorld().unloadChunkRequest(i, j, false));
+        if(args.length>0 && args[0].equalsIgnoreCase("load")) 
+Logger.getGlobal().info("load "+loc.getWorld().loadChunk(i, j,false));*/
         if (!(sender instanceof Player)) {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;

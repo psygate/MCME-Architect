@@ -33,12 +33,15 @@ import org.bukkit.material.Door;
  */
 public class SpecialBlockThinWall extends SpecialBlockDoor {
     
-    private final boolean hingeRight;
+    private final boolean hingeRight,powered, open;
     
     private SpecialBlockThinWall(String id, 
-                        Material material, boolean alternateType) {
+                        Material material, boolean powered, 
+                        boolean alternateType, boolean open) {
         super(id, material, (byte) 0, SpecialBlockType.THIN_WALL);
         this.hingeRight = alternateType;
+        this.powered = powered;
+        this.open = open;
     }
     
     public static SpecialBlockThinWall loadFromConfig(ConfigurationSection config, String id) {
@@ -46,14 +49,16 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
         if(material==null) {
             return null;
         }
-        boolean hingeRight = config.getBoolean("alternateType", false);
-        return new SpecialBlockThinWall(id, material, hingeRight);
+        boolean hingeRight = config.getBoolean("rightHinge", false);
+        boolean powered = config.getBoolean("powered", false);
+        boolean open = config.getBoolean("open", false);
+        return new SpecialBlockThinWall(id, material, powered, hingeRight, open);
     }
     
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), true, true, hingeRight);
+        placeDoor(blockPlace, playerLoc, getMaterial(), powered, true, hingeRight, open);
     }
     
    @Override
@@ -72,7 +77,8 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
             if(block.getData()<8) {
                 return false;
             }
-            return hingeRight == (block.getData()%2==1);
+            return (hingeRight == (block.getData()%2==1))
+                && (powered == (block.getData()>9));
         }
         return false;
     }

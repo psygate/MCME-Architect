@@ -40,6 +40,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventor
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.FurnaceListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.InventoryListener;
 import com.mcmiddleearth.architect.voxelStencilEditor.SlCommand;
 import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
@@ -88,6 +89,8 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new NoPhysicsListener(), this);
         pluginManager.registerEvents(new FbtListener(), this);
         pluginManager.registerEvents(new SpecialBlockListener(), this);
+        pluginManager.registerEvents(new FurnaceListener(), this);
+        //pluginManager.registerEvents(new TestListener(), this);
         pluginManager.registerEvents(new VoxelBiomeBrushListener(), this);
         pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);

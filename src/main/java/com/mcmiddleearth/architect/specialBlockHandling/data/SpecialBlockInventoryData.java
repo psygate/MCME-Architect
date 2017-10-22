@@ -40,6 +40,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMatchOrientation;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMobSpawnerBlock;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOpenHalfDoor;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.DevUtil;
@@ -201,6 +202,9 @@ public class SpecialBlockInventoryData {
                         break;
                     case FOUR_DIRECTIONS:
                         blockData = SpecialBlockFourDirections.loadFromConfig(section, fullName(rpName,itemKey));
+                        break;
+                    case OPEN_HALF_DOOR:
+                        blockData = SpecialBlockOpenHalfDoor.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
                     case MATCH_ORIENTATION:
                         blockData = SpecialBlockMatchOrientation.loadFromConfig(section, fullName(rpName,itemKey));
