@@ -23,6 +23,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,13 +58,20 @@ public class InventoryListener implements Listener{
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
             final Player p = (Player) event.getPlayer();
+            ItemStack handItem = p.getInventory().getItemInMainHand();
+            ItemStack offHandItem = p.getInventory().getItemInOffHand();
+            if((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
+                    && handItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))
+                || (offHandItem.hasItemMeta() && offHandItem.getItemMeta().hasDisplayName()
+                    && offHandItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))) {
+                SpecialHeadInventoryData.openInventory(p);
+                return;
+            }
             String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
             if(rpN==null || rpN.equals("")) {
-                ItemStack handItem = p.getInventory().getItemInMainHand();
                 rpN = getRpName(handItem);
                 if(rpN.equals("")) {
-                    handItem = p.getInventory().getItemInOffHand();
-                    rpN = getRpName(handItem);
+                    rpN = getRpName(offHandItem);
                 }
             }
             if(!SpecialBlockInventoryData.openInventory(p, rpN)) {
