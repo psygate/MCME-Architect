@@ -24,6 +24,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoor;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
@@ -35,6 +36,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -106,7 +109,7 @@ public class SpecialBlockListener implements Listener{
     public void placeSpecialBlock(PlayerInteractEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                || !event.getHand().equals(EquipmentSlot.HAND)
+                || !event.getHand().equals(EquipmentSlot.HAND) 
                 || event.getPlayer().getInventory().getItemInMainHand()==null
                 || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
                 || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
@@ -275,16 +278,23 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
 //Logger.getGlobal().info("1");
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
                 || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                || !event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
+                || !(event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
+                     || !InventoryListener.getRpName(event.getPlayer().getInventory().getItemInMainHand()).equals(""))
                 || !EventUtil.isMainHandEvent(event)) {
 //Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
             return;
         }
 //Logger.getGlobal().info("3");
         Block block = event.getClickedBlock();
-        String rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
-        if(rpName.equals("")) {
-            PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
+        ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
+        String rpName = "";
+        if(handItem.getType().equals(Material.FLINT)) {
+            rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
+            if(rpName.equals("")) {
+                PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
+            }
+        } else {
+            rpName = InventoryListener.getRpName(handItem);
         }
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
         if(item!=null) {
@@ -367,6 +377,56 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         SpecialBlockItemBlock.removeArmorStands(loc);
     }
     
+    
+    /**
+     * place powered doors for creative inventory door items
+     */
+    @EventHandler
+    private void poweredDoorPlace(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.USE_POWERED_DOORS)
+                || !event.getHand().equals(EquipmentSlot.HAND) 
+                || event.getPlayer().getInventory().getItemInMainHand()==null
+                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+            return;
+        }
+        final Player player = event.getPlayer();
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        Material material=null;
+        switch(handItem.getType()) {
+            case ACACIA_DOOR_ITEM:
+                material = Material.ACACIA_DOOR;
+                break;
+            case DARK_OAK_DOOR_ITEM:
+                material = Material.DARK_OAK_DOOR;
+                break;
+            case JUNGLE_DOOR_ITEM:
+                material = Material.JUNGLE_DOOR;
+                break;
+            case SPRUCE_DOOR_ITEM:
+                material = Material.SPRUCE_DOOR;
+                break;
+            case BIRCH_DOOR_ITEM:
+                material = Material.BIRCH_DOOR;
+                break;
+            case WOODEN_DOOR:
+                material = Material.WOOD_DOOR;
+                break;
+            case IRON_DOOR:
+                material = Material.IRON_DOOR;
+                break;
+        }
+        if(material==null) {
+            return;
+        }
+        if(!PluginData.hasGafferPermission(player,event.getBlockPlaced().getLocation())) {
+            return;
+        }
+        ConfigurationSection config = new MemoryConfiguration();
+        config.set("blockMaterial", material.name());
+        config.set("powered", true);
+        SpecialBlockDoor block = SpecialBlockDoor.loadFromConfig(config,"temp");
+        block.placeBlock(event.getBlock(), BlockFace.SELF, player);
+    }
     
     /*
     Doesn't work as VehicleBlockCollision Events are called by rideabel minecarts only.

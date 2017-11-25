@@ -20,6 +20,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DoorUtil;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -74,6 +75,7 @@ public class DoorListener implements Listener{
                 && event.getHand().equals(EquipmentSlot.HAND)
                 && DoorUtil.isDoorBlock(event.getClickedBlock())) {
             Block block = event.getClickedBlock();
+//Logger.getGlobal().info("Clicked block"+((Door)block.getState().getData()).getHinge());
             if(DoorUtil.isThinWall(block)) {
                 return;
             }
@@ -85,16 +87,21 @@ public class DoorListener implements Listener{
                 }
             } else {                                            //click at lower door part
                 if(!DoorUtil.isUpperDoorBlock(block.getRelative(BlockFace.UP))//check for half door
-                    && !DoorUtil.isFullDoorBelow(block)) {               //check for 3 block high door
+                    && !DoorUtil.isFullDoorAbove(block)) {               //check for 3 block high door
                     return;
                 }
             }
-            if(DoorUtil.isFullDoorBelow(block)) {
-                block = block.getRelative(BlockFace.DOWN, 2);   //
+            if(DoorUtil.isFullDoorAbove(block)) {
+                block = block.getRelative(BlockFace.UP);   //
             }
+            boolean hingeRightOfClickedSide = ((Door)block.getRelative(BlockFace.UP)
+                                               .getState().getData()).getHinge();
+//Logger.getGlobal().info("Lower block"+hingeRightOfClickedSide);
             DoorUtil.toggleDoor(block);
             DoorUtil.toggleDoor(block.getRelative(BlockFace.UP));
-            DoorUtil.toggleDoor(block.getRelative(BlockFace.UP,2));
+            DoorUtil.toggleHalfDoor(block.getRelative(BlockFace.DOWN),
+                                    hingeRightOfClickedSide,
+                                    ((Door)block.getState().getData()).isOpen());
 
             Block block2Lower = DoorUtil.getSecondHalf(block);
             Block block2Upper = block2Lower.getRelative(BlockFace.UP);
@@ -107,7 +114,9 @@ public class DoorListener implements Listener{
                        !=(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()))) {
                 DoorUtil.toggleDoor(block2Lower);
                 DoorUtil.toggleDoor(block2Upper);
-                DoorUtil.toggleDoor(block2Lower.getRelative(BlockFace.UP,2));
+                DoorUtil.toggleHalfDoor(block2Lower.getRelative(BlockFace.DOWN),
+                                        !hingeRightOfClickedSide,
+                                        ((Door)block2Lower.getState().getData()).isOpen());
             }
         }
     }

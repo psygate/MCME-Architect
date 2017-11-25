@@ -6,7 +6,6 @@
 package com.mcmiddleearth.architect.bannerEditor;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
 
 /**
  *
@@ -18,6 +17,7 @@ public enum BannerEditorMode {
     COLOR   ("c","",": Selects cycle color mode."),
     ADD     ("a","",": Selects add pattern mode."),
     REMOVE  ("r","",": Selects remove pattern mode."),
+    SHIELD  ("s","",": Selects banner to shield mode."),
     GET     ("g","",": Selects get banner mode.");
     
     @Getter
