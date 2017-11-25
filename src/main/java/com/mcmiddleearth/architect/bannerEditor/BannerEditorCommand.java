@@ -190,6 +190,9 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                         case REMOVE:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> remove pattern "+ playerConfig.getPatternId());
                             break;
+                        case SHIELD:
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> banner to shield");
+                            break;
                         case GET:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> get banner ");
                             break;

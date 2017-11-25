@@ -80,7 +80,7 @@ public class InventoryListener implements Listener{
         }
     }
     
-    private String getRpName(ItemStack item) {
+    public static String getRpName(ItemStack item) {
         String rpN="";
         if(item.hasItemMeta()
                 && item.getItemMeta().hasDisplayName()) {

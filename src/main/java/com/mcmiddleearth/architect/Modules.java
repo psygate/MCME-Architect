@@ -36,6 +36,7 @@ public enum Modules {
     INVENTORY_ACCESS       ("modules.specialBlocks.inventoryAccess"),
     SPECIAL_BLOCKS_PLACE   ("modules.specialBlocks.place"),
     SPECIAL_BLOCKS_FLINT   ("modules.specialBlocks.flint"),
+    USE_POWERED_DOORS      ("modules.specialBlocks.poweredDoors"),
     BLOCK_PLAYER_INTERACTION ("modules.specialBlocks.blockPlayerInteraction"),
 
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),

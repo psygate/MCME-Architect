@@ -24,6 +24,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 /**
  *
@@ -109,6 +110,16 @@ public class BannerListener implements Listener {
                             sendInvalidPatternId(player, patternId);
                         }
                         break;
+                    case SHIELD:
+                        ItemStack shieldItem = new ItemStack(Material.SHIELD);
+                        BlockStateMeta shieldMeta = (BlockStateMeta) shieldItem.getItemMeta();
+                        shieldMeta.setBlockState(banner);
+                        shieldItem.setItemMeta(shieldMeta);
+                        int amoun = shieldItem.getMaxStackSize();
+                        shieldItem.setAmount(amoun);
+                        player.getInventory().addItem(shieldItem);
+                        sendGotShield(player, amoun);
+                        break;
                     case GET:
                         ItemStack item = new ItemStack(Material.BANNER);
                         BannerMeta meta = (BannerMeta) item.getItemMeta();
@@ -180,6 +191,10 @@ public class BannerListener implements Listener {
 
     private void sendGotBanner(Player player, int amount) {
         PluginData.getMessageUtil().sendInfoMessage(player,"Given "+amount+" banners to "+player.getName()+".");
+    }
+
+    private void sendGotShield(Player player, int amount) {
+        PluginData.getMessageUtil().sendInfoMessage(player,"Given "+amount+" shields to "+player.getName()+".");
     }
 
     private void sendNotEnabledErrorMessage(CommandSender cs) {

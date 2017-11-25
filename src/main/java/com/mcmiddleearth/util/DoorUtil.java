@@ -17,6 +17,7 @@
 package com.mcmiddleearth.util;
 
 import com.mcmiddleearth.architect.PluginData;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -69,9 +70,9 @@ public class DoorUtil {
         return block.getState().getData() instanceof Door;
     }
     
-    public static boolean isFullDoorBelow(Block block) {
-        return   isUpperDoorBlock(block.getRelative(BlockFace.DOWN))
-                && isLowerDoorBlock(block.getRelative(BlockFace.DOWN,2));
+    public static boolean isFullDoorAbove(Block block) {
+        return   isUpperDoorBlock(block.getRelative(BlockFace.UP,2))
+                && isLowerDoorBlock(block.getRelative(BlockFace.UP));
     }
     
     public static Block getSecondHalf(Block block) {
@@ -101,11 +102,56 @@ public class DoorUtil {
             BlockState state = block.getState();
 //Logger.getGlobal().info("dv "+state.getRawData());
             Door data = (Door) state.getData();
-            data.setOpen(!data.isOpen());
-            state.setData(data);
-            state.update();
+            if(isUpperDoorBlock(block.getRelative(BlockFace.UP))) {
+                data.setOpen(!data.isOpen());
+                state.setData(data);
+                state.update();
+            }
 //Logger.getGlobal().info("dv new "+state.getRawData());
         }
+    }
+    public static void toggleHalfDoor(Block block, boolean hingeRight, boolean isOpen) {
+//Logger.getGlobal().info("toggle "+block.getX()+" "+block.getY()+" "+block.getZ()+" "+hingeRight+" "+isOpen);
+        if(block.getState().getData() instanceof Door
+              && !((Door)block.getState().getData()).isTopHalf()) {
+            BlockState state = block.getState();
+            Door data = (Door) state.getData();
+//Logger.getGlobal().info("toggle 2");
+            BlockFace facing = data.getFacing();
+            boolean clockwise = hingeRight ^ isOpen; //XOR
+            facing = rotate(facing, clockwise);
+            data.setFacingDirection(facing);
+            state.setData(data);
+            state.update();
+//Logger.getGlobal().info("toggle !");
+        }
+    }
+    
+    private static BlockFace rotate(BlockFace facing, boolean clockwise) {
+        if(clockwise) {
+            switch(facing) {
+                case NORTH:
+                    return BlockFace.EAST;
+                case EAST:
+                    return BlockFace.SOUTH;
+                case SOUTH:
+                    return BlockFace.WEST;
+                case WEST:
+                    return BlockFace.NORTH;
+            }
+        } else {
+            switch(facing) {
+                case NORTH:
+                    return BlockFace.WEST;
+                case EAST:
+                    return BlockFace.NORTH;
+                case SOUTH:
+                    return BlockFace.EAST;
+                case WEST:
+                    return BlockFace.SOUTH;
+            }
+        }
+        return BlockFace.DOWN;
     }
     
     private static void closeDoor(Block block) {

@@ -1,6 +1,6 @@
 name: MCME-Architect
 main: com.mcmiddleearth.architect.ArchitectPlugin
-version: 2.1.1
+version: 2.1.2
 author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
