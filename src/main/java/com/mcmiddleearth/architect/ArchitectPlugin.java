@@ -12,7 +12,7 @@ import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
 import com.mcmiddleearth.architect.additionalCommands.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
-import com.mcmiddleearth.architect.additionalListeners.HangingEntityProtectionListener;
+import com.mcmiddleearth.architect.additionalListeners.AdditionalProtectionListener;
 import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.StickBlockCycleListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
@@ -92,7 +92,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new FurnaceListener(), this);
         //pluginManager.registerEvents(new TestListener(), this);
         pluginManager.registerEvents(new VoxelBiomeBrushListener(), this);
-        pluginManager.registerEvents(new HangingEntityProtectionListener(), this);
+        pluginManager.registerEvents(new AdditionalProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
         pluginManager.registerEvents(new StickBlockCycleListener(), this);

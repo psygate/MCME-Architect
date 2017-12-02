@@ -42,6 +42,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMobSpawnerBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOpenHalfDoor;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ZipUtil;
@@ -217,6 +218,9 @@ public class SpecialBlockInventoryData {
                         break;
                     case THIN_WALL:
                         blockData = SpecialBlockThinWall.loadFromConfig(section, fullName(rpName,itemKey));
+                        break;
+                    case DOOR_VANILLA:
+                        blockData = SpecialBlockVanillaDoor.loadFromConfig(section, fullName(rpName,itemKey));
                         break;
                     case DOOR_FOUR_BLOCKS:
                         blockData = SpecialBlockDoorFourBlocks.loadFromConfig(section, fullName(rpName,itemKey));
