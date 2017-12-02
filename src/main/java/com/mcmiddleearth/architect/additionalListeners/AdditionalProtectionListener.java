@@ -16,10 +16,14 @@
  */
 package com.mcmiddleearth.architect.additionalListeners;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import java.util.logging.Logger;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,12 +33,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class HangingEntityProtectionListener implements Listener{
+public class AdditionalProtectionListener implements Listener{
     
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void HangingBreak(HangingBreakByEntityEvent event) {
@@ -112,4 +118,27 @@ public class HangingEntityProtectionListener implements Listener{
         }
     }
     
+   @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
+    public void flowerPotProtection(PlayerInteractEvent event) {
+//Logger.getGlobal().info("AdditionalProtection flower Pot 1 ");                    
+        if(!event.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
+            return;
+        }
+//Logger.getGlobal().info("AdditionalProtection flower Pot 2 ");                    
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        if(!PluginData.hasGafferPermission(player,block.getLocation())) {
+            PluginData.getMessageUtil().sendErrorMessage(player, 
+                    PluginData.getGafferProtectionMessage(player, block.getLocation()));
+            event.setCancelled(true);
+            /*final BlockState state = block.getState();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    state.update(true,false);
+Logger.getGlobal().info("restore");                    
+                }
+            }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);*/
+        }
+    }
 }

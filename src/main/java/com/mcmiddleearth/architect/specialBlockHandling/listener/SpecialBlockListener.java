@@ -24,11 +24,12 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoor;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ResourceRegionsUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,6 +46,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -54,6 +56,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -117,14 +120,9 @@ public class SpecialBlockListener implements Listener{
         }
         final Player player = event.getPlayer();
         final ItemStack handItem = player.getInventory().getItemInMainHand();
-        ItemMeta meta = handItem.getItemMeta();
-        if(!(meta.hasLore() 
-                && meta.getLore().size()>1 
-                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
-            return;
-        }
-        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
-        if(data == null || data.getType().equals(SpecialBlockType.VANILLA)) {
+        SpecialBlock data = getSpecialBlockDataFromItem(handItem);
+        if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
+                        || data.getType().equals(SpecialBlockType.DOOR_VANILLA)) {
             return;
         }
         event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
@@ -181,6 +179,15 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
 }*/
     }
     
+    private SpecialBlock getSpecialBlockDataFromItem(ItemStack handItem) {
+        ItemMeta meta = handItem.getItemMeta();
+        if(!(meta.hasLore() 
+                && meta.getLore().size()>1 
+                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
+            return null;
+        }
+        return SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
+    }
     /**
      * If module SPECIAL_BLOCK_PLACE is enabled in world config file
      * prevents changes of item durability.
@@ -338,7 +345,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                     || (event.getClickedBlock().getType().equals(Material.DIODE_BLOCK_OFF) )
                     || (event.getClickedBlock().getType().equals(Material.DIODE_BLOCK_ON) ))) {
             event.setCancelled(true);
-        }
+        }t
     }*/
     
     /**
@@ -382,7 +389,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      * place powered doors for creative inventory door items
      */
     @EventHandler
-    private void poweredDoorPlace(BlockPlaceEvent event) {
+    private void vanillaDoorPlace(BlockPlaceEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.USE_POWERED_DOORS)
                 || !event.getHand().equals(EquipmentSlot.HAND) 
                 || event.getPlayer().getInventory().getItemInMainHand()==null
@@ -390,42 +397,56 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
             return;
         }
         final Player player = event.getPlayer();
-        ItemStack handItem = player.getInventory().getItemInMainHand();
-        Material material=null;
-        switch(handItem.getType()) {
-            case ACACIA_DOOR_ITEM:
-                material = Material.ACACIA_DOOR;
-                break;
-            case DARK_OAK_DOOR_ITEM:
-                material = Material.DARK_OAK_DOOR;
-                break;
-            case JUNGLE_DOOR_ITEM:
-                material = Material.JUNGLE_DOOR;
-                break;
-            case SPRUCE_DOOR_ITEM:
-                material = Material.SPRUCE_DOOR;
-                break;
-            case BIRCH_DOOR_ITEM:
-                material = Material.BIRCH_DOOR;
-                break;
-            case WOODEN_DOOR:
-                material = Material.WOOD_DOOR;
-                break;
-            case IRON_DOOR:
-                material = Material.IRON_DOOR;
-                break;
-        }
-        if(material==null) {
-            return;
-        }
         if(!PluginData.hasGafferPermission(player,event.getBlockPlaced().getLocation())) {
             return;
         }
-        ConfigurationSection config = new MemoryConfiguration();
-        config.set("blockMaterial", material.name());
-        config.set("powered", true);
-        SpecialBlockDoor block = SpecialBlockDoor.loadFromConfig(config,"temp");
-        block.placeBlock(event.getBlock(), BlockFace.SELF, player);
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        SpecialBlock data = getSpecialBlockDataFromItem(handItem);
+        if(data==null) {
+            Material material=null;
+            switch(handItem.getType()) {
+                case ACACIA_DOOR_ITEM:
+                    material = Material.ACACIA_DOOR;
+                    break;
+                case DARK_OAK_DOOR_ITEM:
+                    material = Material.DARK_OAK_DOOR;
+                    break;
+                case JUNGLE_DOOR_ITEM:
+                    material = Material.JUNGLE_DOOR;
+                    break;
+                case SPRUCE_DOOR_ITEM:
+                    material = Material.SPRUCE_DOOR;
+                    break;
+                case BIRCH_DOOR_ITEM:
+                    material = Material.BIRCH_DOOR;
+                    break;
+                case WOOD_DOOR:
+                    material = Material.WOODEN_DOOR;
+                    break;
+                case IRON_DOOR:
+                    material = Material.IRON_DOOR_BLOCK;
+                    break;
+            }
+            if(material==null) {
+                return;
+            }
+            ConfigurationSection config = new MemoryConfiguration();
+            config.set("blockMaterial", material.name());
+            config.set("powered", true);
+            data = SpecialBlockVanillaDoor.loadFromConfig(config,"temp");
+        }
+        if(!(data instanceof SpecialBlockVanillaDoor)) {
+            return;
+        }
+        boolean hingeRight = ((Door)event.getBlock().getRelative(BlockFace.UP)
+                                                  .getState().getData()).getHinge();
+/*Logger.getGlobal().info("hinge upper: "+((Door)event.getBlock().getRelative(BlockFace.UP)
+                                                  .getState().getData()).getHinge());
+Logger.getGlobal().info("blockid: "+event.getBlock().getRelative(BlockFace.UP).getType());
+Logger.getGlobal().info("placeblockdata: "+event.getBlockPlaced().getData());
+Logger.getGlobal().info("placeblockid: "+event.getBlockPlaced().getType());*/
+        ((SpecialBlockVanillaDoor)data).placeBlock(event.getBlock(), BlockFace.SELF, 
+                                                   player, hingeRight);
     }
     
     /*

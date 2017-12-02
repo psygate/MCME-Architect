@@ -20,6 +20,7 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DoorUtil;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,12 +37,21 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class SpecialBlockDoor extends SpecialBlock {
     
-   private final boolean powered;
+   private boolean powered, hingeRight;
     
     private SpecialBlockDoor(String id, 
-                        Material material, boolean powered) {
+                        Material material, boolean powered, boolean hingeRight) {
         super(id, material, (byte) 0, SpecialBlockType.DOOR);
         this.powered = powered;
+        this.hingeRight = hingeRight;
+    }
+    
+    protected SpecialBlockDoor(String id, 
+                        Material material, boolean powered, boolean hingeRight,
+                        SpecialBlockType type) {
+        super(id, material, (byte) 0, type);
+        this.powered = powered;
+        this.hingeRight = hingeRight;
     }
     
     protected SpecialBlockDoor(String id, 
@@ -50,6 +60,7 @@ public class SpecialBlockDoor extends SpecialBlock {
                         SpecialBlockType type) {
         super(id, material, (byte) 0, SpecialBlockType.DOOR);
         powered = false;
+        hingeRight = false;
     }
     
     public static SpecialBlockDoor loadFromConfig(ConfigurationSection config, String id) {
@@ -58,13 +69,20 @@ public class SpecialBlockDoor extends SpecialBlock {
             return null;
         }
         boolean powered = config.getBoolean("powered", false);
-        return new SpecialBlockDoor(id, material, powered);
+        boolean hingeRight = config.getBoolean("hingeRight", false);
+        return new SpecialBlockDoor(id, material, powered, hingeRight);
     }
     
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, false, false);
+        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, hingeRight, false);
+    }
+    
+    public void placeBlock(final Block blockPlace, final BlockFace blockFace, 
+                           final Player player, boolean hingeRight) {
+        final Location playerLoc = player.getLocation();
+        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, hingeRight, false);
     }
     
     protected void placeDoor(final Block blockPlace, final Location playerLoc,
@@ -100,12 +118,12 @@ public class SpecialBlockDoor extends SpecialBlock {
                     lowerDoorData.setFacingDirection(facing);
                     lowerDoorData.setOpen(open);
                     tempLowerState.setData(lowerDoorData);
-                    boolean hinge;
-                    if(fixedHinge) {
+                    boolean hinge=!hingeRight;
+                    /*if(fixedHinge) {
                         hinge = hingeRight;
                     } else {
-                        hinge = checkForHingeRightSide(tempUpperState.getBlock(),facing);
-                    }
+                        hinge = checkForHingeRightSide(tempUpperState.getBlock(),facing, hingeRight);
+                    }*/
                     upperDoorData.setHinge(hinge);
                     if(powered) {
                         upperDoorData.setData((byte)(upperDoorData.getData()+2));
@@ -125,21 +143,34 @@ public class SpecialBlockDoor extends SpecialBlock {
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
     }
  
-    private boolean checkForHingeRightSide(Block block, BlockFace facing) {
-        Block checkBlock;
+/*    private boolean checkForHingeRightSide(Block block, BlockFace facing, boolean hingeRight) {
+Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
+        Block leftBlock, rightBlock;
         switch(facing) {
-            case NORTH: checkBlock = block.getRelative(BlockFace.EAST); break;
-            case EAST: checkBlock = block.getRelative(BlockFace.SOUTH); break;
-            case SOUTH: checkBlock = block.getRelative(BlockFace.WEST); break;
-            default: checkBlock = block.getRelative(BlockFace.NORTH);
+            case NORTH: rightBlock = block.getRelative(BlockFace.EAST);
+                     leftBlock = block.getRelative(BlockFace.WEST);break;
+            case EAST: rightBlock = block.getRelative(BlockFace.SOUTH);
+                     leftBlock = block.getRelative(BlockFace.NORTH); break;
+            case SOUTH: rightBlock = block.getRelative(BlockFace.WEST);
+                     leftBlock = block.getRelative(BlockFace.EAST); break;
+            default: rightBlock = block.getRelative(BlockFace.NORTH);
+                     leftBlock = block.getRelative(BlockFace.SOUTH);
         }
-        BlockState checkState = checkBlock.getState();
-        if(checkState.getData() instanceof Door) {
-            return !((Door)checkState.getData()).getHinge();
-        } else {
+        BlockState checkState = leftBlock.getState();
+Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
+        if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
+Logger.getGlobal().info("DoorBlockPlace leftState return true");
+            return true;
+        }
+        checkState = rightBlock.getState();
+Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
+        if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
+Logger.getGlobal().info("DoorBlockPlace leftState return false");
             return false;
         }
-    }
+Logger.getGlobal().info("DoorBlockPlace leftState return default.");
+        return hingeRight;
+    }*/
     
    @Override
     public boolean matches(Block block) {
@@ -158,5 +189,5 @@ public class SpecialBlockDoor extends SpecialBlock {
         }
         return false;
     }
-
+    
 }
