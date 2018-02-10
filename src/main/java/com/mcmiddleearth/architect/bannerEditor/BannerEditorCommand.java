@@ -259,6 +259,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
         helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Banner Editor -";
         help = new String[][]{{"/banner files ","[folder]",": Shows saved banners."},
                               {"/banner save ","<filename> <description>",": Saves banner."},
+                              {"/banner delete ","<filename>",": Deletes a saved banner."},
                               {"/banner load ","<filename>",": Loads banner."}};
         helpList.addAll(Arrays.asList(help));
             for(BannerEditorMode mode: BannerEditorMode.values()) {

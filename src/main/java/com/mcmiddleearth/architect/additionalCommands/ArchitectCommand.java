@@ -25,6 +25,7 @@ import com.mcmiddleearth.pluginutil.message.MessageType;
 import com.mcmiddleearth.util.DevUtil;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -153,6 +154,9 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             }
             PluginData.getMessageUtil().sendErrorMessage(sender,"World not found.");
             return true;*/
+        } else if (args[0].equalsIgnoreCase("reloaddata")) {
+            Bukkit.getServer().reloadData();
+            PluginData.getMessageUtil().sendInfoMessage(sender, "Reloading mc server data...");
         } else if (args[0].equalsIgnoreCase("version")) {
             PluginData.getMessageUtil().sendInfoMessage(sender, "Version: "+ ArchitectPlugin.getPluginInstance()
                                                      .getDescription().getVersion());

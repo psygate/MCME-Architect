@@ -389,7 +389,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      * place powered doors for creative inventory door items
      */
     @EventHandler
-    private void vanillaDoorPlace(BlockPlaceEvent event) {
+    public void vanillaDoorPlace(BlockPlaceEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.USE_POWERED_DOORS)
                 || !event.getHand().equals(EquipmentSlot.HAND) 
                 || event.getPlayer().getInventory().getItemInMainHand()==null
@@ -401,9 +401,12 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
             return;
         }
         ItemStack handItem = player.getInventory().getItemInMainHand();
+//Logger.getGlobal().info("HandItem: "+handItem);        
         SpecialBlock data = getSpecialBlockDataFromItem(handItem);
+//Logger.getGlobal().info("Data: "+data);
         if(data==null) {
             Material material=null;
+            boolean powered = true;
             switch(handItem.getType()) {
                 case ACACIA_DOOR_ITEM:
                     material = Material.ACACIA_DOOR;
@@ -419,12 +422,14 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                     break;
                 case BIRCH_DOOR_ITEM:
                     material = Material.BIRCH_DOOR;
+                    powered = false;
                     break;
                 case WOOD_DOOR:
                     material = Material.WOODEN_DOOR;
                     break;
                 case IRON_DOOR:
                     material = Material.IRON_DOOR_BLOCK;
+                    powered = false;
                     break;
             }
             if(material==null) {
@@ -432,7 +437,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
             }
             ConfigurationSection config = new MemoryConfiguration();
             config.set("blockMaterial", material.name());
-            config.set("powered", true);
+            config.set("powered", powered);
             data = SpecialBlockVanillaDoor.loadFromConfig(config,"temp");
         }
         if(!(data instanceof SpecialBlockVanillaDoor)) {
