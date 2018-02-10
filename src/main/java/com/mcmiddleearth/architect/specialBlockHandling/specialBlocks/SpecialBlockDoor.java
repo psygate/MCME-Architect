@@ -109,24 +109,28 @@ public class SpecialBlockDoor extends SpecialBlock {
                     float yaw = playerLoc.getYaw();
                     if(open) {
                         if(hingeRight) {
-                            yaw += 90;
-                        } else {
                             yaw -= 90;
+                        } else {
+                            yaw += 90;
                         }
                     }
                     final BlockFace facing = getBlockFace(yaw);//getOppositeBlockFace(getBlockFace(yaw));
                     lowerDoorData.setFacingDirection(facing);
                     lowerDoorData.setOpen(open);
                     tempLowerState.setData(lowerDoorData);
-                    boolean hinge=!hingeRight;
-                    /*if(fixedHinge) {
-                        hinge = hingeRight;
-                    } else {
+                    boolean hinge = hingeRight;
+                    if(!fixedHinge) {
                         hinge = checkForHingeRightSide(tempUpperState.getBlock(),facing, hingeRight);
-                    }*/
-                    upperDoorData.setHinge(hinge);
-                    if(powered) {
-                        upperDoorData.setData((byte)(upperDoorData.getData()+2));
+                    }
+                    //upperDoorData.setHinge(!hinge);
+                    if(powered && hinge) {
+                        upperDoorData.setData((byte)10);
+                    } else if(powered && !hinge) {
+                        upperDoorData.setData((byte)11);
+                    } else if(!powered && hinge) {
+                        upperDoorData.setData((byte)8);
+                    } else { 
+                        upperDoorData.setData((byte)9);
                     }
                     tempUpperState.setData(upperDoorData);
                     new BukkitRunnable() {
@@ -143,7 +147,7 @@ public class SpecialBlockDoor extends SpecialBlock {
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
     }
  
-/*    private boolean checkForHingeRightSide(Block block, BlockFace facing, boolean hingeRight) {
+    private boolean checkForHingeRightSide(Block block, BlockFace facing, boolean hingeRight) {
 Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
         Block leftBlock, rightBlock;
         switch(facing) {
@@ -156,21 +160,37 @@ Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
             default: rightBlock = block.getRelative(BlockFace.NORTH);
                      leftBlock = block.getRelative(BlockFace.SOUTH);
         }
-        BlockState checkState = leftBlock.getState();
-Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
-        if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
-Logger.getGlobal().info("DoorBlockPlace leftState return true");
-            return true;
+        if(hingeRight) {
+            BlockState checkState = leftBlock.getState();
+//    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
+            if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
+//    Logger.getGlobal().info("DoorBlockPlace leftState return true");
+                return true;
+            }
+            checkState = rightBlock.getState();
+//    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
+            if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
+//    Logger.getGlobal().info("DoorBlockPlace rightState return false");
+                return false;
+            }
         }
-        checkState = rightBlock.getState();
-Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
-        if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
-Logger.getGlobal().info("DoorBlockPlace leftState return false");
-            return false;
+        else {
+            BlockState checkState = rightBlock.getState();
+//    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
+            if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
+//    Logger.getGlobal().info("DoorBlockPlace rightState return false");
+                return false;
+            }
+            checkState = leftBlock.getState();
+//    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
+            if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
+//    Logger.getGlobal().info("DoorBlockPlace leftState return true");
+                return true;
+            }
         }
 Logger.getGlobal().info("DoorBlockPlace leftState return default.");
         return hingeRight;
-    }*/
+    }
     
    @Override
     public boolean matches(Block block) {

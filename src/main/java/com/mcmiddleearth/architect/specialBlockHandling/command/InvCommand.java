@@ -55,7 +55,7 @@ public class InvCommand extends AbstractArchitectCommand {
     @Override
     public boolean onCommand(CommandSender cs, Command command, String label, String[] args) {
         final CommandSender sender = cs;
-        if(args[0].equalsIgnoreCase("reload")) {
+        if(args.length>0 && args[0].equalsIgnoreCase("reload")) {
             if((cs instanceof Player) && !PluginData.hasPermission((Player)cs,Permission.INV_RELOAD_COMMAND)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
                 return true;

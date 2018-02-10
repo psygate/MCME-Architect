@@ -95,6 +95,12 @@ public class StickBlockCycleListener implements Listener {
                 case CHORUS_FLOWER:
                     state.setRawData((byte)(((6+state.getRawData()+change)%6)));
                     break;
+                case REDSTONE_TORCH_ON:
+                    state.setType(Material.REDSTONE_TORCH_OFF);
+                    break;
+                case REDSTONE_TORCH_OFF:
+                    state.setType(Material.REDSTONE_TORCH_ON);
+                    break;
                 case MOB_SPAWNER:
                     //TODO: item cycling for mob spawner blocks
                     break;
