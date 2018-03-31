@@ -67,13 +67,14 @@ public class ArmorStandListener implements Listener {
             }
             Location loc;
             boolean exact;
-            if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                loc = event.getClickedBlock().getRelative(BlockFace.UP, 1).getLocation();
-                exact = false;
-            }
-            else {
+            if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)
+                    || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 loc = p.getLocation();
                 exact = true;
+            }
+            else {
+                loc = event.getClickedBlock().getRelative(BlockFace.UP, 1).getLocation();
+                exact = false;
             }
             config.placeArmorStand(loc, exact);
             event.setCancelled(true);
@@ -110,7 +111,7 @@ public class ArmorStandListener implements Listener {
         } 
     }
     
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler //(ignoreCancelled = true) removed to make item block stands editable
     public void PlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         if(event.getRightClicked() instanceof ArmorStand) {
             if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.ARMOR_STAND_PROTECTION)) {
@@ -147,6 +148,12 @@ public class ArmorStandListener implements Listener {
         ArmorStandGuard.setModifiedFlag(armorStand);
         ArmorStandEditorConfig config = ArmorStandEditorCommand.getPlayerConfig(player);
         ArmorStandEditorMode mode = config.getEditorMode();
+        if(ArmorStandUtil.isLocked(armorStand) 
+                && !(mode.equals(ArmorStandEditorMode.LOCK) 
+                  && player.getItemInHand().getType().equals(Material.STICK))) {
+            sendLockedMessage(player);
+            return true;
+        }
         int stepInDegree = config.getRotationStep();
         if(!(player.getItemInHand().getType().equals(Material.STICK)
                 || mode.equals(ArmorStandEditorMode.HAND))) {
@@ -268,6 +275,15 @@ public class ArmorStandListener implements Listener {
                 armorStand.setVisible(!armorStand.isVisible());
                 PluginData.getMessageUtil().sendInfoMessage(player,"Switched visibility.");
                 break;
+            case LOCK:
+                if(armorStand.getScoreboardTags().contains("LOCKED")) {
+                    ArmorStandUtil.lockArmorStand(armorStand, false);
+                    PluginData.getMessageUtil().sendInfoMessage(player,"Armor stand unlocked.");
+                } else {
+                    ArmorStandUtil.lockArmorStand(armorStand, true);
+                    PluginData.getMessageUtil().sendInfoMessage(player,"Armor stand locked.");
+                }
+                break;
             case GRAVITY:
                 armorStand.setGravity(!armorStand.hasGravity());
                 PluginData.getMessageUtil().sendInfoMessage(player,"Switched armor stand affected by gravity.");
@@ -288,7 +304,7 @@ public class ArmorStandListener implements Listener {
                 //nothing to do here
                 break;
             case COPY:
-                config.copyArmorStand(armorStand);
+                config.copyArmorStand(player, armorStand);
                 sendCopyMessage(player);
                 break;
         }
@@ -357,4 +373,7 @@ public class ArmorStandListener implements Listener {
         PluginData.getMessageUtil().sendInfoMessage(player,"Armor stand copied to clipboard.");
     }
 
+    private void sendLockedMessage(Player player) {
+        PluginData.getMessageUtil().sendErrorMessage(player,"This armor stand is locked! Use /armor l to unlock.");
+    }
 }

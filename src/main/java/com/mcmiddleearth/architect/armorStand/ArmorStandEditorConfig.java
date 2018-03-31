@@ -28,6 +28,7 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -44,6 +45,9 @@ public class ArmorStandEditorConfig {
     private MemoryConfiguration copiedEntity;
     
     private boolean hasCopiedArmorStand = false;
+    
+    @Getter
+    private Vector copiedArmorStandRelativeLoc = new Vector(0,0,0);
     
     @Getter
     private static final File dataDir = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"armorStands");
@@ -83,9 +87,11 @@ public class ArmorStandEditorConfig {
         hasCopiedArmorStand = false;
     }
     
-    public void copyArmorStand(ArmorStand armor) {
+    public void copyArmorStand(Player player, ArmorStand armor) {
         copiedEntity = new MemoryConfiguration();
         copiedEntity.set("ArmorStand",ArmorStandUtil.serializeArmorStand(armor));
+        copiedArmorStandRelativeLoc = armor.getLocation().getBlock().getLocation().toVector()
+                     .subtract(player.getLocation().toVector());
         hasCopiedArmorStand = true;
     }
     

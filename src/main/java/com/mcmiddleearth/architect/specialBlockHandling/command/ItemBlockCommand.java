@@ -82,6 +82,10 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
             }
             return true;
         }
+        /*if(args[0].equalsIgnoreCase("visible")) {
+            SpecialBlockItemBlock.makeVisible(p.getLocation());
+            return true;
+        }*/
         if(!args[0].equalsIgnoreCase("remove")) {
             PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
             return true;

@@ -18,17 +18,14 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -105,6 +102,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         //armor.setMarker(true); makes items vanish near the edge of screen but doesn't remove push time
         armor.setGravity(false);
         armor.setCustomName(getArmorStandName(blockPlace)+ID_DELIMITER+getId());
+        armor.addScoreboardTag(ArmorStandUtil.LOCKED);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -166,7 +164,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static void removeArmorStands(Location loc, double xzRadius, double yRadius, boolean exactMatch) {
         for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, xzRadius, yRadius, xzRadius)) {
-//Logger.getGlobal().info("found "+entity);
+//Logger.getGlobal().info("found "+entity.getCustomName()+" Loc: "+entity.getLocation());
+//Logger.getGlobal().info("Exact match: "+exactMatch+"   searching for: "+getArmorStandName(loc.getBlock()));
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
                     && (!exactMatch || entity.getCustomName().startsWith(getArmorStandName(loc.getBlock())))) {
 //Logger.getGlobal().info("removed "+entity.getCustomName());
