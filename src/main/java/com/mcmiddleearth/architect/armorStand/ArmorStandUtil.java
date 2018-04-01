@@ -114,4 +114,18 @@ public class ArmorStandUtil {
         }
     }
     
+    public static final String LOCKED = "LOCKED";
+    
+    public static void lockArmorStand(ArmorStand armorStand, boolean locked) {
+        if(locked) {
+            armorStand.addScoreboardTag(LOCKED);
+        } else {
+            armorStand.removeScoreboardTag(LOCKED);
+        }
+    }
+    
+    public static boolean isLocked(ArmorStand armorStand) {
+        return armorStand.getScoreboardTags().contains(LOCKED);
+    }
+    
 }

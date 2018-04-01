@@ -6,7 +6,6 @@
 package com.mcmiddleearth.architect.armorStand;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
 
 /**
  *
@@ -32,6 +31,7 @@ public enum ArmorStandEditorMode {
     GRAVITY     ("g","",": Selects switch gravity mode"),
     PASTE       ("p","",": Selects paste mode"),
     COPY        ("c","",": Selects copy mode"),
+    LOCK        ("l","",": Selects switch lock mode"),
     ROLLBACK    ("rollback","",": Not implemented");
     
     @Getter

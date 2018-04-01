@@ -29,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -83,6 +84,11 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                     sendRotationStepMessage(cs,playerConfig.getRotationStep());
                     return true;
                 }
+                if(args[0].equalsIgnoreCase("default")) {
+                    playerConfig.setRotationStep(10);
+                    sendStepSizeDefaultMessage(cs);
+                    return true;
+                }
                 if(args[0].equalsIgnoreCase("parts")) {
                     sendPartsHelpMessage(cs);
                     return true;
@@ -113,8 +119,10 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
                 }
-                if(args[0].equalsIgnoreCase("place")) {
-                    playerConfig.placeArmorStand(p.getLocation(),true);
+                if(args[0].equalsIgnoreCase("paste")) {
+                    Vector loc = p.getLocation().toVector();
+                    loc = loc.add(playerConfig.getCopiedArmorStandRelativeLoc());
+                    playerConfig.placeArmorStand(loc.toLocation(p.getWorld()),false);
                     return true;
                 }
                 if(args[0].equalsIgnoreCase("place2") && PluginData.hasPermission(p,Permission.RANDOMISER_MATERIALS)) {
@@ -295,6 +303,9 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
                         case VISIBLE:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch visibility");
                             break;
+                        case LOCK:
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch lock");
+                            break;
                         case BASE:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> switch base plate");
                             break;
@@ -314,7 +325,7 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
     }
 
     private void sendRotationStepMessage(CommandSender cs, int rotationStep) {
-        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set rot/move step to "+rotationStep+"degree/percent");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set rot/move step to "+rotationStep+" percent/degree");
     }
 
     private void sendCopiedArmorStandClearedMessage(CommandSender cs) {
@@ -373,6 +384,10 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
 
     private void sendNotActivatedMessage(CommandSender cs) {
         PluginData.getMessageUtil().sendErrorMessage(cs, "Armor stand editor is not activated for this world.");
+    }
+        
+    private void sendStepSizeDefaultMessage(CommandSender cs) {
+        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set move/rot step to 10 percentt/degree.");
     }
         
     @Override
