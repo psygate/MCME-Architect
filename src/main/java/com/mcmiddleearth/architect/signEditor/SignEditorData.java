@@ -74,7 +74,38 @@ public class SignEditorData {
             return false;
         }
         Sign sign = (Sign) signBlock.getState();
-        sign.setLine(line-1, newText.replace('#','§'));
+        char[] chars = newText.toCharArray();
+        CharPage charPage = CharPage.LATIN;
+        newText = "";
+        for(int i=0; i < chars.length; i++) {
+            if(chars[i] == '#') {
+                if(i+1 < chars.length) {
+                    switch(chars[i+1]) {
+                        case '#':
+                        case ' ':
+                            newText = newText+"#";
+                            break;
+                        case 'L':
+                            charPage = CharPage.LATIN;
+                            i++;
+                            break;
+                        case 'T':
+                            charPage = CharPage.TENGWAR;
+                            i++;
+                            break;
+                        case 'A':
+                            charPage = CharPage.ANGERTHAS;
+                            i++;
+                            break;
+                        default:
+                            newText = newText+"§";
+                    }
+                }
+            } else {
+                newText = newText+((char)(chars[i]+charPage.shift));
+            }
+        }
+        sign.setLine(line-1, newText);//.replace('#','§'));
         sign.update(true, false);
         return true;
     }

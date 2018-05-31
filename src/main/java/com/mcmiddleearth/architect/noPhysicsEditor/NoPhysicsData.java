@@ -56,8 +56,12 @@ public class NoPhysicsData {
         return false;
     }
     
-    public static void setExceptionArea(String name, CuboidRegion region) {
-        exceptionAreas.put(name, new RedstoneCircuitArea(region));
+    public static void setExceptionArea(String name, CuboidRegion region, String type) {
+        if(type.equalsIgnoreCase("redstone")) {
+            exceptionAreas.put(name, new RedstoneCircuitArea(region));
+        } else {
+            exceptionAreas.put(name, new WaterFlowArea(region));
+        }
     }
     
     public static void deleteExceptionArea(String name) {

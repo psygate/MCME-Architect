@@ -378,7 +378,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
             return;
         }
-Logger.getGlobal().info("remove Item Block"+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ());
+//Logger.getGlobal().info("remove Item Block"+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ());
         Location loc = new Location(event.getBlock().getWorld(), event.getBlock().getX()+0.5,
                                     event.getBlock().getY(), event.getBlock().getZ()+0.5);
         SpecialBlockItemBlock.removeArmorStands(loc);
