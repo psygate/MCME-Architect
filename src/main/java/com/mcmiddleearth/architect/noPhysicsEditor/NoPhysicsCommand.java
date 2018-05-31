@@ -138,7 +138,8 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
                 }
-                if(args[1].equalsIgnoreCase("set")) {
+                if(args[1].equalsIgnoreCase("redstone")
+                        || args[1].equalsIgnoreCase("water")) {
                     Region region= null;
                     try {
                         region = WorldEdit.getInstance().getSession(p.getName()).getRegion();
@@ -149,7 +150,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                                 sendAreaAlreadyExistsMessage(p);
                                 return true;
                             }
-                            NoPhysicsData.setExceptionArea(args[2], (CuboidRegion) region);
+                            NoPhysicsData.setExceptionArea(args[2], (CuboidRegion) region, args[1]);
                             try {
                                 NoPhysicsData.save();
                             } catch (IOException ex) {

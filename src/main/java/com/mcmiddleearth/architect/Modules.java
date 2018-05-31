@@ -40,6 +40,7 @@ public enum Modules {
     BLOCK_PLAYER_INTERACTION ("modules.specialBlocks.blockPlayerInteraction"),
 
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),
+    DROP_BLOCKING          ("modules.environment.dropBlocking"),
     MONSTER_SPAWN_BLOCKING ("modules.environment.monsterSpawnBlocking"),
     FIRE_SPREAD_BLOCKING   ("modules.environment.fireSpreadBlocking"),
     WEATHER_BLOCKING       ("modules.environment.weatherBlocking"),

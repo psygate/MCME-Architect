@@ -387,7 +387,7 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
     }
         
     private void sendStepSizeDefaultMessage(CommandSender cs) {
-        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set move/rot step to 10 percentt/degree.");
+        PluginData.getMessageUtil().sendInfoMessage(cs, "    -> Set move/rot step to 10 percent/degree.");
     }
         
     @Override

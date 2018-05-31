@@ -18,7 +18,10 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -27,6 +30,7 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
@@ -49,7 +53,15 @@ public class GameMechanicsListener implements Listener{
     }
     
     @EventHandler
-    private void onBlockBurn(BlockBurnEvent event) {
+    public void blockPlayerDrops(PlayerDropItemEvent event)
+    {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.DROP_BLOCKING)) {
+            event.getItemDrop().remove();
+        }
+    }
+    
+    @EventHandler
+    public void onBlockBurn(BlockBurnEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.FIRE_SPREAD_BLOCKING))
         event.setCancelled(true);
     }
