@@ -152,8 +152,10 @@ public class SpecialBlockListener implements Listener{
             return;
         }
         if(!PluginData.hasGafferPermission(player,blockPlace.getLocation())) {
+//Logger.getGlobal().info("No Gaffer Permission");
             return;
         }
+//Logger.getGlobal().info("Gaffer Permission ok");
 //Logger.getGlobal().info(""+data.getType());
         data.placeBlock(blockPlace, event.getBlockFace(), player);
 /*Logger.getGlobal().info("specialBlock place 7 main");
@@ -373,7 +375,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      * item block is removed.
      * @param event 
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) 
     public void removeItemBlockArmorStand(BlockBreakEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)) {
             return;
