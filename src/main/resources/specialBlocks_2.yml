@@ -1,0 +1,1304 @@
+Categories:
+    Block:
+        itemMaterial: GOLD_HELMET
+        damage: 13
+        damageCurrent: 14
+    Deco:
+        itemMaterial: GOLD_HELMET
+        damage: 15
+        damageCurrent: 16
+    Plant:
+        itemMaterial: GOLD_HELMET
+        damage: 5
+        damageCurrent: 6
+    Door:
+        itemMaterial: GOLD_HELMET
+        damage: 7        
+        damageCurrent: 8
+    Barrel:
+        itemMaterial: GOLD_HELMET
+        damage: 9        
+        damageCurrent: 10
+    Glass:
+        itemMaterial: GOLD_HELMET
+        damage: 17        
+        damageCurrent: 18
+    Misc:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test2:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test3:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test4:
+        itemMaterial: GOLD_HELMET
+        damageCurrent: 12
+        damage: 11        
+    Test5:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test6:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test7:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test8:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test9:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test10:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test11:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test12:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+    Test13:
+        itemMaterial: GOLD_HELMET
+        damage: 11        
+        damageCurrent: 12
+Items:
+    Meat:
+        blockMaterial: CACTUS
+        dataValue: 0
+        itemMaterial: CACTUS
+        damage: 0    
+        category: Deco
+        type: BLOCK
+    Diagonal Chains 1:
+        blockMaterial: REDSTONE_WIRE
+        dataValue: 1
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 1
+        display: Diagonal Chains
+        category: Deco
+        type: BLOCK
+    Horizontal Chains:
+        blockMaterial: REDSTONE_WIRE
+        dataValue: 2
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 2    
+        category: Deco
+        type: BLOCK
+    Smooth Full Stone:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 8
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 3    
+        type: BLOCK
+    Smooth Half Stone:
+        blockMaterial: DOUBLE_STEP
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 4    
+        type: BLOCK
+    Dragon Egg:
+        blockMaterial: DRAGON_EGG
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 5    
+        category: Deco
+        type: BLOCK
+    Oak Log (bark):
+        blockMaterial: LOG
+        dataValue: 12
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 6    
+        type: BLOCK
+    Spruce Log (bark):
+        blockMaterial: LOG
+        dataValue: 13
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 7    
+        type: BLOCK
+    Birch Log (bark):
+        blockMaterial: LOG
+        dataValue: 14
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 8    
+        type: BLOCK
+    Jungle Log (bark):
+        blockMaterial: LOG
+        dataValue: 15
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 9    
+        type: BLOCK
+    Acacia Log (bark):
+        blockMaterial: LOG_2
+        dataValue: 12
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 10    
+        type: BLOCK
+    Dark Oak Log (bark):
+        blockMaterial: LOG_2
+        dataValue: 13
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 11    
+        type: BLOCK
+    Table:
+        blockMaterial: PISTON_EXTENSION
+        dataValueNorth: 2
+        dataValueSouth: 3
+        dataValueEast: 5
+        dataValueWest: 4
+        dataValueUp: 1
+        dataValueDown: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 12    
+        category: Deco
+        type: SIX_FACES
+    Wheel:
+        blockMaterial: PISTON_EXTENSION
+        dataValueNorth: 10
+        dataValueSouth: 11
+        dataValueEast: 13
+        dataValueWest: 12
+        dataValueUp: 9
+        dataValueDown: 8
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 13   
+        category: Deco
+        type: SIX_FACES
+    Unlit Torch:
+        blockMaterial: REDSTONE_TORCH_OFF
+        dataValueNorth: 4
+        dataValueSouth: 3
+        dataValueEast: 1
+        dataValueWest: 2
+        dataValueDown: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 21   
+        category: Deco
+        type: FIVE_FACES
+    Half Bed (head):
+        blockMaterial: BED_BLOCK
+        dataValueNorth: 10
+        dataValueSouth: 8
+        dataValueEast: 11
+        dataValueWest: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 22   
+        category: Deco
+        type: FOUR_DIRECTIONS
+    Half Bed (feet):
+        blockMaterial: BED_BLOCK
+        dataValueNorth: 2
+        dataValueSouth: 0
+        dataValueEast: 3
+        dataValueWest: 1
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 23   
+        category: Deco
+        type: FOUR_DIRECTIONS
+    Weathered Sandstone Bricks:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 24    
+        type: BLOCK
+    Sandstone Corner:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValueX: 1
+        dataValueZ: 2
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 25    
+        type: TWO_AXIS
+    Sandstone Window Bottom:
+        blockMaterial: CACTUS
+        dataValueX: 1
+        dataValueZ: 2
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 26    
+        type: TWO_AXIS
+    Sandstone Window Top:
+        blockMaterial: CACTUS
+        dataValueX: 3
+        dataValueZ: 4
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 27    
+        type: TWO_AXIS
+    Sandstone and Clay:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValueNorthWest: 5
+        dataValueSouthWest: 4
+        dataValueNorthEast: 6
+        dataValueSouthEast: 3
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 28    
+        type: WALL_COMBI
+    Footprints:
+        blockMaterial: ACTIVATOR_RAIL
+        dataValueSouth: 8
+        dataValueSouthWest: 11
+        dataValueWest: 9
+        dataValueNorthWest: 2
+        dataValueNorth: 0
+        dataValueNorthEast: 3
+        dataValueEast: 1
+        dataValueSouthEast: 10
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 29   
+        category: Deco
+        type: EIGHT_FACES
+    Brown Mushroom:
+        blockMaterial: BROWN_MUSHROOM
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 30    
+        category: Plant
+        type: BLOCK
+    Red Mushroom:
+        blockMaterial: RED_MUSHROOM
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 31    
+        category: Plant
+        type: BLOCK
+    Decorated Sandstone:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValue: 7
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 32    
+        type: BLOCK
+    Decorated Sandstone Corner:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValueX: 8
+        dataValueZ: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 33    
+        type: TWO_AXIS
+    The Eye:
+        blockMaterial: PORTAL
+        dataValueNorth: 1
+        dataValueSouth: 1
+        dataValueEast: 2
+        dataValueWest: 2
+        category: Deco
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 34    
+        type: FOUR_DIRECTIONS
+    Barrel(potatoes):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 1
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 41    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(coal):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 2
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 42    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(tomatoes):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 3
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 43    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(wheat):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 4
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 44    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(meat):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 5
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 45    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(grapes):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 6
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 46    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(water):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 7
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 47    
+        category: Barrel
+        type: ITEM_BLOCK
+    Coal Slab:
+        blockMaterial: STONE_SLAB2
+        dataValue: 0
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 8
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 48   
+        type: ITEM_BLOCK
+    Dirt Slab:
+        blockMaterial: STONE_SLAB2
+        dataValue: 0
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 9
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 49   
+        type: ITEM_BLOCK
+    Gravel Slab:
+        blockMaterial: STONE_SLAB2
+        dataValue: 0
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 10
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 50   
+        type: ITEM_BLOCK
+    Sand Slab:
+        blockMaterial: STONE_SLAB2
+        dataValue: 0
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 11
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 51   
+        type: ITEM_BLOCK
+    Barrel(apples):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 12
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 52    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(fish):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 13
+        contentHeight: 0.84
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 53    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(potatoes-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 1
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 41    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(coal-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 2
+        contentHeight: 0.44
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 42    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(tomatoes-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 3
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 43    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(wheat-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 4
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 44    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(meat-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 5
+        contentHeight: 0.64
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 45    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(grapes-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 6
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 46    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(water-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 7
+        contentHeight: 0.44
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 47    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(apples-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 12
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 52    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(fish-half):
+        blockMaterial: CACTUS
+        blockDataValue: 5
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 13
+        contentHeight: 0.54
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 53    
+        category: Barrel
+        type: ITEM_BLOCK
+    Barrel(empty):
+        blockMaterial: CACTUS
+        dataValue: 5
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 55    
+        category: Barrel
+        type: BLOCK
+    Glass(circle light grey 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 14
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 14    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle light grey 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 15
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 15    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle light grey 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 16
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 16    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle light grey 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 17
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 17    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle dark grey 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 18
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 18    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle dark grey 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 19
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 19    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle dark grey 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 20
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 20    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle dark grey 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 21
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 21    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle blue 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 22
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 22   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle blue 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 23
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 23   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle blue 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 24
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 24 
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle blue 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 25
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 25    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light grey 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 26
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 26    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light grey 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 27
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 27    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light grey 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 28
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 28    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light grey 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 29
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 29   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb dark grey 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 30
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 30    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb dark grey 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 31
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 31   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb dark grey 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 32
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 32   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb dark grey 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 33
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 33   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb blue 50%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 34
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 34   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb blue 60%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 35
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 35   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb blue 70%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 36
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 36 
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb blue 75%):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 37
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 37    
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle light blue):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 38
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 38   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle coloured):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 39
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 39   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(circle dark red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 40
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 40   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light blue):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 41
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 41   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb coloured):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 42
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 42  
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb dark red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 43
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 43   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond light blue):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 44
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 44   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond dark blue):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 45
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 45   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond coloured):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 46
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 46   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond dark grey):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 47
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 47   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond light grey):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 48
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 48   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(diamond dark red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 49
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 49   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(rhomb light red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 50
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 50   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood blue):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 51
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 51   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood green):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 52
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 52   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood dark red):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 53
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 53   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood dark grey):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 54
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 54   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood light grey):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 55
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 55   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Glass(wood coloured):
+        blockMaterial: ACACIA_FENCE_GATE
+        dataValueX: 8
+        dataValueZ: 9
+        contentItem: DIAMOND_LEGGINGS
+        contentDamage: 56
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_LEGGINGS
+        damage: 56   
+        category: Glass
+        type: ITEM_BLOCK_TWO_DIRECTIONS
+    Log with ropes:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValueX: 0
+        dataValueY: 1
+        dataValueZ: 2
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 57    
+        type: THREE_AXIS
+    Log with chains:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValueX: 3
+        dataValueY: 4
+        dataValueZ: 5
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 58    
+        type: THREE_AXIS
+    Unused Block 3:
+        blockMaterial: HUGE_MUSHROOM_1
+        dataValue: 12
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 4:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 5:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 1
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 6:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 2
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 7:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 3
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 8:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 4
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 9:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 5
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 10:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 6
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 11:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 7
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 12:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 0
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 13:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 8
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 14:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 15:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 16:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 17:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 18:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 19:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 20:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 21:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 22:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 23:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 24:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 25:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 26:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 27:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 28:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 29:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 30:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 31:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 32:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 33:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 34:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 35:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 36:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 37:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 38:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 39:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 40:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 41:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 42:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 43:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 44:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 45:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 46:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 47:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 48:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 49:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 50:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    Unused Block 51:
+        blockMaterial: HUGE_MUSHROOM_2
+        dataValue: 9
+        itemMaterial: DIAMOND_CHESTPLATE
+        damage: 54    
+        type: BLOCK
+    

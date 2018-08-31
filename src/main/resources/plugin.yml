@@ -48,7 +48,7 @@ commands:
       usage: /nophy list | add | remove
    architect:
       description: Manage architect plugin
-      usage: /architect version | world | reload | dev
+      usage: /architect version | world | weather | reload | dev
    chead:
       description: Manage custom heads
       usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
@@ -76,6 +76,7 @@ permissions:
             architect.inventory.reload: true
             architect.inventory.other: true
             architect.get.other: true
+            architect.weather: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -307,4 +308,7 @@ permissions:
         default: op
     architect.customHeadManager.manager: 
         descriptions: Allows to use all subcommands of command /chead 
+        default: op
+    architect.weather: 
+        descriptions: Allows to change server weather 
         default: op

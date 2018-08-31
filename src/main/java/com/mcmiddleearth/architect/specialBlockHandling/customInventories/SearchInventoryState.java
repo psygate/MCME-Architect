@@ -139,7 +139,7 @@ public class SearchInventoryState {
         ItemStack item = new ItemStack(material,1,damage);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(display);
-        meta.spigot().setUnbreakable(true);
+        meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);

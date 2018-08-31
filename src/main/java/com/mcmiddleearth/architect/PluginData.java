@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,6 +52,10 @@ public class PluginData {
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
     
     private static final Map<String, String> rpUrls = new HashMap<>();
+    
+    @Getter
+    @Setter
+    private static boolean overrideWeather = false;
     
     @Getter
     private static final MessageUtil messageUtil = new MessageUtil();

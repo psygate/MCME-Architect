@@ -89,7 +89,7 @@ Logger.getGlobal().info(cat);
                 if(i==currentCategory) {
                      item = new ItemStack(cat.getCurrentCategoryItem());
                      ItemMeta meta = item.getItemMeta();
-                     meta.spigot().setUnbreakable(false);
+                     meta.setUnbreakable(false);
                      item.setItemMeta(meta);
                 } else {
                      item = new ItemStack(cat.getCategoryItem());
@@ -355,7 +355,7 @@ Logger.getGlobal().info(cat);
         ItemStack item = new ItemStack(material,1,damage);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(display);
-        meta.spigot().setUnbreakable(true);
+        meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);

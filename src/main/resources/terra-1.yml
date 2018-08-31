@@ -1,0 +1,738 @@
+﻿Categories:
+    Terra:
+        itemMaterial: LEATHER_HELMET
+        damage: 1
+        damageCurrent: 2
+        
+Items:
+# MAX durability of Diamond Boots: 430
+    stone:
+        blockMaterial: STONE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 1
+        display: Stone [1:0]
+        category: Terra
+        type: BLOCK 
+        
+    granite:
+        blockMaterial: STONE
+        dataValue: 1
+        itemMaterial: DIAMOND_BOOTS
+        damage: 2
+        display: Rough dark stone [1:1]
+        category: Terra
+        type: BLOCK
+        
+    granite_smooth:
+        blockMaterial: STONE
+        dataValue: 2
+        itemMaterial: DIAMOND_BOOTS
+        damage: 3
+        display: Smooth red stone [1:2]
+        category: Terra
+        type: BLOCK
+        
+    diorite:
+        blockMaterial: STONE
+        dataValue: 3
+        itemMaterial: DIAMOND_BOOTS
+        damage: 4
+        display: Rough light stone [1:3]
+        category: Terra
+        type: BLOCK
+        
+    diorite_smooth:
+        blockMaterial: STONE
+        dataValue: 4
+        itemMaterial: DIAMOND_BOOTS
+        damage: 5
+        display: Smooth light stone [1:4]
+        category: Terra
+        type: BLOCK
+        
+    andesite:
+        blockMaterial: STONE
+        dataValue: 5
+        itemMaterial: DIAMOND_BOOTS
+        damage: 6
+        display: Mossy stone [1:5]
+        category: Terra
+        type: BLOCK
+        
+    andesite_smooth:
+        blockMaterial: STONE
+        dataValue: 6
+        itemMaterial: DIAMOND_BOOTS
+        damage: 7
+        display: Smooth dark stone [1:6]
+        category: Terra
+        type: BLOCK
+        
+    hardened_clay:
+        blockMaterial: HARD_CLAY
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 8
+        display: Smooth brown stone [172:0]
+        category: Terra
+        type: BLOCK
+        
+    gold_ore:
+        blockMaterial: GOLD_ORE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 9
+        display: Gold ore [14:0]
+        category: Terra
+        type: BLOCK
+        
+    iron_ore:
+        blockMaterial: IRON_ORE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 10
+        display: Iron ore [15:0]
+        category: Terra
+        type: BLOCK
+        
+    coal_ore:
+        blockMaterial: COAL_ORE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 11
+        display: Coal ore [16:0]
+        category: Terra
+        type: BLOCK
+        
+    lapis_ore:
+        blockMaterial: LAPIS_ORE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 12
+        display: Copper ore [21:0]
+        category: Terra
+        type: BLOCK
+        
+    # diamond_ore:
+        # blockMaterial: DIAMOND_ORE
+        # dataValue: 0
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 13
+        # display: --- [56:0]
+        # category: Terra
+        # type: BLOCK
+        
+    # redstone_ore:
+        # blockMaterial: REDSTONE_ORE
+        # dataValue: 0
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 14
+        # display: --- [73:0]
+        # category: Terra
+        # type: BLOCK
+        
+    # emerald_ore:
+        # blockMaterial: EMERALD_ORE
+        # dataValue: 0
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 15
+        # display: --- [129:0]
+        # category: Terra
+        # type: BLOCK
+        
+    # quartz_ore:
+        # blockMaterial: QUARTZ_ORE
+        # dataValue: 0
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 16
+        # display: --- [153:0]
+        # category: Terra
+        # type: BLOCK
+        
+    bedrock:
+        blockMaterial: BEDROCK
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 17
+        display: Bedrock [7:0]
+        category: Terra
+        type: BLOCK
+        
+    obsidian:
+        blockMaterial: OBSIDIAN
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 18
+        display: Obsidian [49:0]
+        category: Terra
+        type: BLOCK
+        
+    netherrack:
+        blockMaterial: NETHERRACK
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 19
+        display: Ash/coal block [87:0]
+        category: Terra
+        type: BLOCK
+        
+    grass:
+        blockMaterial: GRASS
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 20
+        display: Grass block [2:0]
+        category: Terra
+        type: BLOCK
+        
+    dirt:
+        blockMaterial: DIRT
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 21
+        display: Dirt block [3:0]
+        category: Terra
+        type: BLOCK
+        
+    clay:
+        blockMaterial: CLAY
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 22
+        display: Light dirt [82:0]
+        category: Terra
+        type: BLOCK
+        
+    soul_sand:
+        blockMaterial: SOUL_SAND
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 23
+        display: Dark dirt [88:0]
+        category: Terra
+        type: BLOCK
+        
+    coarse_dirt:
+        blockMaterial: DIRT
+        dataValue: 1
+        itemMaterial: DIAMOND_BOOTS
+        damage: 24
+        display: Coarse dirt [3:1]
+        category: Terra
+        type: BLOCK
+        
+    podzol:
+        blockMaterial: DIRT
+        dataValue: 2
+        itemMaterial: DIAMOND_BOOTS
+        damage: 25
+        display: Podzol [3:2]
+        category: Terra
+        type: BLOCK
+        
+    sand:
+        blockMaterial: DIRT
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 26
+        display: Sand [12:0]
+        category: Terra
+        type: BLOCK
+        
+    gravel:
+        blockMaterial: GRAVEL
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 27
+        display: Gravel [13:0]
+        category: Terra
+        type: BLOCK
+        
+    red_sand:
+        blockMaterial: SAND
+        dataValue: 1
+        itemMaterial: DIAMOND_BOOTS
+        damage: 28
+        display: Red gravel [12:1]
+        category: Terra
+        type: BLOCK
+        
+    nether_wart_block:
+        blockMaterial: NETHER_WART_BLOCK
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 29
+        display: Rough gravel [214:0]
+        category: Terra
+        type: BLOCK
+        
+    mycelium:
+        blockMaterial: MYCEL
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 30
+        display: Greenish dirt [110:0]
+        category: Terra
+        type: BLOCK
+        
+    farmland_moisture0:
+        blockMaterial: SOIL
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 31
+        display: Dry farmland [60:0]
+        category: Terra
+        type: BLOCK
+        
+    farmland_moisture1:
+        blockMaterial: SOIL
+        dataValue: 1
+        itemMaterial: DIAMOND_BOOTS
+        damage: 32
+        display: Wet farmland [60:1]
+        category: Terra
+        type: BLOCK
+        
+    farmland_moisture2:
+        blockMaterial: SOIL
+        dataValue: 2
+        itemMaterial: DIAMOND_BOOTS
+        damage: 33
+        display: Very wet farmland [60:2]
+        category: Terra
+        type: BLOCK
+        
+    farmland_moisture3:
+        blockMaterial: SOIL
+        dataValue: 3
+        itemMaterial: DIAMOND_BOOTS
+        damage: 34
+        display: Dark soil [60:3]
+        category: Terra
+        type: BLOCK
+        
+    # farmland_moisture4:
+        # blockMaterial: SOIL
+        # dataValue: 4
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 35
+        # display: --- [60:4]
+        # category: Terra
+        # type: BLOCK
+        
+    # farmland_moisture5:
+        # blockMaterial: SOIL
+        # dataValue: 5
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 36
+        # display: --- [60:5]
+        # category: Terra
+        # type: BLOCK
+        
+    # farmland_moisture6:
+        # blockMaterial: SOIL
+        # dataValue: 6
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 37
+        # display: --- [60:6]
+        # category: Terra
+        # type: BLOCK
+        
+    # farmland_moisture7:
+        # blockMaterial: SOIL
+        # dataValue: 7
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 38
+        # display: --- [60:7]
+        # category: Terra
+        # type: BLOCK
+        
+    snow:
+        blockMaterial: SNOW_BLOCK
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 39
+        display: Snow block [80:0]
+        category: Terra
+        type: BLOCK
+        
+    snow_layer:
+        blockMaterial: SNOW
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 40
+        display: Layered snow [78:0]
+        category: Terra
+        type: BLOCK
+        
+    ice:
+        blockMaterial: ICE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 41
+        display: Ice [79:0]
+        category: Terra
+        type: BLOCK
+        
+    packed_ice:
+        blockMaterial: PACKED_ICE
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 42
+        display: Ice [174:0]
+        category: Terra
+        type: BLOCK
+        
+    # frosted_ice age0:
+        # blockMaterial: FROSTED_ICE
+        # dataValue: 0
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 43
+        # display: --- [212:0]
+        # category: Terra
+        # type: BLOCK
+        
+    # frosted_ice age1:
+        # blockMaterial: FROSTED_ICE
+        # dataValue: 1
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 44
+        # display: --- [212:1]
+        # category: Terra
+        # type: BLOCK
+        
+    # frosted_ice age2:
+        # blockMaterial: FROSTED_ICE
+        # dataValue: 2
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 45
+        # display: --- [212:2]
+        # category: Terra
+        # type: BLOCK
+        
+    # frosted_ice age3:
+        # blockMaterial: FROSTED_ICE
+        # dataValue: 3
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 46
+        # display: --- [212:3]
+        # category: Terra
+        # type: BLOCK
+        
+    # grass_path:
+        # blockMaterial: GRASS_PATH
+        # dataValue: 3
+        # itemMaterial: DIAMOND_BOOTS
+        # damage: 47
+        # display: --- [208:0]
+        # category: Terra
+        # type: BLOCK
+        
+    bucket_water:
+        blockMaterial: STATIONARY_WATER
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 0
+        display: Water [9:0]
+        category: Terra
+        type: BLOCK
+        
+    bucket_lava:
+        blockMaterial: STATIONARY_LAVA
+        dataValue: 0
+        itemMaterial: DIAMOND_BOOTS
+        damage: 0
+        display: Lava [11:0]
+        category: Terra
+        type: BLOCK
+        
+    # ----------------------
+        
+    half_slab_stone:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 100
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 101
+        display: ITEMBLOCK Stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_stone:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 102
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 103
+        display: ITEMBLOCK Stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_granite:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 104
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 105
+        display: ITEMBLOCK Rough dark stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_granite:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 106
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 107
+        display: ITEMBLOCK Rough dark stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_granite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 108
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 109
+        display: ITEMBLOCK Smooth red stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_granite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 110
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 111
+        display: ITEMBLOCK Smooth red stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_diorite:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 112
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 113
+        display: ITEMBLOCK Rough light stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_diorite:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 114
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 115
+        display: ITEMBLOCK Rough light stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_diorite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 116
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 117
+        display: ITEMBLOCK Smooth light stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_diorite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 118
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 119
+        display: ITEMBLOCK Smooth light stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_andesite:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 120
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 121
+        display: ITEMBLOCK Mossy stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_andesite:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 122
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 123
+        display: ITEMBLOCK Mossy stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_andesite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 124
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 125
+        display: ITEMBLOCK Smooth dark stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_andesite_smooth:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 126
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 127
+        display: ITEMBLOCK Smooth dark stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_hardened_clay:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 128
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 129
+        display: ITEMBLOCK Brown stone half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_hardened_clay:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 130
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 131
+        display: ITEMBLOCK Brown stone half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_dirt:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 132
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 133
+        display: ITEMBLOCK Dirt half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_dirt:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 134
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 135
+        display: ITEMBLOCK Dirt half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_sand:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 136
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 137
+        display: ITEMBLOCK Sand half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_sand:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 138
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 139
+        display: ITEMBLOCK Sand half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_gravel:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 140
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 141
+        display: ITEMBLOCK Gravel half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_gravel:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 142
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 143
+        display: ITEMBLOCK Gravel half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    half_slab_nether_wart_block:
+        blockMaterial: STEP
+        blockDataValue: 6
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 144
+        contentHeight: 0.3125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 145
+        display: ITEMBLOCK Rough gravel half slab (lower)
+        category: Terra
+        type: ITEM_BLOCK
+        
+    upper_slab_nether_wart_block:
+        blockMaterial: STEP
+        blockDataValue: 14
+        contentItem: DIAMOND_BOOTS
+        contentDamage: 146
+        contentHeight: 0.8125
+        itemMaterial: DIAMOND_BOOTS
+        damage: 147
+        display: ITEMBLOCK Rough gravel half slab (upper)
+        category: Terra
+        type: ITEM_BLOCK

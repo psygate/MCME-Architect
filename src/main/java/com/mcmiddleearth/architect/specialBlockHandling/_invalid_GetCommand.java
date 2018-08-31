@@ -16,7 +16,6 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling;
 
-import com.mcmiddleearth.architect.specialBlockHandling.*;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
@@ -53,7 +52,7 @@ public class _invalid_GetCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
-        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS)) {
+        if(!PluginData.isModuleEnabled(p.getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             sendNotEnabledErrorMessage(cs);
             return true;
         }

@@ -385,7 +385,7 @@ public class SpecialBlockInventoryData {
             ItemMeta im = item.getItemMeta();
             im.setDisplayName(displayName);
             im.setLore(Arrays.asList(new String[]{SPECIAL_BLOCK_TAG, fullName(rp,name)}));
-            im.spigot().setUnbreakable(true);
+            im.setUnbreakable(true);
             im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             item.setItemMeta(im);
