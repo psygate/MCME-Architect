@@ -90,6 +90,39 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             }
             return true;
         }
+        if (args[0].equalsIgnoreCase("weather")) {
+            if(!(sender instanceof Player)) {
+                PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
+                return true;
+            } 
+            if(!PluginData.hasPermission((Player)sender, Permission.ARCHITECT_WEATHER)) {
+                PluginData.getMessageUtil().sendNoPermissionError(sender);
+                return true;
+            }
+            if(args.length<2) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
+                return true;
+            }
+            if(args[1].equalsIgnoreCase("clear")) {
+                PluginData.setOverrideWeather(true);
+                ((Player)sender).getWorld().setStorm(false);
+                ((Player)sender).getWorld().setThundering(false);
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Weather changing to clear.");
+                return true;
+            } else if(args[1].equalsIgnoreCase("rain")) {
+                PluginData.setOverrideWeather(true);
+                ((Player)sender).getWorld().setStorm(true);
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Weather changing to rain.");
+                return true;
+            } else if(args[1].equalsIgnoreCase("thunder")) {
+                PluginData.setOverrideWeather(true);
+                ((Player)sender).getWorld().setStorm(true);
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Weather changing to thunder.");
+                return true;
+            }
+            PluginData.getMessageUtil().sendInvalidSubcommandError(sender);
+            return true;
+        }
         if(!(sender instanceof ConsoleCommandSender 
                 || (sender instanceof Player 
                     && (PluginData.hasPermission((Player)sender, Permission.ARCHITECT_INFO)

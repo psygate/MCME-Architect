@@ -18,10 +18,8 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import java.util.logging.Logger;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -48,7 +46,13 @@ public class GameMechanicsListener implements Listener{
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
         if (PluginData.isModuleEnabled(event.getWorld(), Modules.WEATHER_BLOCKING)) {
-            event.setCancelled(true);
+            if(!PluginData.isOverrideWeather()) {
+//Logger.getGlobal().info("Cancelling weather change.");
+                event.setCancelled(true);
+            } else {
+//Logger.getGlobal().info("Allow weather change.");
+            }
+            PluginData.setOverrideWeather(false);
         }
     }
     

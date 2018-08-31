@@ -26,6 +26,7 @@ public enum Permission {
     
     ARCHITECT_INFO        ("architect.info"),
     ARCHITECT_RELOAD      ("architect.reload"),
+    ARCHITECT_WEATHER      ("architect.weather"),
     FULL_BRIGHTNESS       ("architect.fullBrightness"),
     RESOURCE_PACK_SWITCH  ("architect.resourcePackSwitcher"),
     PLACE_HALF_DOOR       ("architect.place.halfDoor"),
