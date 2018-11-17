@@ -5,11 +5,15 @@ author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
 depend: [PluginUtils]
+api-version: 1.13
 
 commands:
    parrot:
       description: Removes parrots
       usage: /parrot
+   speed:
+      description: Speed
+      usage: /speed #
    get:
       description: Gives user special blocks with changed place behaviour
       usage: /get doors|logs|plants|food|head|slabs|armor|misc

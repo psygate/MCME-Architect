@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -183,7 +184,9 @@ public class RandomiserCommand extends AbstractArchitectCommand {
                     if(center.distance(loc)<radius) {
                         Block block = loc.getBlock();
                         if(pConfig.isIn(block.getType())) {
-                            block.setData(pConfig.randomDataValue());
+                            BlockState state = block.getState();
+                            state.setRawData(pConfig.randomDataValue());
+                            state.update(true, false);
                         }
                     }
                 }

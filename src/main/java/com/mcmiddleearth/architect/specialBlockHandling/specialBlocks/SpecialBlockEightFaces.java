@@ -18,10 +18,10 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,15 +30,35 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockEightFaces extends SpecialBlockOrientable {
     
+    private static Orientation[] eightFaces = new Orientation[] {
+            new Orientation(BlockFace.SOUTH,"South"),
+            new Orientation(BlockFace.SOUTH_WEST,"SouthWest"),
+            new Orientation(BlockFace.WEST,"West"),
+            new Orientation(BlockFace.NORTH_WEST,"NorthWest"),
+            new Orientation(BlockFace.NORTH,"North"),
+            new Orientation(BlockFace.NORTH_EAST,"NorthEast"),
+            new Orientation(BlockFace.EAST,"East"),
+            new Orientation(BlockFace.SOUTH_EAST,"SouthEast")
+        };
+    
     private SpecialBlockEightFaces(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.EIGHT_FACES);
-        this.material = material;
-        this.dataValue = dataValue;
+                        //Material[] material, 
+                        //byte[] dataValue,
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.EIGHT_FACES);
+        orientations = eightFaces;
+        //this.material = material;
+        //this.dataValue = dataValue;
     }
     
     public static SpecialBlockEightFaces loadFromConfig(ConfigurationSection config, String id) {
+        BlockData[] data = loadBlockDataFromConfig(config, eightFaces);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockEightFaces(id,data);
+    }
+    /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[8];
@@ -68,47 +88,43 @@ public class SpecialBlockEightFaces extends SpecialBlockOrientable {
         dataAxis[6] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataAxis[7] = (config.isInt("dataValueSouthEast")?(byte) config.getInt("dataValueSouthEast"):data);
         return new SpecialBlockEightFaces(id, materialAxis, dataAxis);
-    }
+    }*/
     
     @Override
     protected BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         BlockState state = blockPlace.getState();
         BlockFace blockFaceFromYaw = getBlockFaceFine(playerLoc.getYaw());
+        return super.getBlockState(blockPlace, blockFaceFromYaw, playerLoc);
+        /* 1.13 removed
         switch(blockFaceFromYaw) {
             case SOUTH:
-                state.setType(material[0]);
-                state.setRawData(dataValue[0]);
+                //state.setType(material[0]);
+                //state.setRawData(dataValue[0]);
+                state.setBlockData(blockData[0]);
                 break;
             case SOUTH_WEST:
-                state.setType(material[1]);
-                state.setRawData(dataValue[1]);
+                state.setBlockData(blockData[1]);
                 break;
             case WEST:
-                state.setType(material[2]);
-                state.setRawData(dataValue[2]);
+                state.setBlockData(blockData[2]);
                 break;
             case NORTH_WEST:
-                state.setType(material[3]);
-                state.setRawData(dataValue[3]);
+                state.setBlockData(blockData[3]);
                 break;
             case NORTH:
-                state.setType(material[4]);
-                state.setRawData(dataValue[4]);
+                state.setBlockData(blockData[4]);
                 break;
             case NORTH_EAST:
-                state.setType(material[5]);
-                state.setRawData(dataValue[5]);
+                state.setBlockData(blockData[5]);
                 break;
             case EAST:
-                state.setType(material[6]);
-                state.setRawData(dataValue[6]);
+                state.setBlockData(blockData[6]);
                 break;
             default:
-                state.setType(material[7]);
-                state.setRawData(dataValue[7]);
+                state.setBlockData(blockData[7]);
                 break;
         }
-        return state;
+        return state;*/
     }
     
 }

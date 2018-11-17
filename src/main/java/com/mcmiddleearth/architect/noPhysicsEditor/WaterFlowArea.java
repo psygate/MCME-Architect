@@ -42,9 +42,7 @@ public class WaterFlowArea extends ExceptionArea {
     
     @Override
     public boolean isAffected(Material material) {
-        return     material.equals(Material.STATIONARY_WATER)              //55
-                || material.equals(Material.WATER)     //150
-                || material.equals(Material.STATIONARY_LAVA)    //149
+        return     material.equals(Material.WATER)              //55
                 || material.equals(Material.LAVA);            //93
                 
     }

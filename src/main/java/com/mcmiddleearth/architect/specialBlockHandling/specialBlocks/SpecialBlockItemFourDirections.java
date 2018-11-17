@@ -18,46 +18,46 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
-import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock.getArmorStand;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOrientable.Orientation;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
+public class SpecialBlockItemFourDirections extends SpecialBlockItemOrientable {
     
-    private final Material[] material;
-    private final byte[] dataValue;
+    //private final Material[] material;
+    //private final byte[] dataValue;
     
-    /*private final Material contentItem;
-    private final short contentDamage;
-    
-    private final double contentHeight;*/
+    private static Orientation[] fourFaces = new Orientation[] {
+        new SpecialBlockOrientable.Orientation(BlockFace.SOUTH,"South"),
+        new SpecialBlockOrientable.Orientation(BlockFace.WEST,"West"),
+        new SpecialBlockOrientable.Orientation(BlockFace.NORTH,"North"),
+        new SpecialBlockOrientable.Orientation(BlockFace.EAST,"East")
+    };
     
     private SpecialBlockItemFourDirections(String id, 
-                        Material[] blockMaterial, 
-                        byte[] blockDataValue,
+                        BlockData[] data,
                         Material contentItem,
-                        Short[] contentDamage,
+                        Integer[] contentDamage,
                         double contentHeight) {
-        super(id, Material.AIR, (byte) 0, contentItem, contentDamage, 
+        super(id, data, contentItem, contentDamage, 
                   contentHeight, SpecialBlockType.ITEM_BLOCK_FOUR_DIRECTIONS);
-        this.material = blockMaterial;
-        this.dataValue = blockDataValue;
+        orientations = fourFaces;
+        //this.dataValue = blockDataValue;
         /*this.contentItem = contentItem;
         this.contentDamage = contentDamage;
         this.contentHeight = contentHeight;*/
     }
 
     public static SpecialBlockItemFourDirections loadFromConfig(ConfigurationSection config, String id) {
+        /* 13. removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialFaces = new Material[4];
@@ -77,16 +77,18 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
         dataFaces[0] = (config.isInt("dataValueNorth")?(byte) config.getInt("dataValueNorth"):data);
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
-        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
+        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);*/
+        BlockData[] data = SpecialBlockOrientable.loadBlockDataFromConfig(config, fourFaces);
         Material materialContent = matchMaterial(config.getString("contentItem",""));
-        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
+        Integer[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
         double contentHeight = config.getDouble("contentHeight",0);
-        return new SpecialBlockItemFourDirections(id, materialFaces, dataFaces, 
+        return new SpecialBlockItemFourDirections(id, data, 
                                                      materialContent, 
                                                      contentDamage, 
                                                      contentHeight);
     }
 
+    /* 1.13 removed
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
@@ -109,7 +111,19 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
                 break;
         }
         return state;
+        final BlockState state = blockPlace.getState();
+        for(Orientation orientation: orientations) {
+            if(orientation.face.equals(blockFace)) {
+                data = blockData[i];
+        }
+            
+        state.setBlockData(getBlockData(blockFace));
+        return state;
     }
+    
+
+    }
+    */
 
     @Override
     protected Location getArmorStandLocation(Block blockPlace, BlockFace blockFace, Location playerLoc) {
@@ -129,6 +143,7 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
         return loc;
     }
     
+    /*
     @Override
     public boolean matches(Block block) {
         for(Material mat: material) {
@@ -139,7 +154,7 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
                         if(holder!=null) {
                             ItemStack content = holder.getHelmet();
                             if(content.getType().equals(contentItem)) {
-                                for(short damage: contentDamage) {
+                                for(int damage: contentDamage) {
                                     if(damage == content.getDurability()) {
                                         return true;
                                     }
@@ -152,5 +167,5 @@ public class SpecialBlockItemFourDirections extends SpecialBlockItemBlock {
         }
         return false;
     }
-
+    */
 }

@@ -17,12 +17,13 @@
 package com.mcmiddleearth.util;
 
 import com.mcmiddleearth.architect.PluginData;
-import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.material.Door;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
+// 1.13 removed import org.bukkit.material.Door;
 
 /**
  *
@@ -30,18 +31,22 @@ import org.bukkit.material.Door;
  */
 public class DoorUtil {
     
-    public static boolean isUpperDoorPart(Block block) { //doesnt'work for powered doors
-        return block.getData()==8 || block.getData()==9; 
-    }
+    /* 1.13 removed public static boolean isUpperDoorPart(Block block) { //doesnt'work for powered doors -> should work now
+        // 1.13 removed return block.getData()==8 || block.getData()==9; 
+        BlockData data = block.getBlockData();
+        return (data instanceof Door?((Door)data).getHalf().equals(Bisected.Half.TOP):false);
+               
+    }*/
 
     public static boolean isDoor(Material blockType) {
-        return blockType.equals(Material.WOODEN_DOOR)
-                || blockType.equals(Material.IRON_DOOR_BLOCK)
+        /* 1.13 removed return blockType.equals(Material.OAK_DOOR)
+                || blockType.equals(Material.IRON_DOOR)
                 || blockType.equals(Material.SPRUCE_DOOR)
                 || blockType.equals(Material.BIRCH_DOOR)
                 || blockType.equals(Material.JUNGLE_DOOR)
                 || blockType.equals(Material.ACACIA_DOOR)
-                || blockType.equals(Material.DARK_OAK_DOOR);
+                || blockType.equals(Material.DARK_OAK_DOOR);*/
+        return blockType.createBlockData() instanceof Door;
     }
 
     public static boolean isThinWall(Block block) {
@@ -58,7 +63,7 @@ public class DoorUtil {
     }
     public static boolean isUpperDoorBlock(Block block) {
         return isDoorBlock(block)
-              && ((Door)block.getState().getData()).isTopHalf();
+              && ((Door)block.getBlockData()).getHalf().equals(Bisected.Half.TOP);
     }
     
     public static boolean isLowerDoorBlock(Block block) {
@@ -67,7 +72,7 @@ public class DoorUtil {
     }
     
     public static boolean isDoorBlock(Block block) {
-        return block.getState().getData() instanceof Door;
+        return block.getState().getBlockData() instanceof Door;
     }
     
     public static boolean isFullDoorAbove(Block block) {
@@ -76,35 +81,36 @@ public class DoorUtil {
     }
     
     public static Block getSecondHalf(Block block) {
-        if(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()) {
-            switch(((Door) block.getState().getData()).getFacing()) {
-                case NORTH: return block.getRelative(BlockFace.EAST);
-                case EAST: return block.getRelative(BlockFace.SOUTH);
-                case SOUTH: return block.getRelative(BlockFace.WEST);
-                case WEST: return block.getRelative(BlockFace.NORTH);
-            }
-        } else {
-            switch(((Door) block.getState().getData()).getFacing()) {
-                case NORTH: return block.getRelative(BlockFace.WEST);
-                case EAST: return block.getRelative(BlockFace.NORTH);
-                case SOUTH: return block.getRelative(BlockFace.EAST);
-                case WEST: return block.getRelative(BlockFace.SOUTH);
+        if(isDoorBlock(block)) {
+            if(((Door)block.getRelative(BlockFace.UP).getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
+                switch(((Door) block.getState().getBlockData()).getFacing()) {
+                    case NORTH: return block.getRelative(BlockFace.EAST);
+                    case EAST: return block.getRelative(BlockFace.SOUTH);
+                    case SOUTH: return block.getRelative(BlockFace.WEST);
+                    case WEST: return block.getRelative(BlockFace.NORTH);
+                }
+            } else {
+                switch(((Door) block.getState().getBlockData()).getFacing()) {
+                    case NORTH: return block.getRelative(BlockFace.WEST);
+                    case EAST: return block.getRelative(BlockFace.NORTH);
+                    case SOUTH: return block.getRelative(BlockFace.EAST);
+                    case WEST: return block.getRelative(BlockFace.SOUTH);
+                }
             }
         }
         return null;
     }
     
     public static void toggleDoor(Block block) {
-        if(block.getState().getData() instanceof Door
-              && !((Door)block.getState().getData()).isTopHalf()
+        if(isLowerDoorBlock(block)
               && !(isThinWall(block))) {
 //Logger.getGlobal().info("toggle "+block.getX()+" "+block.getY()+" "+block.getZ());
             BlockState state = block.getState();
 //Logger.getGlobal().info("dv "+state.getRawData());
-            Door data = (Door) state.getData();
+            Door data = (Door) state.getBlockData();
             if(isUpperDoorBlock(block.getRelative(BlockFace.UP))) {
                 data.setOpen(!data.isOpen());
-                state.setData(data);
+                state.setBlockData(data);
                 state.update();
             }
 //Logger.getGlobal().info("dv new "+state.getRawData());
@@ -112,16 +118,15 @@ public class DoorUtil {
     }
     public static void toggleHalfDoor(Block block, boolean hingeRight, boolean isOpen) {
 //Logger.getGlobal().info("toggle "+block.getX()+" "+block.getY()+" "+block.getZ()+" "+hingeRight+" "+isOpen);
-        if(block.getState().getData() instanceof Door
-              && !((Door)block.getState().getData()).isTopHalf()) {
+        if(isLowerDoorBlock(block)) {
             BlockState state = block.getState();
-            Door data = (Door) state.getData();
+            Door data = (Door) state.getBlockData();
 //Logger.getGlobal().info("toggle 2");
             BlockFace facing = data.getFacing();
             boolean clockwise = hingeRight ^ isOpen; //XOR
             facing = rotate(facing, clockwise);
-            data.setFacingDirection(facing);
-            state.setData(data);
+            data.setFacing(facing);
+            state.setBlockData(data);
             state.update();
 //Logger.getGlobal().info("toggle !");
         }
@@ -155,11 +160,25 @@ public class DoorUtil {
     }
     
     private static void closeDoor(Block block) {
-        block.setData((byte)(block.getData()-4), false);
+        if(isDoorBlock(block)) {
+            BlockState state = block.getState();
+            //state.setRawData((byte)(block.getData()-4));
+            Door data = (Door) state.getBlockData();
+            data.setOpen(false);
+            state.setBlockData(data);
+            state.update(true, false);
+        }
     }
     
     private static void openDoor(Block block) {
-        block.setData((byte)(block.getData()+4), false);
+        if(isDoorBlock(block)) {
+            BlockState state = block.getState();
+            //state.setRawData((byte)(block.getData()-4));
+            Door data = (Door) state.getBlockData();
+            data.setOpen(true);
+            state.setBlockData(data);
+            state.update(true, false);
+        }
     }
     
 }

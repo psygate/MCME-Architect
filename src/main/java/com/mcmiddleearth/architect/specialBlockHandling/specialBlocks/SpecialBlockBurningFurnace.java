@@ -18,13 +18,13 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class SpecialBlockBurningFurnace extends SpecialBlock {
     
     private SpecialBlockBurningFurnace(String id) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.BURNING_FURNACE);
+        super(id, Material.FURNACE.createBlockData(), SpecialBlockType.BURNING_FURNACE);
     }
     
     public static SpecialBlockBurningFurnace loadFromConfig(ConfigurationSection config, String id) {
@@ -48,10 +48,16 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
     public void placeBlock(final Block blockPlace, BlockFace blockFace, Player player) {
         final Location playerLoc = player.getLocation();
         final BlockState state = blockPlace.getState();
-        state.setType(Material.BURNING_FURNACE);
+        state.setType(Material.FURNACE);
+        org.bukkit.block.data.type.Furnace data = (org.bukkit.block.data.type.Furnace)getBlockData();
+        data.setLit(true);
+        data.setFacing(getBlockFace(playerLoc.getYaw()).getOppositeFace());
+        state.setBlockData(data);
+        /* 1.13 removed 
         switch(getBlockFace(playerLoc.getYaw())) {
             case NORTH:
-                state.setRawData((byte)3);
+                //state.setRawData((byte)3);
+                data.setFacing(blockFace);
                 break;
             case SOUTH:
                 state.setRawData((byte)2);
@@ -62,7 +68,7 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
             default:
                 state.setRawData((byte)5);
                 break;
-        }
+        }*/
         state.update(true, false);
         new BukkitRunnable() {
             @Override
@@ -73,7 +79,7 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
                 new BukkitRunnable() {
                     @Override
                     public void run(){
-                        furnace.getInventory().setSmelting(new ItemStack(Material.RAW_FISH));
+                        furnace.getInventory().setSmelting(new ItemStack(Material.COD));
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }

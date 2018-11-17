@@ -16,14 +16,7 @@
  */
 package com.mcmiddleearth.architect.additionalListeners;
 
-import com.mcmiddleearth.architect.Modules;
-import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutil.EventUtil;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  *
@@ -31,7 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class StickBlockBreakListener implements Listener {
 
-    @EventHandler
+    /*1.13 removed @EventHandler
     public void PlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if((PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_EDITOR)
@@ -41,6 +34,6 @@ public class StickBlockBreakListener implements Listener {
               && EventUtil.isMainHandEvent(event)) {
             event.setCancelled(true);
         }
-    }
+    }*/
     
 }

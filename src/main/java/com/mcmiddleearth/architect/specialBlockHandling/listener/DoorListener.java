@@ -57,7 +57,7 @@ public class DoorListener implements Listener{
                         return;
                     }
                     Block above = event.getClickedBlock().getRelative(BlockFace.UP);
-                    if(!DoorUtil.isUpperDoorPart(event.getClickedBlock()) && !(DoorUtil.isDoor(above.getType()) && DoorUtil.isUpperDoorPart(above))){
+                    if(!DoorUtil.isUpperDoorBlock(event.getClickedBlock()) && !(DoorUtil.isDoor(above.getType()) && DoorUtil.isUpperDoorBlock(above))){
                         event.setCancelled(true);
                     }
                 }

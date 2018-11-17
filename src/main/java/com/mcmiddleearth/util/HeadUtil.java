@@ -47,7 +47,7 @@ public class HeadUtil {
         if(propertyMap == null)
             throw new IllegalStateException("Profile doesn't contain a property map!");
         propertyMap.put("textures", new Property("Value", headTexture));
-        ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
         ItemMeta headMeta = itemStack.getItemMeta();
         try {
             Field profileField = headMeta.getClass().getDeclaredField("profile");
@@ -67,7 +67,7 @@ public class HeadUtil {
     public static void placeCustomHead(Block block, ItemStack head) {
         try {
             BlockState blockState = block.getState();
-            blockState.setType(Material.SKULL);
+            blockState.setType(Material.PLAYER_HEAD);
             blockState.update(true, false);
             blockState = block.getState();
             Skull skullData = (Skull) blockState;
@@ -94,7 +94,7 @@ public class HeadUtil {
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(skullBlockState);
 
-            ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
             ItemMeta headMeta = head.getItemMeta();
             
             profileField = headMeta.getClass().getDeclaredField("profile");

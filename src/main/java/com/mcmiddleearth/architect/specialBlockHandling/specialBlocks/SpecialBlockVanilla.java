@@ -17,11 +17,14 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -32,25 +35,28 @@ import org.bukkit.entity.Player;
 public class SpecialBlockVanilla extends SpecialBlock {
     
     private SpecialBlockVanilla(String id, 
-                        Material material, 
-                        byte dataValue) {
-        this(id, material, dataValue, SpecialBlockType.VANILLA);
+                        //Material material, 
+                        //byte dataValue,
+                        BlockData data) {
+        this(id, data, SpecialBlockType.VANILLA);
     }
     
     protected SpecialBlockVanilla(String id, 
-                        Material material, 
-                        byte dataValue,
+                        //Material material, 
+                        //byte dataValue,
+                        BlockData data,
                         SpecialBlockType type) {
-        super(id,material,dataValue,type);
+        super(id,data,type);
     }
     
     public static SpecialBlockVanilla loadFromConfig(ConfigurationSection config, String id) {
-            Material blockMat =  Material.AIR;
-            byte data = (byte) 0;
-            if(blockMat!=null) {
-                return new SpecialBlockVanilla(id, blockMat, data);
-            } 
-            return null;
+        //convert old data
+        if(config.contains("blockMaterial")) {
+            config.set("blockMaterial", null);
+            config.set("dataValue",null);
+        }
+        // end convert old data
+        return new SpecialBlockVanilla(id, Material.AIR.createBlockData());
     }
     
     @Override

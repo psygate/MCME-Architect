@@ -26,9 +26,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Door;
+// 1.13 remove import org.bukkit.material.Door;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -41,7 +43,7 @@ public class SpecialBlockDoor extends SpecialBlock {
     
     private SpecialBlockDoor(String id, 
                         Material material, boolean powered, boolean hingeRight) {
-        super(id, material, (byte) 0, SpecialBlockType.DOOR);
+        super(id, material.createBlockData(), SpecialBlockType.DOOR);
         this.powered = powered;
         this.hingeRight = hingeRight;
     }
@@ -49,7 +51,7 @@ public class SpecialBlockDoor extends SpecialBlock {
     protected SpecialBlockDoor(String id, 
                         Material material, boolean powered, boolean hingeRight,
                         SpecialBlockType type) {
-        super(id, material, (byte) 0, type);
+        super(id, material.createBlockData(), type);
         this.powered = powered;
         this.hingeRight = hingeRight;
     }
@@ -58,7 +60,7 @@ public class SpecialBlockDoor extends SpecialBlock {
                         Material material, 
                         byte dataValue,
                         SpecialBlockType type) {
-        super(id, material, (byte) 0, SpecialBlockType.DOOR);
+        super(id, material.createBlockData(), SpecialBlockType.DOOR);
         powered = false;
         hingeRight = false;
     }
@@ -76,13 +78,13 @@ public class SpecialBlockDoor extends SpecialBlock {
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, hingeRight, false);
+        placeDoor(blockPlace, playerLoc, getBlockData().getMaterial(), powered, false, hingeRight, false);
     }
     
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, 
                            final Player player, boolean hingeRight) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), powered, false, hingeRight, false);
+        placeDoor(blockPlace, playerLoc, getBlockData().getMaterial(), powered, false, hingeRight, false);
     }
     
     protected void placeDoor(final Block blockPlace, final Location playerLoc,
@@ -102,10 +104,11 @@ public class SpecialBlockDoor extends SpecialBlock {
                 DevUtil.log("4 door block place: ID "+upperState.getType()+" - DV "+upperState.getRawData());
                 final BlockState tempLowerState = lowerState.getBlock().getState();
                 final BlockState tempUpperState = upperState.getBlock().getState();
-                if(tempLowerState.getData() instanceof Door && tempUpperState.getData() instanceof Door) {
-                    Door lowerDoorData = (Door) tempLowerState.getData();
-                    Door upperDoorData = (Door) tempUpperState.getData();
-                    upperDoorData.setTopHalf(true);
+                if(tempLowerState.getBlockData() instanceof Door && tempUpperState.getBlockData() instanceof Door) {
+                    Door lowerDoorData = (Door) tempLowerState.getBlockData();
+                    Door upperDoorData = (Door) tempUpperState.getBlockData();
+                    upperDoorData.setHalf(Bisected.Half.TOP);
+                    lowerDoorData.setHalf(Bisected.Half.BOTTOM);
                     float yaw = playerLoc.getYaw();
                     if(open) {
                         if(hingeRight) {
@@ -115,15 +118,21 @@ public class SpecialBlockDoor extends SpecialBlock {
                         }
                     }
                     final BlockFace facing = getBlockFace(yaw);//getOppositeBlockFace(getBlockFace(yaw));
-                    lowerDoorData.setFacingDirection(facing);
+                    lowerDoorData.setFacing(facing);
+                    upperDoorData.setFacing(facing);
                     lowerDoorData.setOpen(open);
-                    tempLowerState.setData(lowerDoorData);
-                    boolean hinge = hingeRight;
+                    upperDoorData.setOpen(open);
+                    lowerDoorData.setPowered(powered);
+                    upperDoorData.setPowered(powered);
+                    Door.Hinge hinge = (hingeRight?Door.Hinge.RIGHT:Door.Hinge.LEFT);
                     if(!fixedHinge) {
-                        hinge = checkForHingeRightSide(tempUpperState.getBlock(),facing, hingeRight);
+                        hinge = (checkForHingeRightSide(tempUpperState.getBlock(),facing, hingeRight)
+                                 ?Door.Hinge.RIGHT:Door.Hinge.LEFT);
                     }
+                    lowerDoorData.setHinge(hinge);
+                    upperDoorData.setHinge(hinge);
                     //upperDoorData.setHinge(!hinge);
-                    if(powered && hinge) {
+                    /* 1.13 removed if(powered && hinge) {
                         upperDoorData.setData((byte)10);
                     } else if(powered && !hinge) {
                         upperDoorData.setData((byte)11);
@@ -131,8 +140,9 @@ public class SpecialBlockDoor extends SpecialBlock {
                         upperDoorData.setData((byte)8);
                     } else { 
                         upperDoorData.setData((byte)9);
-                    }
-                    tempUpperState.setData(upperDoorData);
+                    }*/
+                    tempLowerState.setBlockData(lowerDoorData);
+                    tempUpperState.setBlockData(upperDoorData);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -163,13 +173,15 @@ Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
         if(hingeRight) {
             BlockState checkState = leftBlock.getState();
 //    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
-            if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
+            if(checkState.getBlockData() instanceof Door 
+                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
 //    Logger.getGlobal().info("DoorBlockPlace leftState return true");
                 return true;
             }
             checkState = rightBlock.getState();
 //    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
-            if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
+            if(checkState.getBlockData() instanceof Door 
+                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.LEFT)) {
 //    Logger.getGlobal().info("DoorBlockPlace rightState return false");
                 return false;
             }
@@ -177,13 +189,15 @@ Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
         else {
             BlockState checkState = rightBlock.getState();
 //    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
-            if(checkState.getData() instanceof Door && !((Door)checkState.getData()).getHinge()) {
+            if(checkState.getBlockData() instanceof Door 
+                    && ((Door)checkState.getData()).getHinge().equals(Door.Hinge.LEFT)) {
 //    Logger.getGlobal().info("DoorBlockPlace rightState return false");
                 return false;
             }
             checkState = leftBlock.getState();
 //    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
-            if(checkState.getData() instanceof Door && ((Door)checkState.getData()).getHinge()) {
+            if(checkState.getBlockData() instanceof Door 
+                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
 //    Logger.getGlobal().info("DoorBlockPlace leftState return true");
                 return true;
             }
@@ -194,7 +208,7 @@ Logger.getGlobal().info("DoorBlockPlace leftState return default.");
     
    @Override
     public boolean matches(Block block) {
-        if(getMaterial().equals(block.getType())) {
+        if(getBlockData().getMaterial().equals(block.getType())) {
            if(DoorUtil.isLowerDoorBlock(block)) {
                block = block.getRelative(BlockFace.UP);
                if(!DoorUtil.isUpperDoorBlock(block)) {

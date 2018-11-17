@@ -16,10 +16,15 @@
  */
 package com.mcmiddleearth.architect.bannerEditor;
 
+import org.bukkit.Material;
+
 /**
  *
  * @author Eriol_Eandur
  */
 public class BannerUtil {
     
+    public static boolean isBanner(Material mat) {
+        return mat.name().contains("BANNER");
+    }
 }

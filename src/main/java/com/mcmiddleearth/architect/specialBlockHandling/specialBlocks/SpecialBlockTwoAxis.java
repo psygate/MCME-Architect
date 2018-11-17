@@ -17,11 +17,8 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,15 +27,21 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockTwoAxis extends SpecialBlockOrientable {
     
+    private static Orientation[] twoAxis = new Orientation[] {
+        new Orientation(BlockFace.SOUTH,"Z"),
+        new Orientation(BlockFace.WEST,"X"),
+        new Orientation(BlockFace.NORTH,"Z"),
+        new Orientation(BlockFace.EAST,"X")
+    };
+
     private SpecialBlockTwoAxis(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.TWO_AXIS);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.TWO_AXIS);
+        orientations = twoAxis;
     }
     
     public static SpecialBlockTwoAxis loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[2];
@@ -54,10 +57,15 @@ public class SpecialBlockTwoAxis extends SpecialBlockOrientable {
             }
         }
         dataAxis[0] = (config.isInt("dataValueX")?(byte) config.getInt("dataValueX"):data);
-        dataAxis[1] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);
-        return new SpecialBlockTwoAxis(id, materialAxis, dataAxis);
+        dataAxis[1] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, twoAxis);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockTwoAxis(id, data);
     }
     
+    /* 1.13 removed
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
@@ -74,5 +82,5 @@ public class SpecialBlockTwoAxis extends SpecialBlockOrientable {
                 break;
         }
         return state;
-    }
+    }*/
 }

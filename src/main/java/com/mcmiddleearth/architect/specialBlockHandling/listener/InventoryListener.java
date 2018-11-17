@@ -162,31 +162,18 @@ public class InventoryListener implements Listener{
                 event.setCancelled(true);
                 return;
             case BUILDER:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)) {
-                    PluginData.getMessageUtil().sendNoPermissionError(player);
-                    event.setCancelled(true);
-                    return;
-                }
-                if(!PluginData.hasGafferPermission(player,loc)) {
-                        PluginData.getMessageUtil().sendErrorMessage(player, 
-                            PluginData.getGafferProtectionMessage(player, loc));
+                if(!PluginData.checkBuildPermissions((Player)event.getPlayer(), loc,
+                                                Permission.INVENTORY_OPEN)) {
                     event.setCancelled(true);
                 }
                 return;
             case EXCEPTION:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)){
-                    PluginData.getMessageUtil().sendNoPermissionError(player);
-                    event.setCancelled(true);
-                    return;
-                }
-                if(!PluginData.hasGafferPermission((Player)event.getPlayer(), 
-                                                          event.getInventory().getLocation())
-                        || !NoPhysicsData.hasNoPhysicsException(event.getInventory()
-                                                                     .getLocation().getBlock())) {
-                    //PluginData.getMessageUtil().sendErrorMessage(player, 
-                    //        PluginData.getGafferProtectionMessage(player, loc));
+                if(!PluginData.checkBuildPermissions((Player)event.getPlayer(),loc,
+                                                Permission.INVENTORY_OPEN)
+                        || !NoPhysicsData.hasNoPhysicsException(loc.getBlock())){
                     event.setCancelled(true);
                 }
+                return;
         }
         /*
         if (//event.getInventory().getType().equals(InventoryType.ANVIL)

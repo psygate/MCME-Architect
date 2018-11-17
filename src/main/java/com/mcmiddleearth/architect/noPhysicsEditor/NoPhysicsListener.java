@@ -32,11 +32,13 @@ public class NoPhysicsListener implements Listener {
     @EventHandler
     private void noPhysicsList(BlockPhysicsEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
-                && PluginData.isNoPhysicsBlock(event.getBlock())
+                && NoPhysicsData.isNoPhysicsBlock(event.getBlock())
                 && !NoPhysicsData.hasNoPhysicsException(event.getBlock())) {
-            DevUtil.log(4,"noPhysicsList "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getZ());
+            DevUtil.log(4,"no Physics "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getZ());
             event.setCancelled(true);
-        }
+        } else {
+            DevUtil.log(4,"allow Physics "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getZ());
+        }            
     }
 
 }

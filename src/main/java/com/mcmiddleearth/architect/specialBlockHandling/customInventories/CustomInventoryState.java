@@ -31,7 +31,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class CustomInventoryState {
     
-    final static public Material pagingMaterial = Material.GOLD_HELMET;
+    final static public Material pagingMaterial = Material.GOLDEN_HELMET;
     final static public short pageUp = 1;
     final static public short pageDown = 2;
     final static public short pageLeft = 3;

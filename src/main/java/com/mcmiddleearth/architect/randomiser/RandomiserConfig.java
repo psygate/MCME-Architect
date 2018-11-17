@@ -26,7 +26,7 @@ public class RandomiserConfig {
     private final Set<Material> materials = new HashSet();
     
     public RandomiserConfig() {
-        materials.add(Material.CROPS);
+        materials.add(Material.WHEAT);
     }
     
     public void setDataValueRange(int min, int max) {

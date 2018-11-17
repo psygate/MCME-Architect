@@ -86,7 +86,7 @@ public class FurnaceListener implements Listener{
             final Furnace furnace = (Furnace) holder;
             ItemStack current = event.getCurrentItem();
             ItemStack cursor = event.getCursor();
-            ItemStack smelting = new ItemStack(Material.RAW_FISH);
+            ItemStack smelting = new ItemStack(Material.COD);
             ItemStack fuel = new ItemStack(Material.COAL);
             if(current.getType().equals(Material.AIR)) {
                 //event.setCurrentItem(new ItemStack(Material.RAW_FISH));
@@ -128,11 +128,12 @@ Logger.getGlobal().info("cursor "+ event.getCursor());
     
     private boolean isSmeltingItem(ItemStack item) {
         switch(item.getType()) {
-            case RAW_FISH:
-            case RAW_BEEF:
-            case RAW_CHICKEN:
+            case COD:
+            case TROPICAL_FISH:
+            case SALMON:
+            case CHICKEN:
             case RABBIT:
-            case PORK:
+            case PORKCHOP:
             case MUTTON:
                 return true;
             default: 

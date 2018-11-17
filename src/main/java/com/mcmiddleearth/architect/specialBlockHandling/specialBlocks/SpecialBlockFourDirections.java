@@ -18,10 +18,10 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,16 +30,26 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockFourDirections extends SpecialBlockOrientable {
     
+    private static Orientation[] fourFaces = new Orientation[] {
+        new Orientation(BlockFace.SOUTH,"South"),
+        new Orientation(BlockFace.WEST,"West"),
+        new Orientation(BlockFace.NORTH,"North"),
+        new Orientation(BlockFace.EAST,"East")
+    };
+    
     protected SpecialBlockFourDirections(String id, 
-                        Material[] material, 
-                        byte[] dataValue,
-                        SpecialBlockType type) {
-        super(id, Material.AIR, (byte) 0, type);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.FOUR_DIRECTIONS);
+        orientations = fourFaces;
+    }
+    
+    protected SpecialBlockFourDirections(String id, 
+                        BlockData[] data, SpecialBlockType type) {
+        super(id, data, type);
     }
     
     public static SpecialBlockFourDirections loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("blockDataValue");
         Material[] materialFaces = new Material[4];
@@ -59,13 +69,20 @@ public class SpecialBlockFourDirections extends SpecialBlockOrientable {
         dataFaces[0] = (config.isInt("dataValueNorth")?(byte) config.getInt("dataValueNorth"):data);
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
-        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
-        return new SpecialBlockFourDirections(id, materialFaces, dataFaces, SpecialBlockType.FOUR_DIRECTIONS);
+        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, fourFaces);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockFourDirections(id, data);
     }
     
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
+        state.setBlockData(getBlockData(getBlockFace(playerLoc.getYaw())));
+        return state;
+        /* 1.13 removed
         switch(getBlockFace(playerLoc.getYaw())) {
             case NORTH:
                 state.setType(material[0]);
@@ -84,7 +101,7 @@ public class SpecialBlockFourDirections extends SpecialBlockOrientable {
                 state.setRawData(dataValue[3]);
                 break;
         }
-        return state;
+        return state;*/
     }
     
 }

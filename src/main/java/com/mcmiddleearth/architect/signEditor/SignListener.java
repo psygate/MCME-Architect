@@ -42,13 +42,8 @@ public class SignListener implements Listener {
             sendNotEnabledErrorMessage(player);
             return;
         }   
-        if(!PluginData.hasPermission(player,Permission.SIGN_EDITOR)) {
-            PluginData.getMessageUtil().sendNoPermissionError(player);
-        } else if(!PluginData.hasGafferPermission(player,block.getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, block.getLocation()));
-        }
-        else {
+        if(PluginData.checkBuildPermissions(player,block.getLocation(),
+                                        Permission.SIGN_EDITOR)) {
             SignEditorData.putEditor(event.getPlayer(),block);
             SignEditorData.sendSignMessage(event.getPlayer());
         }

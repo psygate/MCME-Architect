@@ -16,14 +16,12 @@
  */
 package com.mcmiddleearth.architect.additionalListeners;
 
-import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import java.util.logging.Logger;
+import com.mcmiddleearth.util.TheGafferUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +32,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -52,12 +49,8 @@ public class AdditionalProtectionListener implements Listener{
             return;
         }
         Player player = (Player) event.getRemover();
-        if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
-            event.setCancelled(true);
-            PluginData.getMessageUtil().sendNoPermissionError(player);
-        } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+        if(!PluginData.checkBuildPermissions(player,event.getEntity().getLocation(),
+                                       Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
         }
     }
@@ -68,12 +61,8 @@ public class AdditionalProtectionListener implements Listener{
             return;
         }  
         Player player = event.getPlayer();
-        if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
-            event.setCancelled(true);
-            PluginData.getMessageUtil().sendNoPermissionError(player);
-        } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+        if(!PluginData.checkBuildPermissions(player,event.getEntity().getLocation(),
+                                       Permission.HANGING_ENTITY_EDITOR)) {
             event.setCancelled(true);
         }
     }
@@ -85,12 +74,8 @@ public class AdditionalProtectionListener implements Listener{
                 return;
             }  
             Player player = (Player) event.getPlayer();
-            if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
-                event.setCancelled(true);
-                PluginData.getMessageUtil().sendNoPermissionError(player);
-            } else if(!PluginData.hasGafferPermission(player,event.getRightClicked().getLocation())) {
-                PluginData.getMessageUtil().sendErrorMessage(player, 
-                        PluginData.getGafferProtectionMessage(player, event.getRightClicked().getLocation()));
+            if(!PluginData.checkBuildPermissions(player,event.getRightClicked().getLocation(),
+                                           Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
             }
         }
@@ -107,12 +92,8 @@ public class AdditionalProtectionListener implements Listener{
                 return;
             }
             Player player = (Player) event.getDamager();
-            if(!PluginData.hasPermission(player,Permission.HANGING_ENTITY_EDITOR)) {
-                event.setCancelled(true);
-                PluginData.getMessageUtil().sendNoPermissionError(player);
-            } else if(!PluginData.hasGafferPermission(player,event.getEntity().getLocation())) {
-                PluginData.getMessageUtil().sendErrorMessage(player, 
-                        PluginData.getGafferProtectionMessage(player, event.getEntity().getLocation()));
+            if(!PluginData.checkBuildPermissions(player,event.getEntity().getLocation(),
+                                         Permission.HANGING_ENTITY_EDITOR)) {
                 event.setCancelled(true);
             }
         }
@@ -120,25 +101,13 @@ public class AdditionalProtectionListener implements Listener{
     
    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void flowerPotProtection(PlayerInteractEvent event) {
-//Logger.getGlobal().info("AdditionalProtection flower Pot 1 ");                    
         if(!event.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
             return;
         }
-//Logger.getGlobal().info("AdditionalProtection flower Pot 2 ");                    
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        if(!PluginData.hasGafferPermission(player,block.getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, block.getLocation()));
+        if(!TheGafferUtil.checkGafferPermission(player, block.getLocation())) {
             event.setCancelled(true);
-            /*final BlockState state = block.getState();
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    state.update(true,false);
-Logger.getGlobal().info("restore");                    
-                }
-            }.runTaskLater(ArchitectPlugin.getPluginInstance(), 10);*/
         }
     }
 }

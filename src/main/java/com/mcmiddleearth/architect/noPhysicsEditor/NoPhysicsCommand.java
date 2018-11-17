@@ -36,6 +36,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,6 +47,8 @@ import org.bukkit.entity.Player;
  */
 public class NoPhysicsCommand extends AbstractArchitectCommand {
 
+    private String inverted = "";
+    
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String c, String[] args) {
         if (!(cs instanceof Player)) {
@@ -61,19 +64,31 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
             return true;
         } else {
             Player p = (Player) cs;
+            inverted = (PluginData.isModuleEnabled(((Player)cs).getWorld(), 
+                                                          Modules.NO_PHYSICS_LIST_INVERTED)?
+                               ChatColor.RED+"ALLOW"+PluginData.getMessageUtil().INFO:
+                               ChatColor.RED+"NO"+PluginData.getMessageUtil().INFO);
             if(args.length<2 || args[0].equalsIgnoreCase("help")) {
                 int page = 1;
                 if(args.length>1 && NumericUtil.isInt(args[1])) {
                     page = NumericUtil.getInt(args[1]);
                 }
                 sendHelpMessage(p,page);
-            } else if(args[0].equalsIgnoreCase("list")) {
-                PluginData.getMessageUtil().sendInfoMessage(p, "No physics list for");
-                for (String worldName : PluginData.getWorldNames()) {
-                    if (worldName.equalsIgnoreCase(args[1]) || args[1].equalsIgnoreCase("-all")) {
-                        PluginData.getMessageUtil().sendNoPrefixInfoMessage(p, "- "+worldName+": "
-                                        +PluginData.getMessageUtil().STRESSED+ PluginData.getNpList(worldName));
-                    }
+                return true;
+            }
+            if(!args[1].equals("-default") && (Bukkit.getWorld(args[1]) == null)) {
+                sendWorldNotFoundMessage((Player)cs);
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("list")) {
+                PluginData.getMessageUtil().sendInfoMessage(p, inverted+" physics list for "
+                                                + PluginData.getMessageUtil().STRESSED
+                                                + args[1]+":");
+                List<String> npList = NoPhysicsData.getNoPhysicsListAsStrings(args[1]);
+                npList.sort(null);
+                for(String line: npList) {                
+                    PluginData.getMessageUtil().sendIndentedInfoMessage(p,
+                                               PluginData.getMessageUtil().STRESSED+ line);
                 }
             } else if(args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
                 if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EDIT)) {
@@ -85,49 +100,21 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     sendHelpMessage(p,1);
                     return true;
                 }
-                int blockId;
-                if(NumericUtil.isInt(args[2])) {
-                    blockId = NumericUtil.getInt(args[2]); 
-                } else {
-                    Material material = Material.matchMaterial(args[2]);
-                    if(material==null) {
-                        sendNoValidMaterial(p);
-                        return true;
-                    }
-                    blockId = material.getId();
+                BlockData data = NoPhysicsData.createBlockData(args[2]);
+                if(data==null) {
+                    sendNoValidMaterial(p);
+                    return true;
                 }
                 boolean materialAdded = false;
                 boolean materialRemoved = false;
-                if(args[1].equalsIgnoreCase("-all")) {
-                    for(String worldName: PluginData.getWorldNames()) {
-                        if(args[0].equalsIgnoreCase("add")) {
-                            materialAdded = materialAdded | PluginData.addNpBlock(worldName,blockId, true);
-                        } else {
-                            materialRemoved = materialRemoved | PluginData.removeNpBlock(worldName,blockId, true);
-                        }
-                    }
-                }
-                else {
-                    World world = Bukkit.getWorld(args[1]);
-                    if(world == null) {
-                        sendWorldNotFound(p);
-                        return true;
-                    }
-                    if(args[0].equalsIgnoreCase("add")) {
-                        materialAdded = materialAdded | PluginData.addNpBlock(world.getName(),blockId, false);
-                    } else {
-                        materialRemoved = materialRemoved | PluginData.removeNpBlock(world.getName(),blockId, false);
-                    }
-                }
                 if(args[0].equalsIgnoreCase("add")) {
-                    if(materialAdded) {
+                    if(NoPhysicsData.addNpBlock(args[1],args[2])) {
                         sendMaterialAddedMessage(p);
                     } else {
                         sendMaterialAlreadyNpMessage(p);
                     }
-                }
-                if(args[0].equalsIgnoreCase("remove")) {
-                    if(materialRemoved) {
+                } else {
+                    if(NoPhysicsData.removeNpBlock(args[1],args[2])) {
                         sendMaterialRemovedMessage(p);
                     } else {
                         sendMaterialNotNpMessage(p);
@@ -244,23 +231,27 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
     }
 
     private void sendMaterialAddedMessage(Player p) {
-        PluginData.getMessageUtil().sendInfoMessage(p, "Material added to noPhysics list.");
+        PluginData.getMessageUtil().sendInfoMessage(p, "Material added to "+inverted+" physics list.");
     }
 
     private void sendMaterialAlreadyNpMessage(Player p) {
-        PluginData.getMessageUtil().sendErrorMessage(p, "Material already is on noPhysics list.");
+        PluginData.getMessageUtil().sendErrorMessage(p, "Material already is on "+inverted+PluginData.getMessageUtil().ERROR+" physics list.");
     }
 
     private void sendMaterialRemovedMessage(Player p) {
-        PluginData.getMessageUtil().sendInfoMessage(p, "Material removed from noPhysics list.");
+        PluginData.getMessageUtil().sendInfoMessage(p, "Material removed from "+inverted+" physics list.");
     }
 
     private void sendMaterialNotNpMessage(Player p) {
-        PluginData.getMessageUtil().sendErrorMessage(p, "Material is not on noPhysics list.");
+        PluginData.getMessageUtil().sendErrorMessage(p, "Material is not on "+inverted+PluginData.getMessageUtil().ERROR+" physics list.");
     }
     
     private void sendInvalidSelection(Player p) {
         PluginData.getMessageUtil().sendErrorMessage(p, "Make a valid WE selection first.");
+    }
+    
+    private void sendWorldNotFoundMessage(Player p) {
+        PluginData.getMessageUtil().sendErrorMessage(p, "You must specify a valid world name or '-default'.");
     }
     
     @Override
@@ -275,7 +266,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
 
     @Override
     public String getUsageDescription() {
-        return ": Manages lists of blocks which will not be affected by game physics. \n "
+        return ": Manages lists of blocks which will be affected by game physics. \n "
                 +ChatColor.WHITE+"Click for detailed help.";
     }
     
@@ -286,10 +277,10 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
 
     @Override
     protected void sendHelpMessage(Player player, int page) {
-        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"No Physics List Editor -";
-        help = new String[][]{{"/noPhy list ","<world>|-all",": Shows no physics list.","You may use '-all' instead of a worldname to show the no physics lists of all worlds."},
-                                       {"/noPhy add ","<world>|-all <material>",": Adds a block"," to no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."},
-                                       {"/noPhy remove ","<world>|-all <material>",": Removes a block"," from no physics list. Argument <material> may be a block ID (e.g. 12) or a Material name (e.g. sand)."},
+        helpHeader = "Help for "+PluginData.getMessageUtil().STRESSED+"Physics Editor -";
+        help = new String[][]{{"/noPhy list ","<world>|-default",": Shows no physics list.","You may use '-default' instead of a worldname to show the default no physics lists of all worlds without specific settings."},
+                                       {"/noPhy add ","<world>|-default <material>",": Adds a material"," to "+inverted+" physics list. Argument <material> must be a block state descriptor."},
+                                       {"/noPhy remove ","<world>|-default <material>",": Removes a material"," from "+inverted+" physics list. Argument <material> must be a block state descriptor."},
                                        {"/noPhy exception set ","<name>",": Creates ", "a new exception area."},
                                        {"/noPhy exception delete "," <name>",": Deletes ", "an exception area."},
                                        {"/noPhy exception list "," [#page]",": Displays a list", " of all exception areas."}};

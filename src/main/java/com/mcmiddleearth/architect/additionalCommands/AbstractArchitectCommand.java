@@ -22,15 +22,25 @@ import com.mcmiddleearth.pluginutil.message.MessageType;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public abstract class AbstractArchitectCommand implements CommandExecutor{
+public abstract class AbstractArchitectCommand implements TabExecutor{
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                               Command command,
+                                               java.lang.String alias,
+                                               java.lang.String[] args) {
+        return new ArrayList<>();
+    }
+    
     public abstract String getHelpPermission();
 
     public abstract String getShortDescription();

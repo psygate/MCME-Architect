@@ -17,12 +17,8 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -31,15 +27,23 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockSixFaces extends SpecialBlockOrientable {
     
+    private static Orientation[] sixFaces = new Orientation[] {
+        new Orientation(BlockFace.SOUTH,"South"),
+        new Orientation(BlockFace.WEST,"West"),
+        new Orientation(BlockFace.NORTH,"North"),
+        new Orientation(BlockFace.EAST,"East"),
+        new Orientation(BlockFace.DOWN,"Down"),
+        new Orientation(BlockFace.UP,"Up")
+    };
+
     private SpecialBlockSixFaces(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.SIX_FACES);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.SIX_FACES);
+        orientations = sixFaces;
     }
     
     public static SpecialBlockSixFaces loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[6];
@@ -63,10 +67,15 @@ public class SpecialBlockSixFaces extends SpecialBlockOrientable {
         dataAxis[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataAxis[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
         dataAxis[4] = (config.isInt("dataValueUp")?(byte) config.getInt("dataValueUp"):data);
-        dataAxis[5] = (config.isInt("dataValueDown")?(byte) config.getInt("dataValueDown"):data);
-        return new SpecialBlockSixFaces(id, materialAxis, dataAxis);
+        dataAxis[5] = (config.isInt("dataValueDown")?(byte) config.getInt("dataValueDown"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, sixFaces);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockSixFaces(id, data);
     }
     
+    /* 1.13 removed
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
@@ -97,6 +106,6 @@ public class SpecialBlockSixFaces extends SpecialBlockOrientable {
                 break;
         }
         return state;
-    }
+    }*/
     
 }

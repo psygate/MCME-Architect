@@ -18,14 +18,17 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.util.DevUtil;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,37 +42,57 @@ public class SpecialBlock {
     @Getter
     private final String id;
     
-    @Getter
-    private final Material material;
+    // 1.13 removed private final Material material;
     
-    private final byte dataValue;
+    @Getter
+    private final BlockData blockData;
+    
+    // 1.13 removed private final byte dataValue;
     
     @Getter
     protected final SpecialBlockType type;
     
     private SpecialBlock(String id, 
-                        Material material, 
-                        byte dataValue) {
-        this(id, material, dataValue, SpecialBlockType.BLOCK);
+                        //Material material, 
+                        //byte dataValue,
+                        BlockData data) {
+        this(id, data, SpecialBlockType.BLOCK);
     }
     
     protected SpecialBlock(String id, 
-                        Material material, 
-                        byte dataValue,
+                        //Material material, 
+                        //byte dataValue,
+                        BlockData data,
                         SpecialBlockType type) {
         this.id = id;
-        this.material = material;
-        this.dataValue = dataValue;
+        //this.material = material;
+        //this.dataValue = dataValue;
+        this.blockData = data;
         this.type = type;
     }
     
     public static SpecialBlock loadFromConfig(ConfigurationSection config, String id) {
+        BlockData data;
+        //convert old data
+        if(!config.contains("blockData")) {
             Material blockMat =  Material.matchMaterial(config.getString("blockMaterial",""));
-            byte data = (byte) config.getInt("dataValue");
-            if(blockMat!=null) {
-                return new SpecialBlock(id, blockMat, data);
-            } 
-            return null;
+            byte rawData = (byte) config.getInt("dataValue", 0);
+            data = LegacyMaterialUtil.getBlockData(blockMat, rawData);
+            if(data == null) {
+                return null;
+            }
+            config.set("blockData", data.getAsString());
+            config.set("blockMaterial", null);
+            config.set("dataValue",null);
+        // end convert old data
+        }else {
+            try {
+                data = Bukkit.getServer().createBlockData(config.getString("blockData",""));
+            } catch(IllegalArgumentException e) {
+                return null;
+            }
+        }
+        return new SpecialBlock(id, data);
     }
     
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
@@ -94,14 +117,15 @@ public class SpecialBlock {
     
     protected BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
-        state.setType(material);
-        state.setRawData(dataValue);
+        //state.setType(material);
+        //state.setRawData(dataValue);
+        state.setBlockData(blockData);
         return state;
     }
     
     protected static Material matchMaterial(String identifier) {
         if(NumericUtil.isInt(identifier)) {
-            return Material.getMaterial(NumericUtil.getInt(identifier));
+            return LegacyMaterialUtil.getMaterial(NumericUtil.getInt(identifier));
         } else {
             return Material.matchMaterial(identifier);
         }
@@ -153,6 +177,7 @@ public class SpecialBlock {
         }
     }
     
+    /* 1.13 removed
     protected static BlockFace getOppositeBlockFace(BlockFace face) {
         switch(face) {
             case NORTH_WEST: return BlockFace.SOUTH_EAST;
@@ -175,10 +200,12 @@ public class SpecialBlock {
             case UP: return BlockFace.DOWN;
             default: return BlockFace.UP;
         }
-    }
+    }*/
     
     public boolean matches(Block block) {
-        return material.equals(block.getType())
-                && dataValue == block.getData();
+        return block.getBlockData().matches(blockData);
+                //material.equals(block.getType())
+                //&& dataValue == block.getData();
     }
+    
 }
