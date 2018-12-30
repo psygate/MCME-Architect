@@ -20,6 +20,7 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.util.ClientUpdateUtil;
 import com.mcmiddleearth.util.DevUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -109,6 +110,7 @@ public class SpecialBlock {
                     public void run() {
                         DevUtil.log("Special block place x2: loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
                         tempState.update(true, false);
+                        new ClientUpdateUtil().sendBlockPlaceUpdates(blockPlace,player);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 5);
             }

@@ -28,7 +28,6 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.ResourceRegionsUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

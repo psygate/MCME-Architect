@@ -29,6 +29,7 @@ public enum Permission {
     ARCHITECT_WEATHER      ("architect.weather"),
     FULL_BRIGHTNESS       ("architect.fullBrightness"),
     RESOURCE_PACK_SWITCH  ("architect.resourcePackSwitcher"),
+    RESOURCE_PACK_ADMIN   ("architect.resourcePackAdmin"),
     PLACE_HALF_DOOR       ("architect.place.halfDoor"),
     PLACE_HALF_BED        ("architect.place.halfBed"),
     PLACE_TORCH           ("architect.place.torch"),

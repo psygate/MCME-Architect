@@ -19,9 +19,9 @@ package com.mcmiddleearth.architect.specialBlockHandling.listener;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.EventUtil;
-import com.mcmiddleearth.util.ResourceRegionsUtil;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -64,7 +64,7 @@ public class BlockPickerListener implements Listener {
         ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
         String rpName = "";
         if(handItem.getType().equals(Material.FLINT)) {
-            rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(event.getPlayer()));
+            rpName = RpManager.getCurrentRpName(event.getPlayer());
             if(rpName.equals("")) {
                 PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
             }

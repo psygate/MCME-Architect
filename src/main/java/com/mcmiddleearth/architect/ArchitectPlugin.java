@@ -9,7 +9,7 @@ import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
-import com.mcmiddleearth.architect.additionalCommands.RpCommand;
+import com.mcmiddleearth.architect.serverResoucePack.RpCommand;
 import com.mcmiddleearth.architect.additionalCommands.SpeedCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
@@ -29,6 +29,9 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
 import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
+import com.mcmiddleearth.architect.serverResoucePack.RPSwitchTask;
+import com.mcmiddleearth.architect.serverResoucePack.RpListener;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.signEditor.SignCommand;
 import com.mcmiddleearth.architect.signEditor.SignListener;
 import com.mcmiddleearth.architect.specialBlockHandling.command.GetCommand;
@@ -52,6 +55,7 @@ import java.util.List;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
@@ -65,6 +69,8 @@ public class ArchitectPlugin extends JavaPlugin {
     @Getter
     private final static List<String> commandList = new ArrayList<>();
 
+    private BukkitTask rpSwitchTask;
+    
     @Override
     public void onEnable() {
         
@@ -102,6 +108,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new SignListener(), this);
         pluginManager.registerEvents(new DoorListener(), this);
         pluginManager.registerEvents(new InventoryListener(), this);
+        pluginManager.registerEvents(new RpListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
@@ -123,10 +130,18 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("itemblock", new ItemBlockCommand());
         setCommandExecutor("sign", new SignCommand());
         setCommandExecutor("parrot", new ParrotCommand());
-        setCommandExecutor("speed", new SpeedCommand());
+        //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
+        RpManager.init();
+        rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 1000, 20);
+        
         getLogger().info("MCME-Architect Enabled!");
+    }
+    
+    @Override
+    public void onDisable() {
+        rpSwitchTask.cancel();
     }
     
     public void setCommandExecutor(String command, AbstractArchitectCommand executor) {

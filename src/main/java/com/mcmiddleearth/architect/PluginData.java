@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -50,7 +51,7 @@ public class PluginData {
     
     private static YamlConfiguration defaultWorldConfig = new YamlConfiguration();
     
-    private static final Map<String, String> rpUrls = new HashMap<>();
+    //private static final Map<String, String> rpUrls = new HashMap<>();
     
     @Getter
     @Setter
@@ -86,11 +87,11 @@ public class PluginData {
     }
     
     public static void load(){
-        ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
+        /*ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getConfigurationSection("ServerResourcePacks");
         for(String rpKey: rpConfig.getKeys(false)) {
             rpUrls.put(rpKey, rpConfig.getString(rpKey));
-        }
+        }*/
         ConfigurationSection entityConfig = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getConfigurationSection(ENITIY_LIMIT_SECTION);
         if(entityConfig==null) {
@@ -126,7 +127,7 @@ public class PluginData {
         }
     }*/
     
-    public static boolean hasPermission(Player player, Permission perm) {
+    public static boolean hasPermission(CommandSender player, Permission perm) {
         return player.hasPermission(perm.getPermissionNode());
     }
     
@@ -189,7 +190,7 @@ public class PluginData {
         return afkPlayerList.remove(player);
     }
     
-    public static String getRpUrl(String rpKey) {
+    /*public static String getRpUrl(String rpKey) {
         if(rpUrls.containsKey(rpKey)) {
             return rpUrls.get(rpKey);
             }
@@ -212,7 +213,7 @@ public class PluginData {
             }
         }
         return "";
-    }
+    }*/
     
     public static boolean moreEntitiesAllowed(Block block) {
         Collection<Entity> entities = block.getWorld().getNearbyEntities(block.getLocation(), 

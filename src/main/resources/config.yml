@@ -1,5 +1,9 @@
 ServerResourcePacks:
-    Gondor: http://build.mcmiddleearth.com/content/Gondor2.zip
+    Gondor: 
+        16px: 
+            light: 
+                url: http://build.mcmiddleearth.com/content/Gondor2.zip
+                sha: 
     Eriador: http://build.mcmiddleearth.com/content/Eriador.zip
     Lothlorien: http://build.mcmiddleearth.com/content/Lothlorien.zip
     Rohan: http://build.mcmiddleearth.com/content/Rohan.zip

@@ -17,7 +17,7 @@
 package com.mcmiddleearth.architect.specialBlockHandling.data;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.pluginutil.FileUtil;
@@ -183,7 +183,7 @@ public class SpecialItemInventoryData {
     }*/
     
     public static synchronized int downloadConfig(String rpName, InputStream in) throws IOException {
-        return ZipUtil.extract(PluginData.getRpUrl(rpName), in, configLocator, new File(configFolder,rpName));
+        return ZipUtil.extract(RpManager.getRpUrl(rpName,null), in, configLocator, new File(configFolder,rpName));
     }
     
     private static ItemStack loadItemFromConfig(ConfigurationSection config, String name, String rp) {

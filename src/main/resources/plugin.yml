@@ -11,9 +11,6 @@ commands:
    parrot:
       description: Removes parrots
       usage: /parrot
-   speed:
-      description: Speed
-      usage: /speed #
    get:
       description: Gives user special blocks with changed place behaviour
       usage: /get doors|logs|plants|food|head|slabs|armor|misc
@@ -81,6 +78,7 @@ permissions:
             architect.inventory.other: true
             architect.get.other: true
             architect.weather: true
+            archtiect.resourcePackAdmin: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -168,6 +166,11 @@ permissions:
     architect.resourcePackSwitcher: 
         descriptions: Allows to use command /rp 
         default: op
+    architect.resourcePackAdmin: 
+        descriptions: Allows to manage resource packs using command /rp 
+        default: op
+        children:
+            architect.resourcePackSwitcher: true
     architect.place.halfDoor: 
         descriptions: Allows to place half doors
         default: op

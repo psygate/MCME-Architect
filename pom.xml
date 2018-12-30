@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>MCME-Architect</artifactId>
-    <version>2.3.0-SNAPSHOT-native-001</version>
+    <version>2.3.0-SNAPSHOT-native-002</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,7 +44,11 @@
          <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
-          </repository>
+        </repository>
+        <repository>
+            <id>fawe-repo</id>
+            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
+        </repository>
         <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/artifactory/repo</url>
@@ -68,6 +72,11 @@
             <artifactId>spigot</artifactId>
             <version>1.13.1-R0.1-SNAPSHOT</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.boydti</groupId>
+            <artifactId>fawe-api</artifactId>
+            <version>latest</version>
         </dependency>
         <dependency>
           <groupId>com.sk89q.worldedit</groupId>

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.architect.additionalCommands;
+package com.mcmiddleearth.architect.serverResoucePack;
 
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.util.HttpTextInputHandler;
@@ -25,13 +25,13 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class RPSwitcher extends HttpTextInputHandler{
+public class _invalid_RPSwitcher extends HttpTextInputHandler{
     
     private final Player player;
     
     String url;
     
-    public RPSwitcher(String url, Player player) {
+    public _invalid_RPSwitcher(String url, Player player) {
         super(url,2000);
         this.player = player;
         this.url = url;
