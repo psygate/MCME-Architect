@@ -40,13 +40,13 @@ public class RpPlayerData implements Serializable {
     private int resolution = 16;
     @Getter
     @Setter
-    private volatile RpRegion currentRegion = null;
+    private transient RpRegion currentRegion = null;
     @Getter
     @Setter
     private String currentRpUrl = null;
     @Getter
     @Setter
-    private volatile PlayerResourcePackStatusEvent.Status currentRpStatus 
+    private transient PlayerResourcePackStatusEvent.Status currentRpStatus 
             = PlayerResourcePackStatusEvent.Status.DECLINED;
     
 }

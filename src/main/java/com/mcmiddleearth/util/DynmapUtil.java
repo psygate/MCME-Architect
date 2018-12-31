@@ -133,7 +133,7 @@ public class DynmapUtil {
         if(region.getRegion() instanceof Polygonal2DRegion) {
             double[] result = new double[((Polygonal2DRegion)region.getRegion()).getPoints().size()];
             for(int i = 0; i < result.length; i++) {
-                BlockVector2D vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i);
+                BlockVector2D vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i).toBlockVector2D();
                 result[i] = vector.getX();
             }
             return result;

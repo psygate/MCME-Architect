@@ -44,7 +44,7 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
         RpRegion region = getRegion(cc);
         return "You are editing rp region: "+region.getName()+"\n"
              + "- weight: "+region.getWeight()+"\n"
-             + "- rp: "+region.getRp()
+             + "- rp: "+region.getRp()+"\n"
              + "- region: "+(region.getRegion() instanceof Polygonal2DRegion?"posible to edit":"not possible to edit");
     }
 

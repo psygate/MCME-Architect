@@ -11,7 +11,6 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import static com.mcmiddleearth.architect.serverResoucePack.RpManager.getRpUrl;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -19,6 +18,7 @@ import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -71,7 +71,6 @@ public class RpCommand extends AbstractArchitectCommand {
                 case "auto":
                     if(args.length<2) {
                         data.setAutoRp(!data.isAutoRp());
-                        return true;
                     } else {
                         if(args[1].equals("on") || args[1].equals("true")) {
                             data.setAutoRp(true);
@@ -113,6 +112,9 @@ public class RpCommand extends AbstractArchitectCommand {
                     break;
             }
             RpManager.savePlayerData();
+            if(data.isAutoRp() && data.getCurrentRegion()!=null) {
+                RpManager.setRp(data.getCurrentRegion().getRp(), (Player)cs);
+            }
             return true;
         }
         if(args.length>0 && (args[0].equalsIgnoreCase("list"))
@@ -204,7 +206,7 @@ public class RpCommand extends AbstractArchitectCommand {
             sendRPNotFoundMessage(cs);
             return true;
         }
-        if(getRpUrl(rpName, (Player)cs).equals("")) {
+        if(RpManager.getRpUrl(rpName, (Player)cs).equals("")) {
             PluginData.getMessageUtil().sendErrorMessage(cs, "Missing url configuration for rp: "+rpName);
             return true;
         }

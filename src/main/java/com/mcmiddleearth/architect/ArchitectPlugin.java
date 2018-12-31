@@ -134,7 +134,7 @@ public class ArchitectPlugin extends JavaPlugin {
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         RpManager.init();
-        rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 1000, 20);
+        rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);
         
         getLogger().info("MCME-Architect Enabled!");
     }

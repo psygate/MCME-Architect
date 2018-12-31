@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.serverResoucePack;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation.RegionEditConversationFactory;
+import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DynmapUtil;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +45,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -73,8 +75,25 @@ public class RpManager {
             try {
                 YamlConfiguration config = new YamlConfiguration();
                 config.load(file);
-                RpRegion region = config.getSerializable("rpRegion", RpRegion.class);
-                addRegion(region);
+                final ConfigurationSection section = config.getConfigurationSection("rpRegion");
+                new BukkitRunnable() {
+                    int counter = 10;
+                    @Override
+                    public void run() {
+                        RpRegion region = RpRegion.loadFromMap((Map<String,Object>)section.getValues(true));
+                        if(region!=null) {
+                            DevUtil.log("loaded region: "+region.getName());
+                            addRegion(region);  
+                            cancel();
+                        } else {
+                            counter--;
+                            DevUtil.log("failed to load region: "+region.getName()+" tries left: "+counter);
+                            if(counter<1) {
+                                cancel();
+                            }
+                        }
+                    }
+                }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 200, 20);
             } catch (IOException | InvalidConfigurationException ex) {
                 Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -150,16 +169,21 @@ public class RpManager {
             /*for(int i=0; i<sha.length();i+=2) {
                 result[i/2] = Byte.parseByte(sha.substring(i, i+2),16);
             }*/
-            if(sha==null) {
-                return result;
-            }
-            result = new BigInteger(sha.trim(),16).toByteArray();
-            if(result.length>20) {
-                result = Arrays.copyOfRange(result,1,21);
-            }
-//Logger.getGlobal().info("First sha byte: " +result[0]+ " "+result[19]);
+            return stringToSHA(sha);
+        }
+        return result;
+    }
+    
+    private static byte[] stringToSHA(String sha) {
+        byte[] result = new byte[20];
+        if(sha==null) {
             return result;
         }
+        result = new BigInteger(sha.trim(),16).toByteArray();
+        if(result.length>20) {
+            result = Arrays.copyOfRange(result,1,21);
+        }
+//Logger.getGlobal().info("First sha byte: " +result[0]+ " "+result[19]);
         return result;
     }
     
@@ -206,8 +230,8 @@ public class RpManager {
     
     public static boolean setRp(String rpName, Player player) {
         String url = getRpUrl(rpName, player);
-        RpPlayerData data = playerRpData.get(player);
-        if(!url.equals("") && !url.equals(playerRpData.get(player).getCurrentRpUrl())) {
+        RpPlayerData data = getPlayerData(player);
+        if(!url.equals("") && !url.equals(data.getCurrentRpUrl())) {
             data.setCurrentRpUrl(url);
             player.setResourcePack(url, getSHA(rpName, player));
             savePlayerData();
@@ -216,8 +240,24 @@ public class RpManager {
         return false;
     }
     
+    public static byte[] getSHAForUrl(String url) {
+        for(String rpName: getRpConfig().getKeys(false)) {
+            ConfigurationSection section = getRpConfig().getConfigurationSection(rpName);
+            for(String key: section.getKeys(false)) {
+                ConfigurationSection pxSection = section.getConfigurationSection(key);
+                for(String varKey: pxSection.getKeys(false)) {
+                    ConfigurationSection varSection = pxSection.getConfigurationSection(varKey);
+                    if(varSection.getString("url").equals(url)) {
+                        return stringToSHA(varSection.getString("sha"));
+                    }
+                }
+            }
+        }
+        return new byte[20];
+    }
+    
     public static boolean searchRpKey(String key) {
-        return getRpConfig().getKeys(true).contains(key);
+        return getRpConfig().getKeys(true).stream().anyMatch((search) -> (search.endsWith(key)));
     }
     
     private static ConfigurationSection getRpConfig() {
@@ -272,15 +312,16 @@ public class RpManager {
     }
     
     public static void savePlayerData() {
-        if(!playerFile.exists()) {
-            try {
+        try {
+            if(!playerFile.exists()) {
                 playerFile.createNewFile();
-                try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(playerFile))) {
-                    out.writeObject(playerRpData);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
+            try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(playerFile))) {
+                DevUtil.log("Saving player RP data");
+                out.writeObject(playerRpData);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -297,7 +338,7 @@ public class RpManager {
     public static void saveRpRegion(RpRegion region) {
         try {
             YamlConfiguration config = new YamlConfiguration();
-            config.set("rpRegion", region.serialize());
+            config.set("rpRegion", region.saveToMap());
             config.save(new File(regionFolder,region.getName()+".reg"));
         } catch (IOException ex) {
             Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);

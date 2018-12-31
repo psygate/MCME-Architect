@@ -34,13 +34,13 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.ConfigurationSection;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class RpRegion implements ConfigurationSerializable {
+public class RpRegion {
     
     @Getter @Setter
     private String name;
@@ -68,8 +68,7 @@ public class RpRegion implements ConfigurationSerializable {
                 && region.contains(new Vector(loc.getX(),loc.getY(),loc.getZ()));
     }
 
-    @Override
-    public Map<String, Object> serialize() {
+    public Map<String, Object> saveToMap() {
         Map<String,Object> result = new HashMap<>();
         result.put("name", name);
         result.put("weight",weight);
@@ -111,10 +110,10 @@ public class RpRegion implements ConfigurationSerializable {
         return result;
     }
     
-    public static RpRegion deserialize(Map<String,Object> data) {
+    public static RpRegion loadFromMap(Map<String,Object> data) {
         RpRegion result;
         String name = (String) data.get("name");
-        Map<String,Object> regionData = (Map<String,Object>) data.get("region");
+        Map<String,Object> regionData = ((ConfigurationSection)data.get("region")).getValues(true);
         World world = Bukkit.getWorld((String) regionData.get("world"));
         if(world==null) {
             return null;
@@ -128,10 +127,13 @@ public class RpRegion implements ConfigurationSerializable {
                 break;
             case "CylinderRegion":
                 Vector center = getVector((String) regionData.get("center"));
-                Vector2D radius = getVector2D((String)regionData.get("radius"));
+                BlockVector2D blockRadius = getBlockVector2((String)regionData.get("radius"));
+                Vector2D rad = new Vector2D(blockRadius.getBlockX(),blockRadius.getBlockZ());
                 int minY = (Integer) regionData.get("minY");
                 int maxY = (Integer) regionData.get("maxY");
-                result = new RpRegion(name, new CylinderRegion(new BukkitWorld(world),center,radius,minY,maxY));
+                result = new RpRegion(name, new CylinderRegion(new BukkitWorld(world),
+                                                               center.toBlockVector(),
+                                                               rad,minY,maxY));
                 break;
             case "EllipsoidRegion":
                 center = getVector((String) regionData.get("center"));
@@ -144,9 +146,10 @@ public class RpRegion implements ConfigurationSerializable {
                 List<String> pointData = (List<String>) regionData.get("points");
                 List<BlockVector2D> points = new ArrayList<>();
                 for(String point: pointData) {
-                    points.add(getVector2D(point));
+                    points.add(getBlockVector2(point));
                 }
                 result = new RpRegion(name, new Polygonal2DRegion(new BukkitWorld(world),points,minY,maxY));
+                break;
             default:
                 throw new UnsupportedOperationException("Not all region types are supported.");
         }
@@ -159,7 +162,7 @@ public class RpRegion implements ConfigurationSerializable {
         String[] split = data.split(",");
         return new Vector(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
     }
-    private static BlockVector2D getVector2D(String data) {
+    private static BlockVector2D getBlockVector2(String data) {
         String[] split = data.split(",");
         return new BlockVector2D(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
     }
