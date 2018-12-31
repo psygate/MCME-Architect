@@ -63,6 +63,8 @@ public class RpCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
+        ChatColor ccStressed = PluginData.getMessageUtil().STRESSED;
+        ChatColor ccInfo = PluginData.getMessageUtil().INFO;
         if(args.length>0 && (args[0].equals("auto")
                           || args[0].equals("px")
                           || args[0].equals("variant"))) {
@@ -79,7 +81,8 @@ public class RpCommand extends AbstractArchitectCommand {
                         }
                     }
                     String on = (data.isAutoRp()?"on":"off");
-                    PluginData.getMessageUtil().sendInfoMessage(cs,"Auto rp switching set to " + on);
+                    PluginData.getMessageUtil().sendInfoMessage(cs,"Auto rp switching set to " 
+                                                                    +ccStressed+ on);
                     break;
                 case "px":
                     if(args.length<2) {
@@ -96,7 +99,8 @@ public class RpCommand extends AbstractArchitectCommand {
                         return true;
                     }
                     data.setResolution(px);
-                    PluginData.getMessageUtil().sendInfoMessage(cs, "RP resolution set to "+px+"px. If this resolution is not available for a RP you'll see default resolution.");
+                    PluginData.getMessageUtil().sendInfoMessage(cs, "RP resolution set to "
+                                         +ccStressed+px+"px"+ccInfo+". If this resolution is not available for a RP you'll see default resolution.");
                     break;
                 case "variant":
                     if(args.length<2) {
@@ -108,7 +112,8 @@ public class RpCommand extends AbstractArchitectCommand {
                         return true;
                     }
                     data.setVariant(args[1]);
-                    PluginData.getMessageUtil().sendInfoMessage(cs, "RP variant set to "+args[1]+". If this variant is not available for a RP you'll see default variant.");
+                    PluginData.getMessageUtil().sendInfoMessage(cs, "RP variant set to "
+                                    +ccStressed+args[1]+ccInfo+". If this variant is not available for a RP you'll see default variant.");
                     break;
             }
             RpManager.savePlayerData();
@@ -207,13 +212,16 @@ public class RpCommand extends AbstractArchitectCommand {
             return true;
         }
         if(RpManager.getRpUrl(rpName, (Player)cs).equals("")) {
-            PluginData.getMessageUtil().sendErrorMessage(cs, "Missing url configuration for rp: "+rpName);
+            PluginData.getMessageUtil().sendErrorMessage(cs, "Missing url configuration for rp: "
+                                                            +ccStressed+rpName);
             return true;
         }
         if(RpManager.setRp(rpName,(Player)cs)) {
-            PluginData.getMessageUtil().sendInfoMessage(cs, "Server resource pack set to: "+rpName);
+            PluginData.getMessageUtil().sendInfoMessage(cs, "Server resource pack set to: "
+                                                            +ccStressed+rpName);
         } else {
-            PluginData.getMessageUtil().sendErrorMessage(cs, "You are already using rp "+rpName);
+            PluginData.getMessageUtil().sendErrorMessage(cs, "You are already using rp "
+                                                            +ccStressed+rpName);
         }
         /*String urlStr = PluginData.getRpUrl(PluginData.matchRpName(args[0]));//"";
         

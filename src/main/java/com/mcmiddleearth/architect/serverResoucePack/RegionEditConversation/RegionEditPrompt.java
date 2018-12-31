@@ -22,10 +22,14 @@ import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
@@ -39,22 +43,29 @@ import org.bukkit.entity.Player;
  */
 public class RegionEditPrompt extends StringPrompt implements ConversationAbandonedListener{
 
+    
     @Override
     public String getPromptText(ConversationContext cc) {
+        ChatColor ccStressed = PluginData.getMessageUtil().HIGHLIGHT_STRESSED;
+        ChatColor ccHigh = PluginData.getMessageUtil().HIGHLIGHT;
         RpRegion region = getRegion(cc);
-        return "You are editing rp region: "+region.getName()+"\n"
-             + "- weight: "+region.getWeight()+"\n"
-             + "- rp: "+region.getRp()+"\n"
-             + "- region: "+(region.getRegion() instanceof Polygonal2DRegion?"posible to edit":"not possible to edit");
+        return "You are editing rp region: "+ccStressed+region.getName()+"\n"
+             + ccHigh+"- weight: "+ccStressed+region.getWeight()+"\n"
+             + ccHigh+"- rp: "+ccStressed+region.getRp()+"\n"
+             + ccHigh+"- type: "+ccStressed+region.getRegion().getClass().getSimpleName();//region.getRegion() instanceof Polygonal2DRegion?"posible to edit":"not possible to edit");
     }
 
     @Override
     public Prompt acceptInput(ConversationContext cc, String input) {
+        ChatColor ccStressed = PluginData.getMessageUtil().HIGHLIGHT_STRESSED;
+        ChatColor ccHigh = PluginData.getMessageUtil().HIGHLIGHT;
+        ChatColor ccError = PluginData.getMessageUtil().ERROR;
+        RpRegion editRegion = getRegion(cc);
         String[] words = input.split(" ");
         switch(words[0]) {
             case "weight":
                 if(words.length<2) {
-                    return new ResponsePrompt("Missing argument.");
+                    return new ResponsePrompt(ccError+"Missing argument.");
                 }
                 if(NumericUtil.isInt(words[1]) && NumericUtil.getInt(words[1])>0) {
                     getRegion(cc).setWeight(NumericUtil.getInt(words[1]));
@@ -75,63 +86,108 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
                 } else {
                     return new ResponsePrompt("No RP found for name: "+words[1]);
                 }
-            case "region":
-                if(words.length<2) {
-                    return new ResponsePrompt("Missing argument.");
-                }
-                if(words[1].equalsIgnoreCase("set")) {
-                    Region weRegion = FawePlayer.wrap(getPlayer(cc)).getSelection();
-                    if(weRegion!=null) {
-                        getRegion(cc).setRegion(weRegion.clone());
-                        RpManager.saveRpRegion(getRegion(cc));
-                        return new ResponsePrompt("Region bounds changed to current selection.");
-                    } else {
-                        return new ResponsePrompt("Make a WE selection first");
+            case "info":
+                Region weRegion = editRegion.getRegion();
+                String info="Region info:\n";
+                if(weRegion instanceof CuboidRegion) {
+                    Vector min = weRegion.getMinimumPoint();
+                    Vector max = weRegion.getMaximumPoint();
+                    info= info+ccHigh+"Type: "+ccStressed+"cuboid\n" 
+                         +ccHigh+"MinimumPoint: "+ccStressed+min.getBlockX()+","+min.getBlockY()+","+min.getBlockZ()+"\n"
+                         +ccHigh+"MaximumPoint: "+ccStressed+max.getBlockX()+","+max.getBlockY()+","+max.getBlockZ()+"\n";
+                } else if(weRegion instanceof Polygonal2DRegion) {
+                    info= info+ccHigh+"Type: "+ccStressed+"polygonal\n"
+                              +ccHigh+"Lower border: "+ccStressed+((Polygonal2DRegion)weRegion).getMinimumY()+"\n"
+                              +ccHigh+"Upper border: "+ccStressed+((Polygonal2DRegion)weRegion).getMaximumY()+"\n"
+                              +ccHigh+"Points: \n";
+                    int i = 0;
+                    for(BlockVector2D point: ((Polygonal2DRegion)weRegion).getPoints()) {
+                        info = info + ccHigh+"- ["+i+"] "+ccStressed+point.getBlockX()+","+point.getBlockZ()+"\n";
+                        i++;
                     }
+                } else  {
+                    info = info + ccHigh+"Type: "+ccStressed+weRegion.getClass().getSimpleName();
                 }
+                return new ResponsePrompt(info);
+            case "set":
+                Region newWeRegion = FawePlayer.wrap(getPlayer(cc)).getSelection();
+                if(newWeRegion!=null) {
+                    getRegion(cc).setRegion(newWeRegion.clone());
+                    RpManager.saveRpRegion(getRegion(cc));
+                    return new ResponsePrompt("Region borders changed to current selection.");
+                } else {
+                    return new ResponsePrompt(ccError+"Make a WE selection first");
+                }
+            case "setborder":
+            case "setminy":
+            case "setmaxy":
+            case "addpoint":
+            case "setpoint":
+            case "removepoint":
                 if(!(getRegion(cc).getRegion() instanceof Polygonal2DRegion)) {
-                    return new ResponsePrompt("You can edit polygonal regions only");
+                    return new ResponsePrompt(ccError+"You can edit polygonal regions only");
                 }
-                if(words.length<3) {
-                    return new ResponsePrompt("Missing argument.");
+                if(words[0].equals("setminy") 
+                        || words[0].equals("setmaxy")) {
+                    int y = getPlayer(cc).getLocation().getBlockY();
+                    if(words.length>1 && NumericUtil.isInt(words[1])) {
+                        y = NumericUtil.getInt(words[1]);
+                    }
+                    switch(words[0]) {
+                        case "setmaxy":
+                            ((Polygonal2DRegion)editRegion.getRegion()).setMaximumY(y);
+                            break;
+                        case "setminy":
+                            ((Polygonal2DRegion)editRegion.getRegion()).setMinimumY(y);
+                            break;
+                        default:
+                            return new ResponsePrompt(ccError+"Invalid subcommand.");
+                    }
+                    RpManager.updateDynmapRegions();
+                    RpManager.saveRpRegion(getRegion(cc));
+                    return new ResponsePrompt("Region borders edited.");
                 }
-                if(!NumericUtil.isInt(words[2])) {
-                    return new ResponsePrompt("You need to specify an index.");
+                if(words.length<2) {
+                    return new ResponsePrompt(ccError+"Missing argument.");
+                }
+                if(!NumericUtil.isInt(words[1])) {
+                    return new ResponsePrompt(ccError+"You need to specify an index.");
                 }
                 int x = getPlayer(cc).getLocation().getBlockX();
                 int z = getPlayer(cc).getLocation().getBlockZ();
-                if(words.length>4 && NumericUtil.isInt(words[3])
-                                  && NumericUtil.isInt(words[4])) {
-                    x = NumericUtil.getInt(words[3]);
-                    z = NumericUtil.getInt(words[4]);
+                if(words.length>3 && NumericUtil.isInt(words[2])
+                                  && NumericUtil.isInt(words[3])) {
+                    x = NumericUtil.getInt(words[2]);
+                    z = NumericUtil.getInt(words[3]);
                 }
-                RpRegion editRegion = getRegion(cc);
-                switch(words[1]) {
+                switch(words[0]) {
                     case "addpoint":
-                        insertPoint(editRegion,NumericUtil.getInt(words[2]),x,z);
+                        if(!insertPoint(editRegion,NumericUtil.getInt(words[1]),x,z)) {
+                            return new ResponsePrompt(ccError+"Invalid index.");
+                        }
                         break;
                     case "removepoint":
-                        removePoint(editRegion,NumericUtil.getInt(words[2]));
+                        if(!removePoint(editRegion,NumericUtil.getInt(words[1]))) {
+                            return new ResponsePrompt(ccError+"Invalid index.");
+                        }
                         break;
                     case "setpoint":
-                        setPoint(editRegion,NumericUtil.getInt(words[2]),x,z);
+                        if(!setPoint(editRegion,NumericUtil.getInt(words[1]),x,z)) {
+                            return new ResponsePrompt(ccError+"Invalid index.");
+                        }
                         break;
-                    case "setmaxy":
-                        ((Polygonal2DRegion)editRegion.getRegion()).setMaximumY(NumericUtil.getInt((words[2])));
-                    case "setminy":
-                        ((Polygonal2DRegion)editRegion.getRegion()).setMinimumY(NumericUtil.getInt((words[2])));
-                    default: return new ResponsePrompt("Invalid subcommand.");
+                    default: return new ResponsePrompt(ccError+"Invalid subcommand.");
                 }
                 RpManager.updateDynmapRegions();
                 RpManager.saveRpRegion(getRegion(cc));
-                return new ResponsePrompt("Region bounds edited.");
+                return new ResponsePrompt("Region borders edited.");
             case "name":
                 if(words.length<2) {
-                    return new ResponsePrompt("Missing argument.");
+                    return new ResponsePrompt(ccError+"Missing argument.");
                 }
                 RpRegion region = RpManager.getRegion(words[1]);
                 if(region!=null) {
-                    return new ResponsePrompt("A region with that name already exists.");
+                    return new ResponsePrompt(ccError+"A region with that name already exists.");
                 }
                 region = getRegion(cc);
                 RpManager.removeRegion(region.getName());
@@ -142,7 +198,7 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
             case "quit":
                 return Prompt.END_OF_CONVERSATION;
             default:
-                return new ResponsePrompt("Invalid command.");
+                return new ResponsePrompt(ccError+"Invalid command.");
         }
     }
 
@@ -167,33 +223,50 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
         return (Player) cc.getSessionData("player");
     }
     
-    private void insertPoint(RpRegion region, int index, int x, int z) {
+    private boolean insertPoint(RpRegion region, int index, int x, int z) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(weRegion.size()<=index) {
             weRegion.addPoint(new BlockVector2D(x,z));
+            return true;
         } else {
             index = Math.max(index, 0);
-            List<BlockVector2D> points = weRegion.getPoints();
+            List<BlockVector2D> points = new ArrayList<>();
+            points.addAll(weRegion.getPoints());
             ListIterator<BlockVector2D> iterator = points.listIterator(index);
             iterator.add(new BlockVector2D(x,z));
+            region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
+                                   weRegion.getMinimumY(),weRegion.getMaximumY()));
+            return true;
         }
     }
 
-    private void removePoint(RpRegion region, int index) {
+    private boolean removePoint(RpRegion region, int index) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(index >=0 && index < weRegion.size()) {
-            List<BlockVector2D> points = weRegion.getPoints();
+            List<BlockVector2D> points = new ArrayList<>();
+            points.addAll(weRegion.getPoints());
             ListIterator<BlockVector2D> iterator = points.listIterator(index);
+            iterator.next();
             iterator.remove();
+            region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
+                                   weRegion.getMinimumY(),weRegion.getMaximumY()));
+            return true;
         }
+        return false;
     }
 
-    private void setPoint(RpRegion region, int index, int x, int z) {
+    private boolean setPoint(RpRegion region, int index, int x, int z) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(index >=0 && index < weRegion.size()) {
-            List<BlockVector2D> points = weRegion.getPoints();
+            List<BlockVector2D> points = new ArrayList<>();
+            points.addAll(weRegion.getPoints());
             ListIterator<BlockVector2D> iterator = points.listIterator(index);
+            iterator.next();
             iterator.set(new BlockVector2D(x,z));
+            region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
+                                   weRegion.getMinimumY(),weRegion.getMaximumY()));
+            return true;
         }
+        return false;
     }
 }

@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation;
 
+import com.mcmiddleearth.architect.PluginData;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
@@ -39,6 +40,6 @@ public class ResponsePrompt extends MessagePrompt {
 
     @Override
     public String getPromptText(ConversationContext cc) {
-        return response;
+        return PluginData.getMessageUtil().STRESSED+response;
     }
 }

@@ -48,6 +48,7 @@ public class RegionEditConversationFactory{
                     }
                 })
                 .withFirstPrompt(new RegionEditPrompt())
+                .addConversationAbandonedListener(new RegionEditPrompt())
                 .withTimeout(120)
                 .withLocalEcho(true);
     }
