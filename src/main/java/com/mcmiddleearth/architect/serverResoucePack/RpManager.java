@@ -212,11 +212,12 @@ public class RpManager {
     }
         
     public static String getCurrentRpName(Player player) {
-        RpRegion region = getPlayerData(player).getCurrentRegion();
+        /*RpRegion region = getPlayerData(player).getCurrentRegion();
         if(region!=null) {
             return region.getRp();
         }
-        return "";
+        return "";*/
+        return getRpForUrl(getPlayerData(player).getCurrentRpUrl());
     }
 
     public static String matchRpName(String rpKey) {
@@ -254,6 +255,22 @@ public class RpManager {
             }
         }
         return new byte[20];
+    }
+    
+    public static String getRpForUrl(String url) {
+        for(String rpName: getRpConfig().getKeys(false)) {
+            ConfigurationSection section = getRpConfig().getConfigurationSection(rpName);
+            for(String key: section.getKeys(false)) {
+                ConfigurationSection pxSection = section.getConfigurationSection(key);
+                for(String varKey: pxSection.getKeys(false)) {
+                    ConfigurationSection varSection = pxSection.getConfigurationSection(varKey);
+                    if(varSection.getString("url").equals(url)) {
+                        return rpName;
+                    }
+                }
+            }
+        }
+        return "";
     }
     
     public static boolean searchRpKey(String key) {
