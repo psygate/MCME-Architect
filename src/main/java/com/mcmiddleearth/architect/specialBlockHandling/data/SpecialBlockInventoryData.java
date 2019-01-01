@@ -334,24 +334,34 @@ public class SpecialBlockInventoryData {
     }
     
     public static ItemStack getItem(Block block, String rpName) {
-        Material material = block.getType();
-        byte dataValue = block.getData();
+        //Material material = block.getType();
+        //byte dataValue = block.getData();
         for(SpecialBlock data: blockList) {
             if(rpName(data.getId()).equals(rpName)
                     && data.matches(block)) {
                 return inventories.get(rpName).getItem(data.getId());
             }
         }
-        return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));
+        return getHandItem(new ItemStack(block.getType(),1));
+        //1.13 removed: return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));
     }
     
     private static ItemStack getHandItem(ItemStack item) {
-        return item;
-        /*1.13 removed switch(item.getType()) {
-            case SIGN_POST:
+        switch(item.getType()) {
             case WALL_SIGN:
                 return new ItemStack(Material.SIGN,1);
-            case WALL_BANNER:
+            case WALL_TORCH:
+                return new ItemStack(Material.TORCH,1);
+            case REDSTONE_WALL_TORCH:
+                return new ItemStack(Material.REDSTONE_TORCH,1);
+        }
+        String material = item.getType().name();
+        if(item.getType().name().contains("WALL_BANNER")) {
+            return new ItemStack(Material.valueOf(material.replace("WALL_BANNER", "BANNER")));
+        }
+        return item;
+    }
+    /*1.13 removed        case BANNER:
             case STANDING_BANNER:
                 return new ItemStack(Material.BANNER,1);
             case BED_BLOCK:
@@ -375,7 +385,6 @@ public class SpecialBlockInventoryData {
             default:
                 return item;
         }*/
-    }
     
     public static synchronized int downloadConfig(String rpName, InputStream in) throws IOException {
         return ZipUtil.extract(RpManager.getRpUrl(rpName,null), in, configLocator, new File(configFolder,rpName));
