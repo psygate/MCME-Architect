@@ -92,17 +92,21 @@ public class BlockPickerListener implements Listener {
             event.setCancelled(true);
             Block block = event.getPlayer().getTargetBlock(null, 1000);
             Player player = event.getPlayer();
-            List<String> info = new BlockDataManager().getBlockInfo(block.getBlockData(),block.getData());
-            PluginData.getMessageUtil().sendInfoMessage(player, "Data for block at ("+ChatColor.GREEN
-                                                +block.getLocation().getBlockX()+", "
-                                                +block.getLocation().getBlockY()+", "
-                                                +block.getLocation().getBlockZ()+ChatColor.AQUA+")");
-            //PluginData.getMessageUtil().sendIndentedInfoMessage(player, "Material: "+ChatColor.GREEN+block.getType().name());
-            //if(!block.getType().isLegacy()) {
-            //    PluginData.getMessageUtil().sendIndentedInfoMessage(player, ChatColor.GREEN+block.getType().getKey().toString());
-            //}
-            for(String line: info) {
-                PluginData.getMessageUtil().sendIndentedInfoMessage(player, line);
+            if(player.isSneaking()) {
+                PluginData.getMessageUtil().sendInfoMessage(player, block.getBlockData().getAsString());
+            } else {
+                List<String> info = new BlockDataManager().getBlockInfo(block.getBlockData(),block.getData());
+                PluginData.getMessageUtil().sendInfoMessage(player, "Data for block at ("+ChatColor.GREEN
+                                                    +block.getLocation().getBlockX()+", "
+                                                    +block.getLocation().getBlockY()+", "
+                                                    +block.getLocation().getBlockZ()+ChatColor.AQUA+")");
+                //PluginData.getMessageUtil().sendIndentedInfoMessage(player, "Material: "+ChatColor.GREEN+block.getType().name());
+                //if(!block.getType().isLegacy()) {
+                //    PluginData.getMessageUtil().sendIndentedInfoMessage(player, ChatColor.GREEN+block.getType().getKey().toString());
+                //}
+                for(String line: info) {
+                    PluginData.getMessageUtil().sendIndentedInfoMessage(player, line);
+                }
             }
         }
     }
