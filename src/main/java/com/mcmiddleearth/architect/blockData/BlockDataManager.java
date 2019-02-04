@@ -492,6 +492,14 @@ public class BlockDataManager {
         }*/
     }
     
+    public Attribute getAttributeByName(String name) {
+        for(Attribute search: attributes) {
+            if(search.getName().equalsIgnoreCase(name)) {
+                return search;
+            }
+        }
+        return null;
+    }
         
     
     

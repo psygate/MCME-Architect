@@ -163,7 +163,7 @@ public class NoPhysicsData {
         temp.renameTo(dataFile);
     }
     
-    public static void load() {
+    public static void loadExceptionAreas() {
         try (Scanner scanner = new Scanner(dataFile)) {
             scanner.useDelimiter(";");
             while(scanner.hasNext()) {

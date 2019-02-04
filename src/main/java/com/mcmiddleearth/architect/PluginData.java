@@ -30,6 +30,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -142,12 +143,12 @@ public class PluginData {
             allowMonsters = false;
         }
         world.setSpawnFlags(allowMonsters, allowAnimals);    
-        world.setGameRuleValue("doFireTick", true+"");
+        world.setGameRule(GameRule.DO_FIRE_TICK, true);
         if (PluginData.isModuleEnabled(world, Modules.FIRE_SPREAD_BLOCKING)) {
-            world.setGameRuleValue("doFireTick", false+"");
+            world.setGameRule(GameRule.DO_FIRE_TICK, false);
         }
         DevUtil.log(world.getName());
-        DevUtil.log("fireTick "+world.getGameRuleValue("doFireTick"));
+        DevUtil.log("fireTick "+world.getGameRuleValue(GameRule.DO_FIRE_TICK));
         DevUtil.log("animals "+world.getAllowAnimals());
         DevUtil.log("mobs "+world.getAllowMonsters());
         for(String rule: world.getGameRules()) {
@@ -167,7 +168,7 @@ public class PluginData {
     
     public static boolean getNoInteraction(Block block) {
         WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
-        return config.getNoInteraction(block.getState());
+        return config.getNoInteraction(block.getBlockData());
     }
     
     public static Set<String> getWorldNames() {

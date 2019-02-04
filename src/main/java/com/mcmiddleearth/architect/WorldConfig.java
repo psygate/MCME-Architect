@@ -27,9 +27,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryType;
@@ -68,6 +70,8 @@ public class WorldConfig {
 
     private YamlConfiguration defaultConfig;
 
+    private List<BlockData> noInteraction = new ArrayList<>();
+    
     static {
         if (!worldConfigDir.exists()) {
             worldConfigDir.mkdirs();
@@ -97,6 +101,7 @@ public class WorldConfig {
             worldConfig = YamlConfiguration.loadConfiguration(configFile);
         }
         convertNoPhysicsList();
+        loadNoInteraction();
         /*} else { 
             if(defaultConfigFile.exists()) {
                 config = YamlConfiguration.loadConfiguration(defaultConfigFile);
@@ -138,7 +143,7 @@ public class WorldConfig {
         for (Modules modul : Modules.values()) {
             config.set(modul.getModuleKey(), true);
         }
-        config.set(NO_PHYSICS_LIST, new ArrayList<String>());
+        config.set(NO_PHYSICS_LIST, new ArrayList<>());
         createInventoryAccess(config);
         createNoInteraction(config);
         return config;
@@ -463,56 +468,45 @@ public class WorldConfig {
         shulker.set("default", InventoryAccess.TRUE.name());
     }
 
-    public boolean getNoInteraction(BlockState state) {
-        boolean defaultValue = false;
-        ConfigurationSection section = worldConfig.getConfigurationSection(NO_INTERACTION);
-        if (section == null) {
-            defaultValue = true;
-            section = defaultConfig.getConfigurationSection(NO_INTERACTION);
-        }
-        if (section == null) {
-            return false;
-        }
-        String data = section.getString(state.getType().name());
-        if (data == null && !defaultValue) {
-            section = defaultConfig.getConfigurationSection(NO_INTERACTION);
-            if (section == null) {
-                return false;
-            }
-            data = section.getString(state.getType().name());
-        }
-        if (data != null) {
-            String[] values = data.split(";");
-            for (String value : values) {
-                int first = -1, last = -1;
-                if (value.contains("-") && value.lastIndexOf("-") + 1 < value.length()) {
-                    String firstPart = value.substring(0, value.indexOf("-"));
-                    String lastPart = value.substring(value.lastIndexOf("-") + 1);
-                    if (NumericUtil.isInt(firstPart)) {
-                        first = NumericUtil.getInt(firstPart);
-                    }
-                    if (NumericUtil.isInt(lastPart)) {
-                        last = NumericUtil.getInt(lastPart);
-                    } else {
-                        last = first;
-                    }
-                } else {
-                    if (NumericUtil.isInt(value)) {
-                        first = NumericUtil.getInt(value);
-                        last = first;
-                    }
-                }
-                if (state.getRawData() >= first && state.getRawData() <= last) {
-                    return true;
-                }
+    public boolean getNoInteraction(BlockData data) {
+        return noInteraction.stream().anyMatch((search) -> (data.matches(search)));
+    }
+    
+    private void loadNoInteraction() {
+        List<String> data;
+        if(worldConfig.contains(NO_INTERACTION)) {
+            data = worldConfig.getStringList(NO_INTERACTION);
+        } else {
+            if(defaultConfig.contains(NO_INTERACTION)) {
+                data = defaultConfig.getStringList(NO_INTERACTION);
+            } else {
+                createNoInteraction(defaultConfig);
+                saveDefaultConfig();
+                data = defaultConfig.getStringList(NO_INTERACTION);
             }
         }
-        return false;
+        noInteraction.clear();
+        for(String entry: data) {
+            noInteraction.add(Bukkit.createBlockData(entry));
+        }
     }
 
     private void createNoInteraction(ConfigurationSection config) {
-        ConfigurationSection section = config.createSection(NO_INTERACTION);
-        section.set(Material.OAK_FENCE_GATE.name(), "8-15"); //1.13 renamed
+        List<String> list = new ArrayList<>();
+        list.add("minecraft:acacia_fence_gate");
+        list.add("minecraft:birch_fence_gate[powered=true]");
+        list.add("minecraft:jungle_fence_gate");
+        list.add("minecraft:dark_oak_fence_gate");
+        list.add("minecraft:spruce_fence_gate");
+        list.add("minecraft:acacia_door[powered=false]");
+        list.add("minecraft:jungle_door[powered=false]");
+        list.add("minecraft:dark_oak_door[powered=false]");
+        list.add("minecraft:spruce_door[powered=false]");
+        list.add("minecraft:repeater");
+        list.add("minecraft:comparator");
+        config.set(NO_INTERACTION, list);
+        
+        /*section.set(Material.OAK_FENCE_GATE.name(), "8-15"); //1.13 renamed
         section.set(Material.SPRUCE_FENCE_GATE.name(), "0-15");
         section.set(Material.BIRCH_FENCE_GATE.name(), "8-15");
         section.set(Material.JUNGLE_FENCE_GATE.name(), "0-15");
@@ -527,6 +521,6 @@ public class WorldConfig {
         section.set(Material.REPEATER.name(), "0-15"); //1.13 renamed
         //1.13 removed section.set(Material.DIODE_BLOCK_OFF.name(), "0-15");
         section.set(Material.COMPARATOR.name(), "0-15"); //1.13 renamed
-        //1.13 removed section.set(Material.REDSTONE_COMPARATOR_OFF.name(), "0-15");
+        //1.13 removed section.set(Material.REDSTONE_COMPARATOR_OFF.name(), "0-15");*/
     }
 }

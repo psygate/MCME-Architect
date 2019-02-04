@@ -18,21 +18,28 @@ package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DoorUtil;
-import java.util.logging.Logger;
+import com.mcmiddleearth.util.TheGafferUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.material.Door;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -75,19 +82,19 @@ public class DoorListener implements Listener{
                 && event.getHand().equals(EquipmentSlot.HAND)
                 && DoorUtil.isDoorBlock(event.getClickedBlock())) {
             Block block = event.getClickedBlock();
-//Logger.getGlobal().info("Clicked block"+((Door)block.getState().getData()).getHinge());
+//Logger.getGlobal().info("Clicked block"+((Door)block.getBlockData()).getHinge().name());
             if(DoorUtil.isThinWall(block)) {
                 return;
             }
             event.setCancelled(true);
-            if(DoorUtil.isUpperDoorBlock(block)) {                       //click at upper door part
+            if(DoorUtil.isUpperDoorBlock(block)) {              //click at upper door part
                 block = block.getRelative(BlockFace.DOWN);      //check if clicked block is part of full door
                 if(!DoorUtil.isDoorBlock(block)) {
                     return;
                 }
-            } else {                                            //click at lower door part
+            } else {                                                           //click at lower door part
                 if(!DoorUtil.isUpperDoorBlock(block.getRelative(BlockFace.UP))//check for half door
-                    && !DoorUtil.isFullDoorAbove(block)) {               //check for 3 block high door
+                    && !DoorUtil.isFullDoorAbove(block)) {                    //check for 3 block high door
                     return;
                 }
             }
@@ -95,30 +102,101 @@ public class DoorListener implements Listener{
                 block = block.getRelative(BlockFace.UP);   //
             }
             boolean hingeRightOfClickedSide = ((Door)block.getRelative(BlockFace.UP)
-                                               .getState().getData()).getHinge();
-//Logger.getGlobal().info("Lower block"+hingeRightOfClickedSide);
+                                               .getBlockData()).getHinge().equals(Door.Hinge.RIGHT);
+//Logger.getGlobal().info("Lower block "+hingeRightOfClickedSide);
             DoorUtil.toggleDoor(block);
             DoorUtil.toggleDoor(block.getRelative(BlockFace.UP));
             DoorUtil.toggleHalfDoor(block.getRelative(BlockFace.DOWN),
                                     hingeRightOfClickedSide,
-                                    ((Door)block.getState().getData()).isOpen());
+                                    ((Door)block.getState().getBlockData()).isOpen());
 
             Block block2Lower = DoorUtil.getSecondHalf(block);
             Block block2Upper = block2Lower.getRelative(BlockFace.UP);
             BlockState block2LowerState = block2Lower.getState();
             BlockState block2UpperState = block2Upper.getState();
             if(DoorUtil.isDoorBlock(block2Lower) && DoorUtil.isDoorBlock(block2Upper) 
-                && (((Door)block2LowerState.getData()).getFacing()
-                            .equals(((Door)block.getState().getData()).getFacing())) //check for same facing
-                && (((Door)block2UpperState.getData()).getHinge()           //check for opposite hinge
-                       !=(((Door)block.getRelative(BlockFace.UP).getState().getData()).getHinge()))) {
+                && (((Door)block2LowerState.getBlockData()).getFacing()
+                            .equals(((Door)block.getBlockData()).getFacing())) //check for same facing
+                && (((Door)block2UpperState.getBlockData()).getHinge()           //check for opposite hinge
+                       !=(((Door)block.getRelative(BlockFace.UP).getBlockData()).getHinge()))) {
                 DoorUtil.toggleDoor(block2Lower);
                 DoorUtil.toggleDoor(block2Upper);
                 DoorUtil.toggleHalfDoor(block2Lower.getRelative(BlockFace.DOWN),
                                         !hingeRightOfClickedSide,
-                                        ((Door)block2Lower.getState().getData()).isOpen());
+                                        ((Door)block2Lower.getBlockData()).isOpen());
             }
         }
+    }
+    
+    /**
+     * place powered doors for creative inventory door items
+     * @param event
+     */
+    @EventHandler
+    public void vanillaDoorPlace(BlockPlaceEvent event) {
+        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.USE_POWERED_DOORS)
+                || !event.getHand().equals(EquipmentSlot.HAND) 
+                || event.getPlayer().getInventory().getItemInMainHand()==null
+                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+            return;
+        }
+        final Player player = event.getPlayer();
+        if(!TheGafferUtil.hasGafferPermission(player,event.getBlockPlaced().getLocation())) {
+            return;
+        }
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+//Logger.getGlobal().info("HandItem: "+handItem);        
+        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
+//Logger.getGlobal().info("Data: "+data);
+        if(data==null) {
+            Material material=null;
+            boolean powered = true;
+            switch(handItem.getType()) {
+                case ACACIA_DOOR:
+                    material = Material.ACACIA_DOOR;
+                    break;
+                case DARK_OAK_DOOR:
+                    material = Material.DARK_OAK_DOOR;
+                    break;
+                case JUNGLE_DOOR:
+                    material = Material.JUNGLE_DOOR;
+                    break;
+                case SPRUCE_DOOR:
+                    material = Material.SPRUCE_DOOR;
+                    break;
+                case BIRCH_DOOR:
+                    material = Material.BIRCH_DOOR;
+                    powered = false;
+                    break;
+                case OAK_DOOR:
+                    material = Material.OAK_DOOR;
+                    break;
+                case IRON_DOOR:
+                    material = Material.IRON_DOOR;
+                    powered = false;
+                    break;
+            }
+            if(material==null) {
+                return;
+            }
+            ConfigurationSection config = new MemoryConfiguration();
+            config.set("blockMaterial", material.name());
+            config.set("powered", powered);
+            data = SpecialBlockVanillaDoor.loadFromConfig(config,"temp");
+//Logger.getGlobal().info("door data: "+data);
+        }
+        if(!(data instanceof SpecialBlockVanillaDoor)) {
+            return;
+        }
+        boolean hingeRight = ((Door)event.getBlock().getRelative(BlockFace.UP)
+                                                  .getBlockData()).getHinge().equals(Door.Hinge.RIGHT);
+/*Logger.getGlobal().info("hinge upper: "+((Door)event.getBlock().getRelative(BlockFace.UP)
+                                                  .getBlockData()).getHinge());
+Logger.getGlobal().info("blockid: "+event.getBlock().getRelative(BlockFace.UP).getType());
+Logger.getGlobal().info("placeblockdata: "+event.getBlockPlaced().getData());
+Logger.getGlobal().info("placeblockid: "+event.getBlockPlaced().getType());*/
+        ((SpecialBlockVanillaDoor)data).placeBlock(event.getBlock(), BlockFace.SELF, 
+                                                   player, hingeRight);
     }
     
     /*@EventHandler(priority = EventPriority.LOWEST) 

@@ -20,7 +20,6 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DoorUtil;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -158,7 +157,7 @@ public class SpecialBlockDoor extends SpecialBlock {
     }
  
     private boolean checkForHingeRightSide(Block block, BlockFace facing, boolean hingeRight) {
-Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
+//Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
         Block leftBlock, rightBlock;
         switch(facing) {
             case NORTH: rightBlock = block.getRelative(BlockFace.EAST);
@@ -175,34 +174,34 @@ Logger.getGlobal().info("DoorBlockPlace hinge side right: "+hingeRight);
 //    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
             if(checkState.getBlockData() instanceof Door 
                     && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
-//    Logger.getGlobal().info("DoorBlockPlace leftState return true");
+//   Logger.getGlobal().info("DoorBlockPlace leftState return true");
                 return true;
             }
             checkState = rightBlock.getState();
 //    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
             if(checkState.getBlockData() instanceof Door 
                     && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.LEFT)) {
-//    Logger.getGlobal().info("DoorBlockPlace rightState return false");
+//  Logger.getGlobal().info("DoorBlockPlace rightState return false");
                 return false;
             }
         }
         else {
             BlockState checkState = rightBlock.getState();
-//    Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
+//  Logger.getGlobal().info("DoorBlockPlace rightState id "+checkState.getType());
             if(checkState.getBlockData() instanceof Door 
-                    && ((Door)checkState.getData()).getHinge().equals(Door.Hinge.LEFT)) {
-//    Logger.getGlobal().info("DoorBlockPlace rightState return false");
+                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
+//  Logger.getGlobal().info("DoorBlockPlace rightState return false");
                 return false;
             }
             checkState = leftBlock.getState();
-//    Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
+//  Logger.getGlobal().info("DoorBlockPlace leftState id "+checkState.getType());
             if(checkState.getBlockData() instanceof Door 
-                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
-//    Logger.getGlobal().info("DoorBlockPlace leftState return true");
+                    && ((Door)checkState.getBlockData()).getHinge().equals(Door.Hinge.LEFT)) {
+//  Logger.getGlobal().info("DoorBlockPlace leftState return true");
                 return true;
             }
         }
-Logger.getGlobal().info("DoorBlockPlace leftState return default.");
+//gger.getGlobal().info("DoorBlockPlace leftState return default.");
         return hingeRight;
     }
     

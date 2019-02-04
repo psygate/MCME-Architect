@@ -10,7 +10,6 @@ import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
 import com.mcmiddleearth.architect.serverResoucePack.RpCommand;
-import com.mcmiddleearth.architect.additionalCommands.SpeedCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.AdditionalProtectionListener;
@@ -80,14 +79,6 @@ public class ArchitectPlugin extends JavaPlugin {
         //ProtocolLibUtil.init(this);
         //DoorListener.addOpenHalfDoorListener();
         PluginData.getMessageUtil().setPluginName("Architect");
-        PluginData.load();
-        NoPhysicsData.load();
-        CustomHeadManagerData.load();
-        SpecialBlockInventoryData.loadInventories();
-        SpecialSavedInventoryData.loadInventories();
-        SpecialItemInventoryData.loadInventories();
-        SpecialHeadInventoryData.loadInventory();
-        GetData.load();
         
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);
@@ -133,7 +124,8 @@ public class ArchitectPlugin extends JavaPlugin {
         //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
-        RpManager.init();
+        loadData();
+        
         rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);
         
         getLogger().info("MCME-Architect Enabled!");
@@ -147,6 +139,18 @@ public class ArchitectPlugin extends JavaPlugin {
     public void setCommandExecutor(String command, AbstractArchitectCommand executor) {
         getCommand(command).setExecutor(executor);
         commandList.add(command);
+    }
+    
+    public void loadData() {
+        PluginData.load();
+        NoPhysicsData.loadExceptionAreas();
+        CustomHeadManagerData.load();
+        SpecialBlockInventoryData.loadInventories();
+        SpecialSavedInventoryData.loadInventories();
+        SpecialItemInventoryData.loadInventories();
+        SpecialHeadInventoryData.loadInventory();
+        GetData.load();
+        RpManager.init();
     }
     
 }

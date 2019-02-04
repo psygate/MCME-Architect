@@ -82,7 +82,7 @@ public class DoorUtil {
     
     public static Block getSecondHalf(Block block) {
         if(isDoorBlock(block)) {
-            if(((Door)block.getRelative(BlockFace.UP).getBlockData()).getHinge().equals(Door.Hinge.RIGHT)) {
+            if(((Door)block.getRelative(BlockFace.UP).getBlockData()).getHinge().equals(Door.Hinge.LEFT)) {
                 switch(((Door) block.getState().getBlockData()).getFacing()) {
                     case NORTH: return block.getRelative(BlockFace.EAST);
                     case EAST: return block.getRelative(BlockFace.SOUTH);
@@ -111,7 +111,13 @@ public class DoorUtil {
             if(isUpperDoorBlock(block.getRelative(BlockFace.UP))) {
                 data.setOpen(!data.isOpen());
                 state.setBlockData(data);
-                state.update();
+                state.update(true, false);
+                state = block.getRelative(BlockFace.UP).getState();
+                data = (Door) state.getBlockData();
+                data.setOpen(!data.isOpen());
+                state.setBlockData(data);
+                state.update(true, false);
+//Logger.getGlobal().info("toggle !");
             }
 //Logger.getGlobal().info("dv new "+state.getRawData());
         }
@@ -127,7 +133,7 @@ public class DoorUtil {
             facing = rotate(facing, clockwise);
             data.setFacing(facing);
             state.setBlockData(data);
-            state.update();
+            state.update(true, false);
 //Logger.getGlobal().info("toggle !");
         }
     }

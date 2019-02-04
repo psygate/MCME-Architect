@@ -115,7 +115,7 @@ public class SpecialBlockListener implements Listener{
         }
         final Player player = event.getPlayer();
         final ItemStack handItem = player.getInventory().getItemInMainHand();
-        SpecialBlock data = getSpecialBlockDataFromItem(handItem);
+        SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
         if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
                         || data.getType().equals(SpecialBlockType.DOOR_VANILLA)) {
             return;
@@ -174,15 +174,6 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
 }*/
     }
     
-    private SpecialBlock getSpecialBlockDataFromItem(ItemStack handItem) {
-        ItemMeta meta = handItem.getItemMeta();
-        if(!(meta.hasLore() 
-                && meta.getLore().size()>1 
-                && meta.getLore().get(0).equals(SpecialBlockInventoryData.SPECIAL_BLOCK_TAG))) {
-            return null;
-        }
-        return SpecialBlockInventoryData.getSpecialBlock(meta.getLore().get(1));
-    }
     /**
      * If module SPECIAL_BLOCK_PLACE is enabled in world config file
      * prevents changes of item durability.
@@ -345,75 +336,6 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         SpecialBlockItemBlock.removeArmorStands(loc);
     }
     
-    
-    /**
-     * place powered doors for creative inventory door items
-     */
-    @EventHandler
-    public void vanillaDoorPlace(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.USE_POWERED_DOORS)
-                || !event.getHand().equals(EquipmentSlot.HAND) 
-                || event.getPlayer().getInventory().getItemInMainHand()==null
-                || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-            return;
-        }
-        final Player player = event.getPlayer();
-        if(!TheGafferUtil.hasGafferPermission(player,event.getBlockPlaced().getLocation())) {
-            return;
-        }
-        ItemStack handItem = player.getInventory().getItemInMainHand();
-//Logger.getGlobal().info("HandItem: "+handItem);        
-        SpecialBlock data = getSpecialBlockDataFromItem(handItem);
-//Logger.getGlobal().info("Data: "+data);
-        if(data==null) {
-            Material material=null;
-            boolean powered = true;
-            switch(handItem.getType()) {
-                /*case ACACIA_DOOR_ITEM:
-                    material = Material.ACACIA_DOOR;
-                    break;
-                case DARK_OAK_DOOR_ITEM:
-                    material = Material.DARK_OAK_DOOR;
-                    break;
-                case JUNGLE_DOOR_ITEM:
-                    material = Material.JUNGLE_DOOR;
-                    break;
-                case SPRUCE_DOOR_ITEM:
-                    material = Material.SPRUCE_DOOR;
-                    break;*/
-                case BIRCH_DOOR:
-                    //material = Material.BIRCH_DOOR;
-                    powered = false;
-                    break;
-                /*case WOOD_DOOR:
-                    material = Material.WOODEN_DOOR;
-                    break;*/
-                case IRON_DOOR:
-                    //material = Material.IRON_DOOR_BLOCK;
-                    powered = false;
-                    break;
-            }
-            if(material==null) {
-                return;
-            }
-            ConfigurationSection config = new MemoryConfiguration();
-            config.set("blockMaterial", material.name());
-            config.set("powered", powered);
-            data = SpecialBlockVanillaDoor.loadFromConfig(config,"temp");
-        }
-        if(!(data instanceof SpecialBlockVanillaDoor)) {
-            return;
-        }
-        boolean hingeRight = ((Door)event.getBlock().getRelative(BlockFace.UP)
-                                                  .getState().getData()).getHinge();
-/*Logger.getGlobal().info("hinge upper: "+((Door)event.getBlock().getRelative(BlockFace.UP)
-                                                  .getState().getData()).getHinge());
-Logger.getGlobal().info("blockid: "+event.getBlock().getRelative(BlockFace.UP).getType());
-Logger.getGlobal().info("placeblockdata: "+event.getBlockPlaced().getData());
-Logger.getGlobal().info("placeblockid: "+event.getBlockPlaced().getType());*/
-        ((SpecialBlockVanillaDoor)data).placeBlock(event.getBlock(), BlockFace.SELF, 
-                                                   player, hingeRight);
-    }
     
 
     

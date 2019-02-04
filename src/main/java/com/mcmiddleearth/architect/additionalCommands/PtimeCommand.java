@@ -29,7 +29,7 @@ import org.bukkit.potion.PotionEffectType;
  *
  * @author Eriol_Eandur
  */
-public class SpeedCommand extends AbstractArchitectCommand {
+public class PtimeCommand extends AbstractArchitectCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

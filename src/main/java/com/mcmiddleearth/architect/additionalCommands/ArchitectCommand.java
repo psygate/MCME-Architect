@@ -20,17 +20,14 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
-import com.mcmiddleearth.architect.blockData.MaterialComparator;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
 import com.mcmiddleearth.util.DevUtil;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -210,7 +207,8 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             PluginData.getMessageUtil().sendErrorMessage(sender,"World not found.");
             return true;*/
         } 
-        if(!(PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
+        if(!(sender instanceof ConsoleCommandSender 
+                    || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
@@ -232,8 +230,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
-            PluginData.getMessageUtil().sendInfoMessage(sender, "Reloading...");
-            PluginData.load();
+            ArchitectPlugin.getPluginInstance().loadData();
             PluginData.getMessageUtil().sendInfoMessage(sender,  "Reload complete!");
         } else {
             PluginData.getMessageUtil().sendInvalidSubcommandError(sender);

@@ -333,6 +333,15 @@ public class SpecialBlockInventoryData {
         return null;
     }
     
+    public static SpecialBlock getSpecialBlockDataFromItem(ItemStack handItem) {
+        ItemMeta meta = handItem.getItemMeta();
+        if(!(meta.hasLore() 
+                && meta.getLore().size()>1 
+                && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG))) {
+            return null;
+        }
+        return getSpecialBlock(meta.getLore().get(1));
+    }
     public static ItemStack getItem(Block block, String rpName) {
         //Material material = block.getType();
         //byte dataValue = block.getData();

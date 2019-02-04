@@ -10,10 +10,12 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.architect.blockData.attributes.Attribute;
+import com.mcmiddleearth.architect.blockData.attributes.IntAttribute;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -42,7 +44,7 @@ public class RandomiserCommand extends AbstractArchitectCommand {
 
     private final Map<OfflinePlayer, RandomiserConfig> configList = new HashMap<>();
     
-    private final static Set<Material> allowedMaterials = new HashSet<>();
+    private final static Set<String> allowedMaterials = new HashSet<>();
     
     private static File configFile;
     
@@ -176,6 +178,16 @@ public class RandomiserCommand extends AbstractArchitectCommand {
     }
         
     private void randomise(Location center, RandomiserConfig pConfig) {
+       // get attribute for name
+       // only int Attributes
+       // set value with pConfig.randomDataValue
+        BlockDataManager manager = new BlockDataManager();
+        Map<Material,IntAttribute> attributes = new HashMap<>();
+        for(String material: pConfig.getMaterialsSet()) {
+            String[] data = material.split(":");
+            attributes.put(Material.matchMaterial(data[0]), 
+                                                  (IntAttribute) manager.getAttributeByName(data[1]));
+        }
         int radius = pConfig.getRadius();
         for(int i = center.getBlockX()-radius; i<center.getBlockX()+radius; i++) {
             for(int j = center.getBlockY()-radius; j<center.getBlockY()+radius; j++) {
@@ -183,10 +195,12 @@ public class RandomiserCommand extends AbstractArchitectCommand {
                     Location loc = new Location(center.getWorld(),i,j,k);
                     if(center.distance(loc)<radius) {
                         Block block = loc.getBlock();
-                        if(pConfig.isIn(block.getType())) {
-                            BlockState state = block.getState();
-                            state.setRawData(pConfig.randomDataValue());
-                            state.update(true, false);
+                        IntAttribute attrib = attributes.get(block.getType());
+                        if(attrib!=null) {
+                            BlockData data = block.getBlockData();
+                            attrib.setBlockData(data);
+                            attrib.setState(pConfig.randomDataValue());
+                            block.setBlockData(data, false);
                         }
                     }
                 }
@@ -212,29 +226,33 @@ public class RandomiserCommand extends AbstractArchitectCommand {
         return true;
     }
     
-    public static boolean isAllowed(Material mat) {
+    public static boolean isAllowed(String mat) {
         return allowedMaterials.contains(mat);
     }
     
     private void setAllowed(String name, boolean allow) {
-        Material material = Material.matchMaterial(name);
-        if(material != null) {
-            if(allow) {
-                allowedMaterials.add(material);
-            }
-            else {
-                allowedMaterials.remove(material);
+        String[] data = name.split(":");
+        Material material = Material.matchMaterial(data[0]);
+        if(material != null && data.length>1) {
+            Attribute attrib = new BlockDataManager().getAttributeByName(data[1]);
+            if(attrib instanceof IntAttribute) {
+                if(allow) {
+                    allowedMaterials.add(name);
+                }
+                else {
+                    allowedMaterials.remove(name);
+                }
             }
         }
     }
     
     public void saveAllowedMaterials() {
         FileConfiguration config = new YamlConfiguration();
-        List<String> materialNames = new ArrayList<>();
+        /*List<String> materialNames = new ArrayList<>();
         for(Material mat : allowedMaterials) {
             materialNames.add(mat.name());
-        }
-        config.set(configPathAllowedMaterials, materialNames);
+        }*/
+        config.set(configPathAllowedMaterials, allowedMaterials);
         try {
             config.save(configFile);
         } catch (IOException ex) {
@@ -251,14 +269,9 @@ public class RandomiserCommand extends AbstractArchitectCommand {
             return;
         }
         List<String> materialNames = config.getStringList(configPathAllowedMaterials);
+        allowedMaterials.clear();
         for(String name : materialNames) {
-            Material material= Material.matchMaterial(name);
-            if(material!=null) {
-                allowedMaterials.add(material);
-            } 
-            else {
-                Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING,"Material not found.");
-            }
+            setAllowed(name,true);
         }
     }
     
@@ -281,8 +294,8 @@ public class RandomiserCommand extends AbstractArchitectCommand {
     
     private void sendMaterialsInfoMessage(CommandSender cs) {
         String matList = "";
-        for(Material material: allowedMaterials) {
-            matList = matList+material.name()+" ";
+        for(String material: allowedMaterials) {
+            matList = matList+material+"\n";
         }
         PluginData.getMessageUtil().sendInfoMessage(cs,"Allowed materials: "+PluginData.getMessageUtil().STRESSED+ matList);
     }
