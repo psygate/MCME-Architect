@@ -10,6 +10,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
 import com.mcmiddleearth.pluginutil.EventUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -128,11 +129,13 @@ public class ArmorStandListener implements Listener {
         }
         int stepInDegree = config.getRotationStep();
         if(!(player.getItemInHand().getType().equals(Material.STICK)
-                || mode.equals(ArmorStandEditorMode.HAND))) {
+                || mode.equals(ArmorStandEditorMode.HAND)
+                || mode.equals(ArmorStandEditorMode.HELMET))) {
             return false;
         }
         ArmorStandPart part = config.getPart();
         ArmorStandEditorMode modifiedMode = mode;
+//Logger.getGlobal().info("mode: "+mode.name());
         switch(mode) {
             case HAND:
                 if(!rightClick) {
@@ -140,18 +143,40 @@ public class ArmorStandListener implements Listener {
                     break;
                 }
                 ItemStack oldItem = armorStand.getItemInHand();
-                ItemStack newItem = new ItemStack(player.getItemInHand());
+                ItemStack newItem = new ItemStack(player.getInventory().getItemInMainHand());
                 newItem.setAmount(1);
                 armorStand.setItemInHand(newItem);
                 if(player.getGameMode().equals(GameMode.SURVIVAL)) {
-                    int amount = player.getItemInHand().getAmount();
+                    int amount = player.getInventory().getItemInMainHand().getAmount();
                     if(amount==1) {
-                        player.setItemInHand(null);
+                        player.getInventory().setItemInMainHand(null);
                     }
                     else {
-                        player.getItemInHand().setAmount(amount-1);
+                        player.getInventory().getItemInMainHand().setAmount(amount-1);
                     }
                     player.getInventory().addItem(oldItem);
+                }
+                break;
+            case HELMET:
+//Logger.getGlobal().info("right Click: "+rightClick);
+                if(!rightClick) {
+                    armorStand.setHelmet(null);
+                    break;
+                }
+                ItemStack oldHelmet = armorStand.getHelmet();
+                ItemStack newHelmet = new ItemStack(player.getInventory().getItemInMainHand());
+                newHelmet.setAmount(1);
+                armorStand.setHelmet(newHelmet);
+//Logger.getGlobal().info("Helmet set: "+newHelmet.getType());
+                if(player.getGameMode().equals(GameMode.SURVIVAL)) {
+                    int amount = player.getInventory().getItemInMainHand().getAmount();
+                    if(amount==1) {
+                        player.getInventory().setItemInMainHand(null);
+                    }
+                    else {
+                        player.getInventory().getItemInMainHand().setAmount(amount-1);
+                    }
+                    player.getInventory().addItem(oldHelmet);
                 }
                 break;
             case ROTATE:
