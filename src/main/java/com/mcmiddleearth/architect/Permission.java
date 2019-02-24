@@ -85,6 +85,8 @@ public enum Permission {
     RANDOMISER_USER       ("architect.randomiser.user"),
     CUSTOM_HEAD_USER      ("architect.customHeadManager.user"),
     CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager"),
+    CUNK_UPDATE           ("architect.chunkupdate"),
+    CUNK_UPDATE_AUTO      ("architect.chunkupdate.auto"),
     ARCHITECT_HELP        ("architect.help");
 
     @Getter

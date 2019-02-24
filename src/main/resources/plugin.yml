@@ -50,6 +50,9 @@ commands:
    architect:
       description: Manage architect plugin
       usage: /architect version | world | weather | reload | dev
+   chunkupdate:
+      description: Updates chunks around a player
+      usage: /chunkupdate <radius>
    chead:
       description: Manage custom heads
       usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
@@ -100,6 +103,7 @@ permissions:
             architect.ranks.adventurer: true
             architect.bannerEditor.save: true
             architect.armorStandEditor.trusted: true
+            architect.chunkupdate: true
             architect.get.private: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
@@ -153,6 +157,9 @@ permissions:
         default: op
     architect.inventory.reload:
         description: Allows to reload Architect's special build inventories from config files
+        default: op
+    architect.chunkupdate:
+        description: Allows to use comand /chunkupdate
         default: op
     architect.help:
         description: Allows to use comand /architect help

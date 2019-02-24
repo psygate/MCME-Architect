@@ -87,7 +87,7 @@ public class RpManager {
                             cancel();
                         } else {
                             counter--;
-                            DevUtil.log("failed to load region: "+region.getName()+" tries left: "+counter);
+                            DevUtil.log("failed to load region: "+region+" tries left: "+counter);
                             if(counter<1) {
                                 cancel();
                             }

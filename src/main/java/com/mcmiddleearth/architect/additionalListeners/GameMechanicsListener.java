@@ -18,11 +18,9 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import java.util.logging.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
@@ -81,7 +79,7 @@ public class GameMechanicsListener implements Listener{
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
-Logger.getGlobal().info("Block fade.");
+//Logger.getGlobal().info("Block fade.");
 //Logger.getGlobal().info("Block decay: "+event.getBlock().getType().name()+" "
 //                                       +event.getBlock().getX()
 //                                       +" "+event.getBlock().getZ());

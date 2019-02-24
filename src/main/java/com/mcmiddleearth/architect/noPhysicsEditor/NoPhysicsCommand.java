@@ -73,7 +73,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                 sendHelpMessage(p,page);
                 return true;
             }
-            if(!args[1].equals("-default") && (Bukkit.getWorld(args[1]) == null)) {
+            if(!args[1].equals(PluginData.getDefaultKey()) && (Bukkit.getWorld(args[1]) == null)) {
                 sendWorldNotFoundMessage((Player)cs);
                 return true;
             }
@@ -222,10 +222,6 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
 
     private void sendNoValidMaterial(Player p) {
         PluginData.getMessageUtil().sendErrorMessage(p, "Not a valid block material ID.");
-    }
-
-    private void sendWorldNotFound(Player p) {
-        PluginData.getMessageUtil().sendErrorMessage(p, "World not found.");
     }
 
     private void sendMaterialAddedMessage(Player p) {

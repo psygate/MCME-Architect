@@ -187,6 +187,11 @@ public class WorldConfig {
         return defaultValue;
     }
 
+    public void setModuleEnabled(Modules module, boolean enable) {
+        worldConfig.set(module.getModuleKey(), enable);
+        saveWorldConfig();
+    }
+
     /* 1.13 removed 
     public String getNoPhysicsListAsString() {
         String result="";

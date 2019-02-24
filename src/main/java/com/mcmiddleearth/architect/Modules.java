@@ -26,7 +26,7 @@ public enum Modules {
     
     REDSTONE_TORCH         ("modules.specialBlocks.redstoneTorch"),
     HALF_DOORS             ("modules.specialBlocks.halfDoors"),
-    HALF_BEDS             ("modules.specialBlocks.halfBeds"),
+    HALF_BEDS              ("modules.specialBlocks.halfBeds"),
     DOUBLE_SLABS           ("modules.specialBlocks.doubleSlabs"),
     PLANTS                 ("modules.specialBlocks.plants"),
     PISTON_EXTENSIONS      ("modules.specialBlocks.pistonExtenstions"),
@@ -66,6 +66,9 @@ public enum Modules {
     RANDOMISER             ("modules.command.randomiser"),
     
     VOXEL_BIOME_BRUSH_FIX  ("modules.voxelBiomeBrushFix"),
+    
+    CHUNK_UPDATE           ("modules.chunkupdate.manual"),
+    CHUNK_UPDATE_AUTO      ("modules.chunkupdate.auto"),
     
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");

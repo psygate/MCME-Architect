@@ -14,26 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.util;
+package com.mcmiddleearth.architect.chunkUpdate;
 
+import com.mcmiddleearth.architect.Modules;
+import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.pluginutil.NMSUtil;
+import com.mcmiddleearth.util.DevUtil;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class ClientUpdateUtil {
+public class ChunkUpdateUtil {
+    
+    private final static int updateRadius = 5;
     
     private static final Map<Material,BlockFace[]> blockPlaceUpdateSpread = new HashMap<>();
     
-    private static final int maxStep = 16*16;
+    private static final int maxStep = 16*Bukkit.getServer().getViewDistance();
     
     static {
         blockPlaceUpdateSpread.put(Material.BROWN_MUSHROOM_BLOCK, new BlockFace[]{BlockFace.WEST,
@@ -42,6 +52,57 @@ public class ClientUpdateUtil {
                                                                                   BlockFace.NORTH});
         blockPlaceUpdateSpread.put(Material.MUSHROOM_STEM, new BlockFace[]{  BlockFace.UP,
                                                                                   BlockFace.DOWN});
+    }
+    
+    public static void sendUpdates(Block blockPlace, Player player) {
+        Location loc = blockPlace.getLocation();
+        if(!PluginData.isModuleEnabled(loc.getWorld(),Modules.CHUNK_UPDATE_AUTO)) {
+            return;
+        }
+        if(blockPlaceUpdateSpread.containsKey(blockPlace.getType())) {
+            DevUtil.log("Sending block specific chunk updates.");
+            //sendBlockUpdate(blockPlace,player);
+            Set<Chunk> finishedChunks = new HashSet<>();
+            NMSUtil.updatePlayerChunks(player, blockPlace.getLocation(), blockPlace.getLocation());
+            finishedChunks.add(blockPlace.getChunk());
+            Material mat = blockPlace.getType();
+            for(BlockFace face: blockPlaceUpdateSpread.get(blockPlace.getType())) {
+                Block block = blockPlace.getRelative(face);
+                int step = 0;
+                while(block.getChunk().isLoaded() && block.getType().equals(mat) 
+                                                  && step < maxStep) {
+                    if(!finishedChunks.contains(block.getChunk())) {
+                        //sendBlockUpdate(block,player);
+                        NMSUtil.updatePlayerChunks(player, block.getLocation(), block.getLocation());
+                        DevUtil.log(2,"Sending block specific chunk updates.");
+                        finishedChunks.add(block.getChunk());
+                        block = block.getRelative(face);
+                    }
+                    step++;
+                }
+            }
+        } else {
+            DevUtil.log("Sending local chunk updates.");
+            NMSUtil.updatePlayerChunks(player,
+                                       loc.clone().add(new Vector(-updateRadius,0,-updateRadius)), 
+                                       loc.clone().add(new Vector(updateRadius,0,updateRadius)));
+        }
+    }
+}
+
+            /* 3D flood fill
+            faces = blockPlaceUpdateSpread.get(blockPlace.getType());
+            done = new BlockMap();
+            sendBlockPlaceUpdates(blockPlace.getType(), blockPlace,player,0);
+            
+            /* -invalid
+            Set<Block> start = new HashSet<>();
+            start.add(blockPlace);
+            chunkQueue.put(blockPlace.getChunk(), start);
+            while(!chunkQueue.isEmpty()) {
+                Chunk next = chunkQueue.keySet().iterator().next();
+            }
+        }
     }
     
     //private final Map<Chunk,Set<Block>> chunkQueue = new HashMap<>();
@@ -94,36 +155,6 @@ public class ClientUpdateUtil {
     BlockChart done;
     
     BlockFace[] faces;
-    
-    public void sendBlockPlaceUpdates(Block blockPlace, Player player) {
-        if(blockPlaceUpdateSpread.containsKey(blockPlace.getType())) {
-            sendBlockUpdate(blockPlace,player);
-            Material mat = blockPlace.getType();
-            for(BlockFace face: blockPlaceUpdateSpread.get(blockPlace.getType())) {
-                Block block = blockPlace.getRelative(face);
-                int step = 0;
-                while(block.getChunk().isLoaded() && block.getType().equals(mat) 
-                                                  && step < maxStep) {
-                    sendBlockUpdate(block,player);
-                    block = block.getRelative(face);
-                    step++;
-                }
-            }
-            /* 3D flood fill
-            faces = blockPlaceUpdateSpread.get(blockPlace.getType());
-            done = new BlockMap();
-            sendBlockPlaceUpdates(blockPlace.getType(), blockPlace,player,0);
-            
-            /* -invalid
-            Set<Block> start = new HashSet<>();
-            start.add(blockPlace);
-            chunkQueue.put(blockPlace.getChunk(), start);
-            while(!chunkQueue.isEmpty()) {
-                Chunk next = chunkQueue.keySet().iterator().next();
-            }*/
-        }
-    }
-    
     private void sendBlockPlaceUpdates(Material mat, Block block, Player player, int step) {
         DevUtil.log(2,"Update: "+block.getX()+" "+block.getY()+" "+block.getZ()+ " - "+step);
         if(block.getChunk().isLoaded() && !done.contains(block) 
@@ -141,4 +172,4 @@ public class ClientUpdateUtil {
     }
     
     
-}
+}*/

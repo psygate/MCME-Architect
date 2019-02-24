@@ -52,6 +52,9 @@ public class PluginData {
     
     private static YamlConfiguration defaultWorldConfig = new YamlConfiguration();
     
+    @Getter
+    private static String defaultKey = "-default";
+                                       
     //private static final Map<String, String> rpUrls = new HashMap<>();
     
     @Getter
@@ -76,6 +79,14 @@ public class PluginData {
         WorldConfig config = getOrCreateWorldConfig(world.getName());
         DevUtil.log(40, "isEnabled? "+modul.getModuleKey());
         return config.isModuleEnabled(modul,true);
+    }
+
+    public static void setModuleEnabled(World world, Modules modul, boolean enable) {
+        if(world==null) {
+            worldConfigs.get(defaultKey).setModuleEnabled(modul,enable);
+        } else {
+            getOrCreateWorldConfig(world.getName()).setModuleEnabled(modul, enable);
+        }
     }
 
     public static WorldConfig getOrCreateWorldConfig(String worldName) {
@@ -105,7 +116,7 @@ public class PluginData {
         entityLimitRadius = entityConfig.getInt("radius",80);
         worldConfigs.clear();
         WorldConfig config = new WorldConfig(WorldConfig.getDefaultWorldConfigName(), defaultWorldConfig);
-        worldConfigs.put("-default", config);
+        worldConfigs.put(defaultKey, config);
         defaultWorldConfig = config.getWorldConfig();
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));

@@ -7,6 +7,7 @@ package com.mcmiddleearth.architect;
 
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
 import com.mcmiddleearth.architect.serverResoucePack.RpCommand;
@@ -20,6 +21,7 @@ import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
 import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadListener;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.customHeadManager.HeadCommand;
@@ -100,6 +102,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new DoorListener(), this);
         pluginManager.registerEvents(new InventoryListener(), this);
         pluginManager.registerEvents(new RpListener(), this);
+        pluginManager.registerEvents(new ChunkUpdateListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
@@ -121,6 +124,7 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("itemblock", new ItemBlockCommand());
         setCommandExecutor("sign", new SignCommand());
         setCommandExecutor("parrot", new ParrotCommand());
+        setCommandExecutor("chunkupdate", new ChunkUpdateCommand());
         //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         

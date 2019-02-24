@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>MCME-Architect</artifactId>
-    <version>2.3.0-SNAPSHOT-native-003</version>
+    <version>2.3.0-SNAPSHOT-native-004</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.mcmiddleearth</groupId>
             <artifactId>PluginUtils</artifactId>
-            <version>1.2-SNAPSHOT-native-003</version>
+            <version>1.2-SNAPSHOT-native-006</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bukkit</groupId>
