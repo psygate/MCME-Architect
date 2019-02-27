@@ -48,6 +48,8 @@ public enum Modules {
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
     NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
+    NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),
+    NO_PHYSICS_CONNECT_FENCES("modules.environment.noPhysicsConnectFences"),
     
     SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),

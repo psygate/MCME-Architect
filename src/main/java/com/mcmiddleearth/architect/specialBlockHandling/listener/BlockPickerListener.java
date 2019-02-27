@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.specialBlockHandling.listener;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.EventUtil;
@@ -108,6 +109,7 @@ public class BlockPickerListener implements Listener {
                     PluginData.getMessageUtil().sendIndentedInfoMessage(player, line);
                 }
             }
+            ChunkUpdateUtil.sendUpdates(block, player);
         }
     }
 

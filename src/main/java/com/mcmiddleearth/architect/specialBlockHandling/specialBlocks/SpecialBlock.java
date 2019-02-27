@@ -17,11 +17,11 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
+import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.util.DevUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -104,6 +104,7 @@ public class SpecialBlock {
             @Override
             public void run() {
                 state.update(true, false);
+                NoPhysicsListener.connectNoPhysicsBlocks(blockPlace);
                 DevUtil.log("Special block place: ID "+state.getType()+" - DV "+state.getRawData());
                 final BlockState tempState = getBlockState(blockPlace, blockFace, playerLoc);
                 new BukkitRunnable() {

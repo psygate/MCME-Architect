@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import com.mcmiddleearth.architect.blockData.attributes.Attribute;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
@@ -69,6 +70,7 @@ public class BlockCycleListener implements Listener {
             Attribute attrib = blockDataManager.getAttribute(block.getBlockData());
             PluginData.getMessageUtil().sendInfoMessage(p, "Selected Block State: "
                                           +(attrib!=null?attrib.getName()+" : "+attrib.getState():"null"));
+            ChunkUpdateUtil.sendUpdates(block, p);
         }
     }
         
