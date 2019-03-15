@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.TheGafferUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,7 +27,6 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -37,7 +37,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *
  * @author Eriol_Eandur
  */
-public class AdditionalProtectionListener implements Listener{
+public class AdditionalProtectionListener extends WatchedListener{
     
     @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void HangingBreak(HangingBreakByEntityEvent event) {

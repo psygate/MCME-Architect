@@ -28,11 +28,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.Bukkit;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.inventory.meta.SkullMeta;
 
 /**
@@ -71,15 +71,17 @@ public class HeadUtil {
             blockState.update(true, false);
             blockState = block.getState();
             Skull skullData = (Skull) blockState;
-            skullData.setSkullType(SkullType.PLAYER);
+            //skullData.setSkullType(SkullType.PLAYER);
             Field profileField = head.getItemMeta().getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(head.getItemMeta());
             profileField = skullData.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(skullData, profile);
-            skullData.setRawData((byte)1);
-            skullData.setRotation(BlockFace.NORTH_NORTH_EAST);
+            //skullData.setRawData((byte)1);
+            Rotatable data = ((Rotatable)skullData.getBlockData());
+            data.setRotation(BlockFace.SOUTH_SOUTH_WEST);
+            skullData.setBlockData(data);
             skullData.update(true, false);
         } catch (NoSuchFieldException | SecurityException e) {
             Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);

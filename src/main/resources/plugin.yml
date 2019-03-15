@@ -59,6 +59,28 @@ commands:
    sign:
       description: Edit signs
       usage: /sign <#line> <line text>
+   copy:
+      description: copy area from cuboid WE selection to your clipboard
+      usage: /copy
+   cut:
+      description: cut area from cuboid WE selection to your clipboard
+      usage: /cut
+   paste:
+      description: paste your clipboard
+      usage: /paste
+   undo:
+      description: rolls back your last /paste command(s)
+      usage: /undo <#>
+   redo:
+      description: restores a previously undone /paste command(s)
+      usage: /redo <#>
+   flip:
+      description: flips your clipboard
+      usage: /flip [x|y|z]
+   rot:
+      description: rotate your clipboard along y-axis
+      usage: /rot [90|180|270]
+       
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -96,6 +118,7 @@ permissions:
             architect.inventory.save: true
             architect.noPhysicsList.exception: true
             architect.itemBlockRemove: true
+            architect.copypaste: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -140,6 +163,12 @@ permissions:
             architect.help: true
             architect.noPhysicsList.view: true
             architect.signEditor: true
+    architect.copypaste:
+        description: Allows to use /copy /paste and /rot
+        default: op
+    architect.copypaste.unlimited: 
+        description: Allows to copy / paste unlimited amount of blocks dont crash the server
+        default: op
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
         default: op

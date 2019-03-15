@@ -17,11 +17,7 @@
 package com.mcmiddleearth.architect.chunkUpdate;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.Modules;
-import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutil.NMSUtil;
-import com.mcmiddleearth.util.DevUtil;
-import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,7 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 /**
  *
@@ -60,7 +55,14 @@ public class ChunkUpdateListener implements Listener {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
     public void blockPlace(BlockPlaceEvent event) {
-        ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
+        final Block block = event.getBlock();
+        final Player player = event.getPlayer();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
     }
     
 }

@@ -22,6 +22,13 @@ import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
 import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
+import com.mcmiddleearth.architect.copyPaste.CopyCommand;
+import com.mcmiddleearth.architect.copyPaste.CutCommand;
+import com.mcmiddleearth.architect.copyPaste.FlipCommand;
+import com.mcmiddleearth.architect.copyPaste.PasteCommand;
+import com.mcmiddleearth.architect.copyPaste.RedoCommand;
+import com.mcmiddleearth.architect.copyPaste.RotateCommand;
+import com.mcmiddleearth.architect.copyPaste.UndoCommand;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadListener;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.customHeadManager.HeadCommand;
@@ -125,6 +132,13 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("sign", new SignCommand());
         setCommandExecutor("parrot", new ParrotCommand());
         setCommandExecutor("chunkupdate", new ChunkUpdateCommand());
+        setCommandExecutor("copy", new CopyCommand());
+        setCommandExecutor("cut", new CutCommand());
+        setCommandExecutor("paste", new PasteCommand());
+        setCommandExecutor("rot", new RotateCommand());
+        setCommandExecutor("undo", new UndoCommand());
+        setCommandExecutor("redo", new RedoCommand());
+        setCommandExecutor("flip", new FlipCommand());
         //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         

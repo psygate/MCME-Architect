@@ -210,11 +210,12 @@ public class WorldConfig {
         boolean convert = false;
         for (String input : npList) {
             if (NumericUtil.isInt(input)) {
-                Material mat = LegacyMaterialUtil.getMaterial(NumericUtil.getInt(input));
+                /*Material mat = LegacyMaterialUtil.getMaterial(NumericUtil.getInt(input));
                 if (mat != null) {
                     convertedList.add(mat.getKey().toString());
                     convert = true;
-                }
+                }*/
+                convert = true;
             }
         }
         if (convert) {

@@ -87,7 +87,9 @@ public enum Permission {
     CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager"),
     CUNK_UPDATE           ("architect.chunkupdate"),
     CUNK_UPDATE_AUTO      ("architect.chunkupdate.auto"),
-    ARCHITECT_HELP        ("architect.help");
+    ARCHITECT_HELP        ("architect.help"),
+    COPY_PASTE            ("architect.copypaste"),
+    COPY_PASTE_UNLIMITED  ("architect.copypaste.unlimited");
 
     @Getter
     private final String permissionNode;

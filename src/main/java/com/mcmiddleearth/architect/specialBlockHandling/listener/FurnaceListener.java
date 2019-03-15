@@ -19,13 +19,13 @@ package com.mcmiddleearth.architect.specialBlockHandling.listener;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.FurnaceInventory;
@@ -37,7 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  *
  * @author Eriol_Eandur
  */
-public class FurnaceListener implements Listener{
+public class FurnaceListener extends WatchedListener{
     
     /**
      * If module BURNING_FURNACE is enabled in world config file

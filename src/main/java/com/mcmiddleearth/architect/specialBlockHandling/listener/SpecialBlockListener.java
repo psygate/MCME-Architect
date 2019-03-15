@@ -22,10 +22,10 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
@@ -40,7 +40,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -58,7 +57,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockListener implements Listener{
+public class SpecialBlockListener extends WatchedListener{
  
     /**
      * Handles player interaction with dragon eggs if module DRAGON_EGG is enabled in 

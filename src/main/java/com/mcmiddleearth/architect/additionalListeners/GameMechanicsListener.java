@@ -18,8 +18,8 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -36,7 +36,7 @@ import org.bukkit.event.world.WorldLoadEvent;
  *
  * @author Eriol_Eandur
  */
-public class GameMechanicsListener implements Listener{
+public class GameMechanicsListener extends WatchedListener{
     
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {

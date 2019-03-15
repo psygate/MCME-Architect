@@ -50,6 +50,9 @@ public enum Modules {
     NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
     NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),
     NO_PHYSICS_CONNECT_FENCES("modules.environment.noPhysicsConnectFences"),
+    NO_PHYSICS_CONNECT_CHORUS("modules.environment.noPhysicsConnectChorus"),
+    NO_PHYSICS_CONNECT_CHESTS("modules.environment.noPhysicsConnectChests"),
+    NO_PHYSICS_CONNECT_GLASS("modules.environment.noPhysicsConnectGlass"),
     
     SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),
@@ -66,6 +69,7 @@ public enum Modules {
     ARMOR_STAND_EDITOR     ("modules.command.armorStandEditor"),
     ARMOR_STAND_ROLLBACK   ("modules.command.armorStandRollback"),
     RANDOMISER             ("modules.command.randomiser"),
+    COPY_PASTE             ("modules.command.copypaste"),
     
     VOXEL_BIOME_BRUSH_FIX  ("modules.voxelBiomeBrushFix"),
     

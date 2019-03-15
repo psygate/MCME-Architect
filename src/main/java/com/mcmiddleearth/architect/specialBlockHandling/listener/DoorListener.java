@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DoorUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
@@ -34,7 +35,6 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -45,7 +45,7 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Eriol_Eandur
  */
-public class DoorListener implements Listener{
+public class DoorListener extends WatchedListener{
     
     /**
      * If module HALF_DOORS is enabled in world config file
