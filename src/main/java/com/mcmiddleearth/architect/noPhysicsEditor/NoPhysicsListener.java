@@ -30,6 +30,8 @@ import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.GlassPane;
+import org.bukkit.block.data.type.RedstoneWire;
+import org.bukkit.block.data.type.RedstoneWire.Connection;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -130,6 +132,37 @@ public class NoPhysicsListener extends WatchedListener{
                         block.setBlockData(blockData,false);
                     }
                 }
+            } else if(((block.getBlockData() instanceof RedstoneWire) 
+                    && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_REDSTONE_WIRE))) {
+                RedstoneWire data = (RedstoneWire) block.getBlockData();
+                int power = data.getPower();
+                for(BlockFace face: data.getAllowedFaces()) {
+                    Block neighbour = block.getRelative(face);
+                    Block upperNeighbour = neighbour.getRelative(BlockFace.UP);
+                    Block lowerNeighbour = neighbour.getRelative(BlockFace.DOWN);
+                    if(neighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)neighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)neighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.SIDE);
+                        neighbour.setBlockData(neighbourData,false);
+                        data.setFace(face, Connection.SIDE);
+                    }
+                    if(lowerNeighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)lowerNeighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)lowerNeighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.UP);
+                        lowerNeighbour.setBlockData(neighbourData,false);
+                        data.setFace(face, Connection.SIDE);
+                    }
+                    if(upperNeighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)upperNeighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)upperNeighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.SIDE);
+                        upperNeighbour.setBlockData(neighbourData,false);
+                        data.setFace(face, Connection.UP);
+                    }
+                    block.setBlockData(data, false);
+                }
             }
         //}            
     }
@@ -215,6 +248,33 @@ public class NoPhysicsListener extends WatchedListener{
                             && ((Chest)neighbourData).getType().equals(Chest.Type.LEFT)) {
                         ((Chest)neighbourData).setType(Chest.Type.SINGLE);
                         neighbour.setBlockData(neighbourData, false);
+                    }
+                }
+            } else if(((block.getBlockData() instanceof RedstoneWire) 
+                    && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_REDSTONE_WIRE))) {
+                RedstoneWire data = (RedstoneWire) block.getBlockData();
+                int power = data.getPower();
+                for(BlockFace face: data.getAllowedFaces()) {
+                    Block neighbour = block.getRelative(face);
+                    Block upperNeighbour = neighbour.getRelative(BlockFace.UP);
+                    Block lowerNeighbour = block.getRelative(BlockFace.DOWN);
+                    if(neighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)neighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)neighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.NONE);
+                        neighbour.setBlockData(neighbourData,false);
+                    }
+                    if(lowerNeighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)lowerNeighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)lowerNeighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.NONE);
+                        lowerNeighbour.setBlockData(neighbourData,false);
+                    }
+                    if(upperNeighbour.getBlockData().getClass().equals(data.getClass())
+                            && ((RedstoneWire)upperNeighbour.getBlockData()).getPower()==power) {
+                        RedstoneWire neighbourData = (RedstoneWire)upperNeighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), Connection.NONE);
+                        upperNeighbour.setBlockData(neighbourData,false);
                     }
                 }
             }

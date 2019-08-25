@@ -53,6 +53,7 @@ public enum Modules {
     NO_PHYSICS_CONNECT_CHORUS("modules.environment.noPhysicsConnectChorus"),
     NO_PHYSICS_CONNECT_CHESTS("modules.environment.noPhysicsConnectChests"),
     NO_PHYSICS_CONNECT_GLASS("modules.environment.noPhysicsConnectGlass"),
+    NO_PHYSICS_CONNECT_REDSTONE_WIRE("modules.environment.noPhysicsConnectRedstoneWire"),
     
     SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),

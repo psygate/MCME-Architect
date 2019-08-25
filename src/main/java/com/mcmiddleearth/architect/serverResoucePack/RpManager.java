@@ -234,6 +234,7 @@ public class RpManager {
         RpPlayerData data = getPlayerData(player);
         if(!url.equals("") && !url.equals(data.getCurrentRpUrl())) {
             data.setCurrentRpUrl(url);
+Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
             player.setResourcePack(url, getSHA(rpName, player));
             savePlayerData();
             return true;
@@ -282,13 +283,17 @@ public class RpManager {
     }
 
     public static boolean refreshSHA(CommandSender cs, String rp) {
+Logger.getGlobal().info("rp: "+rp);
         ConfigurationSection config = getRpConfig().getConfigurationSection(rp);
         if(config!=null) {
             for(String resolutionKey: config.getKeys(false)) {
+Logger.getGlobal().info("resolutionKey: "+resolutionKey);
                 ConfigurationSection resolutionSection = config.getConfigurationSection(resolutionKey);
                 for(String variantKey: resolutionSection.getKeys(false)) {
                     try {
+Logger.getGlobal().info("varianKey: "+variantKey);
                         ConfigurationSection variantSection = resolutionSection.getConfigurationSection(variantKey);
+Logger.getGlobal().info(variantSection.getString("url"));
                         URL url = new URL(variantSection.getString("url"));
                         InputStream fis = url.openStream();
                         MessageDigest sha1 = MessageDigest.getInstance("SHA1");

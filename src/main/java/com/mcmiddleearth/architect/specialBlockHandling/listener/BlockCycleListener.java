@@ -49,7 +49,7 @@ public class BlockCycleListener implements Listener {
 
     private final Map<Player, BlockDataManager> playerBlockDataManager = new HashMap<>();
     
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     private void cycleAttribute(PlayerInteractEvent event) {
         if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)
                 && EventUtil.isMainHandEvent(event)
@@ -74,7 +74,7 @@ public class BlockCycleListener implements Listener {
         }
     }
         
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void CycleState(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) 

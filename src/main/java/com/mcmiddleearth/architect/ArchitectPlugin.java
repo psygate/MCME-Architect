@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
 import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
+import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
 import com.mcmiddleearth.architect.copyPaste.CopyCommand;
 import com.mcmiddleearth.architect.copyPaste.CutCommand;
@@ -143,8 +144,10 @@ public class ArchitectPlugin extends JavaPlugin {
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
         loadData();
+        new BlockDataManager().createBlockIdDataMapping();
         
         rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);
+        
         
         getLogger().info("MCME-Architect Enabled!");
     }
@@ -160,6 +163,7 @@ public class ArchitectPlugin extends JavaPlugin {
     }
     
     public void loadData() {
+        reloadConfig();
         PluginData.load();
         NoPhysicsData.loadExceptionAreas();
         CustomHeadManagerData.load();

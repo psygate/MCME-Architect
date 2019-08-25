@@ -25,18 +25,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Axis;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.block.data.Attachable;
@@ -97,6 +101,8 @@ public class BlockDataManager {
     
     private final List<Attribute> attributes = new ArrayList<>();
     
+    private static final Map<LegacyBlockData,BlockData> blockIdDataMapping = new HashMap<>();
+    
     public BlockDataManager() {
         attributes.add(new BooleanAttribute("Waterlogged",Waterlogged.class));
 
@@ -150,7 +156,6 @@ public class BlockDataManager {
         attributes.add(new IntAttribute("Power",AnaloguePowerable.class));
         attributes.add(new IntAttribute("Level",Levelled.class));
         attributes.add(new RotatableAttribute("Rotation"));
-        
     }
     
     public Attribute getAttribute(BlockData data) {
@@ -235,6 +240,66 @@ public class BlockDataManager {
             }
         }
         return results;
+    }
+    
+    public static BlockData getBlockData(int id, byte rawData) {
+        /*World world = Bukkit.getWorld("world");
+        if(world==null) return Bukkit.createBlockData(Material.AIR);
+        Block block = world.getBlockAt(0, 2, 0);
+        BlockState state = block.getState();
+        state.setType(LegacyMaterialUtil.getLegacyMaterial(Material.MAP));
+        state.setRawData(rawData);
+        return new LegacyBlockData(state.getType().getId(),state.getRawData());*/
+        return blockIdDataMapping.get(new LegacyBlockData(id,rawData));
+    }
+    
+    public static LegacyBlockData getLegacyBlockData(BlockData data) {
+        World world = Bukkit.getWorld("world");
+        if(world==null) return new LegacyBlockData(0,(byte)0);
+        Block block = world.getBlockAt(0, 2, 0);
+        BlockState state = block.getState();
+        return new LegacyBlockData(state.getType().getId(),state.getRawData());
+    }
+    
+    public void createBlockIdDataMapping() {
+        Logger.getLogger(this.getClass().getName()).info("Start creating block id data mappings.");
+        new BukkitRunnable(){
+            int retries = 20;
+            @Override
+            public void run() {
+                World world = Bukkit.getWorld("world");
+                if(world !=null) {
+                    Block block = world.getBlockAt(0, 2, 0);
+                    BlockState state = block.getState();
+                    for(Material material: Material.values()) {
+                        Material legacy = LegacyMaterialUtil.getLegacyMaterial(material);
+                        if(legacy!=null) {
+                            List<BlockData> dataList = collectBlockStates(material);
+                            for(BlockData data: dataList) {
+                                state.setBlockData(data);
+                                LegacyBlockData legacyData = new LegacyBlockData(legacy.getId(),
+                                                                           state.getRawData());
+                                if(!blockIdDataMapping.containsKey(legacyData)) {
+                                    blockIdDataMapping.put(legacyData,
+                                                           data.clone());
+                                    //Logger.getLogger(this.getClass().getName())
+                                    //     .info("Created mapping: "+legacyData+" -> "+data.getAsString());                            
+                                }
+                            }
+                        }
+                    }  
+                    cancel();
+                } else {
+                    if(retries>0) {
+                        retries--;
+                        Logger.getLogger(BlockDataManager.class.getName()).info("World not found, retrying in 10 seconds.");
+                    } else {
+                        cancel();
+                    }
+                }
+            }
+        }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 0, 200);
+        Logger.getLogger(this.getClass().getName()).info("Finished creating block id data mappings.");
     }
     
     private List<BlockData> collectBlockStates(Material mat) {
