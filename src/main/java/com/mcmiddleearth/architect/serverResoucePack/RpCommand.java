@@ -18,7 +18,6 @@ import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -53,6 +52,16 @@ public class RpCommand extends AbstractArchitectCommand {
         }
         if (!(cs instanceof Player)) {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
+            return true;
+        }
+        if(args.length>0 && (args[0].equals("check"))) {
+            RpRegion rpRegion = RpManager.getRegion(((Player)cs).getLocation());
+            if(rpRegion == null) {
+                PluginData.getMessageUtil().sendInfoMessage(cs, "No server rp defined for your location.");
+            } else {
+                PluginData.getMessageUtil().sendInfoMessage(cs, "At your current location you should use rp '"
+                                          +rpRegion.getRp()+"'.");
+            }
             return true;
         }
         if(!PluginData.isModuleEnabled(((Player)cs).getWorld(), Modules.RESOURCE_PACK_SWITCHER)) {
