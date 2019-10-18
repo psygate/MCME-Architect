@@ -18,10 +18,10 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,15 +30,21 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockWallCombi extends SpecialBlockOrientable {
     
+    private static Orientation[] fourFaces = new Orientation[] {
+        new Orientation(BlockFace.SOUTH,"NorthWest"),
+        new Orientation(BlockFace.WEST,"SouthWest"),
+        new Orientation(BlockFace.NORTH,"NorthEast"),
+        new Orientation(BlockFace.EAST,"SouthEast")
+    };
+
     private SpecialBlockWallCombi(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.WALL_COMBI);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.WALL_COMBI);
+        orientations = fourFaces;
     }
     
     public static SpecialBlockWallCombi loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[4];
@@ -58,8 +64,12 @@ public class SpecialBlockWallCombi extends SpecialBlockOrientable {
         dataAxis[0] = (config.isInt("dataValueNorthWest")?(byte) config.getInt("dataValueNorthWest"):data);
         dataAxis[1] = (config.isInt("dataValueSouthWest")?(byte) config.getInt("dataValueSouthWest"):data);
         dataAxis[2] = (config.isInt("dataValueNorthEast")?(byte) config.getInt("dataValueNorthEast"):data);
-        dataAxis[3] = (config.isInt("dataValueSouthEast")?(byte) config.getInt("dataValueSouthEast"):data);
-        return new SpecialBlockWallCombi(id, materialAxis, dataAxis);
+        dataAxis[3] = (config.isInt("dataValueSouthEast")?(byte) config.getInt("dataValueSouthEast"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, fourFaces);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockWallCombi(id, data);
     }
     
     @Override
@@ -70,35 +80,27 @@ public class SpecialBlockWallCombi extends SpecialBlockOrientable {
         while(yaw<-180) yaw += 360;
         if(yaw > 90) {
             if(blockFace.equals(BlockFace.UP)) {
-                state.setType(material[3]);
-                state.setRawData(dataValue[3]);
+                state.setBlockData(getBlockDatas()[3]);
             } else {
-                state.setType(material[0]);
-                state.setRawData(dataValue[0]);
+                state.setBlockData(getBlockDatas()[0]);
             }
         } else if(yaw > 0) {
             if(blockFace.equals(BlockFace.UP)) {
-                state.setType(material[2]);
-                state.setRawData(dataValue[2]);
+                state.setBlockData(getBlockDatas()[2]);
             } else {
-                state.setType(material[1]);
-                state.setRawData(dataValue[1]);
+                state.setBlockData(getBlockDatas()[1]);
             }
         } else if(yaw > -90) {
             if(blockFace.equals(BlockFace.UP)) {
-                state.setType(material[0]);
-                state.setRawData(dataValue[0]);
+                state.setBlockData(getBlockDatas()[0]);
             } else {
-                state.setType(material[3]);
-                state.setRawData(dataValue[3]);
+                state.setBlockData(getBlockDatas()[3]);
             }
         } else {
             if(blockFace.equals(BlockFace.UP)) {
-                state.setType(material[1]);
-                state.setRawData(dataValue[1]);
+                state.setBlockData(getBlockDatas()[1]);
             } else {
-                state.setType(material[2]);
-                state.setRawData(dataValue[2]);
+                state.setBlockData(getBlockDatas()[2]);
             }
         }
         return state;

@@ -10,6 +10,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
 import com.mcmiddleearth.pluginutil.EventUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,15 +39,11 @@ public class ArmorStandListener implements Listener {
             return;
         }
         if(PluginData.isModuleEnabled(p.getWorld(),Modules.ARMOR_STAND_PROTECTION)
-                && p.getInventory().getItemInHand().getType().equals(Material.ARMOR_STAND)
+                && p.getInventory().getItemInMainHand().getType().equals(Material.ARMOR_STAND)
                 && EventUtil.isMainHandEvent(event)
                 && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR)) {
-                event.setCancelled(true);
-                PluginData.getMessageUtil().sendErrorMessage(p, "Sorry, you are not allowed to place armor stands.");
-            } else if(!PluginData.hasGafferPermission(p,event.getClickedBlock().getLocation())) {
-                PluginData.getMessageUtil().sendErrorMessage(p, 
-                        PluginData.getGafferProtectionMessage(p, event.getClickedBlock().getLocation()));
+            if(!PluginData.checkBuildPermissions(p, event.getClickedBlock().getLocation(),
+                                            Permission.ARMOR_STAND_EDITOR)) {
                 event.setCancelled(true);
             }
         }
@@ -55,13 +52,8 @@ public class ArmorStandListener implements Listener {
                 && config.getEditorMode().equals(ArmorStandEditorMode.PASTE)
                 && p.getInventory().getItemInHand().getType().equals(Material.STICK)
                 && EventUtil.isMainHandEvent(event)) {
-            if(!PluginData.hasPermission(p, Permission.ARMOR_STAND_EDITOR)) {
-                event.setCancelled(true);
-                PluginData.getMessageUtil().sendErrorMessage(p, "Sorry, you are not allowed to place armor stands.");
-                return;
-            } else if(!PluginData.hasGafferPermission(p,event.getClickedBlock().getLocation())) {
-                PluginData.getMessageUtil().sendErrorMessage(p, 
-                        PluginData.getGafferProtectionMessage(p, event.getClickedBlock().getLocation()));
+            if(!PluginData.checkBuildPermissions(p, event.getClickedBlock().getLocation(),
+                                         Permission.ARMOR_STAND_EDITOR)) {
                 event.setCancelled(true);
                 return;
             }
@@ -91,15 +83,8 @@ public class ArmorStandListener implements Listener {
                 if(!(event.getDamager() instanceof Player)) {
                     event.setCancelled(true);
                     return;
-                } else if(!PluginData.hasPermission((Player) event.getDamager(), Permission.ARMOR_STAND_EDITOR)) {
-                    event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(((Player)event.getDamager()),
-                                                 "Sorry, you are not allowed to remove armor stands.");
-                    return;
-                } else if(!PluginData.hasGafferPermission((Player)event.getDamager(),event.getEntity().getLocation())) {
-                    PluginData.getMessageUtil().sendErrorMessage((Player)event.getDamager(), 
-                            PluginData.getGafferProtectionMessage((Player)event.getDamager(),
-                                                                    event.getEntity().getLocation()));
+                } else if(!PluginData.checkBuildPermissions((Player) event.getDamager(), event.getEntity().getLocation(),
+                                                        Permission.ARMOR_STAND_EDITOR)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -115,16 +100,8 @@ public class ArmorStandListener implements Listener {
     public void PlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         if(event.getRightClicked() instanceof ArmorStand) {
             if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.ARMOR_STAND_PROTECTION)) {
-                if(!PluginData.hasPermission(event.getPlayer(), Permission.ARMOR_STAND_EDITOR)) {
-                    event.setCancelled(true);
-                    PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(), 
-                                                 "Sorry, you are not allowed to interact with armor stands.");
-                    return;
-                } else if(!PluginData.hasGafferPermission(event.getPlayer(),
-                                                 event.getRightClicked().getLocation())) {
-                    PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(), 
-                            PluginData.getGafferProtectionMessage(event.getPlayer(), 
-                                                 event.getRightClicked().getLocation()));
+                if(!PluginData.checkBuildPermissions(event.getPlayer(), event.getRightClicked().getLocation(),
+                                             Permission.ARMOR_STAND_EDITOR)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -137,12 +114,8 @@ public class ArmorStandListener implements Listener {
     }
     
     private boolean manipulate(ArmorStand armorStand, Player player, boolean rightClick) {
-        if(!PluginData.hasPermission(player, Permission.ARMOR_STAND_EDITOR)) {
-            PluginData.getMessageUtil().sendErrorMessage(player, "Sorry, you are not allowed to manipulate armor stands.");
-            return true;
-        } else if(!PluginData.hasGafferPermission(player,armorStand.getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, armorStand.getLocation()));
+        if(!PluginData.checkBuildPermissions(player, armorStand.getLocation(),
+                                     Permission.ARMOR_STAND_EDITOR)) {
             return true;
         }
         ArmorStandGuard.setModifiedFlag(armorStand);
@@ -156,11 +129,13 @@ public class ArmorStandListener implements Listener {
         }
         int stepInDegree = config.getRotationStep();
         if(!(player.getItemInHand().getType().equals(Material.STICK)
-                || mode.equals(ArmorStandEditorMode.HAND))) {
+                || mode.equals(ArmorStandEditorMode.HAND)
+                || mode.equals(ArmorStandEditorMode.HELMET))) {
             return false;
         }
         ArmorStandPart part = config.getPart();
         ArmorStandEditorMode modifiedMode = mode;
+//Logger.getGlobal().info("mode: "+mode.name());
         switch(mode) {
             case HAND:
                 if(!rightClick) {
@@ -168,18 +143,40 @@ public class ArmorStandListener implements Listener {
                     break;
                 }
                 ItemStack oldItem = armorStand.getItemInHand();
-                ItemStack newItem = new ItemStack(player.getItemInHand());
+                ItemStack newItem = new ItemStack(player.getInventory().getItemInMainHand());
                 newItem.setAmount(1);
                 armorStand.setItemInHand(newItem);
                 if(player.getGameMode().equals(GameMode.SURVIVAL)) {
-                    int amount = player.getItemInHand().getAmount();
+                    int amount = player.getInventory().getItemInMainHand().getAmount();
                     if(amount==1) {
-                        player.setItemInHand(null);
+                        player.getInventory().setItemInMainHand(null);
                     }
                     else {
-                        player.getItemInHand().setAmount(amount-1);
+                        player.getInventory().getItemInMainHand().setAmount(amount-1);
                     }
                     player.getInventory().addItem(oldItem);
+                }
+                break;
+            case HELMET:
+//Logger.getGlobal().info("right Click: "+rightClick);
+                if(!rightClick) {
+                    armorStand.setHelmet(null);
+                    break;
+                }
+                ItemStack oldHelmet = armorStand.getHelmet();
+                ItemStack newHelmet = new ItemStack(player.getInventory().getItemInMainHand());
+                newHelmet.setAmount(1);
+                armorStand.setHelmet(newHelmet);
+//Logger.getGlobal().info("Helmet set: "+newHelmet.getType());
+                if(player.getGameMode().equals(GameMode.SURVIVAL)) {
+                    int amount = player.getInventory().getItemInMainHand().getAmount();
+                    if(amount==1) {
+                        player.getInventory().setItemInMainHand(null);
+                    }
+                    else {
+                        player.getInventory().getItemInMainHand().setAmount(amount-1);
+                    }
+                    player.getInventory().addItem(oldHelmet);
                 }
                 break;
             case ROTATE:

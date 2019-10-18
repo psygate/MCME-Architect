@@ -26,7 +26,7 @@ public enum Modules {
     
     REDSTONE_TORCH         ("modules.specialBlocks.redstoneTorch"),
     HALF_DOORS             ("modules.specialBlocks.halfDoors"),
-    HALF_BEDS             ("modules.specialBlocks.halfBeds"),
+    HALF_BEDS              ("modules.specialBlocks.halfBeds"),
     DOUBLE_SLABS           ("modules.specialBlocks.doubleSlabs"),
     PLANTS                 ("modules.specialBlocks.plants"),
     PISTON_EXTENSIONS      ("modules.specialBlocks.pistonExtenstions"),
@@ -47,6 +47,13 @@ public enum Modules {
     DECAY_BLOCKING         ("modules.environment.decayBlocking"),
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
+    NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
+    NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),
+    NO_PHYSICS_CONNECT_FENCES("modules.environment.noPhysicsConnectFences"),
+    NO_PHYSICS_CONNECT_CHORUS("modules.environment.noPhysicsConnectChorus"),
+    NO_PHYSICS_CONNECT_CHESTS("modules.environment.noPhysicsConnectChests"),
+    NO_PHYSICS_CONNECT_GLASS("modules.environment.noPhysicsConnectGlass"),
+    NO_PHYSICS_CONNECT_REDSTONE_WIRE("modules.environment.noPhysicsConnectRedstoneWire"),
     
     SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),
@@ -63,8 +70,12 @@ public enum Modules {
     ARMOR_STAND_EDITOR     ("modules.command.armorStandEditor"),
     ARMOR_STAND_ROLLBACK   ("modules.command.armorStandRollback"),
     RANDOMISER             ("modules.command.randomiser"),
+    COPY_PASTE             ("modules.command.copypaste"),
     
     VOXEL_BIOME_BRUSH_FIX  ("modules.voxelBiomeBrushFix"),
+    
+    CHUNK_UPDATE           ("modules.chunkupdate.manual"),
+    CHUNK_UPDATE_AUTO      ("modules.chunkupdate.auto"),
     
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");

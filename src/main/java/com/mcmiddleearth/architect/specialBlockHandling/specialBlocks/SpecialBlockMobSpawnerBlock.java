@@ -21,9 +21,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.pluginutil.NBTTagBuilder;
 import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import com.mcmiddleearth.pluginutil.ReflectionUtil;
 import com.mcmiddleearth.util.DevUtil;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class SpecialBlockMobSpawnerBlock extends SpecialBlock {
                         Material contentItem,
                         Short[] contentDamage,
                         SpecialBlockType type) {
-        super(id, Material.MOB_SPAWNER, (byte)0, type);
+        super(id, Material.SPAWNER.createBlockData(), type);
         this.contentItem = contentItem;
         this.contentDamage = contentDamage;
     }
@@ -81,10 +79,10 @@ public class SpecialBlockMobSpawnerBlock extends SpecialBlock {
         super.placeBlock(blockPlace, blockFace, player);
         final Location loc = blockPlace.getLocation();
         final BlockState state = getBlockState(blockPlace, blockFace, playerLoc);
-        state.setType(Material.MOB_SPAWNER);
+        state.setType(Material.SPAWNER);
         state.update(true, false);
         final BlockState spawner = blockPlace.getState();
-        if(! spawner.getType().equals(Material.MOB_SPAWNER)) {
+        if(! spawner.getType().equals(Material.SPAWNER)) {
             DevUtil.log("Mob spawner block place failed: "+loc.getBlockX()+" - "
                                                           +loc.getBlockY()+" - "
                                                           +loc.getBlockZ()+" - "

@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.architect.randomiser;
 
+import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Material;
@@ -23,10 +24,14 @@ public class RandomiserConfig {
     
     private int[] props = evenProps();
     
-    private final Set<Material> materials = new HashSet();
+    private final Set<String> materials = new HashSet();
     
     public RandomiserConfig() {
-        materials.add(Material.CROPS);
+        materials.add("wheat:Age");
+    }
+    
+    public Set<String> getMaterialsSet() {
+        return materials;
     }
     
     public void setDataValueRange(int min, int max) {
@@ -46,10 +51,14 @@ public class RandomiserConfig {
     public boolean setMaterials(String[] names) {
         boolean allAllowed = true;
         materials.clear();
+        BlockDataManager manager = new BlockDataManager();
         for(String name : names) {
-            Material mat = Material.matchMaterial(name.toUpperCase());
-            if(mat!=null && RandomiserCommand.isAllowed(mat)) {
-                materials.add(mat);
+            String[] data = name.split(":");
+            Material mat = Material.matchMaterial(data[0].toUpperCase());
+            if(mat!=null && data.length>1 
+                         && manager.getAttributeByName(data[1])!=null
+                         && RandomiserCommand.isAllowed(name)) {
+                materials.add(name);
             }
             else {
                 allAllowed = false;
@@ -102,15 +111,15 @@ public class RandomiserConfig {
 
     public String getMaterials() {
         String str = "";
-        for(Material mat : materials) {
-            str = str+mat.name()+" ";
+        for(String mat : materials) {
+            str = str+mat+"\n";
         }
         return str;
     }
     
     public boolean isIn(Material type) {
-        for(Material search: materials) {
-            if(search.equals(type)) {
+        for(String search: materials) {
+            if(search.equalsIgnoreCase(type.name())) {
                 return true;
             }
         }

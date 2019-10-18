@@ -22,9 +22,9 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
-import com.mcmiddleearth.util.ResourceRegionsUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -67,7 +67,7 @@ public class InventoryListener implements Listener{
                 SpecialHeadInventoryData.openInventory(p);
                 return;
             }
-            String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+            String rpN = RpManager.getCurrentRpName(p);//1.13 removed: PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
             if(rpN==null || rpN.equals("")) {
                 rpN = getRpName(handItem);
                 if(rpN.equals("")) {
@@ -88,7 +88,7 @@ public class InventoryListener implements Listener{
             if(displayName.indexOf(' ')>0) {
                 displayName = displayName.substring(0,displayName.indexOf(' '));
             }
-            if(!PluginData.getRpUrl(displayName).equalsIgnoreCase("")) {
+            if(!RpManager.getRpUrl(displayName,null).equalsIgnoreCase("")) {
                 rpN = displayName;
             }
         } 
@@ -113,7 +113,7 @@ public class InventoryListener implements Listener{
                     return;
                 }
                 final Player p = (Player) event.getWhoClicked();
-                String rpN = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+                String rpN = RpManager.getCurrentRpName(p);//PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
                 if(rpN==null || rpN.equals("")) {
                     return; //+++rpN = "Gondor";
                 }
@@ -162,31 +162,18 @@ public class InventoryListener implements Listener{
                 event.setCancelled(true);
                 return;
             case BUILDER:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)) {
-                    PluginData.getMessageUtil().sendNoPermissionError(player);
-                    event.setCancelled(true);
-                    return;
-                }
-                if(!PluginData.hasGafferPermission(player,loc)) {
-                        PluginData.getMessageUtil().sendErrorMessage(player, 
-                            PluginData.getGafferProtectionMessage(player, loc));
+                if(!PluginData.checkBuildPermissions((Player)event.getPlayer(), loc,
+                                                Permission.INVENTORY_OPEN)) {
                     event.setCancelled(true);
                 }
                 return;
             case EXCEPTION:
-                if(!PluginData.hasPermission((Player)event.getPlayer(),Permission.INVENTORY_OPEN)){
-                    PluginData.getMessageUtil().sendNoPermissionError(player);
-                    event.setCancelled(true);
-                    return;
-                }
-                if(!PluginData.hasGafferPermission((Player)event.getPlayer(), 
-                                                          event.getInventory().getLocation())
-                        || !NoPhysicsData.hasNoPhysicsException(event.getInventory()
-                                                                     .getLocation().getBlock())) {
-                    //PluginData.getMessageUtil().sendErrorMessage(player, 
-                    //        PluginData.getGafferProtectionMessage(player, loc));
+                if(!PluginData.checkBuildPermissions((Player)event.getPlayer(),loc,
+                                                Permission.INVENTORY_OPEN)
+                        || !NoPhysicsData.hasNoPhysicsException(loc.getBlock())){
                     event.setCancelled(true);
                 }
+                return;
         }
         /*
         if (//event.getInventory().getType().equals(InventoryType.ANVIL)

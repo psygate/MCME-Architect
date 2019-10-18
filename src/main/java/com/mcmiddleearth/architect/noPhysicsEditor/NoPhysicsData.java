@@ -17,6 +17,9 @@
 package com.mcmiddleearth.architect.noPhysicsEditor;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import com.mcmiddleearth.architect.Modules;
+import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.WorldConfig;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,8 +27,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +39,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
 
 /**
@@ -47,6 +54,70 @@ public class NoPhysicsData {
     private static final File dataFile = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),
                                                 "NoPhyExceptionAreas.txt");
     
+    private static final Map<World, Set<BlockData>> noPhysicsLists = new HashMap<>();
+    
+    public static boolean isNoPhysicsBlock(Block block) {
+        if(!PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)) {
+            return false;
+        }
+        Set<BlockData> noPhysicsList = noPhysicsLists.get(block.getWorld());
+        if(noPhysicsList == null) {
+            noPhysicsList = createNoPhysicsList(block.getWorld());
+            noPhysicsLists.put(block.getWorld(), noPhysicsList);
+        }
+        BlockData data = block.getBlockData();
+        boolean inverted = PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_LIST_INVERTED);
+        for(BlockData search: noPhysicsList) {
+           if(data.matches(search)) {
+               return !inverted;
+           }
+        }
+        return inverted; //1.13 removed config.isNoPhysicsBlock(block.getBlockData());
+    }
+    
+    private static Set<BlockData> createNoPhysicsList(World world) {
+        Set<BlockData> noPhysicsList = new HashSet<>();
+        for(String input: getNoPhysicsListAsStrings(world.getName())) {
+            BlockData data = createBlockData(input);
+            if(data != null) {
+                noPhysicsList.add(data);
+            }
+        }
+        return noPhysicsList;
+    }
+    
+    public static BlockData createBlockData(String input) {
+        try {
+            return Bukkit.getServer().createBlockData("minecraft:"+input.toLowerCase());
+        } catch(IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static List<String> getNoPhysicsListAsStrings(String worldName) {
+        WorldConfig config = PluginData.getOrCreateWorldConfig(worldName);
+        return config.getNoPhysicsListAsStrings();
+    }
+
+    public static boolean addNpBlock(String worldName, String blockData) {
+        WorldConfig config = PluginData.getOrCreateWorldConfig(worldName);
+        if(config.addToNpList(blockData)) {
+            noPhysicsLists.clear();
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean removeNpBlock(String worldName, String blockData) {
+        WorldConfig config = PluginData.getOrCreateWorldConfig(worldName);
+        if(config.removeFromNpList(blockData)) {
+            noPhysicsLists.clear();
+            return true;
+        }
+        return false;
+    }
+    
+
     public static boolean hasNoPhysicsException(Block block) {
         for(ExceptionArea area: exceptionAreas.values()) {
             if(area.isAffected(block.getType()) && area.isInside(block.getLocation())) {
@@ -92,7 +163,7 @@ public class NoPhysicsData {
         temp.renameTo(dataFile);
     }
     
-    public static void load() {
+    public static void loadExceptionAreas() {
         try (Scanner scanner = new Scanner(dataFile)) {
             scanner.useDelimiter(";");
             while(scanner.hasNext()) {

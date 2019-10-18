@@ -34,9 +34,11 @@ public class SpecialBlockVanillaDoor extends SpecialBlockDoor {
     
     public static SpecialBlockDoor loadFromConfig(ConfigurationSection config, String id) {
         Material material = matchMaterial(config.getString("blockMaterial",""));
+//Logger.getGlobal().info("VanillaDoor material: "+material); 
         if(material==null) {
             return null;
         }
+//Logger.getGlobal().info("VanillaDoor material: "+material.name()); 
         boolean powered = config.getBoolean("powered", false);
         boolean hingeRight = config.getBoolean("hingeRight", false);
         return new SpecialBlockVanillaDoor(id, material, powered, hingeRight);

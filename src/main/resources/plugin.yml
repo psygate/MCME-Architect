@@ -5,6 +5,7 @@ author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
 depend: [PluginUtils]
+api-version: 1.13
 
 commands:
    parrot:
@@ -49,12 +50,37 @@ commands:
    architect:
       description: Manage architect plugin
       usage: /architect version | world | weather | reload | dev
+   chunkupdate:
+      description: Updates chunks around a player
+      usage: /chunkupdate <radius>
    chead:
       description: Manage custom heads
       usage: /chead list | reviewlist | submit | accept | reject | rename | delete | reload
    sign:
       description: Edit signs
       usage: /sign <#line> <line text>
+   copy:
+      description: copy area from cuboid WE selection to your clipboard
+      usage: /copy
+   cut:
+      description: cut area from cuboid WE selection to your clipboard
+      usage: /cut
+   paste:
+      description: paste your clipboard
+      usage: /paste
+   undo:
+      description: rolls back your last /paste command(s)
+      usage: /undo <#>
+   redo:
+      description: restores a previously undone /paste command(s)
+      usage: /redo <#>
+   flip:
+      description: flips your clipboard
+      usage: /flip [x|y|z]
+   rot:
+      description: rotate your clipboard along y-axis
+      usage: /rot [90|180|270]
+       
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -77,6 +103,7 @@ permissions:
             architect.inventory.other: true
             architect.get.other: true
             architect.weather: true
+            archtiect.resourcePackAdmin: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -91,6 +118,7 @@ permissions:
             architect.inventory.save: true
             architect.noPhysicsList.exception: true
             architect.itemBlockRemove: true
+            architect.copypaste: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
         default: op
@@ -98,6 +126,7 @@ permissions:
             architect.ranks.adventurer: true
             architect.bannerEditor.save: true
             architect.armorStandEditor.trusted: true
+            architect.chunkupdate: true
             architect.get.private: true
     architect.ranks.adventurer: 
         descriptions: Permission for MCME Adventurers
@@ -134,6 +163,12 @@ permissions:
             architect.help: true
             architect.noPhysicsList.view: true
             architect.signEditor: true
+    architect.copypaste:
+        description: Allows to use /copy /paste and /rot
+        default: op
+    architect.copypaste.unlimited: 
+        description: Allows to copy / paste unlimited amount of blocks dont crash the server
+        default: op
     architect.info: 
         descriptions: Allows to use command /architect version | world | dev
         default: op
@@ -152,6 +187,9 @@ permissions:
     architect.inventory.reload:
         description: Allows to reload Architect's special build inventories from config files
         default: op
+    architect.chunkupdate:
+        description: Allows to use comand /chunkupdate
+        default: op
     architect.help:
         description: Allows to use comand /architect help
         default: true
@@ -164,6 +202,11 @@ permissions:
     architect.resourcePackSwitcher: 
         descriptions: Allows to use command /rp 
         default: op
+    architect.resourcePackAdmin: 
+        descriptions: Allows to manage resource packs using command /rp 
+        default: op
+        children:
+            architect.resourcePackSwitcher: true
     architect.place.halfDoor: 
         descriptions: Allows to place half doors
         default: op

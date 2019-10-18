@@ -29,7 +29,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Eriol_Eandur
  */
-public class ResourceRegionsUtil {
+public class _invalid_ResourceRegionsUtil {
     
     public static String getResourceRegionsUrl(Player p) {
         List<MetadataValue> data = p.getMetadata("Region");

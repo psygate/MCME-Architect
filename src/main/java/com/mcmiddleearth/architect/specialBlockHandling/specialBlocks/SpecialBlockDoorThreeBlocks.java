@@ -18,13 +18,14 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
 import com.mcmiddleearth.util.DevUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -79,39 +80,52 @@ public class SpecialBlockDoorThreeBlocks extends SpecialBlockDoor {
                 Block lowerBlock = block.getRelative(BlockFace.DOWN);
                 final BlockState state = block.getState();
                 state.setType(material);
-                if(lowerBlock.getData()%2!=0) {  //check for hinge right
-                    switch(getBlockFace(playerLoc.getYaw())) {
-                        case NORTH:
-                            state.setRawData((byte)3);
-                            break;
-                        case SOUTH:
-                            state.setRawData((byte)1);
-                            break;
-                        case EAST:
-                            state.setRawData((byte)0);
-                            break;
-                        default:
-                            state.setRawData((byte)2);
-                            break;
-                    }
+                if(lowerBlock.getBlockData() instanceof Door && state.getBlockData() instanceof Door) {
+                    Door lowerData = (Door) lowerBlock.getBlockData();
+                    Door data = (Door) state.getBlockData();
+                    data.setFacing(lowerData.getFacing());
+                    data.setHalf(Bisected.Half.BOTTOM);
+                    data.setOpen(lowerData.isOpen());
+                    data.setPowered(lowerData.isPowered());
+                    data.setHinge(lowerData.getHinge());
+                    state.setBlockData(data);
+                    /* 1.13 removed 
+                    if(lowerBlock.getData()%2!=0) {  //check for hinge right
+                        switch(getBlockFace(playerLoc.getYaw())) {
+                            case NORTH:
+                                state.setRawData((byte)3);
+                                break;
+                            case SOUTH:
+                                state.setRawData((byte)1);
+                                break;
+                            case EAST:
+                                state.setRawData((byte)0);
+                                break;
+                            default:
+                                state.setRawData((byte)2);
+                                break;
+                        }
+                    } else {
+                        switch(getBlockFace(playerLoc.getYaw())) {
+                            case NORTH:
+                                state.setRawData((byte)4);
+                                break;
+                            case SOUTH:
+                                state.setRawData((byte)6);
+                                break;
+                            case EAST:
+                                state.setRawData((byte)5);
+                                break;
+                            default:
+                                state.setRawData((byte)7);
+                                break;
+                        }
+                    }*/
+                    DevUtil.log("4 half door block place: ID "+state.getType()+" - DV "+state.getRawData());
+                    state.update(true, false);
                 } else {
-                    switch(getBlockFace(playerLoc.getYaw())) {
-                        case NORTH:
-                            state.setRawData((byte)4);
-                            break;
-                        case SOUTH:
-                            state.setRawData((byte)6);
-                            break;
-                        case EAST:
-                            state.setRawData((byte)5);
-                            break;
-                        default:
-                            state.setRawData((byte)7);
-                            break;
-                    }
+                    DevUtil.log("invalid door material: ID "+state.getType());
                 }
-                DevUtil.log("4 half door block place: ID "+state.getType()+" - DV "+state.getRawData());
-                state.update(true, false);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 3);
 

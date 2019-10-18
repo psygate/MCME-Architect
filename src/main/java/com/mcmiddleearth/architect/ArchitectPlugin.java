@@ -7,19 +7,29 @@ package com.mcmiddleearth.architect;
 
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
 import com.mcmiddleearth.architect.additionalCommands.ArchitectCommand;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateCommand;
 import com.mcmiddleearth.architect.additionalCommands.FbtCommand;
 import com.mcmiddleearth.architect.additionalCommands.ParrotCommand;
-import com.mcmiddleearth.architect.additionalCommands.RpCommand;
+import com.mcmiddleearth.architect.serverResoucePack.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.AdditionalProtectionListener;
 import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
-import com.mcmiddleearth.architect.specialBlockHandling.listener.StickBlockCycleListener;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockCycleListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
 import com.mcmiddleearth.architect.armorStand.ArmorStandEditorCommand;
 import com.mcmiddleearth.architect.armorStand.ArmorStandListener;
 import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
+import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
+import com.mcmiddleearth.architect.copyPaste.CopyCommand;
+import com.mcmiddleearth.architect.copyPaste.CutCommand;
+import com.mcmiddleearth.architect.copyPaste.FlipCommand;
+import com.mcmiddleearth.architect.copyPaste.PasteCommand;
+import com.mcmiddleearth.architect.copyPaste.RedoCommand;
+import com.mcmiddleearth.architect.copyPaste.RotateCommand;
+import com.mcmiddleearth.architect.copyPaste.UndoCommand;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadListener;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.customHeadManager.HeadCommand;
@@ -28,6 +38,9 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
 import com.mcmiddleearth.architect.paintingEditor.PaintingListener;
 import com.mcmiddleearth.architect.randomiser.RandomiserCommand;
+import com.mcmiddleearth.architect.serverResoucePack.RPSwitchTask;
+import com.mcmiddleearth.architect.serverResoucePack.RpListener;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.signEditor.SignCommand;
 import com.mcmiddleearth.architect.signEditor.SignListener;
 import com.mcmiddleearth.architect.specialBlockHandling.command.GetCommand;
@@ -39,6 +52,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockPickerListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.FurnaceListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.InventoryListener;
@@ -50,6 +64,7 @@ import java.util.List;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
@@ -63,6 +78,8 @@ public class ArchitectPlugin extends JavaPlugin {
     @Getter
     private final static List<String> commandList = new ArrayList<>();
 
+    private BukkitTask rpSwitchTask;
+    
     @Override
     public void onEnable() {
         
@@ -72,14 +89,6 @@ public class ArchitectPlugin extends JavaPlugin {
         //ProtocolLibUtil.init(this);
         //DoorListener.addOpenHalfDoorListener();
         PluginData.getMessageUtil().setPluginName("Architect");
-        PluginData.load();
-        NoPhysicsData.load();
-        CustomHeadManagerData.load();
-        SpecialBlockInventoryData.loadInventories();
-        SpecialSavedInventoryData.loadInventories();
-        SpecialItemInventoryData.loadInventories();
-        SpecialHeadInventoryData.loadInventory();
-        GetData.load();
         
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);
@@ -95,10 +104,13 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new AdditionalProtectionListener(), this);
         pluginManager.registerEvents(new CustomHeadListener(), this);
         pluginManager.registerEvents(new StickBlockBreakListener(), this);
-        pluginManager.registerEvents(new StickBlockCycleListener(), this);
+        pluginManager.registerEvents(new BlockCycleListener(), this);
+        pluginManager.registerEvents(new BlockPickerListener(), this);
         pluginManager.registerEvents(new SignListener(), this);
         pluginManager.registerEvents(new DoorListener(), this);
         pluginManager.registerEvents(new InventoryListener(), this);
+        pluginManager.registerEvents(new RpListener(), this);
+        pluginManager.registerEvents(new ChunkUpdateListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
@@ -120,14 +132,47 @@ public class ArchitectPlugin extends JavaPlugin {
         setCommandExecutor("itemblock", new ItemBlockCommand());
         setCommandExecutor("sign", new SignCommand());
         setCommandExecutor("parrot", new ParrotCommand());
+        setCommandExecutor("chunkupdate", new ChunkUpdateCommand());
+        setCommandExecutor("copy", new CopyCommand());
+        setCommandExecutor("cut", new CutCommand());
+        setCommandExecutor("paste", new PasteCommand());
+        setCommandExecutor("rot", new RotateCommand());
+        setCommandExecutor("undo", new UndoCommand());
+        setCommandExecutor("redo", new RedoCommand());
+        setCommandExecutor("flip", new FlipCommand());
+        //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
+        loadData();
+        new BlockDataManager().createBlockIdDataMapping();
+        
+        rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);
+        
+        
         getLogger().info("MCME-Architect Enabled!");
+    }
+    
+    @Override
+    public void onDisable() {
+        rpSwitchTask.cancel();
     }
     
     public void setCommandExecutor(String command, AbstractArchitectCommand executor) {
         getCommand(command).setExecutor(executor);
         commandList.add(command);
+    }
+    
+    public void loadData() {
+        reloadConfig();
+        PluginData.load();
+        NoPhysicsData.loadExceptionAreas();
+        CustomHeadManagerData.load();
+        SpecialBlockInventoryData.loadInventories();
+        SpecialSavedInventoryData.loadInventories();
+        SpecialItemInventoryData.loadInventories();
+        SpecialHeadInventoryData.loadInventory();
+        GetData.load();
+        RpManager.init();
     }
     
 }

@@ -17,11 +17,8 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,15 +27,24 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockFiveFaces extends SpecialBlockOrientable {
     
+    private static Orientation[] fiveFaces = new Orientation[] {
+            new Orientation(BlockFace.SOUTH,"South"),
+            new Orientation(BlockFace.WEST,"West"),
+            new Orientation(BlockFace.NORTH,"North"),
+            new Orientation(BlockFace.EAST,"East"),
+            new Orientation(BlockFace.UP,"Up")
+        };
+
     private SpecialBlockFiveFaces(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.FIVE_FACES);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.FIVE_FACES);
+        orientations = fiveFaces;
+        //this.material = material;
+        //this.dataValue = dataValue;
     }
     
     public static SpecialBlockFiveFaces loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialFaces = new Material[5];
@@ -60,10 +66,15 @@ public class SpecialBlockFiveFaces extends SpecialBlockOrientable {
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
-        dataFaces[4] = (config.isInt("dataValueDown")?(byte) config.getInt("dataValueDown"):data);
-        return new SpecialBlockFiveFaces(id, materialFaces, dataFaces);
+        dataFaces[4] = (config.isInt("dataValueDown")?(byte) config.getInt("dataValueDown"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, fiveFaces);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockFiveFaces(id, data);
     }
     
+    /* 1.13 removed
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
@@ -90,6 +101,6 @@ public class SpecialBlockFiveFaces extends SpecialBlockOrientable {
                 break;
         }
         return state;
-    }
+    }*/
     
 }

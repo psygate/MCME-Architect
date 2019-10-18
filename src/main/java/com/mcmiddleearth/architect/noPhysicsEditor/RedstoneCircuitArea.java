@@ -43,30 +43,30 @@ public class RedstoneCircuitArea extends ExceptionArea {
     @Override
     public boolean isAffected(Material material) {
         return     material.equals(Material.REDSTONE_WIRE)              //55
-                || material.equals(Material.REDSTONE_COMPARATOR_ON)     //150
-                || material.equals(Material.REDSTONE_COMPARATOR_OFF)    //149
-                || material.equals(Material.DIODE_BLOCK_OFF)            //93
-                || material.equals(Material.DIODE_BLOCK_ON)             //94
-                || material.equals(Material.REDSTONE_TORCH_OFF)         //75
-                || material.equals(Material.REDSTONE_TORCH_ON)          //76
-                || material.equals(Material.REDSTONE_LAMP_OFF)          //123
-                || material.equals(Material.REDSTONE_LAMP_ON)           //124
-                || material.equals(Material.PISTON_STICKY_BASE)         //29
-                || material.equals(Material.PISTON_BASE)                //33
-                || material.equals(Material.IRON_DOOR_BLOCK)            //71
-                || material.equals(Material.WOODEN_DOOR)                //64
+                || material.equals(Material.COMPARATOR)     //150
+                || material.equals(Material.REPEATER)//DIODE_BLOCK_OFF)            //93
+                || material.equals(Material.REDSTONE_TORCH)         //75
+                || material.equals(Material.REDSTONE_LAMP)          //123
+                || material.equals(Material.PISTON)         //29
+                || material.equals(Material.IRON_DOOR)            //71
+                || material.equals(Material.OAK_DOOR)                //64
                 || material.equals(Material.DARK_OAK_DOOR)              //197
                 || material.equals(Material.SPRUCE_DOOR)                //193
                 || material.equals(Material.ACACIA_DOOR)                //196
                 || material.equals(Material.JUNGLE_DOOR)                //195
                 || material.equals(Material.BIRCH_DOOR)                 //194
-                || material.equals(Material.FENCE_GATE)                 //107
+                || material.equals(Material.OAK_FENCE_GATE)                 //107
                 || material.equals(Material.DARK_OAK_FENCE_GATE)        //186
                 || material.equals(Material.SPRUCE_FENCE_GATE)          //183
                 || material.equals(Material.ACACIA_FENCE_GATE)          //187
                 || material.equals(Material.JUNGLE_FENCE_GATE)          //185
                 || material.equals(Material.BIRCH_FENCE_GATE)           //183
-                || material.equals(Material.TRAP_DOOR)                  //96
+                || material.equals(Material.OAK_TRAPDOOR)                 
+                || material.equals(Material.SPRUCE_TRAPDOOR)                 
+                || material.equals(Material.JUNGLE_TRAPDOOR)                 
+                || material.equals(Material.BIRCH_TRAPDOOR)                 
+                || material.equals(Material.DARK_OAK_TRAPDOOR)                 
+                || material.equals(Material.ACACIA_TRAPDOOR)                 
                 || material.equals(Material.IRON_TRAPDOOR)              //167
                 || material.equals(Material.DISPENSER)                  //23
                 || material.equals(Material.DROPPER)                    //158
@@ -86,8 +86,8 @@ public class RedstoneCircuitArea extends ExceptionArea {
                 || material.equals(Material.LIME_SHULKER_BOX)          //
                 || material.equals(Material.CYAN_SHULKER_BOX)          //
                 || material.equals(Material.PURPLE_SHULKER_BOX)          //
-                || material.equals(Material.SILVER_SHULKER_BOX)          //
-                || material.equals(Material.ENCHANTMENT_TABLE)          //
+                || material.equals(Material.LIGHT_GRAY_SHULKER_BOX)          //
+                || material.equals(Material.ENCHANTING_TABLE)          //
                 || material.equals(Material.BEACON)          //
                 || material.equals(Material.ANVIL);                                  
     }

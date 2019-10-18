@@ -12,6 +12,7 @@ import lombok.Getter;
  * @author Eriol_Eandur
  */
 public enum ArmorStandEditorMode {
+    HELMET      ("he","",": Selects helmet item mode"),
     HAND        ("h","",": Selects hand item mode"),
     OFF_HAND    ("o","",": not implemented"),
     XMOVE       ("mx","",": Selects x-movement mode"),

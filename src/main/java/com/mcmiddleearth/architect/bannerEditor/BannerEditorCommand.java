@@ -74,7 +74,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
-                    if(!p.getItemInHand().getType().equals(Material.BANNER)) {
+                    if(!(BannerUtil.isBanner(p.getInventory().getItemInMainHand().getType()))) {
                         sendNoBannerInHandError(cs);
                     } else {
                         String description = "";
@@ -82,7 +82,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                             description = description + args[i]+" ";
                         }
                         try {
-                            if(playerConfig.saveBanner(p.getItemInHand(), args[1], description, ((Player)cs).getUniqueId())) {
+                            if(playerConfig.saveBanner(p.getInventory().getItemInMainHand(), args[1], description, ((Player)cs).getUniqueId())) {
                                 sendBannerSavedMessage(cs);
                             } else {
                                 sendFileExistsMessage(cs);

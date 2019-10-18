@@ -25,10 +25,10 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryCategory;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import com.mcmiddleearth.util.ResourceRegionsUtil;
 import com.mcmiddleearth.util.ZipUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class InvCommand extends AbstractArchitectCommand {
                             sendInventoryLoadedMessage(csFinal);
                             cancel();
                         } else { //still something to download
-                            rpName = PluginData.matchRpName(argList.get(0).substring(3));
+                            rpName = RpManager.matchRpName(argList.get(0).substring(3));
                             if(rpName.equals("")) {
                                 sendNotAValidRpKey(csFinal);
                             } else { //start next rp download
@@ -178,7 +178,7 @@ public class InvCommand extends AbstractArchitectCommand {
         String rpName = "";
         for(int i=1; i<args.length;i++) {
             if(args[i].startsWith("rp:")) {
-                rpName = PluginData.matchRpName(args[i].substring(3));
+                rpName = RpManager.matchRpName(args[i].substring(3));
                 if(rpName.equals("")) {
                     sendNotAValidRpKey(p);
                     return true;
@@ -188,7 +188,7 @@ public class InvCommand extends AbstractArchitectCommand {
             }
         }
         if(rpIndex == 0) {
-            rpName = PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+            rpName = RpManager.getCurrentRpName(p);//PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
             if(rpName.equals("")) {
                 sendNotInRpRegion(p);
                 return true;

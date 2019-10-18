@@ -22,6 +22,7 @@ import lombok.Getter;
  *
  * @author Eriol_Eandur
  */
+@Deprecated
 public enum MushroomBlocks {
     
     INSIDE  ("inside", (byte) 0),
@@ -48,6 +49,7 @@ public enum MushroomBlocks {
         this.dataValue = dataValue;
     }
     
+    @Deprecated
     public static byte getDataValue(String displayName) {
         for(MushroomBlocks search: MushroomBlocks.values()) {
             if(search.displayName.equalsIgnoreCase(displayName)) {

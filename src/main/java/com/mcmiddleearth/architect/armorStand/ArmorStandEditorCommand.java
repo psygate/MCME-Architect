@@ -261,6 +261,9 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
     private void sendInfoMessage(CommandSender cs, ArmorStandEditorConfig playerConfig) {
                     PluginData.getMessageUtil().sendInfoMessage(cs, "Current Armor Stand Editor mode: ");
                     switch(playerConfig.getEditorMode()) {
+                        case HELMET:
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> remove/place helmet item");
+                            break;
                         case HAND:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs, "   -> remove/place item in hand");
                             break;

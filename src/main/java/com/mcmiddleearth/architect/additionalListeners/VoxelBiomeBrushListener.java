@@ -50,6 +50,7 @@ public class VoxelBiomeBrushListener implements Listener{
         }
         final Player player = event.getPlayer();
         if((event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                && VoxelUtil.getVoxelSniperPlugin()!=null
                 && VoxelUtil.hasToolInHand(player) && VoxelUtil.isCurrentBrush(player,"biome")) {
             int brushSize=VoxelUtil.getBrushSize(player);
             final Location loc;

@@ -18,13 +18,12 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.matchMaterial;
 import com.mcmiddleearth.util.DevUtil;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,13 +35,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class SpecialBlockOpenHalfDoor extends SpecialBlockFourDirections {
     
     protected SpecialBlockOpenHalfDoor(String id, 
-                        Material[] material, 
-                        byte[] dataValue,
+                        BlockData[] data,
                         SpecialBlockType type) {
-        super(id, material, dataValue, type);
+        super(id, data, type);
     }
     
     public static SpecialBlockOpenHalfDoor loadFromConfig(ConfigurationSection config, String id) {
+        return null;
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("blockDataValue");
         Material[] materialFaces = new Material[4];
@@ -64,6 +64,7 @@ public class SpecialBlockOpenHalfDoor extends SpecialBlockFourDirections {
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
         dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
         return new SpecialBlockOpenHalfDoor(id, materialFaces, dataFaces, SpecialBlockType.FOUR_DIRECTIONS);
+        */
     }
     
     

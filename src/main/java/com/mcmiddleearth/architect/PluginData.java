@@ -19,29 +19,28 @@ package com.mcmiddleearth.architect;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import com.mcmiddleearth.util.DevUtil;
+import com.mcmiddleearth.util.TheGafferUtil;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -51,7 +50,12 @@ public class PluginData {
     
     private static final Map<String,WorldConfig> worldConfigs = new HashMap<>();
     
-    private static final Map<String, String> rpUrls = new HashMap<>();
+    private static YamlConfiguration defaultWorldConfig = new YamlConfiguration();
+    
+    @Getter
+    private static String defaultKey = "-default";
+                                       
+    //private static final Map<String, String> rpUrls = new HashMap<>();
     
     @Getter
     @Setter
@@ -77,21 +81,29 @@ public class PluginData {
         return config.isModuleEnabled(modul,true);
     }
 
-    private static WorldConfig getOrCreateWorldConfig(String worldName) {
+    public static void setModuleEnabled(World world, Modules modul, boolean enable) {
+        if(world==null) {
+            worldConfigs.get(defaultKey).setModuleEnabled(modul,enable);
+        } else {
+            getOrCreateWorldConfig(world.getName()).setModuleEnabled(modul, enable);
+        }
+    }
+
+    public static WorldConfig getOrCreateWorldConfig(String worldName) {
         WorldConfig config = worldConfigs.get(worldName);
         if(config == null) {
-            config = new WorldConfig(worldName);
+            config = new WorldConfig(worldName, defaultWorldConfig);
             worldConfigs.put(worldName, config);
         }
         return config;
     }
     
     public static void load(){
-        ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
+        /*ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getConfigurationSection("ServerResourcePacks");
         for(String rpKey: rpConfig.getKeys(false)) {
             rpUrls.put(rpKey, rpConfig.getString(rpKey));
-        }
+        }*/
         ConfigurationSection entityConfig = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getConfigurationSection(ENITIY_LIMIT_SECTION);
         if(entityConfig==null) {
@@ -103,6 +115,9 @@ public class PluginData {
         entityStandLimit = entityConfig.getInt("number",500);
         entityLimitRadius = entityConfig.getInt("radius",80);
         worldConfigs.clear();
+        WorldConfig config = new WorldConfig(WorldConfig.getDefaultWorldConfigName(), defaultWorldConfig);
+        worldConfigs.put(defaultKey, config);
+        defaultWorldConfig = config.getWorldConfig();
         File[] configFiles = WorldConfig.getWorldConfigDir().listFiles(FileUtil
                                         .getFileExtFilter(WorldConfig.getCfgExtension()));
         if(configFiles!=null) {
@@ -124,7 +139,7 @@ public class PluginData {
         }
     }*/
     
-    public static boolean hasPermission(Player player, Permission perm) {
+    public static boolean hasPermission(CommandSender player, Permission perm) {
         return player.hasPermission(perm.getPermissionNode());
     }
     
@@ -139,12 +154,12 @@ public class PluginData {
             allowMonsters = false;
         }
         world.setSpawnFlags(allowMonsters, allowAnimals);    
-        world.setGameRuleValue("doFireTick", true+"");
+        world.setGameRule(GameRule.DO_FIRE_TICK, true);
         if (PluginData.isModuleEnabled(world, Modules.FIRE_SPREAD_BLOCKING)) {
-            world.setGameRuleValue("doFireTick", false+"");
+            world.setGameRule(GameRule.DO_FIRE_TICK, false);
         }
         DevUtil.log(world.getName());
-        DevUtil.log("fireTick "+world.getGameRuleValue("doFireTick"));
+        DevUtil.log("fireTick "+world.getGameRuleValue(GameRule.DO_FIRE_TICK));
         DevUtil.log("animals "+world.getAllowAnimals());
         DevUtil.log("mobs "+world.getAllowMonsters());
         for(String rule: world.getGameRules()) {
@@ -164,27 +179,7 @@ public class PluginData {
     
     public static boolean getNoInteraction(Block block) {
         WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
-        return config.getNoInteraction(block.getState());
-    }
-    
-    public static boolean isNoPhysicsBlock(Block block) {
-        WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
-        return config.isNoPhysicsBlock(block.getTypeId());
-    }
-    
-    public static String getNpList(String worldName) {
-        WorldConfig config = getOrCreateWorldConfig(worldName);
-        return config.getNpListAsString();
-    }
-
-    public static boolean addNpBlock(String worldName, int blockId, boolean setDefault) {
-        WorldConfig config = getOrCreateWorldConfig(worldName);
-        return config.addToNpList(blockId, setDefault);
-    }
-    
-    public static boolean removeNpBlock(String worldName, int blockId, boolean setDefault) {
-        WorldConfig config = getOrCreateWorldConfig(worldName);
-        return config.removeFromNpList(blockId, setDefault);
+        return config.getNoInteraction(block.getBlockData());
     }
     
     public static Set<String> getWorldNames() {
@@ -207,37 +202,7 @@ public class PluginData {
         return afkPlayerList.remove(player);
     }
     
-    public static boolean hasGafferPermission(Player player, Location location) {
-        Plugin theGaffer = Bukkit.getPluginManager().getPlugin("TheGaffer");
-        if(theGaffer == null) {
-            return true;
-        } else {
-            try {
-                Method getBuildPermMethod = theGaffer.getClass().getMethod("hasBuildPermission", Player.class, Location.class);
-                return (boolean) getBuildPermMethod.invoke(null, player, location);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, "Error getting BuildPermission from TheGaffer", ex);
-                return true;
-            }
-        }
-    }
-    
-    public static String getGafferProtectionMessage(Player player, Location location) {
-        Plugin theGaffer = Bukkit.getPluginManager().getPlugin("TheGaffer");
-        if(theGaffer == null) {
-            return "";
-        } else {
-            try {
-                Method getBuildPermMethod = theGaffer.getClass().getMethod("getBuildProtectionMessage", Player.class, Location.class);
-                return (String) getBuildPermMethod.invoke(null, player, location);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, "Error getting BuildProtectionMessage from TheGaffer", ex);
-                return "";
-            }
-        }
-    }
-    
-    public static String getRpUrl(String rpKey) {
+    /*public static String getRpUrl(String rpKey) {
         if(rpUrls.containsKey(rpKey)) {
             return rpUrls.get(rpKey);
             }
@@ -260,7 +225,7 @@ public class PluginData {
             }
         }
         return "";
-    }
+    }*/
     
     public static boolean moreEntitiesAllowed(Block block) {
         Collection<Entity> entities = block.getWorld().getNearbyEntities(block.getLocation(), 
@@ -277,4 +242,12 @@ public class PluginData {
                                                                             entityLimitRadius);
         return entities.size();
     }
+    
+    public static boolean checkBuildPermissions(Player player, Location loc, Permission perm) {
+        if(!hasPermission(player,perm)) {
+            getMessageUtil().sendNoPermissionError(player);
+            return false;
+        } 
+        return TheGafferUtil.checkGafferPermission(player,loc);
+   }
 }
