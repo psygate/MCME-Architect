@@ -43,12 +43,8 @@ public class BannerListener implements Listener {
                     sendNotEnabledErrorMessage(player);
                     return;
                 }
-                if(!PluginData.hasPermission(player,Permission.BANNER_EDITOR)) {
-                    PluginData.getMessageUtil().sendNoPermissionError(player);
-                    return;
-                } else if(!PluginData.hasGafferPermission(player,event.getClickedBlock().getLocation())) {
-                    PluginData.getMessageUtil().sendErrorMessage(player, 
-                            PluginData.getGafferProtectionMessage(player, event.getClickedBlock().getLocation()));
+                if(!PluginData.checkBuildPermissions(player,event.getClickedBlock().getLocation(),
+                                                Permission.BANNER_EDITOR)) {
                     return;
                 }
                 Banner banner = (Banner) state;
@@ -121,7 +117,7 @@ public class BannerListener implements Listener {
                         sendGotShield(player, amoun);
                         break;
                     case GET:
-                        ItemStack item = new ItemStack(Material.BANNER);
+                        ItemStack item = new ItemStack(Material.WHITE_BANNER);
                         BannerMeta meta = (BannerMeta) item.getItemMeta();
                         meta.setBaseColor(banner.getBaseColor());
                         for(Pattern pattern: banner.getPatterns()) {

@@ -28,7 +28,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -44,8 +43,8 @@ public class CustomHeadListener implements Listener {
                 && EventUtil.isMainHandEvent(event))) {
             return;
         }
-        if(!(event.hasBlock() && event.getClickedBlock().getType().equals(Material.SKULL)
-                              && ((Skull)event.getClickedBlock().getState()).getSkullType().equals(SkullType.PLAYER))) {
+        if(!(event.hasBlock() && event.getClickedBlock().getType().equals(Material.PLAYER_HEAD))) {
+                              //1.13 remove && ((Skull)event.getClickedBlock().getState()).getSkullType().equals(SkullType.PLAYER))) {
             return;
         }
         if(!PluginData.isModuleEnabled(player.getWorld(), Modules.CUSTOM_HEAD_MANAGER)) {

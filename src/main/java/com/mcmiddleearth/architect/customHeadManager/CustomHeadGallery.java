@@ -181,7 +181,7 @@ public class CustomHeadGallery {
         BlockState blockState;
         for(int i =0; i<(collection.getAbsoluteName().length)/4+1;i++) {
             blockState = block.getState();
-            blockState.setType(Material.WOOL);
+            blockState.setType(Material.WHITE_WOOL);
             blockState.setRawData((byte)0);
             blockState.update(true, false);
             block = block.getRelative(BlockFace.UP);

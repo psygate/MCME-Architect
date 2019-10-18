@@ -28,11 +28,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.Bukkit;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.inventory.meta.SkullMeta;
 
 /**
@@ -47,7 +47,7 @@ public class HeadUtil {
         if(propertyMap == null)
             throw new IllegalStateException("Profile doesn't contain a property map!");
         propertyMap.put("textures", new Property("Value", headTexture));
-        ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
         ItemMeta headMeta = itemStack.getItemMeta();
         try {
             Field profileField = headMeta.getClass().getDeclaredField("profile");
@@ -67,19 +67,21 @@ public class HeadUtil {
     public static void placeCustomHead(Block block, ItemStack head) {
         try {
             BlockState blockState = block.getState();
-            blockState.setType(Material.SKULL);
+            blockState.setType(Material.PLAYER_HEAD);
             blockState.update(true, false);
             blockState = block.getState();
             Skull skullData = (Skull) blockState;
-            skullData.setSkullType(SkullType.PLAYER);
+            //skullData.setSkullType(SkullType.PLAYER);
             Field profileField = head.getItemMeta().getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(head.getItemMeta());
             profileField = skullData.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(skullData, profile);
-            skullData.setRawData((byte)1);
-            skullData.setRotation(BlockFace.NORTH_NORTH_EAST);
+            //skullData.setRawData((byte)1);
+            Rotatable data = ((Rotatable)skullData.getBlockData());
+            data.setRotation(BlockFace.SOUTH_SOUTH_WEST);
+            skullData.setBlockData(data);
             skullData.update(true, false);
         } catch (NoSuchFieldException | SecurityException e) {
             Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
@@ -94,7 +96,7 @@ public class HeadUtil {
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(skullBlockState);
 
-            ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
             ItemMeta headMeta = head.getItemMeta();
             
             profileField = headMeta.getClass().getDeclaredField("profile");

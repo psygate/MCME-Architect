@@ -18,31 +18,36 @@ package com.mcmiddleearth.architect.additionalListeners;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import java.util.logging.Logger;
+import com.mcmiddleearth.architect.watcher.WatchedListener;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
-import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class GameMechanicsListener implements Listener{
+public class GameMechanicsListener extends WatchedListener{
     
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
         PluginData.configureWorld(event.getWorld());
     }
 
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().setPlayerTime(6000, false);
+    }
+    
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
         if (PluginData.isModuleEnabled(event.getWorld(), Modules.WEATHER_BLOCKING)) {
@@ -59,55 +64,74 @@ public class GameMechanicsListener implements Listener{
     @EventHandler
     public void blockPlayerDrops(PlayerDropItemEvent event)
     {
+//Logger.getGlobal().info("Player Drops.");
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.DROP_BLOCKING)) {
+//Logger.getGlobal().info("cancel.");
             event.getItemDrop().remove();
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.FIRE_SPREAD_BLOCKING))
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
-        if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.DECAY_BLOCKING)) {
+//Logger.getGlobal().info("Block fade.");
+//Logger.getGlobal().info("Block decay: "+event.getBlock().getType().name()+" "
+//                                       +event.getBlock().getX()
+//                                       +" "+event.getBlock().getZ());
+    if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.DECAY_BLOCKING)) {
+//Logger.getGlobal().info("Block decay canceled");
+//Logger.getGlobal().info("cancel.");
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onLeavesDecay(LeavesDecayEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.DECAY_BLOCKING)) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
+//Logger.getGlobal().info("Block Form.");
+        if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
+//Logger.getGlobal().info("cancel.");
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+//Logger.getGlobal().info("Block Spread.");
+        if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
+            event.setCancelled(true);
+//Logger.getGlobal().info("cancel.");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onStructureGrow(StructureGrowEvent event) {
+        if (PluginData.isModuleEnabled(event.getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMoistureChange(MoistureChangeEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
-    public void onBlockGrow(BlockGrowEvent event) {
-        if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onBlockSpread(BlockSpreadEvent event) {
-        if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onFurnaceBurn(FurnaceBurnEvent event) {
+    //@EventHandler(ignoreCancelled = true)
+    //public void onFurnaceBurn(FurnaceBurnEvent event) {
 //Logger.getGlobal().info("Furnace "+event.isBurning());
         
-    }
+    //}
 }

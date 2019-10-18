@@ -18,24 +18,27 @@ package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock.getBlockFace;
-import static com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock.getArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
+public class SpecialBlockItemTwoDirections extends SpecialBlockItemOrientable {
     
-    private final Material[] material;
-    private final byte[] dataValue;
+    private static SpecialBlockOrientable.Orientation[] twoAxis = new SpecialBlockOrientable.Orientation[] {
+        new SpecialBlockOrientable.Orientation(BlockFace.SOUTH,"Z"),
+        new SpecialBlockOrientable.Orientation(BlockFace.WEST,"X"),
+        new SpecialBlockOrientable.Orientation(BlockFace.NORTH,"Z"),
+        new SpecialBlockOrientable.Orientation(BlockFace.EAST,"X")
+    };
+    //private final Material[] material;
+    //private final byte[] dataValue;
     
     /*private final Material contentItem;
     private final short contentDamage;
@@ -43,21 +46,22 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
     private final double contentHeight;*/
     
     private SpecialBlockItemTwoDirections(String id, 
-                        Material[] blockMaterial, 
-                        byte[] blockDataValue,
+                        BlockData[] data,
                         Material contentItem,
-                        Short[] contentDamage,
+                        Integer[] contentDamage,
                         double contentHeight) {
-        super(id, Material.AIR, (byte) 0, contentItem, contentDamage, 
+        super(id, data, contentItem, contentDamage, 
                   contentHeight, SpecialBlockType.ITEM_BLOCK_TWO_DIRECTIONS);
-        this.material = blockMaterial;
-        this.dataValue = blockDataValue;
+        orientations = twoAxis;
+        //this.material = blockMaterial;
+        //this.dataValue = blockDataValue;
         /*this.contentItem = contentItem;
         this.contentDamage = contentDamage;
         this.contentHeight = contentHeight;*/
     }
 
     public static SpecialBlockItemTwoDirections loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 remove 
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[2];
@@ -74,9 +78,10 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         }
         dataAxis[0] = (config.isInt("dataValueX")?(byte) config.getInt("dataValueX"):data);
         dataAxis[1] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);
-        //return new SpecialBlockTwoAxis(id, materialAxis, dataAxis);
+        //return new SpecialBlockTwoAxis(id, materialAxis, dataAxis);*/
+        BlockData[] data = SpecialBlockOrientable.loadBlockDataFromConfig(config, twoAxis);
         Material materialContent = matchMaterial(config.getString("contentItem",""));
-        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
+        Integer[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
             /*Material[] materialContentAxis = new Material[2];
         materialContentAxis[0] = matchMaterial(config.getString("contentItemX",""));
         materialContentAxis[1] = matchMaterial(config.getString("contentItemZ",""));
@@ -92,7 +97,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         contentDamageAxis[0] = (short) config.getInt("contentDamageX",contentDamage);
         contentDamageAxis[1] = (short) config.getInt("contentDamageZ",contentDamage);*/
         double contentHeight = config.getDouble("contentHeight",0);
-        return new SpecialBlockItemTwoDirections(id, materialAxis, dataAxis, 
+        return new SpecialBlockItemTwoDirections(id, data, 
                                                      materialContent, 
                                                      contentDamage, contentHeight);
     }
@@ -113,7 +118,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
                 armor.setHelmet(item);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
-    }*/
+    }
 
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
@@ -130,7 +135,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
                 break;
         }
         return state;
-    }
+    }*/
 
     @Override
     protected Location getArmorStandLocation(Block blockPlace, BlockFace blockFace, Location playerLoc) {
@@ -144,6 +149,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
         return loc;
     }
     
+    /*
     @Override
     public boolean matches(Block block) {
         for(Material mat: material) {
@@ -154,7 +160,7 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
                         if(holder!=null) {
                             ItemStack content = holder.getHelmet();
                             if(content.getType().equals(contentItem)) {
-                                for(short damage: contentDamage) {
+                                for(int damage: contentDamage) {
                                     if(damage == content.getDurability()) {
                                         return true;
                                     }
@@ -166,6 +172,6 @@ public class SpecialBlockItemTwoDirections extends SpecialBlockItemBlock {
             }
         }
         return false;
-    }
+    }*/
 
 }

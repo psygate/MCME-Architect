@@ -17,11 +17,8 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -30,15 +27,23 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockThreeAxis extends SpecialBlockOrientable {
     
+    private static Orientation[] threeAxis = new Orientation[] {
+        new Orientation(BlockFace.SOUTH,"Z"),
+        new Orientation(BlockFace.WEST,"X"),
+        new Orientation(BlockFace.NORTH,"Z"),
+        new Orientation(BlockFace.EAST,"X"),
+        new Orientation(BlockFace.DOWN,"Y"),
+        new Orientation(BlockFace.UP,"Y")
+    };
+
     private SpecialBlockThreeAxis(String id, 
-                        Material[] material, 
-                        byte[] dataValue) {
-        super(id, Material.AIR, (byte) 0, SpecialBlockType.THREE_AXIS);
-        this.material = material;
-        this.dataValue = dataValue;
+                        BlockData[] data) {
+        super(id, data, SpecialBlockType.THREE_AXIS);
+        orientations = threeAxis;
     }
     
     public static SpecialBlockThreeAxis loadFromConfig(ConfigurationSection config, String id) {
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("dataValue");
         Material[] materialAxis = new Material[3];
@@ -56,10 +61,15 @@ public class SpecialBlockThreeAxis extends SpecialBlockOrientable {
         }
         dataAxis[0] = (config.isInt("dataValueX")?(byte) config.getInt("dataValueX"):data);
         dataAxis[1] = (config.isInt("dataValueY")?(byte) config.getInt("dataValueY"):data);
-        dataAxis[2] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);
-        return new SpecialBlockThreeAxis(id, materialAxis, dataAxis);
+        dataAxis[2] = (config.isInt("dataValueZ")?(byte) config.getInt("dataValueZ"):data);*/
+        BlockData[] data = loadBlockDataFromConfig(config, threeAxis);
+        if(data==null) {
+            return null;
+        }
+        return new SpecialBlockThreeAxis(id, data);
     }
     
+    /* 1.13 removed
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         final BlockState state = blockPlace.getState();
@@ -80,5 +90,5 @@ public class SpecialBlockThreeAxis extends SpecialBlockOrientable {
                 break;
         }
         return state;
-    }
+    }*/
 }

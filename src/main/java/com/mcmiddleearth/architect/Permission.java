@@ -29,6 +29,7 @@ public enum Permission {
     ARCHITECT_WEATHER      ("architect.weather"),
     FULL_BRIGHTNESS       ("architect.fullBrightness"),
     RESOURCE_PACK_SWITCH  ("architect.resourcePackSwitcher"),
+    RESOURCE_PACK_ADMIN   ("architect.resourcePackAdmin"),
     PLACE_HALF_DOOR       ("architect.place.halfDoor"),
     PLACE_HALF_BED        ("architect.place.halfBed"),
     PLACE_TORCH           ("architect.place.torch"),
@@ -84,7 +85,11 @@ public enum Permission {
     RANDOMISER_USER       ("architect.randomiser.user"),
     CUSTOM_HEAD_USER      ("architect.customHeadManager.user"),
     CUSTOM_HEAD_MANAGER   ("architect.customHeadManager.manager"),
-    ARCHITECT_HELP        ("architect.help");
+    CUNK_UPDATE           ("architect.chunkupdate"),
+    CUNK_UPDATE_AUTO      ("architect.chunkupdate.auto"),
+    ARCHITECT_HELP        ("architect.help"),
+    COPY_PASTE            ("architect.copypaste"),
+    COPY_PASTE_UNLIMITED  ("architect.copypaste.unlimited");
 
     @Getter
     private final String permissionNode;

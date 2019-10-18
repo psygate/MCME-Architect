@@ -21,12 +21,12 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.BlockRawData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -35,17 +35,29 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockMatchOrientation extends SpecialBlockFourDirections {
     
-    List<List<BlockRawData>> matches = new ArrayList<>();
+    List<List<BlockData>> matches = new ArrayList<>();
+
+    private static Orientation[] fourFaces = new Orientation[] {
+        new Orientation(BlockFace.NORTH,"North"),
+        new Orientation(BlockFace.SOUTH,"South"),
+        new Orientation(BlockFace.EAST,"East"),
+        new Orientation(BlockFace.WEST,"West")
+    };
 
     private SpecialBlockMatchOrientation(String id, 
-                        Material[] material, 
-                        byte[] dataValue,
-                        List<List<BlockRawData>> matches) {
-        super(id, material, dataValue, SpecialBlockType.MATCH_ORIENTATION);
+                        BlockData[] data,
+                        List<List<BlockData>> matches) {
+        super(id, data, SpecialBlockType.MATCH_ORIENTATION);
+        orientations = fourFaces;
         this.matches = matches;
     }
     
     public static SpecialBlockMatchOrientation loadFromConfig(ConfigurationSection config, String id) {
+        BlockData[] data = loadBlockDataFromConfig(config, fourFaces);
+        if(data==null) {
+            return null;
+        }
+        /* 1.13 removed
         Material material = matchMaterial(config.getString("blockMaterial",""));
         byte data = (byte) config.getInt("blockDataValue");
         Material[] materialFaces = new Material[4];
@@ -65,30 +77,48 @@ public class SpecialBlockMatchOrientation extends SpecialBlockFourDirections {
         dataFaces[0] = (config.isInt("dataValueNorth")?(byte) config.getInt("dataValueNorth"):data);
         dataFaces[1] = (config.isInt("dataValueSouth")?(byte) config.getInt("dataValueSouth"):data);
         dataFaces[2] = (config.isInt("dataValueEast")?(byte) config.getInt("dataValueEast"):data);
-        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);
-        List<List<BlockRawData>> matches = new ArrayList<>();
-        for(int i=0;i<4;i++) matches.add(new ArrayList<BlockRawData>());
-        getMatches(config.getString("blockMatchNorth"),matches.get(0));
-        getMatches(config.getString("blockMatchSouth"),matches.get(1));
-        getMatches(config.getString("blockMatchEast"),matches.get(2));
-        getMatches(config.getString("blockMatchWest"),matches.get(3));
-        return new SpecialBlockMatchOrientation(id, materialFaces, dataFaces, matches);
+        dataFaces[3] = (config.isInt("dataValueWest")?(byte) config.getInt("dataValueWest"):data);*/
+        List<List<BlockData>> matches = new ArrayList<>();
+        for(int i=0;i<4;i++) matches.add(new ArrayList<>());
+        getMatches(config,"blockMatchNorth",matches.get(0));
+        getMatches(config,"blockMatchSouth",matches.get(1));
+        getMatches(config,"blockMatchEast",matches.get(2));
+        getMatches(config,"blockMatchWest",matches.get(3));
+        return new SpecialBlockMatchOrientation(id, data, matches);
     }
     
-    private static void getMatches(String input, List<BlockRawData> matches) {
+    private static void getMatches(ConfigurationSection config, String key, List<BlockData> matches) {
 //Logger.getGlobal().info(input);
+        String input = config.getString(key);
         if(input!=null && !input.equals("")) {
-            Scanner scanner = new Scanner(input);
-            scanner.useDelimiter(",");
-            while(scanner.hasNext()) {
-                matches.add(new BlockRawData(scanner.next()));
+            if(!input.startsWith("minecraft")) {
+                // 1.13 convert old data
+                Scanner scanner = new Scanner(input);
+                scanner.useDelimiter(",");
+                String newData = "";
+                while(scanner.hasNext()) {
+                    BlockData match = new BlockRawData(scanner.next()).getBlockData();
+                    matches.add(match);
+                    if(newData.equals("")) {
+                        newData = match.getAsString();
+                    } else {
+                        newData = newData + ";" + match.getAsString();
+                    }
+                }
+                config.set(key, newData);
+            } else {
+                Scanner scanner = new Scanner(input);
+                scanner.useDelimiter(";");
+                while(scanner.hasNext()) {
+                    matches.add(Bukkit.getServer().createBlockData(scanner.next()));
+                }
             }
         }
     }
     
     @Override
     public BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
-        BlockState state = blockPlace.getState();
+        // 1.13 removed BlockState state = blockPlace.getState();
         int[] score = new int[4];
         score[0] = getScore(blockPlace, BlockFace.SOUTH);
         score[1] = getScore(blockPlace, BlockFace.EAST);
@@ -126,15 +156,19 @@ public class SpecialBlockMatchOrientation extends SpecialBlockFourDirections {
         return score;
     }
 
-    private boolean isMatch(List<BlockRawData> matchList, BlockState state) {
+    private boolean isMatch(List<BlockData> matchList, BlockState state) {
 //Logger.getGlobal().info("match list "+matchList.size());
-        for(BlockRawData data:matchList) {
+        for(BlockData data:matchList) {
 //Logger.getGlobal().info("data "+data.getId()+" "+data.getDV());
 //Logger.getGlobal().info("state "+state.getTypeId()+" "+state.getRawData());
-            if(data.getId()==state.getTypeId()) {
+            /* 1.13 removed
+            if(data.getId()==state.getType().getId()) {
                 if(data.allDV() || data.getDV()==state.getRawData()) {
                     return true;
                 }
+            }*/
+            if(state.getBlockData().matches(data)) {
+                return true;
             }
         }
         return false;

@@ -39,13 +39,8 @@ public class PaintingListener implements Listener {
             sendNotEnabledErrorMessage(player);
             return;
         }   
-        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
-            PluginData.getMessageUtil().sendNoPermissionError(player);
-        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
-        }
-        else {
+        if(PluginData.checkBuildPermissions(player,entity.getLocation(),
+                                        Permission.PAINTING_EDITOR)) {
             Painting painting = (Painting) entity;
             int id = painting.getArt().getId();
             if(id<Art.values().length-1) {
@@ -71,13 +66,8 @@ public class PaintingListener implements Listener {
         if(!player.getItemInHand().getType().equals(Material.STICK)) {
             return;
         }
-        if(!PluginData.hasPermission(player,Permission.PAINTING_EDITOR)) {
-            PluginData.getMessageUtil().sendNoPermissionError(player);
-        } else if(!PluginData.hasGafferPermission(player,entity.getLocation())) {
-            PluginData.getMessageUtil().sendErrorMessage(player, 
-                    PluginData.getGafferProtectionMessage(player, entity.getLocation()));
-        }
-        else {
+        if(PluginData.checkBuildPermissions(player,entity.getLocation(),
+                                       Permission.PAINTING_EDITOR)) {
             Painting painting = (Painting) entity;
             int id = painting.getArt().getId();
             if(id>0) {

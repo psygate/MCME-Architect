@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.additionalCommands;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -28,6 +29,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -130,6 +133,21 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
+        if(args[0].equalsIgnoreCase("blockdata")) {
+            if(!(sender instanceof Player)) {
+                PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
+                return true;
+            }
+            Block block = ((Player)sender).getTargetBlock(null, 100);
+            if(block!=null) {
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Block Data for "
+                                                  +block.getX()+" "+block.getY()+" "+block.getZ()
+                                                  +": "+block.getBlockData().getAsString());
+            } else {
+                PluginData.getMessageUtil().sendErrorMessage(sender, "Target block needs to be visible!");
+            }
+            return true;
+        }
         if(args[0].equalsIgnoreCase("dev")) {
             if(args.length>1 && args[1].equalsIgnoreCase("true")) {
                 DevUtil.setConsoleOutput(true);
@@ -174,6 +192,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                     PluginData.getMessageUtil().sendNoPrefixInfoMessage(sender, "- "+name);
                 }
             }
+            return true;
         /*} else  if (args[0].toLowerCase().startsWith("saveworld")) {
             if(args.length<2) {
                 PluginData.getMessageUtil().sendNotEnoughArgumentsError(sender);
@@ -187,7 +206,19 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             }
             PluginData.getMessageUtil().sendErrorMessage(sender,"World not found.");
             return true;*/
-        } else if (args[0].equalsIgnoreCase("reloaddata")) {
+        } 
+        if(!(sender instanceof ConsoleCommandSender 
+                    || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
+            PluginData.getMessageUtil().sendNoPermissionError(sender);
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("placeAllBlockStates")) {
+            BlockDataManager.placeAllBlocksStates(((Player)sender), 
+                        ((Player)sender).getLocation().getBlock().getRelative(BlockFace.SOUTH), false,
+                        (args.length>1 && args[1].equalsIgnoreCase("file")));
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("reloaddata")) {
             Bukkit.getServer().reloadData();
             PluginData.getMessageUtil().sendInfoMessage(sender, "Reloading mc server data...");
         } else if (args[0].equalsIgnoreCase("version")) {
@@ -199,13 +230,22 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
-            PluginData.getMessageUtil().sendInfoMessage(sender, "Reloading...");
-            PluginData.load();
+            ArchitectPlugin.getPluginInstance().loadData();
             PluginData.getMessageUtil().sendInfoMessage(sender,  "Reload complete!");
         } else {
             PluginData.getMessageUtil().sendInvalidSubcommandError(sender);
         }
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                               Command command,
+                                               java.lang.String alias,
+                                               java.lang.String[] args) {
+        List<String> result = new ArrayList<>();
+        result.add("placeallblockstates");
+        return result;
     }
     
     private void showDetails(CommandSender cs) {

@@ -16,22 +16,29 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.data;
 
+import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import java.util.logging.Logger;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 
 /**
  *
  * @author Eriol_Eandur
  */
+@Deprecated
 public class BlockRawData {
     
+    @Deprecated
     @Setter
     int id=0;
     
+    @Deprecated
     @Setter
     byte dv=0;
     
+    @Deprecated
     public BlockRawData(String input) {
         int separatorPos = input.indexOf(":");
         if(separatorPos<0) {
@@ -51,15 +58,27 @@ public class BlockRawData {
         }
     }
     
+    @Deprecated
     public boolean allDV() {
         return dv==-1;
     }
     
+    @Deprecated
     public byte getDV() {
         return dv<0 ? 0 : dv;
     }
     
+    @Deprecated
     public int getId() {
         return id<0 ? 0 : id;
+    }
+    
+    public BlockData getBlockData() {
+        Material material = LegacyMaterialUtil.getMaterial(getId());
+        if(allDV()) {
+            return Bukkit.getServer().createBlockData(material.createBlockData().getAsString());
+        } else {
+            return LegacyMaterialUtil.getBlockData(material,getDV());
+        }
     }
 }

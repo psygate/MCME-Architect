@@ -56,12 +56,12 @@ public class SpecialBlockThinWall extends SpecialBlockDoor {
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        placeDoor(blockPlace, playerLoc, getMaterial(), powered, true, hingeRight, open);
+        placeDoor(blockPlace, playerLoc, getBlockData().getMaterial(), powered, true, hingeRight, open);
     }
     
    @Override
     public boolean matches(Block block) {
-        if(getMaterial().equals(block.getType())) {
+        if(getBlockData().getMaterial().equals(block.getType())) {
             if(DoorUtil.isLowerDoorBlock(block)) {
                 block = block.getRelative(BlockFace.UP);
                 if(!DoorUtil.isUpperDoorBlock(block)) {

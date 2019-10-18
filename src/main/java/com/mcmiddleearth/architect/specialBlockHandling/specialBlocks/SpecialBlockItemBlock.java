@@ -20,22 +20,27 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -48,42 +53,62 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     public static final String ID_DELIMITER = "_id_";
     
     protected Material contentItem;
-    protected Short[] contentDamage;
+    protected Integer[] contentDamage;
     private double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
-                        Material blockMaterial, 
-                        byte blockDataValue,
+                        BlockData blockData,
                         Material contentItem,
-                        Short[] contentDamage,
+                        Integer[] contentDamage,
                         double contentHeight) {
-        this(id, blockMaterial, blockDataValue, contentItem, contentDamage, contentHeight,
+        this(id, blockData, contentItem, contentDamage, contentHeight,
                 SpecialBlockType.ITEM_BLOCK);
     }
     
     protected SpecialBlockItemBlock(String id, 
-                        Material blockMaterial, 
-                        byte blockDataValue,
+                        BlockData blockData,
                         Material contentItem,
-                        Short[] contentDamage,
+                        Integer[] contentDamage,
                         double contentHeight,
                         SpecialBlockType type) {
-        super(id, blockMaterial, blockDataValue, type);
+        super(id, blockData, type);
         this.contentItem = contentItem;
         this.contentDamage = contentDamage;
         this.contentHeight = contentHeight;
     }
     
     public static SpecialBlockItemBlock loadFromConfig(ConfigurationSection config, String id) {
+        BlockData data;
+        //convert old data
+        if(!config.contains("blockData")) {
+            Material blockMat =  Material.matchMaterial(config.getString("blockMaterial",""));
+            byte rawData = (byte) config.getInt("blockDataValue", 0);
+            data = LegacyMaterialUtil.getBlockData(blockMat, rawData);
+            if(data == null) {
+                return null;
+            }
+            config.set("blockData", data.getAsString());
+            config.set("blockMaterial", null);
+            config.set("blockDataValue",null);
+        // end convert old data
+        }else {
+            try {
+                data = Bukkit.getServer().createBlockData(config.getString("blockData",""));
+            } catch(IllegalArgumentException e) {
+                return null;
+            }
+        }
+        /* 1.13 removed
         Material barrelMaterial = matchMaterial(config.getString("blockMaterial",""));
         if(barrelMaterial == null) {
             return null;
         }
         byte barrelData = (byte) config.getInt("blockDataValue",0);
+        */
         Material contentItem = matchMaterial(config.getString("contentItem",""));
-        Short[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
+        Integer[] contentDamage = getContentDamage(config.getString("contentDamage","0"));
         double contentHeight = config.getDouble("contentHeight",0);
-        return new SpecialBlockItemBlock(id, barrelMaterial, barrelData, contentItem, 
+        return new SpecialBlockItemBlock(id, data, contentItem, 
                                          contentDamage, contentHeight);
     }
     
@@ -106,8 +131,12 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ItemStack item = new ItemStack(contentItem,1,
-                                               contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+                ItemStack item = new ItemStack(contentItem,1);
+                ItemMeta meta = item.getItemMeta();
+                if(meta instanceof Damageable) {
+                    ((Damageable) meta).setDamage(contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+                    item.setItemMeta(meta);
+                }
                 armor.setHelmet(item);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
@@ -126,7 +155,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length());
     }
     
-    public short getNextDurability(short currentDurability) {
+    public int getNextDurability(int currentDurability) {
         for(int i=0;i<contentDamage.length;i++) {
             if(contentDamage[i]==currentDurability) {
                 return ((i+1)<contentDamage.length?contentDamage[i+1]:contentDamage[0]);
@@ -135,7 +164,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         return contentDamage[0];
     }
     
-    public short getPreviousDurability(short currentDurability) {
+    public int getPreviousDurability(int currentDurability) {
         for(int i=0;i<contentDamage.length;i++) {
             if(contentDamage[i]==currentDurability) {
                 return ((i-1)>=0?contentDamage[i-1]:contentDamage[contentDamage.length-1]);
@@ -144,18 +173,18 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         return contentDamage[0];
     }
     
-    protected static Short[] getContentDamage(String data) {
+    protected static Integer[] getContentDamage(String data) {
         Scanner scanner = new Scanner(data);
             scanner.useDelimiter(",");
-            List<Short> contentDamageList = new ArrayList<>();
+            List<Integer> contentDamageList = new ArrayList<>();
             while(scanner.hasNext()) {
                 String dataValue = scanner.next();
-                if(NumericUtil.isShort(dataValue)) {
-                    short value = (short) NumericUtil.getShort(dataValue);
+                if(NumericUtil.isInt(dataValue)) {
+                    int value = (int) NumericUtil.getInt(dataValue);
                     contentDamageList.add(value);
                 }
             }
-        return contentDamageList.toArray(new Short[contentDamageList.size()]);
+        return contentDamageList.toArray(new Integer[contentDamageList.size()]);
     }
     
     public static void removeArmorStands(Location loc) {
@@ -241,7 +270,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
             if(holder!=null) {
                 ItemStack content = holder.getHelmet();
                 if(content.getType().equals(contentItem)) {
-                    for(short damage: contentDamage) {
+                    for(int damage: contentDamage) {
                         if(damage == content.getDurability()) {
                             return true;
                         }
