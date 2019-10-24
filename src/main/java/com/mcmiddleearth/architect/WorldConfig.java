@@ -16,20 +16,19 @@
  */
 package com.mcmiddleearth.architect;
 
-import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -60,6 +59,8 @@ public class WorldConfig {
 
     private static final String INVENTORY_ACCESS = "inventoryAccess";
 
+    private static final String ALLOWED_ENCHANTS = "allowedEnchantments";
+
     private static final String NO_INTERACTION = "noInteraction";
 
     // 1.13 moved to NoPhysicsData private List<Integer> npList;
@@ -71,6 +72,8 @@ public class WorldConfig {
     private YamlConfiguration defaultConfig;
 
     private List<BlockData> noInteraction = new ArrayList<>();
+    
+    private Map<String,Integer> allowedEnchants = new HashMap<>();
     
     static {
         if (!worldConfigDir.exists()) {
@@ -102,6 +105,7 @@ public class WorldConfig {
         }
         convertNoPhysicsList();
         loadNoInteraction();
+        loadAllowedEnchants();
         /*} else { 
             if(defaultConfigFile.exists()) {
                 config = YamlConfiguration.loadConfiguration(defaultConfigFile);
@@ -146,6 +150,7 @@ public class WorldConfig {
         config.set(NO_PHYSICS_LIST, new ArrayList<>());
         createInventoryAccess(config);
         createNoInteraction(config);
+        createAllowedEnchants(config);
         return config;
     }
 
@@ -496,6 +501,30 @@ public class WorldConfig {
             noInteraction.add(Bukkit.createBlockData(entry));
         }
     }
+    
+    public boolean isAllowedEnchantment(String enchantment, int level) {
+        Integer allowedLevel = allowedEnchants.get(enchantment);
+        return allowedLevel != null && level<=allowedLevel;
+    }
+    
+    private void loadAllowedEnchants() {
+        ConfigurationSection data;
+        if(worldConfig.contains(ALLOWED_ENCHANTS)) {
+            data = worldConfig.getConfigurationSection(ALLOWED_ENCHANTS);
+        } else {
+            if(defaultConfig.contains(ALLOWED_ENCHANTS)) {
+                data = defaultConfig.getConfigurationSection(ALLOWED_ENCHANTS);
+            } else {
+                createAllowedEnchants(defaultConfig);
+                saveDefaultConfig();
+                data = defaultConfig.getConfigurationSection(ALLOWED_ENCHANTS);
+            }
+        }
+        allowedEnchants.clear();
+        for(String key: data.getKeys(false)) {
+            allowedEnchants.put(key,data.getInt(key));
+        }
+    }
 
     private void createNoInteraction(ConfigurationSection config) {
         List<String> list = new ArrayList<>();
@@ -528,5 +557,10 @@ public class WorldConfig {
         //1.13 removed section.set(Material.DIODE_BLOCK_OFF.name(), "0-15");
         section.set(Material.COMPARATOR.name(), "0-15"); //1.13 renamed
         //1.13 removed section.set(Material.REDSTONE_COMPARATOR_OFF.name(), "0-15");*/
+    }
+    
+    private void createAllowedEnchants(ConfigurationSection config) {
+        ConfigurationSection section = config.createSection(ALLOWED_ENCHANTS);
+        section.set("Durability", 1);
     }
 }

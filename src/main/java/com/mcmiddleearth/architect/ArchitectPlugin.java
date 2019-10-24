@@ -14,6 +14,7 @@ import com.mcmiddleearth.architect.serverResoucePack.RpCommand;
 import com.mcmiddleearth.architect.additionalListeners.FbtListener;
 import com.mcmiddleearth.architect.additionalListeners.GameMechanicsListener;
 import com.mcmiddleearth.architect.additionalListeners.AdditionalProtectionListener;
+import com.mcmiddleearth.architect.additionalListeners.OpItemListener;
 import com.mcmiddleearth.architect.additionalListeners.StickBlockBreakListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockCycleListener;
 import com.mcmiddleearth.architect.additionalListeners.VoxelBiomeBrushListener;
@@ -111,6 +112,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new InventoryListener(), this);
         pluginManager.registerEvents(new RpListener(), this);
         pluginManager.registerEvents(new ChunkUpdateListener(), this);
+        pluginManager.registerEvents(new OpItemListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand

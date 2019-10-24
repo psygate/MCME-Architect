@@ -77,6 +77,7 @@ public enum Modules {
     CHUNK_UPDATE           ("modules.chunkupdate.manual"),
     CHUNK_UPDATE_AUTO      ("modules.chunkupdate.auto"),
     
+    BLOCK_OP_ITEMS            ("modules.protection.blockOpItems"),
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");
     
