@@ -182,6 +182,11 @@ public class PluginData {
         return config.getNoInteraction(block.getBlockData());
     }
     
+    public static boolean isEnchantmentAllowed(String enchantment, int level) {
+        WorldConfig config = getOrCreateWorldConfig(Bukkit.getWorlds().get(0).getName());
+        return config.isAllowedEnchantment(enchantment, level);
+    }
+    
     public static Set<String> getWorldNames() {
         Set<String> names = new HashSet<>();
         for(World world: Bukkit.getWorlds()) {
