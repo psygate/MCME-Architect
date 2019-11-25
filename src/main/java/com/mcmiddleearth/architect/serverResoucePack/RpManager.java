@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack;
 
+import com.google.gson.Gson;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation.RegionEditConversationFactory;
@@ -24,6 +25,7 @@ import com.mcmiddleearth.util.DynmapUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -32,8 +34,10 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -98,6 +102,7 @@ public class RpManager {
                 Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        importResourceRegions();
     }
     
     public static RpRegion getRegion(Location loc) {
@@ -364,6 +369,68 @@ Logger.getGlobal().info(variantSection.getString("url"));
             config.save(new File(regionFolder,region.getName()+".reg"));
         } catch (IOException ex) {
             Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static void importResourceRegions() {
+        for(File file: regionFolder.listFiles((File dir, String name) -> name.endsWith(".json"))) {
+            Gson gson = new Gson();
+            try(FileReader fr = new FileReader(file)) {
+                ResourceRegionData data = new ResourceRegionData();
+                data = gson.fromJson(fr, data.getClass());
+                final ConfigurationSection section = data.getConfig().getConfigurationSection("rpRegion");
+                new BukkitRunnable() {
+                    int counter = 10;
+                    @Override
+                    public void run() {
+                        RpRegion region = RpRegion.loadFromMap((Map<String,Object>)section.getValues(true));
+                        if(region!=null) {
+                            DevUtil.log("imported region: "+region.getName());
+                            addRegion(region);  
+                            saveRpRegion(region);
+                            file.delete();
+                            cancel();
+                        } else {
+                            counter--;
+                            DevUtil.log("failed to import region: "+region+" tries left: "+counter);
+                            if(counter<1) {
+                                cancel();
+                            }
+                        }
+                    }
+                }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 200, 20);
+            } catch (IOException ex) {
+                Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private static class ResourceRegionData {
+        public String name;
+        public String packUrl;
+        public int weight;
+        public String worldName;
+        public int n;
+        public int[] xpoints;
+        public int[] zpoints;
+        
+        public YamlConfiguration getConfig() {
+            YamlConfiguration config = new YamlConfiguration();
+            ConfigurationSection rpSection = config.createSection("rpRegion");
+            rpSection.set("name",name);
+            rpSection.set("weight",weight);
+            rpSection.set("rp",RpManager.getRpForUrl(packUrl));
+            ConfigurationSection regionSection = rpSection.createSection("region");
+            regionSection.set("world", worldName);
+            regionSection.set("minY",0);
+            regionSection.set("maxY",255);
+            regionSection.set("type","Polygonal2DRegion");
+            List<String> points = new ArrayList<>();
+            for(int i = 0; i<n; i++) {
+                points.add(xpoints[i]+","+zpoints[i]);
+            }
+            regionSection.set("points",points);
+            return config;
         }
     }
 }

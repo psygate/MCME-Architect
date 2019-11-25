@@ -116,7 +116,7 @@ public class RpCommand extends AbstractArchitectCommand {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
-                    if(!RpManager.searchRpKey(args[1])) {
+                    if(args[1].startsWith("xxx_") || !RpManager.searchRpKey(args[1])) {
                         PluginData.getMessageUtil().sendErrorMessage(cs, "That variant is not available. Try 'light' or 'dark'.");
                         return true;
                     }
