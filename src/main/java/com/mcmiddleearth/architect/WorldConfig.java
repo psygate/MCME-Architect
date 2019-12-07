@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -56,12 +57,10 @@ public class WorldConfig {
             + defaultWorldConfigName + "." + cfgExtension);
 
     private static final String NO_PHYSICS_LIST = "noPhysicsList";
-
     private static final String INVENTORY_ACCESS = "inventoryAccess";
-
     private static final String ALLOWED_ENCHANTS = "allowedEnchantments";
-
     private static final String NO_INTERACTION = "noInteraction";
+    private static final String DOUBLE_SLAB_REPLACEMENTS = "doubleSlabReplacements";
 
     // 1.13 moved to NoPhysicsData private List<Integer> npList;
     private final String worldName;
@@ -74,6 +73,8 @@ public class WorldConfig {
     private List<BlockData> noInteraction = new ArrayList<>();
     
     private Map<String,Integer> allowedEnchants = new HashMap<>();
+    
+    private Map<String,Map<BlockData,BlockData>> doubleSlabReplacements = new HashMap<>();
     
     static {
         if (!worldConfigDir.exists()) {
@@ -106,6 +107,7 @@ public class WorldConfig {
         convertNoPhysicsList();
         loadNoInteraction();
         loadAllowedEnchants();
+        loadDoubleSlabReplacements();
         /*} else { 
             if(defaultConfigFile.exists()) {
                 config = YamlConfiguration.loadConfiguration(defaultConfigFile);
@@ -151,6 +153,7 @@ public class WorldConfig {
         createInventoryAccess(config);
         createNoInteraction(config);
         createAllowedEnchants(config);
+        createDoubleSlabReplacements(config);
         return config;
     }
 
@@ -480,6 +483,7 @@ public class WorldConfig {
     }
 
     public boolean getNoInteraction(BlockData data) {
+//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"CheckNoInteraction: "+data.getAsString());        
         return noInteraction.stream().anyMatch((search) -> (data.matches(search)));
     }
     
@@ -497,12 +501,16 @@ public class WorldConfig {
             }
         }
         noInteraction.clear();
+//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"interactionDAta: "+data.size());
         for(String entry: data) {
-            noInteraction.add(Bukkit.createBlockData(entry));
+            BlockData blockData = Bukkit.createBlockData(entry);
+            noInteraction.add(blockData);
+//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,blockData.getAsString());
         }
     }
     
     public boolean isAllowedEnchantment(String enchantment, int level) {
+//Logger.getGlobal().info("Ench Test: "+enchantment+" "+level);
         Integer allowedLevel = allowedEnchants.get(enchantment);
         return allowedLevel != null && level<=allowedLevel;
     }
@@ -522,10 +530,45 @@ public class WorldConfig {
         }
         allowedEnchants.clear();
         for(String key: data.getKeys(false)) {
-            allowedEnchants.put(key,data.getInt(key));
+            allowedEnchants.put("minecraft:"+key.toLowerCase(),data.getInt(key));
         }
     }
 
+    public BlockData getDoubleSlabReplacement(BlockData replace, String rp) {
+        Map<BlockData,BlockData> replacements = doubleSlabReplacements.get(rp.toLowerCase());
+        if(replacements!=null) {
+            return replacements.get(replace);
+        }
+        return null;
+    }
+    
+    private void loadDoubleSlabReplacements() {
+        ConfigurationSection data;
+        if(worldConfig.contains(DOUBLE_SLAB_REPLACEMENTS)) {
+            data = worldConfig.getConfigurationSection(DOUBLE_SLAB_REPLACEMENTS);
+        } else {
+            if(defaultConfig.contains(DOUBLE_SLAB_REPLACEMENTS)) {
+                data = defaultConfig.getConfigurationSection(DOUBLE_SLAB_REPLACEMENTS);
+            } else {
+                createDoubleSlabReplacements(defaultConfig);
+                saveDefaultConfig();
+                data = defaultConfig.getConfigurationSection(DOUBLE_SLAB_REPLACEMENTS);
+            }
+        }
+        doubleSlabReplacements.clear();
+        for(String key: data.getKeys(false)) {
+            Map<BlockData,BlockData> replacements = new HashMap<>();
+            ConfigurationSection section = data.getConfigurationSection(key);
+            for(String replacementKey: section.getKeys(false)) {
+                ConfigurationSection replacement = section.getConfigurationSection(replacementKey);
+                BlockData from = Bukkit.createBlockData(replacement.getString("from"));
+                BlockData to = Bukkit.createBlockData(replacement.getString("to"));
+                replacements.put(from, to);
+            }
+            doubleSlabReplacements.put(key,replacements);
+        }
+    }
+    
     private void createNoInteraction(ConfigurationSection config) {
         List<String> list = new ArrayList<>();
         list.add("minecraft:acacia_fence_gate");
@@ -563,4 +606,14 @@ public class WorldConfig {
         ConfigurationSection section = config.createSection(ALLOWED_ENCHANTS);
         section.set("Durability", 1);
     }
+    
+    private void createDoubleSlabReplacements(ConfigurationSection config) {
+        ConfigurationSection section = config.createSection(DOUBLE_SLAB_REPLACEMENTS);
+        ConfigurationSection rp = section.createSection("gondor");
+        ConfigurationSection eg = rp.createSection("Example");
+        eg.set("from", Bukkit.createBlockData(Material.ACACIA_SLAB).getAsString());
+        eg.set("to", Bukkit.createBlockData(Material.ACACIA_PLANKS).getAsString());
+    }
+    
+    
 }

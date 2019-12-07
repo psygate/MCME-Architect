@@ -18,7 +18,7 @@ package com.mcmiddleearth.architect.chunkUpdate;
 
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
-import com.mcmiddleearth.pluginutil.NMSUtil;
+//import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.util.DevUtil;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,9 +97,35 @@ public class ChunkUpdateUtil {
             }*/
         } else {
             DevUtil.log("Sending local chunk updates.");
-            NMSUtil.updatePlayerChunks(player,
+            /*NMSUtil.updatePlayerChunks(player,
                                        loc.clone().add(new Vector(-updateRadius,0,-updateRadius)), 
-                                       loc.clone().add(new Vector(updateRadius,0,updateRadius)));
+                                       loc.clone().add(new Vector(updateRadius,0,updateRadius)));*/
+            //player.sendBlockChange(blockPlace.getLocation(), blockPlace.getBlockData());
+            for(int i = -1; i<2; i++) {
+                for(int j = -1; j<2; j++) {
+                    Block block = blockPlace.getRelative(BlockFace.EAST,i).getRelative(BlockFace.SOUTH,j);
+                    player.sendBlockChange(block.getLocation(),block.getBlockData());
+                }
+            }
+            /*player.sendBlockChange(blockPlace.getRelative(BlockFace.EAST).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.EAST).getBlockData());
+            player.sendBlockChange(blockPlace.getRelative(BlockFace.WEST).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.WEST).getBlockData());
+            player.sendBlockChange(blockPlace.getRelative(BlockFace.SOUTH).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.SOUTH).getBlockData());
+            player.sendBlockChange(blockPlace.getRelative(BlockFace.NORTH).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.NORTH).getBlockData());
+            player.sendBlockChange(blockPlace.getRelative(BlockFace.UP).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.UP).getBlockData());
+            player.sendBlockChange(blockPlace.getRelative(BlockFace.DOWN).getLocation(), 
+                                   blockPlace.getRelative(BlockFace.DOWN).getBlockData());*/
+            /*int x = loc.getChunk().getX();
+            int z = loc.getChunk().getZ();
+            for(int i=x-updateRadius; i<x+updateRadius; i++) {
+                for(int j = z-updateRadius; j<z+updateRadius; i++) {
+                    player.getWorld().refreshChunk(i, j);
+                }
+            }*/
         }
     }
     
@@ -109,11 +135,13 @@ public class ChunkUpdateUtil {
                 || step == maxStep) {
             return;
         }
+        player.sendBlockChange(block.getLocation(), block.getBlockData());
         visitedBlocks.add(block);
-        if(!finishedChunks.contains(block.getChunk())) {
-            NMSUtil.updatePlayerChunks(player, block.getLocation(), block.getLocation());
-            finishedChunks.add(block.getChunk());
-        }
+        //if(!finishedChunks.contains(block.getChunk())) {
+            //NMSUtil.updatePlayerChunks(player, block.getLocation(), block.getLocation());
+            //player.getWorld().refreshChunk(block.getChunk().getX(), block.getChunk().getZ());
+          //  finishedChunks.add(block.getChunk());
+        //}
         MultipleFacing data = (MultipleFacing) block.getBlockData();
         for(BlockFace face: data.getAllowedFaces()) {
             if(data.hasFace(face) == condition) {

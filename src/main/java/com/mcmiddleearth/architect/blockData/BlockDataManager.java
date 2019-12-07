@@ -222,7 +222,7 @@ public class BlockDataManager {
             String legacyInfo = (legacy!=null?
                                  " "+ChatColor.RED+"old("+legacy.getId()+":"+rawData+")":"");
             results.add("Material: "+ChatColor.GREEN+data.getMaterial().name()
-                                    +" ("+data.getMaterial().getId()+":"+rawData+")"+legacyInfo);
+                                    +/*1.14 removed " ("+data.getMaterial().getId()+":"+rawData+")"+*/legacyInfo);
         } else {
             results.add(data.getMaterial().name());
         }
@@ -254,7 +254,7 @@ public class BlockDataManager {
     }
     
     public static LegacyBlockData getLegacyBlockData(BlockData data) {
-        World world = Bukkit.getWorld("world");
+        World world = Bukkit.getWorlds().get(0);
         if(world==null) return new LegacyBlockData(0,(byte)0);
         Block block = world.getBlockAt(0, 2, 0);
         BlockState state = block.getState();
@@ -267,7 +267,7 @@ public class BlockDataManager {
             int retries = 20;
             @Override
             public void run() {
-                World world = Bukkit.getWorld("world");
+                World world = Bukkit.getWorlds().get(0);
                 if(world !=null) {
                     Block block = world.getBlockAt(0, 2, 0);
                     BlockState state = block.getState();

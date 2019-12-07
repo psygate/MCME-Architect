@@ -18,7 +18,9 @@ package com.mcmiddleearth.util;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
-import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+//import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import java.util.logging.Level;
@@ -133,7 +135,7 @@ public class DynmapUtil {
         if(region.getRegion() instanceof Polygonal2DRegion) {
             double[] result = new double[((Polygonal2DRegion)region.getRegion()).getPoints().size()];
             for(int i = 0; i < result.length; i++) {
-                BlockVector2D vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i).toBlockVector2D();
+                BlockVector2 vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i);
                 result[i] = vector.getX();
             }
             return result;
@@ -150,7 +152,7 @@ public class DynmapUtil {
         if(region.getRegion() instanceof Polygonal2DRegion) {
             double[] result = new double[((Polygonal2DRegion)region.getRegion()).getPoints().size()];
             for(int i = 0; i < result.length; i++) {
-                BlockVector2D vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i);
+                BlockVector2 vector = ((Polygonal2DRegion)region.getRegion()).getPoints().get(i);
                 result[i] = vector.getZ();
             }
             return result;

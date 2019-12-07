@@ -16,6 +16,12 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import com.google.gson.Gson;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
@@ -71,6 +77,7 @@ public class RpManager {
     
     public static void init() {
         loadPlayerData();
+        //addPacketListener();
         if(!regionFolder.exists()) {
             regionFolder.mkdir();
         }
@@ -432,5 +439,23 @@ Logger.getGlobal().info(variantSection.getString("url"));
             regionSection.set("points",points);
             return config;
         }
+    }
+    
+    private static void addPacketListener() {
+        Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING,"Adding RP packet listener");
+        ProtocolManager protocolManager = protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager.addPacketListener(
+          new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, 
+                  PacketType.Play.Server.RESOURCE_PACK_SEND) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                // Item packets (id: 0x29)
+                if (event.getPacketType() == 
+                        PacketType.Play.Server.RESOURCE_PACK_SEND) {
+                    Logger.getLogger(ArchitectPlugin.class.getName())
+                          .log(Level.WARNING,"Sending RP to player "+event.getPlayer());
+                }
+            }
+        });    
     }
 }
