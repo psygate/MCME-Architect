@@ -45,7 +45,7 @@ public class GameMechanicsListener extends WatchedListener{
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().setPlayerTime(6000, false);
+        event.getPlayer().resetPlayerTime();
     }
     
     @EventHandler
