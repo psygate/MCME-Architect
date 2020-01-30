@@ -20,6 +20,8 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.pluginutil.NBTTagUtil;
+import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -35,6 +37,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -90,6 +94,29 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 PluginData.getMessageUtil().sendFancyListMessage((Player)sender, header, commandList, 
                                                                  "/architect help", page);
                 sendManualMessage(sender);
+            }
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("checkNBT")) {
+            if((sender instanceof Player) && !PluginData.hasPermission((Player)sender, Permission.CHECK_NBT)) {
+                PluginData.getMessageUtil().sendNoPermissionError(sender);
+                return true;
+            }
+            if(args.length > 1) {
+                if(Bukkit.getPlayer(args[1])!=null) {
+                    PluginData.getMessageUtil().sendInfoMessage(sender, "Items of player "+ChatColor.GREEN+args[1]+ChatColor.AQUA+" with NBT:");
+                    checkInventory(sender, Bukkit.getPlayer(args[1]));
+                } else {
+                    PluginData.getMessageUtil().sendErrorMessage(sender, "Player " + ChatColor.DARK_RED+args[1]+ChatColor.RED +" needs to be online for item NBT checking.");
+                }
+            } else if(sender instanceof Player) {
+                PluginData.getMessageUtil().sendInfoMessage(sender, "NBT of your main hand item:");
+                String nbt = getNBT(sender,((Player)sender).getInventory().getItemInMainHand());
+                PluginData.getMessageUtil().sendNoPrefixInfoMessage(sender, 
+                        nbt.equals("")?"No item NBT found.":""
+                                       +ChatColor.GREEN+((Player)sender).getInventory().getItemInMainHand().getType()+": "+ChatColor.AQUA+nbt);
+            } else {
+                PluginData.getMessageUtil().sendErrorMessage(sender, "From console you need to add a player name.");
             }
             return true;
         }
@@ -238,7 +265,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
         return true;
     }
     
-    @Override
+    /*@Override
     public List<String> onTabComplete(CommandSender sender,
                                                Command command,
                                                java.lang.String alias,
@@ -246,7 +273,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
         List<String> result = new ArrayList<>();
         result.add("placeallblockstates");
         return result;
-    }
+    }*/
     
     private void showDetails(CommandSender cs) {
         PluginData.getMessageUtil().sendInfoMessage(cs,"DevUtil: Level - "+DevUtil.getLevel()+"; Console - "+DevUtil.isConsoleOutput()+"; ");
@@ -262,6 +289,27 @@ public class ArchitectCommand extends AbstractArchitectCommand{
     }
 
 
+    private String getNBT(CommandSender sender, ItemStack item) {
+        String nbt = "";
+        if(item!=null) {
+            try {
+                Object nmsItem = NMSUtil.getCraftBukkitDeclaredField("inventory.CraftItemStack","handle",item);
+                Object tag = NMSUtil.invokeNMS("ItemStack", "getTag", new Class[]{}, nmsItem);
+                nbt = NBTTagUtil.asString(tag);
+            } catch(NullPointerException ex) {};
+        }
+        return nbt;
+    }
+    
+    private void checkInventory(CommandSender sender, Player player) {
+        player.getInventory().forEach(item -> {
+            String nbt = getNBT(sender,item);
+            if(!nbt.equals("")) {
+                PluginData.getMessageUtil().sendNoPrefixInfoMessage(sender, ""+ChatColor.GREEN+item.getType()+": "+ChatColor.AQUA+nbt);
+            }
+        });
+    }
+    
     @Override
     public String getHelpPermission() {
         return Permission.ARCHITECT_INFO.getPermissionNode();

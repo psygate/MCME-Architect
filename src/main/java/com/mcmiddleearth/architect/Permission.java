@@ -89,7 +89,9 @@ public enum Permission {
     CUNK_UPDATE_AUTO      ("architect.chunkupdate.auto"),
     ARCHITECT_HELP        ("architect.help"),
     COPY_PASTE            ("architect.copypaste"),
-    COPY_PASTE_UNLIMITED  ("architect.copypaste.unlimited");
+    COPY_PASTE_UNLIMITED  ("architect.copypaste.unlimited"),
+    
+    CHECK_NBT  ("architect.checknbt");
 
     @Getter
     private final String permissionNode;

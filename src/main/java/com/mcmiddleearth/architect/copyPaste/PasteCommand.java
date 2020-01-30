@@ -30,6 +30,10 @@ public class PasteCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendErrorMessage(cs,"CopyPasting is not enabled for this world.");
             return true;
         }
+        if(!PluginData.hasPermission(cs, Permission.COPY_PASTE)) {
+            PluginData.getMessageUtil().sendNoPermissionError(cs);
+            return true;
+        }
         if(!CopyPasteManager.hasClipboard(player)) {
             PluginData.getMessageUtil().sendErrorMessage(cs, "Copy something to your clipboard first with /copy.");
             return true;
