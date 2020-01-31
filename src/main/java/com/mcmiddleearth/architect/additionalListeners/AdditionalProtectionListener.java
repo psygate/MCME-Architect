@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.TheGafferUtil;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
@@ -101,7 +102,7 @@ public class AdditionalProtectionListener extends WatchedListener{
     
    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void flowerPotProtection(PlayerInteractEvent event) {
-        if(!event.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
+        if(!isFlowerPot(event.getClickedBlock().getType())) {
             return;
         }
         Player player = event.getPlayer();
@@ -109,5 +110,9 @@ public class AdditionalProtectionListener extends WatchedListener{
         if(!TheGafferUtil.checkGafferPermission(player, block.getLocation())) {
             event.setCancelled(true);
         }
+    }
+    
+    private boolean isFlowerPot(Material type) {
+        return type.equals(Material.FLOWER_POT) || type.name().startsWith("POTTED");
     }
 }
