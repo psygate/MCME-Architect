@@ -539,7 +539,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && (EventUtil.isMainHandEvent(event) 
                     || p.getItemInHand().getType().equals(Material.CACTUS)
-                    || p.getItemInHand().getType().equals(Material.ROSE_RED)
+                    //|| p.getItemInHand().getType().equals(Material.ROSE_RED)
                     || p.getItemInHand().getType().equals(Material.ROSE_BUSH)
                     || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                     || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
@@ -552,7 +552,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                   || p.getItemInHand().getType().equals(Material.PUMPKIN_SEEDS)
                   || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
                   || p.getItemInHand().getType().equals(Material.CACTUS)
-                  || p.getItemInHand().getType().equals(Material.ROSE_RED)
+                  //|| p.getItemInHand().getType().equals(Material.ROSE_RED)
                   || p.getItemInHand().getType().equals(Material.ROSE_BUSH)
                   || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                   || p.getItemInHand().getType().equals(Material.NETHER_WART)
@@ -615,10 +615,11 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.LILY_PAD, false,(byte)0);
                         break;
-                    case ROSE_RED:
+                    /*case ROSE_RED:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.ROSE_RED, false,p.getItemInHand().getData().getData());
                         break;
+                        */
                     case ROSE_BUSH:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.ROSE_BUSH, false,(byte) 0);

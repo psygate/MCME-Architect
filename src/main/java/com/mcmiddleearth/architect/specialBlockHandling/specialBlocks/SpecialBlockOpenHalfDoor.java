@@ -88,8 +88,7 @@ public class SpecialBlockOpenHalfDoor extends SpecialBlockFourDirections {
                             public void run() {
                                 DevUtil.log("open half door place loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
                                 state.getWorld().unloadChunkRequest(tempState.getChunk().getX(),
-                                                                    tempState.getChunk().getZ(), 
-                                                                    false);
+                                                                    tempState.getChunk().getZ());
                             }
                         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 5);
                     }
