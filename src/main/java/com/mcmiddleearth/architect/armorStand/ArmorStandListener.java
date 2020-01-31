@@ -10,7 +10,6 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.guard.ArmorStandGuard;
 import com.mcmiddleearth.pluginutil.EventUtil;
-import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +31,14 @@ import org.bukkit.util.EulerAngle;
  * @author Eriol_Eandur
  */
 public class ArmorStandListener implements Listener {
+
+    @EventHandler
+    public void blockFishingRod(PlayerFishEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.ARMOR_STAND_PROTECTION)
+                && (event.getCaught() instanceof ArmorStand)) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void PlayerInteract(PlayerInteractEvent event) {

@@ -115,4 +115,5 @@ public class AdditionalProtectionListener extends WatchedListener{
     private boolean isFlowerPot(Material type) {
         return type.equals(Material.FLOWER_POT) || type.name().startsWith("POTTED");
     }
+    
 }
