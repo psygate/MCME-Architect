@@ -20,7 +20,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
-import com.mcmiddleearth.pluginutil.FAWEUtil;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -83,7 +83,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     Region region= null;
                     //try {
                         //1.13 removed region = WorldEdit.getInstance().getSession(p.getName()).getRegion();
-                        region = FAWEUtil.getSelection((Player)cs);
+                        region = WEUtil.getSelection((Player)cs);
                     //} catch (NullPointerException | IncompleteRegionException ex) {}
                     if(region instanceof CuboidRegion) {
                         if(args.length>2) {

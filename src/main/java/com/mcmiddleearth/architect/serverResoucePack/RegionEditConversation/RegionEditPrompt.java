@@ -19,7 +19,7 @@ package com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
-import com.mcmiddleearth.pluginutil.FAWEUtil;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -111,7 +111,7 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
                 }
                 return new ResponsePrompt(info);
             case "set":
-                Region newWeRegion = FAWEUtil.getSelection(getPlayer(cc));
+                Region newWeRegion = WEUtil.getSelection(getPlayer(cc));
                 if(newWeRegion!=null) {
                     getRegion(cc).setRegion(newWeRegion.clone());
                     RpManager.saveRpRegion(getRegion(cc));

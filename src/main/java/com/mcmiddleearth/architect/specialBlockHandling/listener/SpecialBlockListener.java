@@ -40,6 +40,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -202,26 +203,24 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      */
     @EventHandler(priority = EventPriority.HIGHEST) 
     public void avoidDoubleSlab(BlockPlaceEvent event) {
-//Logger.getGlobal().info("Avoid double");
+Logger.getGlobal().info("Avoid double");
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                /*|| !(event.getBlock().getType().equals(Material.STONE_SLAB)
-                    || event.getBlock().getType().equals(Material.OAK_SLAB)
-                    || event.getBlock().getType().equals(Material.SANDSTONE_SLAB)
-                    || event.getBlock().getType().equals(Material.PURPUR_SLAB))*/) {
+                && event.getBlockPlaced().getBlockData() instanceof Slab
+                && ((Slab)event.getBlockPlaced().getBlockData()).getType().equals(Slab.Type.DOUBLE)) {
             RpRegion rpRegion = RpManager.getRegion(event.getBlock().getLocation());
             String rp;
-//Logger.getGlobal().info("got rpRegion: "+rpRegion);
+Logger.getGlobal().info("got rpRegion: "+rpRegion);
             if(rpRegion!=null) {
                 rp = rpRegion.getRp();
             } else {
                 rp = RpManager.getCurrentRpName(event.getPlayer());
             }
-//Logger.getGlobal().info("got rp: "+rp);
+Logger.getGlobal().info("got rp: "+rp);
             if(rp!=null && !rp.equals("")) {
                 BlockData data = PluginData.getOrCreateWorldConfig(event.getBlock().getWorld().getName())
                         .getDoubleSlabReplacement(event.getBlockReplacedState().getBlockData(),
                                                   rp);
-//Logger.getGlobal().info("got data: "+data);
+Logger.getGlobal().info("got data: "+data);
                 if(data!=null) {
                     //event.setCancelled(true);
                     Block block = event.getBlockPlaced();

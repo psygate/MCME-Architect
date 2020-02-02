@@ -24,6 +24,8 @@ import com.mcmiddleearth.util.TheGafferUtil;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -114,6 +116,19 @@ public class AdditionalProtectionListener extends WatchedListener{
     
     private boolean isFlowerPot(Material type) {
         return type.equals(Material.FLOWER_POT) || type.name().startsWith("POTTED");
+    }
+    
+   @EventHandler(priority=EventPriority.HIGH)
+    public void dyeSignProtection(PlayerInteractEvent event) {
+        if(event.getClickedBlock()!= null 
+                && (event.getClickedBlock().getBlockData() instanceof Sign
+                    || event.getClickedBlock().getBlockData() instanceof WallSign)) {
+            Player player = event.getPlayer();
+            Block block = event.getClickedBlock();
+            if(!TheGafferUtil.checkGafferPermission(player, block.getLocation())) {
+                event.setCancelled(true);
+            }
+        }
     }
     
 }

@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -26,6 +27,8 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -125,6 +128,15 @@ public class GameMechanicsListener extends WatchedListener{
     @EventHandler(ignoreCancelled = true)
     public void onMoistureChange(MoistureChangeEvent event) {
         if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FORM_BLOCKING)) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onWalkMagma(EntityDamageEvent event) {
+        if (PluginData.isModuleEnabled(event.getEntity().getWorld(), Modules.PLAYER_DAMAGE_BLOCKING)
+                && event.getEntity() instanceof Player
+                && event.getCause().equals(DamageCause.HOT_FLOOR)) {
             event.setCancelled(true);
         }
     }
