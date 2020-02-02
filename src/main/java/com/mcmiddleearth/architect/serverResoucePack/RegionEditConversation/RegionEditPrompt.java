@@ -16,13 +16,14 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+//import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
@@ -90,8 +91,8 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
                 Region weRegion = editRegion.getRegion();
                 String info="Region info:\n";
                 if(weRegion instanceof CuboidRegion) {
-                    Vector min = weRegion.getMinimumPoint();
-                    Vector max = weRegion.getMaximumPoint();
+                    BlockVector3 min = weRegion.getMinimumPoint();
+                    BlockVector3 max = weRegion.getMaximumPoint();
                     info= info+ccHigh+"Type: "+ccStressed+"cuboid\n" 
                          +ccHigh+"MinimumPoint: "+ccStressed+min.getBlockX()+","+min.getBlockY()+","+min.getBlockZ()+"\n"
                          +ccHigh+"MaximumPoint: "+ccStressed+max.getBlockX()+","+max.getBlockY()+","+max.getBlockZ()+"\n";
@@ -101,7 +102,7 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
                               +ccHigh+"Upper border: "+ccStressed+((Polygonal2DRegion)weRegion).getMaximumY()+"\n"
                               +ccHigh+"Points: \n";
                     int i = 0;
-                    for(BlockVector2D point: ((Polygonal2DRegion)weRegion).getPoints()) {
+                    for(BlockVector2 point: ((Polygonal2DRegion)weRegion).getPoints()) {
                         info = info + ccHigh+"- ["+i+"] "+ccStressed+point.getBlockX()+","+point.getBlockZ()+"\n";
                         i++;
                     }
@@ -110,7 +111,7 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
                 }
                 return new ResponsePrompt(info);
             case "set":
-                Region newWeRegion = FawePlayer.wrap(getPlayer(cc)).getSelection();
+                Region newWeRegion = WEUtil.getSelection(getPlayer(cc));
                 if(newWeRegion!=null) {
                     getRegion(cc).setRegion(newWeRegion.clone());
                     RpManager.saveRpRegion(getRegion(cc));
@@ -226,14 +227,14 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
     private boolean insertPoint(RpRegion region, int index, int x, int z) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(weRegion.size()<=index) {
-            weRegion.addPoint(new BlockVector2D(x,z));
+            weRegion.addPoint(BlockVector2.at(x,z));
             return true;
         } else {
             index = Math.max(index, 0);
-            List<BlockVector2D> points = new ArrayList<>();
+            List<BlockVector2> points = new ArrayList<>();
             points.addAll(weRegion.getPoints());
-            ListIterator<BlockVector2D> iterator = points.listIterator(index);
-            iterator.add(new BlockVector2D(x,z));
+            ListIterator<BlockVector2> iterator = points.listIterator(index);
+            iterator.add(BlockVector2.at(x,z));
             region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
                                    weRegion.getMinimumY(),weRegion.getMaximumY()));
             return true;
@@ -243,9 +244,9 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
     private boolean removePoint(RpRegion region, int index) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(index >=0 && index < weRegion.size()) {
-            List<BlockVector2D> points = new ArrayList<>();
+            List<BlockVector2> points = new ArrayList<>();
             points.addAll(weRegion.getPoints());
-            ListIterator<BlockVector2D> iterator = points.listIterator(index);
+            ListIterator<BlockVector2> iterator = points.listIterator(index);
             iterator.next();
             iterator.remove();
             region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
@@ -258,11 +259,11 @@ public class RegionEditPrompt extends StringPrompt implements ConversationAbando
     private boolean setPoint(RpRegion region, int index, int x, int z) {
         Polygonal2DRegion weRegion = (Polygonal2DRegion) region.getRegion();
         if(index >=0 && index < weRegion.size()) {
-            List<BlockVector2D> points = new ArrayList<>();
+            List<BlockVector2> points = new ArrayList<>();
             points.addAll(weRegion.getPoints());
-            ListIterator<BlockVector2D> iterator = points.listIterator(index);
+            ListIterator<BlockVector2> iterator = points.listIterator(index);
             iterator.next();
-            iterator.set(new BlockVector2D(x,z));
+            iterator.set(BlockVector2.at(x,z));
             region.setRegion(new Polygonal2DRegion(weRegion.getWorld(),points,
                                    weRegion.getMinimumY(),weRegion.getMaximumY()));
             return true;

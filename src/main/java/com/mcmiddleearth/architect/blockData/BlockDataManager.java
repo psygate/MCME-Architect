@@ -56,9 +56,12 @@ import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.Rail;
 import org.bukkit.block.data.Snowable;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Bamboo;
 import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.data.type.BubbleColumn;
 import org.bukkit.block.data.type.Cake;
+import org.bukkit.block.data.type.Campfire;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.CommandBlock;
 import org.bukkit.block.data.type.Comparator;
@@ -69,12 +72,14 @@ import org.bukkit.block.data.type.EndPortalFrame;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.block.data.type.Gate;
 import org.bukkit.block.data.type.Hopper;
+import org.bukkit.block.data.type.Lantern;
 import org.bukkit.block.data.type.Leaves;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.block.data.type.PistonHead;
 import org.bukkit.block.data.type.Repeater;
 import org.bukkit.block.data.type.Sapling;
+import org.bukkit.block.data.type.Scaffolding;
 import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Snow;
@@ -156,6 +161,17 @@ public class BlockDataManager {
         attributes.add(new IntAttribute("Power",AnaloguePowerable.class));
         attributes.add(new IntAttribute("Level",Levelled.class));
         attributes.add(new RotatableAttribute("Rotation"));
+        
+        //1.13 - 1.4 additions
+        attributes.add(new SetAttribute("Leaves", Bamboo.class, Bamboo.Leaves.class));
+        attributes.add(new SetAttribute("Attachment", Bell.class, Bell.Attachment.class));
+        attributes.add(new BooleanAttribute("SignalFire", Campfire.class));
+        attributes.add(new BooleanAttribute("Hanging", Lantern.class));
+        attributes.add(new BooleanAttribute("Bottom", Scaffolding.class));
+        attributes.add(new IntAttribute("Distance", Scaffolding.class));
+        //attributes.add(new SetAttribute("Face")) Grindstone???
+        
+        
     }
     
     public Attribute getAttribute(BlockData data) {
@@ -222,7 +238,7 @@ public class BlockDataManager {
             String legacyInfo = (legacy!=null?
                                  " "+ChatColor.RED+"old("+legacy.getId()+":"+rawData+")":"");
             results.add("Material: "+ChatColor.GREEN+data.getMaterial().name()
-                                    +" ("+data.getMaterial().getId()+":"+rawData+")"+legacyInfo);
+                                    +/*1.14 removed " ("+data.getMaterial().getId()+":"+rawData+")"+*/legacyInfo);
         } else {
             results.add(data.getMaterial().name());
         }
@@ -254,7 +270,7 @@ public class BlockDataManager {
     }
     
     public static LegacyBlockData getLegacyBlockData(BlockData data) {
-        World world = Bukkit.getWorld("world");
+        World world = Bukkit.getWorlds().get(0);
         if(world==null) return new LegacyBlockData(0,(byte)0);
         Block block = world.getBlockAt(0, 2, 0);
         BlockState state = block.getState();
@@ -267,7 +283,7 @@ public class BlockDataManager {
             int retries = 20;
             @Override
             public void run() {
-                World world = Bukkit.getWorld("world");
+                World world = Bukkit.getWorlds().get(0);
                 if(world !=null) {
                     Block block = world.getBlockAt(0, 2, 0);
                     BlockState state = block.getState();

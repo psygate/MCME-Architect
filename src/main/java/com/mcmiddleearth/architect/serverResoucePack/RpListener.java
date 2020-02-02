@@ -56,4 +56,6 @@ Logger.getGlobal().info("Last url: "+url);
             player.setResourcePack(url,RpManager.getSHAForUrl(url));
         }
     }
+    
+    
 }

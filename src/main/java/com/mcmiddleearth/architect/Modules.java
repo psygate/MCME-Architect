@@ -39,6 +39,7 @@ public enum Modules {
     USE_POWERED_DOORS      ("modules.specialBlocks.poweredDoors"),
     BLOCK_PLAYER_INTERACTION ("modules.specialBlocks.blockPlayerInteraction"),
 
+    PLAYER_DAMAGE_BLOCKING ("modules.environment.playerDamageBlocking"),
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),
     DROP_BLOCKING          ("modules.environment.dropBlocking"),
     MONSTER_SPAWN_BLOCKING ("modules.environment.monsterSpawnBlocking"),
@@ -54,6 +55,7 @@ public enum Modules {
     NO_PHYSICS_CONNECT_CHESTS("modules.environment.noPhysicsConnectChests"),
     NO_PHYSICS_CONNECT_GLASS("modules.environment.noPhysicsConnectGlass"),
     NO_PHYSICS_CONNECT_REDSTONE_WIRE("modules.environment.noPhysicsConnectRedstoneWire"),
+    DRAIN_WATERLOGGED_DOUBLE_SLABS ("modules.environment.drainWaterloggedDoubleSlabs"),
     
     SIGN_EDITOR            ("modules.command.signEditor"),
     CUSTOM_HEAD_MANAGER    ("modules.command.customHeadManager"),

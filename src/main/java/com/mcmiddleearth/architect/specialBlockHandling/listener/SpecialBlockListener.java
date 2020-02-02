@@ -22,6 +22,8 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.serverResoucePack.RpManager;
+import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
@@ -29,6 +31,7 @@ import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
+import java.util.logging.Logger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +39,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -198,12 +203,31 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      */
     @EventHandler(priority = EventPriority.HIGHEST) 
     public void avoidDoubleSlab(BlockPlaceEvent event) {
-        if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !(event.getBlock().getType().equals(Material.STONE_SLAB)
-                    || event.getBlock().getType().equals(Material.OAK_SLAB)
-                    || event.getBlock().getType().equals(Material.SANDSTONE_SLAB)
-                    || event.getBlock().getType().equals(Material.PURPUR_SLAB))) {
-            return;
+Logger.getGlobal().info("Avoid double");
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                && event.getBlockPlaced().getBlockData() instanceof Slab
+                && ((Slab)event.getBlockPlaced().getBlockData()).getType().equals(Slab.Type.DOUBLE)) {
+            RpRegion rpRegion = RpManager.getRegion(event.getBlock().getLocation());
+            String rp;
+Logger.getGlobal().info("got rpRegion: "+rpRegion);
+            if(rpRegion!=null) {
+                rp = rpRegion.getRp();
+            } else {
+                rp = RpManager.getCurrentRpName(event.getPlayer());
+            }
+Logger.getGlobal().info("got rp: "+rp);
+            if(rp!=null && !rp.equals("")) {
+                BlockData data = PluginData.getOrCreateWorldConfig(event.getBlock().getWorld().getName())
+                        .getDoubleSlabReplacement(event.getBlockReplacedState().getBlockData(),
+                                                  rp);
+Logger.getGlobal().info("got data: "+data);
+                if(data!=null) {
+                    //event.setCancelled(true);
+                    Block block = event.getBlockPlaced();
+                    block.setBlockData(data,false);
+                }
+            }
+            //return;
         }
         //TODO 1.13 still needed?
         /*final BlockState blockState = event.getBlock().getState();
@@ -514,7 +538,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && (EventUtil.isMainHandEvent(event) 
                     || p.getItemInHand().getType().equals(Material.CACTUS)
-                    || p.getItemInHand().getType().equals(Material.ROSE_RED)
+                    //|| p.getItemInHand().getType().equals(Material.ROSE_RED)
                     || p.getItemInHand().getType().equals(Material.ROSE_BUSH)
                     || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                     || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
@@ -527,7 +551,7 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                   || p.getItemInHand().getType().equals(Material.PUMPKIN_SEEDS)
                   || p.getItemInHand().getType().equals(Material.BROWN_MUSHROOM)
                   || p.getItemInHand().getType().equals(Material.CACTUS)
-                  || p.getItemInHand().getType().equals(Material.ROSE_RED)
+                  //|| p.getItemInHand().getType().equals(Material.ROSE_RED)
                   || p.getItemInHand().getType().equals(Material.ROSE_BUSH)
                   || p.getItemInHand().getType().equals(Material.DEAD_BUSH)
                   || p.getItemInHand().getType().equals(Material.NETHER_WART)
@@ -590,10 +614,11 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.LILY_PAD, false,(byte)0);
                         break;
-                    case ROSE_RED:
+                    /*case ROSE_RED:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.ROSE_RED, false,p.getItemInHand().getData().getData());
                         break;
+                        */
                     case ROSE_BUSH:
                         bs = handleInteract(event.getClickedBlock(), event.getBlockFace(), 
                                             Material.ROSE_BUSH, false,(byte) 0);

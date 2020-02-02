@@ -5,12 +5,12 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -116,7 +116,7 @@ public class RpCommand extends AbstractArchitectCommand {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
-                    if(!RpManager.searchRpKey(args[1])) {
+                    if(args[1].startsWith("xxx_") || !RpManager.searchRpKey(args[1])) {
                         PluginData.getMessageUtil().sendErrorMessage(cs, "That variant is not available. Try 'light' or 'dark'.");
                         return true;
                     }
@@ -180,7 +180,7 @@ public class RpCommand extends AbstractArchitectCommand {
                         PluginData.getMessageUtil().sendErrorMessage(cs, "A rp region with that name already exists.");
                         return true;
                     }
-                    Region weRegion = FawePlayer.wrap((Player)cs).getSelection();
+                    Region weRegion = WEUtil.getSelection((Player)cs);
                     if(weRegion==null) {
                         PluginData.getMessageUtil().sendErrorMessage(cs, "Please make a WE selection first.");
                         return true;

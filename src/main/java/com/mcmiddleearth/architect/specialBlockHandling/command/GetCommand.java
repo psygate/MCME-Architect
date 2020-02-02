@@ -457,13 +457,13 @@ public class GetCommand extends AbstractArchitectCommand {
     private void getFlowers(Player p) {
         p.getInventory().addItem(addMeta(new ItemStack(Material.DEAD_BUSH, 64),"Placeable Bush",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_BUSH, 64),"Placeable Flower",true));
-        p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 0),"Placeable Flower",true));
+        /*p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 0),"Placeable Flower",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 1),"Placeable Flower",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 2),"Placeable Flower",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 3),"Placeable Flower",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 4),"Placeable Flower",true));
         p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 5),"Placeable Flower",true));
-        p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 6),"Placeable Flower",true));
+        p.getInventory().addItem(addMeta(new ItemStack(Material.ROSE_RED, 64, (short) 0, (byte) 6),"Placeable Flower",true));*/
     }
     
     private void getHugeMushrooms(Player p) {

@@ -5,7 +5,7 @@ author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
 depend: [PluginUtils]
-api-version: 1.13
+api-version: 1.14
 
 commands:
    parrot:
@@ -61,26 +61,32 @@ commands:
       usage: /sign <#line> <line text>
    copy:
       description: copy area from cuboid WE selection to your clipboard
-      usage: /copy
+      usage: /cp
+      aliases: cp
    cut:
       description: cut area from cuboid WE selection to your clipboard
-      usage: /cut
+      usage: /ct
+      aliases: ct
    paste:
       description: paste your clipboard
-      usage: /paste
+      usage: /pst
+      aliases: [pst, ps]
    undo:
       description: rolls back your last /paste command(s)
-      usage: /undo <#>
+      usage: /un <#>
+      aliases: [un, ud]
    redo:
       description: restores a previously undone /paste command(s)
-      usage: /redo <#>
+      usage: /re <#>
+      aliases: [re, rd]
    flip:
       description: flips your clipboard
-      usage: /flip [x|y|z]
+      usage: /flp [x|y|z]
+      aliases: [flp, fl]
    rot:
       description: rotate your clipboard along y-axis
-      usage: /rot [90|180|270]
-       
+      usage: /rt [90|180|270]
+      aliases: rt
 permissions:
     architect.*:
         description: Allows to use all features of Architect plugin
@@ -354,4 +360,7 @@ permissions:
         default: op
     architect.weather: 
         descriptions: Allows to change server weather 
+        default: op
+    architect.checknbt: 
+        descriptions: Allows to check item NBTs
         default: op

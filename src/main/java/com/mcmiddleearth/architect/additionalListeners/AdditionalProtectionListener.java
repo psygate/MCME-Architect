@@ -21,8 +21,11 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.TheGafferUtil;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -101,7 +104,7 @@ public class AdditionalProtectionListener extends WatchedListener{
     
    @EventHandler(priority=EventPriority.HIGH, ignoreCancelled = true)
     public void flowerPotProtection(PlayerInteractEvent event) {
-        if(!event.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
+        if(!isFlowerPot(event.getClickedBlock().getType())) {
             return;
         }
         Player player = event.getPlayer();
@@ -110,4 +113,22 @@ public class AdditionalProtectionListener extends WatchedListener{
             event.setCancelled(true);
         }
     }
+    
+    private boolean isFlowerPot(Material type) {
+        return type.equals(Material.FLOWER_POT) || type.name().startsWith("POTTED");
+    }
+    
+   @EventHandler(priority=EventPriority.HIGH)
+    public void dyeSignProtection(PlayerInteractEvent event) {
+        if(event.getClickedBlock()!= null 
+                && (event.getClickedBlock().getBlockData() instanceof Sign
+                    || event.getClickedBlock().getBlockData() instanceof WallSign)) {
+            Player player = event.getPlayer();
+            Block block = event.getClickedBlock();
+            if(!TheGafferUtil.checkGafferPermission(player, block.getLocation())) {
+                event.setCancelled(true);
+            }
+        }
+    }
+    
 }

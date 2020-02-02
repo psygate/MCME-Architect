@@ -16,10 +16,13 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack;
 
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.Vector2D;
+//import com.sk89q.worldedit.BlockVector2D;
+//import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+//import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.CylinderRegion;
 import com.sk89q.worldedit.regions.EllipsoidRegion;
@@ -62,10 +65,10 @@ public class RpRegion {
     public boolean contains(Location loc) {
 //Logger.getGlobal().info(region.getWorld().getClass().getName() + " "+loc.getWorld().getClass().getName()
 //                         + " "+region.getWorld().equals(loc.getWorld()));
-        Vector vec = new Vector(loc.getX(),loc.getY(),loc.getZ());
+        BlockVector3 vec = BlockVector3.at(loc.getX(),loc.getY(),loc.getZ());
 //Logger.getGlobal().info("contains: "+vec.toString()+" "+region.contains(vec));
         return region.getWorld().getName().equals(loc.getWorld().getName()) 
-                && region.contains(new Vector(loc.getX(),loc.getY(),loc.getZ()));
+                && region.contains(BlockVector3.at(loc.getX(),loc.getY(),loc.getZ()));
     }
 
     public Map<String, Object> saveToMap() {
@@ -77,31 +80,31 @@ public class RpRegion {
         regionMap.put("world", region.getWorld().getName());
         if(region instanceof CuboidRegion) {
             regionMap.put("type", "CuboidRegion");
-            Vector vec = region.getMinimumPoint();
+            BlockVector3 vec = region.getMinimumPoint();
             regionMap.put("minimumPoint", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
             vec = region.getMaximumPoint();
             regionMap.put("maximumPoint", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
         } else if(region instanceof CylinderRegion) {
             regionMap.put("type", "CylinderRegion");
-            Vector vec = ((CylinderRegion)region).getCenter();
+            BlockVector3 vec = ((CylinderRegion)region).getCenter().toBlockPoint();
             regionMap.put("center", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
             regionMap.put("minY", region.getMinimumPoint().getBlockY());
             regionMap.put("maxY", region.getMaximumPoint().getBlockY());
-            regionMap.put("radius", ((CylinderRegion)region).getRadius().getBlockX()+","
-                                   +((CylinderRegion)region).getRadius().getBlockZ());
+            regionMap.put("radius", ((CylinderRegion)region).getRadius().toBlockPoint().getBlockX()+","
+                                   +((CylinderRegion)region).getRadius().toBlockPoint().getBlockZ());
         } else if(region instanceof EllipsoidRegion) {
             regionMap.put("type", "EllipsoidRegion");
-            Vector vec = ((EllipsoidRegion)region).getCenter();
+            BlockVector3 vec = ((EllipsoidRegion)region).getCenter().toBlockPoint();
             regionMap.put("center", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
-            vec = ((EllipsoidRegion)region).getRadius();
+            vec = ((EllipsoidRegion)region).getRadius().toBlockPoint();
             regionMap.put("radius", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
         } else if(region instanceof Polygonal2DRegion) {
             regionMap.put("type", "Polygonal2DRegion");
             regionMap.put("minY", region.getMinimumPoint().getBlockY());
             regionMap.put("maxY", region.getMaximumPoint().getBlockY());
-            List<BlockVector2D> points = ((Polygonal2DRegion)region).getPoints();
+            List<BlockVector2> points = ((Polygonal2DRegion)region).getPoints();
             List<String> pointData = new ArrayList<>();
-            for(BlockVector2D vec: points) {
+            for(BlockVector2 vec: points) {
                 pointData.add(vec.getBlockX()+","+vec.getBlockZ());
             }
             regionMap.put("points", pointData);
@@ -121,30 +124,30 @@ public class RpRegion {
         String type = (String) regionData.get("type");
         switch(type) {
             case "CuboidRegion":
-                Vector minPoint = getVector((String) regionData.get("minimumPoint"));
-                Vector maxPoint = getVector((String) regionData.get("maximumPoint"));
+                BlockVector3 minPoint = getVector((String) regionData.get("minimumPoint"));
+                BlockVector3 maxPoint = getVector((String) regionData.get("maximumPoint"));
                 result = new RpRegion(name,new CuboidRegion(new BukkitWorld(world),minPoint,maxPoint));
                 break;
             case "CylinderRegion":
-                Vector center = getVector((String) regionData.get("center"));
-                BlockVector2D blockRadius = getBlockVector2((String)regionData.get("radius"));
-                Vector2D rad = new Vector2D(blockRadius.getBlockX(),blockRadius.getBlockZ());
+                BlockVector3 center = getVector((String) regionData.get("center"));
+                BlockVector2 blockRadius = getBlockVector2((String)regionData.get("radius"));
+                Vector2 rad = Vector2.at(blockRadius.getBlockX(),blockRadius.getBlockZ());
                 int minY = (Integer) regionData.get("minY");
                 int maxY = (Integer) regionData.get("maxY");
                 result = new RpRegion(name, new CylinderRegion(new BukkitWorld(world),
-                                                               center.toBlockVector(),
+                                                               center,
                                                                rad,minY,maxY));
                 break;
             case "EllipsoidRegion":
                 center = getVector((String) regionData.get("center"));
-                Vector radius3D = getVector((String)regionData.get("radius"));
-                result = new RpRegion(name, new EllipsoidRegion(new BukkitWorld(world),center,radius3D));
+                BlockVector3 radius3D = getVector((String)regionData.get("radius"));
+                result = new RpRegion(name, new EllipsoidRegion(new BukkitWorld(world),center,radius3D.toVector3()));
                 break;
             case "Polygonal2DRegion":
                 minY = (Integer) regionData.get("minY");
                 maxY = (Integer) regionData.get("maxY");
                 List<String> pointData = (List<String>) regionData.get("points");
-                List<BlockVector2D> points = new ArrayList<>();
+                List<BlockVector2> points = new ArrayList<>();
                 for(String point: pointData) {
                     points.add(getBlockVector2(point));
                 }
@@ -158,12 +161,12 @@ public class RpRegion {
         return result;
     }
     
-    private static Vector getVector(String data) {
+    private static BlockVector3 getVector(String data) {
         String[] split = data.split(",");
-        return new Vector(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
+        return BlockVector3.at(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
     }
-    private static BlockVector2D getBlockVector2(String data) {
+    private static BlockVector2 getBlockVector2(String data) {
         String[] split = data.split(",");
-        return new BlockVector2D(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+        return BlockVector2.at(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
     }
 }

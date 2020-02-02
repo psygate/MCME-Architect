@@ -17,6 +17,7 @@
 package com.mcmiddleearth.architect.noPhysicsEditor;
 
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.math.BlockVector3;
 import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -70,7 +71,7 @@ public abstract class ExceptionArea {
     
     public abstract boolean isAffected(Material material);
     
-    private Vector convertWePoint(com.sk89q.worldedit.Vector weVector) {
+    private Vector convertWePoint(BlockVector3 weVector) {
         int x = weVector.getBlockX();
         int y = weVector.getBlockY();
         int z = weVector.getBlockZ();

@@ -47,11 +47,10 @@ import org.bukkit.util.BoundingBox;
  *
  * @author Eriol_Eandur
  */
-public class Clipboard implements IStoragePlot {
+public class Clipboard1 implements IStoragePlot {
     
     @Getter
     private final Location referencePoint;
-    private Location shift;
     
     @Getter
     private byte[] nbtData = null;
@@ -67,7 +66,7 @@ public class Clipboard implements IStoragePlot {
     
     private final static String worldMismatch = "You need to be in the same world with your WE selection.";
     
-    public Clipboard(Location referencePoint, CuboidRegion weRegion) throws CopyPasteException{
+    public Clipboard1(Location referencePoint, CuboidRegion weRegion) throws CopyPasteException{
         World world = Bukkit.getWorld(weRegion.getWorld().getName());
         if(world==null || !referencePoint.getWorld().equals(world)) {
             throw new CopyPasteException(worldMismatch);
@@ -82,13 +81,9 @@ public class Clipboard implements IStoragePlot {
         highCorner = new Location(world,weRegion.getMaximumPoint().getBlockX(),
                                         weRegion.getMaximumPoint().getBlockY(),
                                         weRegion.getMaximumPoint().getBlockZ());
-log("reference",referencePoint);
-        shift = lowCorner.clone().subtract(this.referencePoint);
-log("shift",shift);
-log("lowCorner",lowCorner);
     }
     
-    public Clipboard(Location referencePoint, Location lowPoint, Location highPoint) throws CopyPasteException {
+    public Clipboard1(Location referencePoint, Location lowPoint, Location highPoint) throws CopyPasteException {
         if(referencePoint.getWorld()==null 
                 || highPoint.getWorld()==null 
                 || lowPoint.getWorld()==null 
@@ -103,8 +98,6 @@ log("lowCorner",lowCorner);
         highCorner = new Location (lowPoint.getWorld(), Math.max(lowPoint.getBlockX(), highPoint.getBlockX()),
                                                        Math.max(lowPoint.getBlockY(), highPoint.getBlockY()),
                                                        Math.max(lowPoint.getBlockZ(), highPoint.getBlockZ()));
-log("reference",referencePoint);
-        shift = lowCorner.clone().subtract(this.referencePoint);
     }
     
     public boolean copyToClipboard() {
@@ -120,7 +113,7 @@ log("reference",referencePoint);
             outStream.close();
             nbtData = byteOut.toByteArray();
         } catch (IOException ex) {
-            Logger.getLogger(Clipboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Clipboard1.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -157,56 +150,20 @@ log("reference",referencePoint);
         while(degree<0) {
             degree = degree + 360;
         }
-        while(degree>360) {
-            degree = degree - 360;
-        }
-        int steps = degree/90;
-        for(int i = 0; i< steps; i++) {
-            rotate90();
-        }
-        //rotation = (rotation + degree/90)%4;
-    }
-    
-    private void rotate90() {
-Logger.getGlobal().info("rot90");
-        Location size = getHighCorner().clone().subtract(getLowCorner());
-        shift = new Location(shift.getWorld(),-shift.getBlockZ()-(rotation%2==0?size.getBlockZ():size.getBlockX()),
-                                               shift.getBlockY(),
-                                               shift.getBlockX());
-        rotation = (rotation + 1)%4;
-        boolean temp_flip = flip[0];
-        flip[0] = flip[2];
-        flip[2] = temp_flip;
+        rotation = (rotation + degree/90)%4;
     }
     
     public void flip(char axis) {
-        Location size = getHighCorner().clone().subtract(getLowCorner());
-        Location rotatedSize;
-        if(rotation%2==0) {
-            rotatedSize = size;
-        } else {
-            rotatedSize = new Location(size.getWorld(),size.getBlockZ(),size.getBlockY(),size.getBlockX());
-        }
         switch(axis) {
             case 'x':
-                shift = new Location(shift.getWorld(),-shift.getBlockX()-rotatedSize.getBlockX(),
-                                                       shift.getBlockY(),
-                                                       shift.getBlockZ());
                 flip[0] = !flip[0];
-                break;
+                return;
             case 'y':
-                shift = new Location(shift.getWorld(), shift.getBlockX(),
-                                                      -shift.getBlockY()-rotatedSize.getBlockY(),
-                                                       shift.getBlockZ());
                 flip[1] = !flip[1];
-                break;
+                return;
             case 'z':
-                shift = new Location(shift.getWorld(), shift.getBlockX(),
-                                                       shift.getBlockY(),
-                                                      -shift.getBlockZ()-rotatedSize.getBlockZ());
                 flip[2] = !flip[2];
         }
-log("shift",shift);
     }
     
     private void log(String name, Location loc) {
@@ -229,64 +186,51 @@ log("shift",shift);
                                 .add(highCorner.clone().subtract(lowCorner).toVector())
                                 .toLocation(lowPoint.getWorld());
         }
-Logger.getGlobal().info("low: "+lowPoint.getBlockX()+" "+lowPoint.getBlockZ()+"high: "+highPoint.getBlockX()+" "+highPoint.getBlockZ());
-        return new Clipboard(lowPoint,lowPoint,highPoint);
+        return new Clipboard1(lowPoint,lowPoint,highPoint);
     }
     
     private Location getPasteLocation(Location location) {
-        Location paste = location.getBlock().getLocation().toVector()
-                                .add(shift.toVector()).toLocation(location.getWorld());
-        return paste;
-/*//        log("ref",referencePoint);
+//        log("ref",referencePoint);
 //        log("low",getLowCorner());
-        Location localShift = getLowCorner().clone().subtract(referencePoint);
+        Location shift = getLowCorner().clone().subtract(referencePoint);
 //        log("shift",shift);
-log("localshift",localShift);
-log("reference",referencePoint);
-log("lowCorner",lowCorner);
         Location size = getHighCorner().clone().subtract(getLowCorner());
 //        log("size",size);
         switch(rotation) {
             case 1:
-                localShift = new Location(localShift.getWorld(),-localShift.getBlockZ()-size.getBlockZ(),
-                                                       localShift.getBlockY(),
-                                                       localShift.getBlockX());
+                shift = new Location(shift.getWorld(),-shift.getBlockZ()-size.getBlockZ(),
+                                                       shift.getBlockY(),
+                                                       shift.getBlockX());
                 break;
             case 2:
-                localShift = new Location(localShift.getWorld(),-localShift.getBlockX()-size.getBlockX(),
-                                                       localShift.getBlockY(),
-                                                      -localShift.getBlockZ()-size.getBlockZ());
+                shift = new Location(shift.getWorld(),-shift.getBlockX()-size.getBlockX(),
+                                                       shift.getBlockY(),
+                                                      -shift.getBlockZ()-size.getBlockZ());
                 break;
             case 3:
-                localShift = new Location(localShift.getWorld(),localShift.getBlockZ(),
-                                                      localShift.getBlockY(),
-                                                     -localShift.getBlockX()-size.getBlockX());
+                shift = new Location(shift.getWorld(),shift.getBlockZ(),
+                                                      shift.getBlockY(),
+                                                     -shift.getBlockX()-size.getBlockX());
                 break;
         }
 //log("shisft2",shift);
 //log("location",location);
 //log("blockloc",location.getBlock().getLocation());
-        Location localPaste = location.getBlock().getLocation().toVector()
-                                 .add(localShift.toVector()).toLocation(location.getWorld());
-log("localshift",localShift);
-log("local",localPaste);
         Location paste = location.getBlock().getLocation().toVector()
-                                .add(localShift.toVector()).toLocation(location.getWorld());
-log("shift",shift);
-log("paste",paste);
-        return paste;*/
+                                 .add(shift.toVector()).toLocation(location.getWorld());
+        return paste;
     }
     
     public boolean paste(Location location, boolean withAir, boolean withBiome) {
         Location paste = getPasteLocation(location);
-log("paste",paste);
+//log("paste",paste);
         try(DataInputStream in = new DataInputStream(
                                  new BufferedInputStream(
                                  new GZIPInputStream(
                                  new ByteArrayInputStream(nbtData))))) {
-            new MCMEPlotFormat().load(paste, rotation, flip, withAir, withBiome, null, in);
+            new MCMEPlotFormat().load(paste, rotation, new boolean[3], withAir, withBiome, null, in);
         } catch (IOException | InvalidRestoreDataException ex) {
-            Logger.getLogger(Clipboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Clipboard1.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;

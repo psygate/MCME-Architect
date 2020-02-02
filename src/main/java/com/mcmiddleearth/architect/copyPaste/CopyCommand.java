@@ -5,11 +5,11 @@
  */
 package com.mcmiddleearth.architect.copyPaste;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import java.util.logging.Logger;
@@ -38,7 +38,7 @@ public class CopyCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
-        Region weRegion = FawePlayer.wrap((Player)cs).getSelection();
+        Region weRegion = WEUtil.getSelection((Player)cs);
         if(weRegion==null) {
             PluginData.getMessageUtil().sendErrorMessage(cs, "Please make a WE selection first.");
             return true;

@@ -16,11 +16,11 @@
  */
 package com.mcmiddleearth.architect.noPhysicsEditor;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import com.mcmiddleearth.pluginutil.WEUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.message.FancyMessage;
 import com.mcmiddleearth.pluginutil.message.MessageType;
@@ -73,51 +73,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                 sendHelpMessage(p,page);
                 return true;
             }
-            if(!args[1].equals(PluginData.getDefaultKey()) && (Bukkit.getWorld(args[1]) == null)) {
-                sendWorldNotFoundMessage((Player)cs);
-                return true;
-            }
-            if(args[0].equalsIgnoreCase("list")) {
-                PluginData.getMessageUtil().sendInfoMessage(p, inverted+" physics list for "
-                                                + PluginData.getMessageUtil().STRESSED
-                                                + args[1]+":");
-                List<String> npList = NoPhysicsData.getNoPhysicsListAsStrings(args[1]);
-                npList.sort(null);
-                for(String line: npList) {                
-                    PluginData.getMessageUtil().sendIndentedInfoMessage(p,
-                                               PluginData.getMessageUtil().STRESSED+ line);
-                }
-            } else if(args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
-                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EDIT)) {
-                    PluginData.getMessageUtil().sendNoPermissionError(cs);
-                    return true;
-                }
-                if(args.length<3) {
-                    PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
-                    sendHelpMessage(p,1);
-                    return true;
-                }
-                BlockData data = NoPhysicsData.createBlockData(args[2]);
-                if(data==null) {
-                    sendNoValidMaterial(p);
-                    return true;
-                }
-                boolean materialAdded = false;
-                boolean materialRemoved = false;
-                if(args[0].equalsIgnoreCase("add")) {
-                    if(NoPhysicsData.addNpBlock(args[1],args[2])) {
-                        sendMaterialAddedMessage(p);
-                    } else {
-                        sendMaterialAlreadyNpMessage(p);
-                    }
-                } else {
-                    if(NoPhysicsData.removeNpBlock(args[1],args[2])) {
-                        sendMaterialRemovedMessage(p);
-                    } else {
-                        sendMaterialNotNpMessage(p);
-                    }
-                }
-            } else if(args[0].equalsIgnoreCase("exception")) {
+            if(args[0].equalsIgnoreCase("exception")) {
                 if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EXCEPT)) {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
@@ -127,7 +83,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                     Region region= null;
                     //try {
                         //1.13 removed region = WorldEdit.getInstance().getSession(p.getName()).getRegion();
-                        region = FawePlayer.wrap((Player)cs).getSelection();
+                        region = WEUtil.getSelection((Player)cs);
                     //} catch (NullPointerException | IncompleteRegionException ex) {}
                     if(region instanceof CuboidRegion) {
                         if(args.length>2) {
@@ -179,6 +135,52 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                                 "/nophy exception list", page);
                 } else {
                     PluginData.getMessageUtil().sendInvalidSubcommandError(p);
+                }
+                return true;
+            }
+            if(!args[1].equals(PluginData.getDefaultKey()) && (Bukkit.getWorld(args[1]) == null)) {
+                sendWorldNotFoundMessage((Player)cs);
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("list")) {
+                PluginData.getMessageUtil().sendInfoMessage(p, inverted+" physics list for "
+                                                + PluginData.getMessageUtil().STRESSED
+                                                + args[1]+":");
+                List<String> npList = NoPhysicsData.getNoPhysicsListAsStrings(args[1]);
+                npList.sort(null);
+                for(String line: npList) {                
+                    PluginData.getMessageUtil().sendIndentedInfoMessage(p,
+                                               PluginData.getMessageUtil().STRESSED+ line);
+                }
+            } else if(args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
+                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EDIT)) {
+                    PluginData.getMessageUtil().sendNoPermissionError(cs);
+                    return true;
+                }
+                if(args.length<3) {
+                    PluginData.getMessageUtil().sendNotEnoughArgumentsError(p);
+                    sendHelpMessage(p,1);
+                    return true;
+                }
+                BlockData data = NoPhysicsData.createBlockData(args[2]);
+                if(data==null) {
+                    sendNoValidMaterial(p);
+                    return true;
+                }
+                boolean materialAdded = false;
+                boolean materialRemoved = false;
+                if(args[0].equalsIgnoreCase("add")) {
+                    if(NoPhysicsData.addNpBlock(args[1],args[2])) {
+                        sendMaterialAddedMessage(p);
+                    } else {
+                        sendMaterialAlreadyNpMessage(p);
+                    }
+                } else {
+                    if(NoPhysicsData.removeNpBlock(args[1],args[2])) {
+                        sendMaterialRemovedMessage(p);
+                    } else {
+                        sendMaterialNotNpMessage(p);
+                    }
                 }
             } else {
                 PluginData.getMessageUtil().sendInvalidSubcommandError(p);

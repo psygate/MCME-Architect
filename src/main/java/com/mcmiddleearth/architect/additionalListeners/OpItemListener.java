@@ -118,6 +118,8 @@ public class OpItemListener implements Listener {
                 //Field field = clazz.getDeclaredField("handle");
                 //field.setAccessible(true);
                 //Object nmsItem = field.get(item);
+                //Logger.getLogger(ArchitectPlugin.class.getName())
+                //      .log(Level.INFO, "Check item: "+item.getType());
                 Object nmsItem = NMSUtil.getCraftBukkitDeclaredField("inventory.CraftItemStack","handle",item);
                 Object tag = NMSUtil.invokeNMS("ItemStack", "getTag", new Class[]{}, nmsItem);
                 if(NBTTagUtil.hasKey(tag, "Enchantments")) {

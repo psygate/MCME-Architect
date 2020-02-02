@@ -357,8 +357,18 @@ public class SpecialBlockInventoryData {
     
     private static ItemStack getHandItem(ItemStack item) {
         switch(item.getType()) {
-            case WALL_SIGN:
-                return new ItemStack(Material.SIGN,1);
+            case ACACIA_WALL_SIGN:
+                return new ItemStack(Material.ACACIA_SIGN,1);
+            case DARK_OAK_WALL_SIGN:
+                return new ItemStack(Material.DARK_OAK_SIGN,1);
+            case OAK_WALL_SIGN:
+                return new ItemStack(Material.OAK_SIGN,1);
+            case SPRUCE_WALL_SIGN:
+                return new ItemStack(Material.SPRUCE_SIGN,1);
+            case JUNGLE_WALL_SIGN:
+                return new ItemStack(Material.JUNGLE_SIGN,1);
+            case BIRCH_WALL_SIGN:
+                return new ItemStack(Material.BIRCH_SIGN,1);
             case WALL_TORCH:
                 return new ItemStack(Material.TORCH,1);
             case REDSTONE_WALL_TORCH:

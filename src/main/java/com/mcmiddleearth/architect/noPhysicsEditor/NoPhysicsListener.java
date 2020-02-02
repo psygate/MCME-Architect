@@ -22,16 +22,19 @@ import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.pluginutil.BlockUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.block.data.type.RedstoneWire;
 import org.bukkit.block.data.type.RedstoneWire.Connection;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -177,7 +180,14 @@ public class NoPhysicsListener extends WatchedListener{
                 && !NoPhysicsData.hasNoPhysicsException(event.getBlock())) {*/
             DevUtil.log(4,"break no physics block"+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getZ());
             Block block = event.getBlock();
-            if((block.getBlockData() instanceof Fence) 
+            if((block.getBlockData() instanceof Slab)
+                && ((Waterlogged) block.getBlockData()).isWaterlogged()
+                && ((Slab) block.getBlockData()).getType().equals(Slab.Type.DOUBLE)
+                && PluginData.isModuleEnabled(block.getWorld(), Modules.DRAIN_WATERLOGGED_DOUBLE_SLABS)) {
+                    event.setCancelled(true);
+                    block.setBlockData(Bukkit.createBlockData(Material.AIR),false);
+                }
+            else if((block.getBlockData() instanceof Fence) 
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_FENCES)) {
                 Fence fence = (Fence) block.getBlockData();
                 for(BlockFace face: fence.getAllowedFaces()) {
@@ -280,4 +290,6 @@ public class NoPhysicsListener extends WatchedListener{
             }
         //}            
     }
+    
+    
 }

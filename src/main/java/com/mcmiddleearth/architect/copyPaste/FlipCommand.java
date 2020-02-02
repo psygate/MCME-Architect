@@ -9,6 +9,7 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.additionalCommands.AbstractArchitectCommand;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,13 +32,17 @@ public class FlipCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendErrorMessage(cs,"CopyPasting is not enabled for this world.");
             return true;
         }
+        if(!PluginData.hasPermission(cs, Permission.COPY_PASTE)) {
+            PluginData.getMessageUtil().sendNoPermissionError(cs);
+            return true;
+        }
         if(!CopyPasteManager.hasClipboard(player)) {
             PluginData.getMessageUtil().sendErrorMessage(cs, "Copy something to your clipboard first with /copy.");
             return true;
         }
         char axis;
-        PluginData.getMessageUtil().sendErrorMessage(cs, "Flipping is not yet supported.");
-        if(true) return true;
+        //PluginData.getMessageUtil().sendErrorMessage(cs, "Flipping is not yet supported.");
+        //if(true) return true;
         if(args.length>0) {
             if(!CopyPasteManager.isAxis(args[0])) {
                 PluginData.getMessageUtil().sendErrorMessage(cs, "Possible axis are x, y and z.");
@@ -46,9 +51,12 @@ public class FlipCommand extends AbstractArchitectCommand {
             axis = args[0].charAt(0);
         } else {
             Location loc = player.getLocation();
+            float yaw = loc.getYaw();
+            while(yaw<-180) yaw+=360;
+            while(yaw>180) yaw-=360;
             if(loc.getPitch()>45 || loc.getPitch()<-45) {
                 axis = 'y';
-            } else if(Math.abs(loc.getYaw())<134 && Math.abs(loc.getYaw())>45) {
+            } else if(Math.abs(yaw)<135 && Math.abs(yaw)>45) {
                 axis = 'x';
             } else {
                 axis = 'z';
