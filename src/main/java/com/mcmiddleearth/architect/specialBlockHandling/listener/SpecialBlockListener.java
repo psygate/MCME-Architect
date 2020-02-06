@@ -203,24 +203,20 @@ Logger.getGlobal().info("Event found: "+event.getEventName());
      */
     @EventHandler(priority = EventPriority.HIGHEST) 
     public void avoidDoubleSlab(BlockPlaceEvent event) {
-Logger.getGlobal().info("Avoid double");
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 && event.getBlockPlaced().getBlockData() instanceof Slab
                 && ((Slab)event.getBlockPlaced().getBlockData()).getType().equals(Slab.Type.DOUBLE)) {
             RpRegion rpRegion = RpManager.getRegion(event.getBlock().getLocation());
             String rp;
-Logger.getGlobal().info("got rpRegion: "+rpRegion);
             if(rpRegion!=null) {
                 rp = rpRegion.getRp();
             } else {
                 rp = RpManager.getCurrentRpName(event.getPlayer());
             }
-Logger.getGlobal().info("got rp: "+rp);
             if(rp!=null && !rp.equals("")) {
                 BlockData data = PluginData.getOrCreateWorldConfig(event.getBlock().getWorld().getName())
                         .getDoubleSlabReplacement(event.getBlockReplacedState().getBlockData(),
                                                   rp);
-Logger.getGlobal().info("got data: "+data);
                 if(data!=null) {
                     //event.setCancelled(true);
                     Block block = event.getBlockPlaced();
