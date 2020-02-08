@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.copyPaste;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.pluginutil.plotStoring.IStoragePlot;
 import com.mcmiddleearth.pluginutil.plotStoring.InvalidRestoreDataException;
 import com.mcmiddleearth.pluginutil.plotStoring.MCMEEntityFilter;
@@ -28,6 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -41,6 +45,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 
 /**
@@ -306,5 +311,74 @@ log("paste",paste);
                 && lctn.getBlockZ()>=getLowCorner().getBlockZ() && lctn.getBlockZ()<=getHighCorner().getBlockZ();
     }
     
+    public void saveToFile(File file) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(file.exists()) {
+                    file.delete();
+                }
+                try(DataOutputStream outStream = new DataOutputStream(
+                                                 new BufferedOutputStream(
+                                                 new FileOutputStream(file)))) {
+                    writeLocation(outStream,referencePoint);
+                    writeLocation(outStream,shift);
+                    writeLocation(outStream,lowCorner);
+                    writeLocation(outStream,highCorner);
+                    outStream.writeInt(rotation);
+                    outStream.writeBoolean(flip[0]);
+                    outStream.writeBoolean(flip[1]);
+                    outStream.writeBoolean(flip[2]);
+                    int i = 0;
+                    final int inc = 4048;
+                    while(i<nbtData.length) {
+                        outStream.write(nbtData,i,Math.min(inc,nbtData.length-i));
+                        i+=inc;
+                    }
+                    outStream.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(Clipboard.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+    }
     
+    private void writeLocation(DataOutputStream out, Location loc) throws IOException {
+        out.writeInt(loc.getBlockX());
+        out.writeInt(loc.getBlockY());
+        out.writeInt(loc.getBlockZ());
+    }
+ 
+    public Clipboard(File file) throws IOException {
+        try(DataInputStream inStream = new DataInputStream(
+                                         new BufferedInputStream(
+                                         new FileInputStream(file)));
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                ) {
+            referencePoint = readLocation(inStream);
+            shift = readLocation(inStream);
+            lowCorner = readLocation(inStream);
+            highCorner = readLocation(inStream);
+            rotation = inStream.readInt();
+            flip[0]=inStream.readBoolean();
+            flip[1]=inStream.readBoolean();
+            flip[2]=inStream.readBoolean();
+            final int inc = 4048;
+            int read = 0;
+            byte[] buffer = new byte[inc];
+            do {
+                read = inStream.read(buffer);
+                if(read>0) {
+                    byteOut.write(buffer,0,read);
+                }
+            } while(read>0);
+            nbtData = byteOut.toByteArray();
+        }
+    }
+    
+    private Location readLocation(DataInputStream in) throws IOException {
+        return new Location (Bukkit.getWorlds().get(0),
+                             in.readInt(),in.readInt(),in.readInt());
+    }
+
 }
