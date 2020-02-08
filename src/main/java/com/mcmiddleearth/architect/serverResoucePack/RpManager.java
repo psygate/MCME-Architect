@@ -30,12 +30,10 @@ import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DynmapUtil;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -66,17 +64,20 @@ public class RpManager {
     private static final File playerFile = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"/playerRpData.dat");
     private static final File regionFolder = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"regions");
     
+    private static final String rpDatabaseConfig = "rpSettingsDatabase";
+    
     @Getter
     private static Map<String, RpRegion> regions = new HashMap<>();
     
     private static Map<UUID,RpPlayerData> playerRpData = new HashMap<>();
+    private static RpDatabaseConnector dbConnector = new RpDatabaseConnector(ArchitectPlugin.getPluginInstance().getConfig().getConfigurationSection(rpDatabaseConfig));
     
     @Getter
     private static RegionEditConversationFactory regionEditConversationFactory
             = new RegionEditConversationFactory(ArchitectPlugin.getPluginInstance());
     
     public static void init() {
-        loadPlayerData();
+        //loadPlayerData();
         //addPacketListener();
         if(!regionFolder.exists()) {
             regionFolder.mkdir();
@@ -157,6 +158,10 @@ public class RpManager {
             playerRpData.put(player.getUniqueId(), data);
         }
         return data;
+    }
+    
+    public static boolean hasPlayerDataLoaded(Player player) {
+        return playerRpData.containsKey(player.getUniqueId());
     }
     
     /**
@@ -241,14 +246,32 @@ public class RpManager {
         return "";
     }
     
+    public static boolean setRpRegion(Player player){
+        RpPlayerData data = RpManager.getPlayerData(player);
+        if(data.isAutoRp()) {
+            RpRegion newRegion = RpManager.getRegion(player.getLocation());
+            if(newRegion != data.getCurrentRegion()) {
+//Logger.getGlobal().info("new: "+newRegion+" current: "+data.getCurrentRegion());
+                data.setCurrentRegion(newRegion);
+                if(newRegion!=null) {
+                    setRp(newRegion.getRp(), player);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public static boolean setRp(String rpName, Player player) {
         String url = getRpUrl(rpName, player);
         RpPlayerData data = getPlayerData(player);
+//Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
+//Logger.getGlobal().info("url: "+url+" current: "+data.getCurrentRpUrl());
         if(!url.equals("") && !url.equals(data.getCurrentRpUrl())) {
             data.setCurrentRpUrl(url);
-Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
+//Logger.getGlobal().info("set!");
             player.setResourcePack(url, getSHA(rpName, player));
-            savePlayerData();
+            savePlayerData(player);
             return true;
         }
         return false;
@@ -295,17 +318,17 @@ Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
     }
 
     public static boolean refreshSHA(CommandSender cs, String rp) {
-Logger.getGlobal().info("rp: "+rp);
+//Logger.getGlobal().info("rp: "+rp);
         ConfigurationSection config = getRpConfig().getConfigurationSection(rp);
         if(config!=null) {
             for(String resolutionKey: config.getKeys(false)) {
-Logger.getGlobal().info("resolutionKey: "+resolutionKey);
+//Logger.getGlobal().info("resolutionKey: "+resolutionKey);
                 ConfigurationSection resolutionSection = config.getConfigurationSection(resolutionKey);
                 for(String variantKey: resolutionSection.getKeys(false)) {
                     try {
-Logger.getGlobal().info("varianKey: "+variantKey);
+//Logger.getGlobal().info("varianKey: "+variantKey);
                         ConfigurationSection variantSection = resolutionSection.getConfigurationSection(variantKey);
-Logger.getGlobal().info(variantSection.getString("url"));
+//Logger.getGlobal().info(variantSection.getString("url"));
                         URL url = new URL(variantSection.getString("url"));
                         InputStream fis = url.openStream();
                         MessageDigest sha1 = MessageDigest.getInstance("SHA1");
@@ -345,7 +368,7 @@ Logger.getGlobal().info(variantSection.getString("url"));
         return px+"px";
     }
     
-    public static void savePlayerData() {
+    /*public static void savePlayerData() {
         try {
             if(!playerFile.exists()) {
                 playerFile.createNewFile();
@@ -357,16 +380,26 @@ Logger.getGlobal().info(variantSection.getString("url"));
         } catch (IOException ex) {
             Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }*/
+    
+    public static void savePlayerData(Player player) {
+        dbConnector.saveRpSettings(player, playerRpData.get(player.getUniqueId()));
     }
     
-    public static void loadPlayerData() {
-        if(playerFile.exists()) {
+    public static void loadPlayerData(UUID uuid) {
+        /*if(playerFile.exists()) {
             try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(playerFile))) {
                 playerRpData = (Map<UUID,RpPlayerData>) in.readObject();
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }*/
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                playerRpData.put(uuid, dbConnector.loadRpSettings(uuid));
+            }
+        }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
     }
     
     public static void saveRpRegion(RpRegion region) {
