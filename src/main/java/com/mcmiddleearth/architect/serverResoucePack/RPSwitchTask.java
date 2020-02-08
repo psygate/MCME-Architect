@@ -30,16 +30,8 @@ public class RPSwitchTask extends BukkitRunnable {
     @Override
     public void run() {
         for(Player player: Bukkit.getOnlinePlayers()) {
-            RpPlayerData data = RpManager.getPlayerData(player);
-            if(data.isAutoRp()) {
-                RpRegion newRegion = RpManager.getRegion(player.getLocation());
-                if(newRegion != data.getCurrentRegion()) {
-                    data.setCurrentRegion(newRegion);
-                    if(newRegion!=null) {
-                        RpManager.setRp(newRegion.getRp(), player);
-                    }
-                }
-            }
+//Logger.getGlobal().info("SwitchTask");
+            RpManager.setRpRegion(player);
         }
     }
     

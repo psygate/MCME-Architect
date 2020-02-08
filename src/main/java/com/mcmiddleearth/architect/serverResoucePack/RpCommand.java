@@ -125,7 +125,7 @@ public class RpCommand extends AbstractArchitectCommand {
                                     +ccStressed+args[1]+ccInfo+". If this variant is not available for a RP you'll see default variant.");
                     break;
             }
-            RpManager.savePlayerData();
+            RpManager.savePlayerData((Player)cs);
             if(data.isAutoRp() && data.getCurrentRegion()!=null) {
                 RpManager.setRp(data.getCurrentRegion().getRp(), (Player)cs);
             }
