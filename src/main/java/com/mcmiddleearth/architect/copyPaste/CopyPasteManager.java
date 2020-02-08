@@ -20,15 +20,19 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.pluginutil.plotStoring.IStoragePlot;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -47,11 +51,24 @@ public class CopyPasteManager {
     private static final int maxSize = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getInt("CopyPasteUndoLimit",30);
     
+    private static final File clipboardFolder = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"clipboards");
+    private static final String cbExtension = ".cbd";
+    
+    static {
+        if(!clipboardFolder.exists()) {
+            clipboardFolder.mkdir();
+        }
+    }
+    
     public static boolean copyToClipboard(Player player, CuboidRegion weRegion) throws CopyPasteException{
 //Logger.getGlobal().info("2");
         Clipboard cb = new Clipboard(player.getLocation(),weRegion);
         clipboards.put(player.getUniqueId(), cb);
-        return cb.copyToClipboard();
+        if(cb.copyToClipboard()) {
+            cb.saveToFile(new File(clipboardFolder,player.getUniqueId().toString()+cbExtension));
+            return true; 
+        }
+        return false;
     }
     
     public static boolean cutToClipboard(Player player, CuboidRegion weRegion) throws CopyPasteException {
@@ -61,7 +78,11 @@ public class CopyPasteManager {
         }
         cb = new Clipboard(player.getLocation(),weRegion);
         clipboards.put(player.getUniqueId(), cb);
-        return cb.cutToClipboard();
+        if(cb.cutToClipboard()) {
+            cb.saveToFile(new File(clipboardFolder,player.getUniqueId().toString()+".cbd"));
+            return true; 
+        }
+        return false;
     }
 
     public static boolean pasteClipboard(Player player, boolean withAir, boolean withBiome) throws CopyPasteException {
@@ -214,6 +235,23 @@ public class CopyPasteManager {
                 sum=sum+data.getNbtData().length;
             }
             return sum;
+        }
+    }
+    
+    public static void loadClipboard(Player player) {
+        File file = new File(clipboardFolder,player.getUniqueId().toString()+cbExtension);
+        if(file.exists()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        Clipboard cb = new Clipboard(file);
+                        clipboards.put(player.getUniqueId(), cb);
+                    } catch (IOException ex) {
+                        Logger.getLogger(CopyPasteManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
         }
     }
     
