@@ -16,13 +16,17 @@
  */
 package com.mcmiddleearth.architect.serverResoucePack;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.connect.events.PlayerConnectEvent;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -48,12 +52,37 @@ public class RpListener implements Listener{
     }
     
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        RpManager.loadPlayerData(event.getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerConnect(PlayerConnectEvent event) {
         Player player = event.getPlayer();
-        String url = RpManager.getPlayerData(player).getCurrentRpUrl();
-Logger.getGlobal().info("Last url: "+url);        
-        if(url!=null && !url.equals("")) {
-            player.setResourcePack(url,RpManager.getSHAForUrl(url));
+//    Logger.getGlobal().info("PlayerConnectEvent: "+player.getName()+" "+ event.getReason().name());        
+        if(event.getReason().equals(PlayerConnectEvent.ConnectReason.JOIN_PROXY)) {
+            new BukkitRunnable() {
+                int counter = 10;
+                @Override
+                public void run() {
+                    if(RpManager.hasPlayerDataLoaded(player) || counter==0) {
+                        RpPlayerData data = RpManager.getPlayerData(player);
+                        String lastUrl = data.getCurrentRpUrl();
+                        data.setCurrentRpUrl(null);
+                        if(!RpManager.setRpRegion(player)) {
+                            if(data.isAutoRp()) {
+                                String rp = RpManager.getRpForUrl(lastUrl);
+//    Logger.getGlobal().info("On PlayerConnect: Set rp to last url: "+rp+" "+ lastUrl);        
+                                RpManager.setRp(rp, player);
+                            }
+                        }
+                        cancel();
+                    } else counter --;
+                    if(counter==0) {
+                        Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING,"Could not get player rp settings from the database");        
+                    }
+                }
+            }.runTaskTimer(ArchitectPlugin.getPluginInstance(),0,20);
         }
     }
     
