@@ -24,6 +24,7 @@ import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
 import com.mcmiddleearth.architect.bannerEditor.BannerListener;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateListener;
+import com.mcmiddleearth.architect.copyPaste.ClipboardPlayerListener;
 import com.mcmiddleearth.architect.copyPaste.CopyCommand;
 import com.mcmiddleearth.architect.copyPaste.CutCommand;
 import com.mcmiddleearth.architect.copyPaste.FlipCommand;
@@ -113,6 +114,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new RpListener(), this);
         pluginManager.registerEvents(new ChunkUpdateListener(), this);
         pluginManager.registerEvents(new OpItemListener(), this);
+        pluginManager.registerEvents(new ClipboardPlayerListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
