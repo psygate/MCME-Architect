@@ -267,7 +267,7 @@ public class RpManager {
         RpPlayerData data = getPlayerData(player);
 //Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
 //Logger.getGlobal().info("url: "+url+" current: "+data.getCurrentRpUrl());
-        if(!url.equals("") && !url.equals(data.getCurrentRpUrl())) {
+        if(url!=null && data!=null && !url.equals("") && !url.equals(data.getCurrentRpUrl())) {
             data.setCurrentRpUrl(url);
 //Logger.getGlobal().info("set!");
             player.setResourcePack(url, getSHA(rpName, player));
