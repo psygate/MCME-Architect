@@ -20,6 +20,7 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
@@ -52,8 +53,11 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     public static final String PREFIX = "iBE_";
     public static final String ID_DELIMITER = "_id_";
     
+    @Getter
     protected Material contentItem;
+    @Getter
     protected Integer[] contentDamage;
+    @Getter
     private double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
@@ -120,6 +124,10 @@ public class SpecialBlockItemBlock extends SpecialBlock {
             PluginData.getMessageUtil().sendErrorMessage(player, "WARNING! Already "+count+" entities (paintings, item frames, item blocks and armorstands) around here. Placing more will cause lag.");
         }
         super.placeBlock(blockPlace, blockFace, player);
+        placeArmorStand(blockPlace, blockFace, playerLoc,contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+    }
+    
+    public void placeArmorStand(Block blockPlace, BlockFace blockFace, Location playerLoc, int currentDamage) {
         Location loc = getArmorStandLocation(blockPlace, blockFace, playerLoc);
         removeArmorStands(blockPlace.getLocation());
         final ArmorStand armor = (ArmorStand) blockPlace.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
@@ -134,7 +142,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
                 ItemStack item = new ItemStack(contentItem,1);
                 ItemMeta meta = item.getItemMeta();
                 if(meta instanceof Damageable) {
-                    ((Damageable) meta).setDamage(contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+                    ((Damageable) meta).setDamage(currentDamage);
                     item.setItemMeta(meta);
                 }
                 armor.setHelmet(item);
@@ -153,6 +161,24 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static String getIdFromArmorStandName(String name) {
         return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length());
+    }
+    
+    public static String getIdFromArmorStand(ArmorStand armorStand) {
+        return getIdFromArmorStandName(armorStand.getCustomName());
+    }
+    
+    public static boolean isItemBlockArmorStand(ArmorStand armorStand) {
+        return armorStand.getCustomName()!=null 
+           &&  armorStand.getCustomName().startsWith(PREFIX);
+    }
+    
+    public static int getContentDamage(ArmorStand armorStand) {
+        return ((Damageable)armorStand.getHelmet().getItemMeta()).getDamage();
+    }
+    
+    public static int[] getCoordinatesFromArmorStand(ArmorStand armorStand) {
+        String[] data = armorStand.getCustomName().split("_");
+        return new int[]{Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3])};
     }
     
     public int getNextDurability(int currentDurability) {
@@ -238,7 +264,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         Collections.sort(stats);
         return stats;
     }
-    
+
     public static class ItemBlockStat implements Comparable<ItemBlockStat>{
         
         @Getter

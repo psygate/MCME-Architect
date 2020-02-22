@@ -38,7 +38,7 @@ public enum Modules {
     SPECIAL_BLOCKS_FLINT   ("modules.specialBlocks.flint"),
     USE_POWERED_DOORS      ("modules.specialBlocks.poweredDoors"),
     BLOCK_PLAYER_INTERACTION ("modules.specialBlocks.blockPlayerInteraction"),
-
+    PLAYER_SURVIVAL_FLY    ("modules.environment.playerSurvivalFly"),
     PLAYER_DAMAGE_BLOCKING ("modules.environment.playerDamageBlocking"),
     ANIMAL_SPAWN_BLOCKING  ("modules.environment.animalSpawnBlocking"),
     DROP_BLOCKING          ("modules.environment.dropBlocking"),

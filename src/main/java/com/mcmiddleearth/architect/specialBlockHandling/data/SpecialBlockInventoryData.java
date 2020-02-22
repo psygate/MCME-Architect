@@ -440,11 +440,11 @@ public class SpecialBlockInventoryData {
         return new ItemStack(Material.STONE);
     }
     
-    private static String fullName(String rpName, String name) {
+    public static String fullName(String rpName, String name) {
         return rpName+"/"+name;
     }
     
-    private static String rpName(String id) {
+    public static String rpName(String id) {
         return id.substring(0,id.indexOf("/"));
     }
 }
