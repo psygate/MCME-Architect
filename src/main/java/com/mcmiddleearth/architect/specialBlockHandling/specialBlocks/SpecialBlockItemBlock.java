@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -150,6 +152,30 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
     }
     
+    public Block getBlock(Location armorLoc) {
+        World world = armorLoc.getWorld();
+        Location blockLoc = new Location(world,armorLoc.getX(),
+                                               armorLoc.getY()+2-contentHeight+0.01,
+                                               armorLoc.getZ());
+        return world.getBlockAt(blockLoc);
+    }
+    
+    public boolean isArmorStandChanged(ArmorStand armor, Block block) {
+        //Block block = blockLocation.getBlock();
+        Location originalLoc = getArmorStandLocation(block,BlockFace.UP,block.getLocation());
+        Location armorLoc = armor.getLocation();
+Logger.getGlobal().info("original: "+originalLoc.getX()+" "+originalLoc.getY()+" "+originalLoc.getZ());
+Logger.getGlobal().info("original: "+armorLoc.getX()+" "+armorLoc.getY()+" "+armorLoc.getZ());
+        return !(matches(armorLoc.getX(),originalLoc.getX())
+              && matches(armorLoc.getY(),originalLoc.getY())
+              && matches(armorLoc.getZ(),originalLoc.getZ()));
+    }
+    
+    private boolean matches(double d1, double d2) {
+        double diff = 0.01;
+        return Math.abs(d2-d1)<diff;
+    }
+    
     protected Location getArmorStandLocation(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         return new Location(blockPlace.getWorld(), blockPlace.getX()+0.5, 
                                     blockPlace.getY()-2+contentHeight, blockPlace.getZ()+0.5);
@@ -230,14 +256,30 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     }
     
     public static ArmorStand getArmorStand(Location loc) {
-        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+        Location center = new Location(loc.getWorld(),loc.getBlockX()+0.5,loc.getBlockY()-1.5,loc.getBlockZ()+0.5);
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(center, 0.5, 1, 0.5)) {
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
-                    && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
-                return (ArmorStand) entity;
+                    //&& entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
+                    && isItemBlockArmorStand((ArmorStand)entity)) {
+                SpecialBlockItemBlock specialBlock = (SpecialBlockItemBlock) SpecialBlockInventoryData
+                                                             .getSpecialBlock(SpecialBlockItemBlock
+                                                                              .getIdFromArmorStand((ArmorStand)entity));
+                if(!specialBlock.isArmorStandChanged((ArmorStand)entity, loc.getBlock())) {
+                    return (ArmorStand) entity;
+                }
             }
         }
         return null;
     }
+    
+    /*public ArmorStand getArmorStand(Location loc) {
+        ArmorStand armorStand = getArmorStandLoose(loc);
+        if(armorStand!=null 
+           && !isArmorStandChanged(armorStand,loc.getBlock())) {
+            return armorStand;
+        }
+        return null;
+    }*/
     
     public static List<ItemBlockStat> getStatistic(Location loc, double xzRadius, double yRadius) {
         List<ItemBlockStat> stats = new ArrayList<>();
