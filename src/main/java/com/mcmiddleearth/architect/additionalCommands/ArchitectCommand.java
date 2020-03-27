@@ -20,6 +20,7 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
+import com.mcmiddleearth.architect.entityLogging.EntityLogger;
 import com.mcmiddleearth.pluginutil.NBTTagUtil;
 import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
@@ -37,7 +38,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -243,6 +243,16 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             BlockDataManager.placeAllBlocksStates(((Player)sender), 
                         ((Player)sender).getLocation().getBlock().getRelative(BlockFace.SOUTH), false,
                         (args.length>1 && args[1].equalsIgnoreCase("file")));
+            return true;
+        }
+        if(args[0].equalsIgnoreCase("eLog")) {
+            if(args.length>1 && args[1].equalsIgnoreCase("true")) {
+                EntityLogger.setLogging(true,((Player)sender).getWorld());
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Entity logging on!");
+            } else {
+                EntityLogger.setLogging(false,((Player)sender).getWorld());
+                PluginData.getMessageUtil().sendInfoMessage(sender, "Entity logging off!");
+            }
             return true;
         }
         if (args[0].equalsIgnoreCase("reloaddata")) {
