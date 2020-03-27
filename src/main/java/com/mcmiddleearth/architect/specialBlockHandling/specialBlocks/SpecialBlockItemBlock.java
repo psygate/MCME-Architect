@@ -20,16 +20,19 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -52,8 +55,11 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     public static final String PREFIX = "iBE_";
     public static final String ID_DELIMITER = "_id_";
     
+    @Getter
     protected Material contentItem;
+    @Getter
     protected Integer[] contentDamage;
+    @Getter
     private double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
@@ -120,6 +126,10 @@ public class SpecialBlockItemBlock extends SpecialBlock {
             PluginData.getMessageUtil().sendErrorMessage(player, "WARNING! Already "+count+" entities (paintings, item frames, item blocks and armorstands) around here. Placing more will cause lag.");
         }
         super.placeBlock(blockPlace, blockFace, player);
+        placeArmorStand(blockPlace, blockFace, playerLoc,contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+    }
+    
+    public void placeArmorStand(Block blockPlace, BlockFace blockFace, Location playerLoc, int currentDamage) {
         Location loc = getArmorStandLocation(blockPlace, blockFace, playerLoc);
         removeArmorStands(blockPlace.getLocation());
         final ArmorStand armor = (ArmorStand) blockPlace.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
@@ -134,12 +144,36 @@ public class SpecialBlockItemBlock extends SpecialBlock {
                 ItemStack item = new ItemStack(contentItem,1);
                 ItemMeta meta = item.getItemMeta();
                 if(meta instanceof Damageable) {
-                    ((Damageable) meta).setDamage(contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+                    ((Damageable) meta).setDamage(currentDamage);
                     item.setItemMeta(meta);
                 }
                 armor.setHelmet(item);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
+    }
+    
+    public Block getBlock(Location armorLoc) {
+        World world = armorLoc.getWorld();
+        Location blockLoc = new Location(world,armorLoc.getX(),
+                                               armorLoc.getY()+2-contentHeight+0.01,
+                                               armorLoc.getZ());
+        return world.getBlockAt(blockLoc);
+    }
+    
+    public boolean isArmorStandChanged(ArmorStand armor, Block block) {
+        //Block block = blockLocation.getBlock();
+        Location originalLoc = getArmorStandLocation(block,BlockFace.UP,block.getLocation());
+        Location armorLoc = armor.getLocation();
+Logger.getGlobal().info("original: "+originalLoc.getX()+" "+originalLoc.getY()+" "+originalLoc.getZ());
+Logger.getGlobal().info("original: "+armorLoc.getX()+" "+armorLoc.getY()+" "+armorLoc.getZ());
+        return !(matches(armorLoc.getX(),originalLoc.getX())
+              && matches(armorLoc.getY(),originalLoc.getY())
+              && matches(armorLoc.getZ(),originalLoc.getZ()));
+    }
+    
+    private boolean matches(double d1, double d2) {
+        double diff = 0.01;
+        return Math.abs(d2-d1)<diff;
     }
     
     protected Location getArmorStandLocation(Block blockPlace, BlockFace blockFace, Location playerLoc) {
@@ -153,6 +187,24 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     public static String getIdFromArmorStandName(String name) {
         return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length());
+    }
+    
+    public static String getIdFromArmorStand(ArmorStand armorStand) {
+        return getIdFromArmorStandName(armorStand.getCustomName());
+    }
+    
+    public static boolean isItemBlockArmorStand(ArmorStand armorStand) {
+        return armorStand.getCustomName()!=null 
+           &&  armorStand.getCustomName().startsWith(PREFIX);
+    }
+    
+    public static int getContentDamage(ArmorStand armorStand) {
+        return ((Damageable)armorStand.getHelmet().getItemMeta()).getDamage();
+    }
+    
+    public static int[] getCoordinatesFromArmorStand(ArmorStand armorStand) {
+        String[] data = armorStand.getCustomName().split("_");
+        return new int[]{Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3])};
     }
     
     public int getNextDurability(int currentDurability) {
@@ -204,14 +256,30 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     }
     
     public static ArmorStand getArmorStand(Location loc) {
-        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(loc, 0.5, 2, 0.5)) {
+        Location center = new Location(loc.getWorld(),loc.getBlockX()+0.5,loc.getBlockY()-1.5,loc.getBlockZ()+0.5);
+        for(Entity entity: loc.getBlock().getWorld().getNearbyEntities(center, 0.5, 1, 0.5)) {
             if(entity instanceof ArmorStand && entity.getCustomName()!=null
-                    && entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
-                return (ArmorStand) entity;
+                    //&& entity.getCustomName().startsWith(getArmorStandName(loc.getBlock()))) {
+                    && isItemBlockArmorStand((ArmorStand)entity)) {
+                SpecialBlockItemBlock specialBlock = (SpecialBlockItemBlock) SpecialBlockInventoryData
+                                                             .getSpecialBlock(SpecialBlockItemBlock
+                                                                              .getIdFromArmorStand((ArmorStand)entity));
+                if(!specialBlock.isArmorStandChanged((ArmorStand)entity, loc.getBlock())) {
+                    return (ArmorStand) entity;
+                }
             }
         }
         return null;
     }
+    
+    /*public ArmorStand getArmorStand(Location loc) {
+        ArmorStand armorStand = getArmorStandLoose(loc);
+        if(armorStand!=null 
+           && !isArmorStandChanged(armorStand,loc.getBlock())) {
+            return armorStand;
+        }
+        return null;
+    }*/
     
     public static List<ItemBlockStat> getStatistic(Location loc, double xzRadius, double yRadius) {
         List<ItemBlockStat> stats = new ArrayList<>();
@@ -238,7 +306,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         Collections.sort(stats);
         return stats;
     }
-    
+
     public static class ItemBlockStat implements Comparable<ItemBlockStat>{
         
         @Getter

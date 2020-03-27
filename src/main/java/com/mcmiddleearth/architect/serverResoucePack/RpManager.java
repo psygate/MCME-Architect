@@ -29,11 +29,9 @@ import com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation.Regi
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.DynmapUtil;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;

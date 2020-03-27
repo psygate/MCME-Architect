@@ -19,6 +19,7 @@ package com.mcmiddleearth.architect.additionalListeners;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -30,6 +31,7 @@ import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -138,6 +140,22 @@ public class GameMechanicsListener extends WatchedListener{
                 && event.getEntity() instanceof Player
                 && event.getCause().equals(DamageCause.HOT_FLOOR)) {
             event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onGamemodeChange(PlayerGameModeChangeEvent event) {
+        if (PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.PLAYER_SURVIVAL_FLY)
+                && event.getNewGameMode().equals(GameMode.SURVIVAL)) {
+            event.getPlayer().setAllowFlight(true);
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onJoin(PlayerJoinEvent event) {
+        if (PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.PLAYER_SURVIVAL_FLY)
+                && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+            event.getPlayer().setAllowFlight(true);
         }
     }
 
