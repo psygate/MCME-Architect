@@ -27,8 +27,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -44,27 +50,59 @@ public class EntityLogger{
     
     private static BukkitTask loggerTask;
     
-    private static Map<Integer[],Integer[]> logData = new HashMap<>();
+    private static Map<Coordinates,Integer[]> logData = new HashMap<>();
     
     private static File logFile = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"entityLog.dat");
     
     private static Listener listener; 
     
-    public static void setLogging(boolean on) {
+    private static Class[] entityTypes = new Class[]{ArmorStand.class,
+                                                       Boat.class,
+                                                       Arrow.class,
+                                                       Item.class,
+                                                       Painting.class,
+                                                       ItemFrame.class};
+    
+    public static void setLogging(boolean on, World world) {
         if(on) {
             listener = new ELogListener();
             Bukkit.getPluginManager().registerEvents(listener, ArchitectPlugin.getPluginInstance());
             loggerTask = new BukkitRunnable() {
+                int maxValue;
                 @Override
                 public void run() {
                     try(PrintWriter fw = new PrintWriter(new FileWriter(logFile))) {
-                        logData.forEach((coord,value)->fw.println(""+coord[0]+";"+coord[1]+";"+value));
+                        String topLine = ";";
+                        for (Class entityType : entityTypes) {
+                            topLine = topLine +  ";" + entityType.getSimpleName();
+                        }
+                        fw.println(topLine+";all");
+                        maxValue=0;
+                        logData.forEach((coord,values)->{
+                            String line = "";
+                            int all = values[values.length-1];
+                            if(maxValue<all) {
+                                maxValue=all;
+                            }
+                            for (Integer value : values) {
+                                line = line +  ";" + value;
+                            }
+                            fw.println(""+coord.x+";"+coord.z+line);
+                                });
+                        //new BukkitRunnable() {
+                          //  @Override
+                           // public void  run() {
+                                logData.forEach((coord,values)->
+                                    ELogDynmapUtil.createMarker(coord, entityTypes, values, maxValue, world));
+                            //}
+                        //}.runTask(ArchitectPlugin.getPluginInstance());
+                        Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO, "Dumping Entity Logs");
                     } catch (IOException ex) {
                         Logger.getLogger(EntityLogger.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }.runTaskTimerAsynchronously(ArchitectPlugin.getPluginInstance(), 2000, 2000);
-        } else {
+            }.runTaskTimerAsynchronously(ArchitectPlugin.getPluginInstance(), 500, 2000);
+        } else if(loggerTask!=null){
             loggerTask.cancel();
             HandlerList.unregisterAll(listener);
         }
@@ -74,18 +112,49 @@ public class EntityLogger{
         
         @EventHandler
         public void onChunkLoad(ChunkLoadEvent event) {
-            Integer[] coords = new Integer[2];
             Chunk chunk = event.getChunk();
-            coords[0] = chunk.getX() * 16;
-            coords[1] = chunk.getZ() *16;
+            Coordinates coords = new Coordinates(chunk.getX() * 16, chunk.getZ() *16);
             Entity[] entities = chunk.getEntities();
-            Integer armorStands = 0;
-            for(Entity entity: entities) {
-                if(entity instanceof ArmorStand) {
-                    armorStands++;
-                }
+            Integer[] values = new Integer[entityTypes.length+1];
+            for(int i=0; i<values.length;i++) {
+                values[i] = 0;
             }
-            logData.put(coords, new Integer[]{armorStands,entities.length});
+            if(entities.length>0) {
+                for(Entity entity: entities) {
+                    for(int i = 0; i< values.length-1; i++) {
+                        if(entityTypes[i].isInstance(entity)) {
+                            values[i]++;
+                            break;
+                        }
+                    }
+                }
+                values[values.length-1] = entities.length;
+                logData.put(coords, values);
+            }
+        }
+    }
+    
+    public static class Coordinates {
+        
+        public int x;
+        public int z;
+        
+        public Coordinates(int x, int z) {
+            this.x = x;
+            this.z = z;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 47 * hash + this.x;
+            hash = 47 * hash + this.z;
+            return hash;
+        }
+        
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Coordinates && this.x == ((Coordinates)other).x && this.z == ((Coordinates)other).z;
         }
     }
 }

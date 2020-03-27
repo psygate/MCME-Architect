@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.util;
+package com.mcmiddleearth.architect.serverResoucePack;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
+import com.mcmiddleearth.util.DevUtil;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 //import com.sk89q.worldedit.BlockVector2D;
@@ -38,7 +39,7 @@ import org.dynmap.markers.MarkerSet;
  *
  * @author Eriol_Eandur
  */
-public class DynmapUtil {
+public class RpDynmapUtil {
     
     private static boolean init = false;
     private static final boolean enabled = getDynmapConfig().getBoolean("enabled",false);
@@ -73,7 +74,7 @@ public class DynmapUtil {
                 ArchitectPlugin.getPluginInstance().saveConfig();
                 init = true;
             } catch(Exception e) {
-                Logger.getLogger(DynmapUtil.class.getName()).log(Level.WARNING, "Dynmap plugin not compatible",e);
+                Logger.getLogger(RpDynmapUtil.class.getName()).log(Level.WARNING, "Dynmap plugin not compatible",e);
             }
         }
     }
