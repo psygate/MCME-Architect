@@ -27,7 +27,6 @@ import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.serverResoucePack.RegionEditConversation.RegionEditConversationFactory;
 import com.mcmiddleearth.util.DevUtil;
-import com.mcmiddleearth.util.DynmapUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -127,9 +126,9 @@ public class RpManager {
     }
     
     public static void updateDynmapRegions() {
-        DynmapUtil.clearMarkers();
+        RpDynmapUtil.clearMarkers();
         regions.values().forEach((region) -> {
-            DynmapUtil.createMarker(region);
+            RpDynmapUtil.createMarker(region);
         });
     }
     
