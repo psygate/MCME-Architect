@@ -22,6 +22,7 @@ import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.pluginutil.BlockUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,7 +57,8 @@ public class NoPhysicsListener extends WatchedListener{
             DevUtil.log(4,"no Physics "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ()+" "+event.getChangedType());
             event.setCancelled(true);
         } else {
-            DevUtil.log(4,"allow Physics "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ()+" "+event.getChangedType());
+            DevUtil.log(4,"allow Physics "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ()+" From: "
+                    +event.getBlock().getType()+" To: "+event.getChangedType()+" Source: "+event.getSourceBlock().getType()+" "+event.getSourceBlock().getX()+" "+event.getSourceBlock().getY()+" "+event.getSourceBlock().getZ()+" ");
         }            
     }
     
@@ -84,6 +86,23 @@ public class NoPhysicsListener extends WatchedListener{
                         MultipleFacing neighbourData = (MultipleFacing)neighbour.getBlockData();
                         neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), true);
                         neighbour.setBlockData(neighbourData,false);
+                    }
+                }
+            } else if ((block.getBlockData() instanceof Chest) 
+                && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_CHESTS)) {
+                Chest chest = (Chest) block.getBlockData();
+                BlockFace face = chest.getFacing();
+                Block neighbour = block.getRelative(rotateRight(face));
+                if(canBecomeDoubleChest(neighbour, block.getType())) {
+                        Chest neighbourChest = ((Chest)neighbour.getBlockData());
+                        neighbourChest.setType(Chest.Type.RIGHT);
+                        neighbour.setBlockData(neighbourChest, false);
+                } else {
+                    neighbour = block.getRelative(rotateLeft(face));
+                    if (canBecomeDoubleChest(neighbour,block.getType())) {
+                        Chest neighbourChest = ((Chest)neighbour.getBlockData());
+                        neighbourChest.setType(Chest.Type.LEFT);
+                        neighbour.setBlockData(neighbourChest, false);
                     }
                 }
             } else if((block.getBlockData() instanceof Stairs) 
@@ -291,5 +310,31 @@ public class NoPhysicsListener extends WatchedListener{
         //}            
     }
     
+    private static boolean canBecomeDoubleChest(Block block, Material match) {
+        return block.getBlockData() instanceof Chest
+                && !block.getType().equals(Material.ENDER_CHEST)
+                && block.getType().equals(match)
+                && ((Chest)block.getBlockData()).getType().equals(Chest.Type.SINGLE);
+    }
+    
+    private static BlockFace rotateLeft(BlockFace face) {
+        switch(face) {
+            case NORTH: return BlockFace.WEST;
+            case EAST: return BlockFace.NORTH;
+            case SOUTH: return BlockFace.EAST;
+            case WEST: return BlockFace.SOUTH;
+            default: return face;
+        }
+    }
+    
+    private static BlockFace rotateRight(BlockFace face) {
+        switch(face) {
+            case SOUTH: return BlockFace.WEST;
+            case WEST: return BlockFace.NORTH;
+            case NORTH: return BlockFace.EAST;
+            case EAST: return BlockFace.SOUTH;
+            default: return face;
+        }
+    }
     
 }

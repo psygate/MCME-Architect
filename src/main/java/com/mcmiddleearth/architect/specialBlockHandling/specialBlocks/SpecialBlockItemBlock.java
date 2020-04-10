@@ -21,6 +21,7 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockRegionManager;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
@@ -121,12 +122,17 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
-        if(!PluginData.moreEntitiesAllowed(blockPlace)) {
+        /*if(!PluginData.moreEntitiesAllowed(blockPlace)) {
             int count = PluginData.countNearbyEntities(blockPlace);
             PluginData.getMessageUtil().sendErrorMessage(player, "WARNING! Already "+count+" entities (paintings, item frames, item blocks and armorstands) around here. Placing more will cause lag.");
+        }*/
+        if (ItemBlockRegionManager.allowPlace(blockPlace, player)) {
+            super.placeBlock(blockPlace, blockFace, player);
+            placeArmorStand(blockPlace, blockFace, playerLoc,contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
+        } else {
+            PluginData.getMessageUtil().sendErrorMessage(player, "Too many entities (paintings, item frames, item blocks and armorstands) in this chunk already. (Limit: "
+                                                                 +ItemBlockRegionManager.getLimit(blockPlace)+")");
         }
-        super.placeBlock(blockPlace, blockFace, player);
-        placeArmorStand(blockPlace, blockFace, playerLoc,contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
     }
     
     public void placeArmorStand(Block blockPlace, BlockFace blockFace, Location playerLoc, int currentDamage) {

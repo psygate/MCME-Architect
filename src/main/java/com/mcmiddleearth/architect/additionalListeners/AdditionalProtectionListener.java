@@ -28,8 +28,11 @@ import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -130,5 +133,15 @@ public class AdditionalProtectionListener extends WatchedListener{
             }
         }
     }
+    
+    @EventHandler(priority=EventPriority.HIGH)
+    public void blockTrampling(PlayerInteractEvent event) {
+        if(event.getAction().equals(Action.PHYSICAL)
+                && event.hasBlock()
+                && event.getClickedBlock().getType().equals(Material.TURTLE_EGG)) {
+            event.setCancelled(true);
+        }
+    }
+    
     
 }

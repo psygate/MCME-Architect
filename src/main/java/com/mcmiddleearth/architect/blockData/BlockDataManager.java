@@ -512,7 +512,7 @@ public class BlockDataManager {
                                 if(prepare) {
                                     prepare(block.getWorld(),x,y,z);
                                 }
-                                block.getWorld().getBlockAt(x+1, y+1, z+1).setBlockData((BlockData)entry);
+                                block.getWorld().getBlockAt(x+1, y+1, z+1).setBlockData((BlockData)entry,false);
                                 x+=2;
                                 rowStarted = true;
                             } else {
