@@ -3,7 +3,7 @@ main: com.mcmiddleearth.architect.ArchitectPlugin
 version: ${project.version}
 author: Eriol_Eandur
 load: STARTUP
-softdepend: [ProtocolLib,Essentials]
+softdepend: [ProtocolLib,Essentials,dynmap]
 depend: [PluginUtils]
 api-version: 1.14
 
@@ -110,6 +110,11 @@ permissions:
             architect.get.other: true
             architect.weather: true
             archtiect.resourcePackAdmin: true
+            architect.itemBlock: true
+            architect.itemBlock.remove: true
+            architect.itemBlock.region.limit: true
+            architect.itemBlock.region.ignore: true
+            architect.itemBlock.region.create: true
     architect.ranks.designer: 
         descriptions: Permission for MCME Designers
         default: op
@@ -123,7 +128,6 @@ permissions:
             architect.get.public: true
             architect.inventory.save: true
             architect.noPhysicsList.exception: true
-            architect.itemBlockRemove: true
             architect.copypaste: true
     architect.ranks.artist: 
         descriptions: Permission for MCME Artists
@@ -243,8 +247,20 @@ permissions:
     architect.itemTexture:
         description: Allows to change durability of item in hand to use alternative texture
         default: op
-    architect.itemBlockRemove:
+    architect.itemBlock.remove:
         description: Allows to remove item block armor stands in a radius
+        default: op
+    architect.itemBlock:
+        description: Allows to use command /itemblock
+        default: op
+    architect.itemBlock.region.limit:
+        description: Allows to change limit of an item block region
+        default: op
+    architect.itemBlock.region.create:
+        description: Allows to create new item block limit regions
+        default: op
+    architect.itemBlock.region.ignore:
+        description: Allows to ignore itemblock limit of a region
         default: op
     architect.itemTexture:
         description: Allow to open special build inventories

@@ -57,7 +57,7 @@ public class BlockCycleListener implements Listener {
             event.setCancelled(true);
             Player p = event.getPlayer();
             if(!PluginData.isModuleEnabled(p.getWorld(),Modules.CYCLE_BLOCKS)) {
-                sendNotEnabledErrorMessage(p);
+                sendNotEnabledErrorMessage(p); 
                 return;
             }   
             Block block = event.getClickedBlock();

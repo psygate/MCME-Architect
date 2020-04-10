@@ -47,13 +47,14 @@ import com.mcmiddleearth.architect.signEditor.SignCommand;
 import com.mcmiddleearth.architect.signEditor.SignListener;
 import com.mcmiddleearth.architect.specialBlockHandling.command.GetCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.command.InvCommand;
-import com.mcmiddleearth.architect.specialBlockHandling.command.ItemBlockCommand;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockCommand;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.SpecialBlockListener;
 import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockRegionManager;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockPickerListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.FurnaceListener;
@@ -177,6 +178,7 @@ public class ArchitectPlugin extends JavaPlugin {
         SpecialHeadInventoryData.loadInventory();
         GetData.load();
         RpManager.init();
+        ItemBlockRegionManager.init();
     }
     
 }

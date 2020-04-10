@@ -62,6 +62,8 @@ public class WorldConfig {
     private static final String NO_INTERACTION = "noInteraction";
     private static final String DOUBLE_SLAB_REPLACEMENTS = "doubleSlabReplacements";
 
+    private static final int defaultItemBlockBaseLimit = 5;
+    
     // 1.13 moved to NoPhysicsData private List<Integer> npList;
     private final String worldName;
 
@@ -360,6 +362,15 @@ public class WorldConfig {
         }
     }
 
+    public int getItemBlockBaseLimit() {
+        return worldConfig.getInt("itemBlock.baseLimit",defaultItemBlockBaseLimit);
+    }
+    
+    public void setItemBlockBaseLimit(int limit) {
+        worldConfig.set("itemBlock.baseLimit",limit);
+        saveWorldConfig();
+    }
+    
     private void checkDeleteWorldNPConfig() {
         Set<String> worldNP = new HashSet<>();
         worldNP.addAll(worldConfig.getStringList(NO_PHYSICS_LIST));

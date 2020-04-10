@@ -182,6 +182,16 @@ public class PluginData {
         return config.getNoInteraction(block.getBlockData());
     }
     
+    public static int getItemBlockBaseLimit(Block block) {
+        WorldConfig config = getOrCreateWorldConfig(block.getWorld().getName());
+        return config.getItemBlockBaseLimit();
+    }
+    
+    public static void setItemBlockBaseLimit(World world,int limit) {
+        WorldConfig config = getOrCreateWorldConfig(world.getName());
+        config.setItemBlockBaseLimit(limit);
+    }
+    
     public static boolean isEnchantmentAllowed(String enchantment, int level) {
         WorldConfig config = getOrCreateWorldConfig(Bukkit.getWorlds().get(0).getName());
         return config.isAllowedEnchantment(enchantment, level);
