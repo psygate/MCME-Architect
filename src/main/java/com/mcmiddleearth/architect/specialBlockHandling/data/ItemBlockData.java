@@ -75,7 +75,12 @@ public class ItemBlockData implements BlockData {
         String[] itemBlockData = firstSplit[0].split("[:\\[,\\]]");
         SpecialBlock specialBlock = SpecialBlockInventoryData.getSpecialBlock(itemBlockData[1]);
         if(specialBlock != null && specialBlock instanceof SpecialBlockItemBlock) {
-            int currentDamage = Integer.parseInt(itemBlockData[3]);
+            int currentDamage;
+            if (itemBlockData[3].equals("?")) {
+                currentDamage = -1;
+            } else {
+                currentDamage = Integer.parseInt(itemBlockData[3]);
+            }
             float yaw = Float.parseFloat(itemBlockData[5]);
             return new ItemBlockData(Bukkit.createBlockData(blockData),(SpecialBlockItemBlock) specialBlock, currentDamage, yaw);
         }
@@ -130,7 +135,7 @@ Logger.getGlobal().info(""+otherData.yaw);
 Logger.getGlobal().info("****************");*/
             return this.specialItemBlock.getId().equals(otherData.specialItemBlock.getId())
                 && this.blockData.equals(otherData.blockData)
-                && this.currentDamage == otherData.currentDamage
+                && (this.currentDamage == otherData.currentDamage || this.currentDamage==-1 || otherData.currentDamage==-1)
                 && this.yaw == otherData.yaw;
         }
         return false;

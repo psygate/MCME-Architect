@@ -17,13 +17,16 @@
 package com.mcmiddleearth.architect.chunkUpdate;
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
+import java.util.logging.Logger;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -47,7 +50,12 @@ public class ChunkUpdateListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.UP),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.DOWN),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.WEST),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.EAST),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());
             }
             
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
@@ -60,7 +68,24 @@ public class ChunkUpdateListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.UP),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.DOWN),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.WEST),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.EAST),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());
+            }
+        }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    public void blockInteract(PlayerInteractEvent event) {
+        final Block block = event.getClickedBlock();
+        final Player player = event.getPlayer();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ChunkUpdateUtil.sendUpdates(event.getClickedBlock(),event.getPlayer());
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
     }
