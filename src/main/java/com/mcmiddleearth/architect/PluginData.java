@@ -34,6 +34,7 @@ import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -265,4 +266,5 @@ public class PluginData {
         } 
         return TheGafferUtil.checkGafferPermission(player,loc);
    }
+    
 }

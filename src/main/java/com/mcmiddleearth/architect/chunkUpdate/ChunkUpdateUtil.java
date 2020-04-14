@@ -20,19 +20,16 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 //import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.util.DevUtil;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.type.Gate;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 /**
  *
@@ -44,89 +41,46 @@ public class ChunkUpdateUtil {
     
     //private static final Map<Material,BlockFace[]> blockPlaceUpdateSpread = new HashMap<>();
     
-    private static final Map<Material,Boolean> specialUpdateMaterials = new HashMap<>();
-    
     private static final int maxStep = 16*Bukkit.getServer().getViewDistance();
     private static final Set<Chunk> finishedChunks = new HashSet<>();
     private static final Set<Block> visitedBlocks = new HashSet<>();
     
-    static {
-        specialUpdateMaterials.put(Material.BROWN_MUSHROOM_BLOCK,false);
-        specialUpdateMaterials.put(Material.RED_MUSHROOM_BLOCK,false);
-        specialUpdateMaterials.put(Material.MUSHROOM_STEM,false);
-        
-        /*blockPlaceUpdateSpread.put(Material.BROWN_MUSHROOM_BLOCK, new BlockFace[]{BlockFace.WEST,
-                                                                                  BlockFace.EAST});
-        blockPlaceUpdateSpread.put(Material.RED_MUSHROOM_BLOCK, new BlockFace[]{  BlockFace.SOUTH,
-                                                                                  BlockFace.NORTH});
-        blockPlaceUpdateSpread.put(Material.MUSHROOM_STEM, new BlockFace[]{  BlockFace.UP,
-                                                                                  BlockFace.DOWN});*/
-        
-    }
-    
-    public static synchronized void sendUpdates(Block blockPlace, Player player) {
-        Location loc = blockPlace.getLocation();
+    public static synchronized void sendUpdates(Block block, Player player) {
+        Location loc = block.getLocation();
         if(!PluginData.isModuleEnabled(loc.getWorld(),Modules.CHUNK_UPDATE_AUTO)) {
             return;
         }
-        if(specialUpdateMaterials.containsKey(blockPlace.getType())) {
+        if(block.getBlockData() instanceof Gate) {
             DevUtil.log("Sending block specific chunk updates.");
-            visitedBlocks.clear();
+            BlockFace[] directions;
+            Gate gate = (Gate) block.getBlockData();
+            if(gate.getFacing().equals(BlockFace.NORTH)
+                    || gate.getFacing().equals(BlockFace.SOUTH)) {
+                directions = new BlockFace[]{BlockFace.EAST,BlockFace.WEST};
+            } else {
+                directions = new BlockFace[]{BlockFace.NORTH,BlockFace.SOUTH};
+            }
+            player.sendBlockChange(loc, gate);
+            for(BlockFace direction: directions) {
+                Block current = block.getRelative(direction);
+                while(current.getBlockData() instanceof Gate) {
+                    player.sendBlockChange(current.getLocation(), current.getBlockData());
+                    current = current.getRelative(direction);
+                }
+            }
+        }
+        /*    visitedBlocks.clear();
             finishedChunks.clear();
             floodFillUpdate(player, blockPlace,0,specialUpdateMaterials.get(blockPlace.getType()));
-            //sendBlockUpdate(blockPlace,player);
-            /*Set<Chunk> finishedChunks = new HashSet<>();
-            Set<Block> visitedBlocks = new HashSet<>();
-            NMSUtil.updatePlayerChunks(player, blockPlace.getLocation(), blockPlace.getLocation());
-            finishedChunks.add(blockPlace.getChunk());
-            Material mat = blockPlace.getType();
-            for(BlockFace face: blockPlaceUpdateSpread.get(blockPlace.getType())) {
-                Block block = blockPlace.getRelative(face);
-                int step = 0;
-                while(block.getChunk().isLoaded() && block.getType().equals(mat) 
-                                                  && step < maxStep) {
-                    if(!finishedChunks.contains(block.getChunk())) {
-                        //sendBlockUpdate(block,player);
-                        NMSUtil.updatePlayerChunks(player, block.getLocation(), block.getLocation());
-                        DevUtil.log(2,"#");
-                        finishedChunks.add(block.getChunk());
-                    }
-                    block = block.getRelative(face);
-                    step++;
-                }
-            }*/
         } else {
             DevUtil.log("Sending local chunk updates.");
-            /*NMSUtil.updatePlayerChunks(player,
-                                       loc.clone().add(new Vector(-updateRadius,0,-updateRadius)), 
-                                       loc.clone().add(new Vector(updateRadius,0,updateRadius)));*/
-            //player.sendBlockChange(blockPlace.getLocation(), blockPlace.getBlockData());
             for(int i = -1; i<2; i++) {
                 for(int j = -1; j<2; j++) {
                     Block block = blockPlace.getRelative(BlockFace.EAST,i).getRelative(BlockFace.SOUTH,j);
                     player.sendBlockChange(block.getLocation(),block.getBlockData());
                 }
             }
-            /*player.sendBlockChange(blockPlace.getRelative(BlockFace.EAST).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.EAST).getBlockData());
-            player.sendBlockChange(blockPlace.getRelative(BlockFace.WEST).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.WEST).getBlockData());
-            player.sendBlockChange(blockPlace.getRelative(BlockFace.SOUTH).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.SOUTH).getBlockData());
-            player.sendBlockChange(blockPlace.getRelative(BlockFace.NORTH).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.NORTH).getBlockData());
-            player.sendBlockChange(blockPlace.getRelative(BlockFace.UP).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.UP).getBlockData());
-            player.sendBlockChange(blockPlace.getRelative(BlockFace.DOWN).getLocation(), 
-                                   blockPlace.getRelative(BlockFace.DOWN).getBlockData());*/
-            /*int x = loc.getChunk().getX();
-            int z = loc.getChunk().getZ();
-            for(int i=x-updateRadius; i<x+updateRadius; i++) {
-                for(int j = z-updateRadius; j<z+updateRadius; i++) {
-                    player.getWorld().refreshChunk(i, j);
-                }
-            }*/
-        }
+        }*/
     }
     
     private static synchronized void floodFillUpdate(Player player, Block block, int step, boolean condition) {
@@ -137,11 +91,6 @@ public class ChunkUpdateUtil {
         }
         player.sendBlockChange(block.getLocation(), block.getBlockData());
         visitedBlocks.add(block);
-        //if(!finishedChunks.contains(block.getChunk())) {
-            //NMSUtil.updatePlayerChunks(player, block.getLocation(), block.getLocation());
-            //player.getWorld().refreshChunk(block.getChunk().getX(), block.getChunk().getZ());
-          //  finishedChunks.add(block.getChunk());
-        //}
         MultipleFacing data = (MultipleFacing) block.getBlockData();
         for(BlockFace face: data.getAllowedFaces()) {
             if(data.hasFace(face) == condition) {

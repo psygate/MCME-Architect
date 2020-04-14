@@ -170,8 +170,8 @@ public class SpecialBlockItemBlock extends SpecialBlock {
         //Block block = blockLocation.getBlock();
         Location originalLoc = getArmorStandLocation(block,BlockFace.UP,block.getLocation());
         Location armorLoc = armor.getLocation();
-Logger.getGlobal().info("original: "+originalLoc.getX()+" "+originalLoc.getY()+" "+originalLoc.getZ());
-Logger.getGlobal().info("original: "+armorLoc.getX()+" "+armorLoc.getY()+" "+armorLoc.getZ());
+//Logger.getGlobal().info("original: "+originalLoc.getX()+" "+originalLoc.getY()+" "+originalLoc.getZ());
+//Logger.getGlobal().info("original: "+armorLoc.getX()+" "+armorLoc.getY()+" "+armorLoc.getZ());
         return !(matches(armorLoc.getX(),originalLoc.getX())
               && matches(armorLoc.getY(),originalLoc.getY())
               && matches(armorLoc.getZ(),originalLoc.getZ()));

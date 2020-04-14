@@ -87,10 +87,10 @@ public class Clipboard implements IStoragePlot {
         highCorner = new Location(world,weRegion.getMaximumPoint().getBlockX(),
                                         weRegion.getMaximumPoint().getBlockY(),
                                         weRegion.getMaximumPoint().getBlockZ());
-log("reference",referencePoint);
+//log("reference",referencePoint);
         shift = lowCorner.clone().subtract(this.referencePoint);
-log("shift",shift);
-log("lowCorner",lowCorner);
+//log("shift",shift);
+//log("lowCorner",lowCorner);
     }
     
     public Clipboard(Location referencePoint, Location lowPoint, Location highPoint) throws CopyPasteException {
@@ -108,7 +108,7 @@ log("lowCorner",lowCorner);
         highCorner = new Location (lowPoint.getWorld(), Math.max(lowPoint.getBlockX(), highPoint.getBlockX()),
                                                        Math.max(lowPoint.getBlockY(), highPoint.getBlockY()),
                                                        Math.max(lowPoint.getBlockZ(), highPoint.getBlockZ()));
-log("reference",referencePoint);
+//log("reference",referencePoint);
         shift = lowCorner.clone().subtract(this.referencePoint);
     }
     
@@ -173,7 +173,7 @@ log("reference",referencePoint);
     }
     
     private void rotate90() {
-Logger.getGlobal().info("rot90");
+//Logger.getGlobal().info("rot90");
         Location size = getHighCorner().clone().subtract(getLowCorner());
         shift = new Location(shift.getWorld(),-shift.getBlockZ()-(rotation%2==0?size.getBlockZ():size.getBlockX()),
                                                shift.getBlockY(),
@@ -211,7 +211,7 @@ Logger.getGlobal().info("rot90");
                                                       -shift.getBlockZ()-rotatedSize.getBlockZ());
                 flip[2] = !flip[2];
         }
-log("shift",shift);
+//log("shift",shift);
     }
     
     private void log(String name, Location loc) {
@@ -234,7 +234,7 @@ log("shift",shift);
                                 .add(highCorner.clone().subtract(lowCorner).toVector())
                                 .toLocation(lowPoint.getWorld());
         }
-Logger.getGlobal().info("low: "+lowPoint.getBlockX()+" "+lowPoint.getBlockZ()+"high: "+highPoint.getBlockX()+" "+highPoint.getBlockZ());
+//Logger.getGlobal().info("low: "+lowPoint.getBlockX()+" "+lowPoint.getBlockZ()+"high: "+highPoint.getBlockX()+" "+highPoint.getBlockZ());
         return new Clipboard(lowPoint,lowPoint,highPoint);
     }
     
@@ -284,7 +284,7 @@ log("paste",paste);
     
     public boolean paste(Location location, boolean withAir, boolean withBiome) {
         Location paste = getPasteLocation(location);
-log("paste",paste);
+//log("paste",paste);
         try(DataInputStream in = new DataInputStream(
                                  new BufferedInputStream(
                                  new GZIPInputStream(
