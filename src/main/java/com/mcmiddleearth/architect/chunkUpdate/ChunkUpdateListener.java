@@ -81,11 +81,14 @@ public class ChunkUpdateListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
     public void blockInteract(PlayerInteractEvent event) {
         final Block block = event.getClickedBlock();
+        if(block==null) {
+            return;
+        }
         final Player player = event.getPlayer();
         new BukkitRunnable() {
             @Override
             public void run() {
-                ChunkUpdateUtil.sendUpdates(event.getClickedBlock(),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(block,player);
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
     }
