@@ -192,7 +192,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     }
     
     public static String getIdFromArmorStandName(String name) {
-        return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length());
+        return name.substring(name.indexOf(ID_DELIMITER)+ID_DELIMITER.length()).replace("2Gondor", "Gondor");
     }
     
     public static String getIdFromArmorStand(ArmorStand armorStand) {
