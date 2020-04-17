@@ -21,7 +21,7 @@ import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.armorStand.ArmorStandUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockRegionManager;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockManager;
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.ArrayList;
@@ -126,12 +126,12 @@ public class SpecialBlockItemBlock extends SpecialBlock {
             int count = PluginData.countNearbyEntities(blockPlace);
             PluginData.getMessageUtil().sendErrorMessage(player, "WARNING! Already "+count+" entities (paintings, item frames, item blocks and armorstands) around here. Placing more will cause lag.");
         }*/
-        if (ItemBlockRegionManager.allowPlace(blockPlace, player)) {
+        if (ItemBlockManager.allowPlace(blockPlace, player)) {
             super.placeBlock(blockPlace, blockFace, player);
             placeArmorStand(blockPlace, blockFace, playerLoc,contentDamage[NumericUtil.getRandom(0, contentDamage.length-1)]);
         } else {
             PluginData.getMessageUtil().sendErrorMessage(player, "Too many entities (paintings, item frames, item blocks and armorstands) in this chunk already. (Limit: "
-                                                                 +ItemBlockRegionManager.getLimit(blockPlace)+")");
+                                                                 +ItemBlockManager.getLimit(blockPlace)+")");
         }
     }
     

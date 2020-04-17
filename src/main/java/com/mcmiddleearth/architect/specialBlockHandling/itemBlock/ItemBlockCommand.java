@@ -82,6 +82,20 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
                                 +" Number: "+itemStat.getCount());
             });
             return true;
+        } else if (args[0].equalsIgnoreCase("glow")) {
+            if(args.length<2) {
+                PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
+                return true;
+            }
+            if(!NumericUtil.isInt(args[1])) {
+                ItemBlockManager.removeGlowPlayer(p);
+                PluginData.getMessageUtil().sendInfoMessage(cs, "Glowing of entities around you disabled.");
+                return true;
+            } else {
+                ItemBlockManager.addGlowPlayer(p,NumericUtil.getInt(args[1]));
+                PluginData.getMessageUtil().sendInfoMessage(cs, "Glowing of entities up to "+NumericUtil.getInt(args[1])+" blocks around you enabled.");
+                return true;
+            }
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (!PluginData.hasPermission(p,Permission.ITEM_BLOCK_COMMAND_REMOVE)) {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
@@ -104,7 +118,7 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
             return true;
         } else if (args[0].equalsIgnoreCase("list")) {
             PluginData.getMessageUtil().sendInfoMessage(p, "Itemblock limit regions:");
-            ItemBlockRegionManager.getRegions().forEach((name,region) -> {
+            ItemBlockManager.getRegions().forEach((name,region) -> {
                 PluginData.getMessageUtil().sendNoPrefixInfoMessage(p, ChatColor.BLACK+"..."
                         +ChatColor.AQUA+"- "+name+", limit: "+region.getLimit());
             });
@@ -119,14 +133,14 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
                 PluginData.getMessageUtil().sendErrorMessage(cs, "Please make a WE selection first.");
                 return true;
             }
-            ItemBlockRegion region = ItemBlockRegionManager.getRegion(args[1]);
+            ItemBlockRegion region = ItemBlockManager.getRegion(args[1]);
             if(region!=null) {
                 PluginData.getMessageUtil().sendErrorMessage(cs, "An itemblock region with that name already exists.");
                 return true;
             }
             region = new ItemBlockRegion(args[1],weRegion);
-            ItemBlockRegionManager.saveItemBlockRegion(region);
-            ItemBlockRegionManager.addRegion(region);
+            ItemBlockManager.saveItemBlockRegion(region);
+            ItemBlockManager.addRegion(region);
             PluginData.getMessageUtil().sendInfoMessage(p, "Region created.");
             return true;
         } else if (args[0].equalsIgnoreCase("delete")) {
@@ -134,12 +148,12 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
                 PluginData.getMessageUtil().sendNoPermissionError(cs);
                 return true;
             }
-            ItemBlockRegion region = ItemBlockRegionManager.getRegion(args[1]);
+            ItemBlockRegion region = ItemBlockManager.getRegion(args[1]);
             if(region==null) {
                 PluginData.getMessageUtil().sendErrorMessage(cs, "There is no itemblock region with that name.");
                 return true;
             }
-            ItemBlockRegionManager.removeRegion(args[1]);
+            ItemBlockManager.removeRegion(args[1]);
             PluginData.getMessageUtil().sendInfoMessage(p, "Region deleted.");
             return true;
         } else if (args[0].equalsIgnoreCase("limit")) {
@@ -161,14 +175,14 @@ public class ItemBlockCommand extends AbstractArchitectCommand {
                 PluginData.getMessageUtil().sendInfoMessage(p, "Item block base limit set to "+limit+".");
                 return true;
             }
-            ItemBlockRegion region = ItemBlockRegionManager.getRegion(args[1]);
+            ItemBlockRegion region = ItemBlockManager.getRegion(args[1]);
             if(region==null) {
                 PluginData.getMessageUtil().sendErrorMessage(cs, "There is no itemblock region with that name.");
                 return true;
             }
             region.setLimit(limit);
             PluginData.getMessageUtil().sendInfoMessage(p, "Region limit set to "+limit+".");
-            ItemBlockRegionManager.saveItemBlockRegion(region);
+            ItemBlockManager.saveItemBlockRegion(region);
             return true;
         }
         PluginData.getMessageUtil().sendInvalidSubcommandError(cs);
