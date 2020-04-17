@@ -23,34 +23,44 @@ import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.util.DevUtil;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public class ItemBlockRegionManager {
+public class ItemBlockManager {
     
     private static final File regionFolder = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"itemBlockRegions");
     
     @Getter
     private static Map<String, ItemBlockRegion> regions = new HashMap<>();
+    
+    private static Map<Player, Integer> glowPlayer = new HashMap<>();
+    private static List<Entity> glowEntities = new ArrayList<>();
+    
+    
+    private static BukkitTask glowTask;
     
     public static void init() {
         //loadPlayerData();
@@ -156,6 +166,38 @@ public class ItemBlockRegionManager {
         } catch (IOException ex) {
             Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void startEntityGlowTask() {
+        if(glowTask!=null && !glowTask.isCancelled()) {
+            glowTask.cancel();
+        }
+        glowTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                glowEntities.forEach(entity -> entity.setGlowing(false));
+                glowEntities.clear();
+                glowPlayer.forEach((player,radius) -> { 
+                    Collection<Entity> entities = player.getWorld()
+                            .getNearbyEntities(player.getLocation(), radius, radius, radius, 
+                                               entity -> entity instanceof ArmorStand);
+                    entities.forEach(entity -> entity.setGlowing(true));
+                    glowEntities.addAll(entities);
+                });
+            }
+        }.runTaskTimer(ArchitectPlugin.getPluginInstance(), 400, 20);
+    }
+
+    public static void stopEntityGlowTask() {
+        glowTask.cancel();
+    }
+
+    static void removeGlowPlayer(Player p) {
+        glowPlayer.remove(p);
+    }
+
+    static void addGlowPlayer(Player p, int radius) {
+        glowPlayer.put(p, radius);
     }
     
 }

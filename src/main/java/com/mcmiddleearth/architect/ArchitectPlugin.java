@@ -54,7 +54,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockRegionManager;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockManager;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockPickerListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.FurnaceListener;
@@ -152,6 +152,7 @@ public class ArchitectPlugin extends JavaPlugin {
         new BlockDataManager().createBlockIdDataMapping();
         
         rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);
+        ItemBlockManager.startEntityGlowTask();
         
         
         getLogger().info("MCME-Architect Enabled!");
@@ -160,6 +161,7 @@ public class ArchitectPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         rpSwitchTask.cancel();
+        ItemBlockManager.stopEntityGlowTask();
     }
     
     public void setCommandExecutor(String command, AbstractArchitectCommand executor) {
@@ -178,7 +180,7 @@ public class ArchitectPlugin extends JavaPlugin {
         SpecialHeadInventoryData.loadInventory();
         GetData.load();
         RpManager.init();
-        ItemBlockRegionManager.init();
+        ItemBlockManager.init();
     }
     
 }
