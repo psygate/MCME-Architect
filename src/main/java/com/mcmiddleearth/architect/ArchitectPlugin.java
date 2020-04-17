@@ -54,6 +54,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.GetData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialItemInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialSavedInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockListener;
 import com.mcmiddleearth.architect.specialBlockHandling.itemBlock.ItemBlockManager;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.BlockPickerListener;
 import com.mcmiddleearth.architect.specialBlockHandling.listener.DoorListener;
@@ -116,6 +117,7 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new ChunkUpdateListener(), this);
         pluginManager.registerEvents(new OpItemListener(), this);
         pluginManager.registerEvents(new ClipboardPlayerListener(), this);
+        pluginManager.registerEvents(new ItemBlockListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
