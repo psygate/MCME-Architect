@@ -65,6 +65,7 @@ import com.mcmiddleearth.architect.voxelStencilEditor.VvCommand;
 import com.mcmiddleearth.architect.weSchematicsViewer.SchListCommand;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
