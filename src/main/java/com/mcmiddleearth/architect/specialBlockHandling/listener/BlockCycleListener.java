@@ -19,6 +19,8 @@ package com.mcmiddleearth.architect.specialBlockHandling.listener;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.bannerEditor.BannerEditorCommand;
+import com.mcmiddleearth.architect.bannerEditor.BannerEditorMode;
 import com.mcmiddleearth.architect.blockData.BlockDataManager;
 import com.mcmiddleearth.architect.blockData.attributes.Attribute;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
@@ -28,6 +30,7 @@ import com.mcmiddleearth.pluginutil.EventUtil;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.ArmorStand;
@@ -54,13 +57,18 @@ public class BlockCycleListener implements Listener {
         if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)
                 && EventUtil.isMainHandEvent(event)
                 && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
-            event.setCancelled(true);
             Player p = event.getPlayer();
+            Block block = event.getClickedBlock();
+            BannerEditorMode bannerMode = BannerEditorCommand.getPlayerConfig(p).getEditorMode();
+            if(block.getState() instanceof Banner
+                        && !bannerMode.equals(BannerEditorMode.ORIENTATION)) {
+                return;
+            }
             if(!PluginData.isModuleEnabled(p.getWorld(),Modules.CYCLE_BLOCKS)) {
                 sendNotEnabledErrorMessage(p); 
                 return;
             }   
-            Block block = event.getClickedBlock();
+            event.setCancelled(true);
             if(!PluginData.checkBuildPermissions(p,block.getLocation(),Permission.CYCLE_BLOCKS)) {
                 return;
             }
@@ -80,12 +88,17 @@ public class BlockCycleListener implements Listener {
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) 
               && p.getInventory().getItemInMainHand().getType().equals(Material.STICK)
               && EventUtil.isMainHandEvent(event)) {
+            BannerEditorMode bannerMode = BannerEditorCommand.getPlayerConfig(p).getEditorMode();
+            Block block = event.getClickedBlock();
+            if(block.getState() instanceof Banner
+                        && !bannerMode.equals(BannerEditorMode.ORIENTATION)) {
+                return;
+            }
             if(!PluginData.isModuleEnabled(p.getWorld(),Modules.CYCLE_BLOCKS)) {
                 sendNotEnabledErrorMessage(p);
                 return;
             }   
             event.setCancelled(true);
-            Block block = event.getClickedBlock();
             if(!PluginData.checkBuildPermissions(p,block.getLocation(),
                                                  Permission.CYCLE_BLOCKS)) {
                 return;

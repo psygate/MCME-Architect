@@ -29,7 +29,7 @@ public class BannerEditorConfig {
     
     private int patternId = 0;
     
-    private BannerEditorMode editorMode = BannerEditorMode.LIST;
+    private BannerEditorMode editorMode = BannerEditorMode.ORIENTATION;
 
     public BannerEditorMode getEditorMode() {
         return editorMode;

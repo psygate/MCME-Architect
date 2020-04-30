@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.architect.bannerEditor;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
@@ -16,6 +17,9 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -32,7 +37,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
  */
 public class BannerListener implements Listener {
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if(event.hasBlock() && player.getInventory().getItemInHand().getType().equals(Material.STICK)
@@ -81,9 +86,24 @@ public class BannerListener implements Listener {
                             banner.update(true, false);
                         }
                         else if(patternId == 0) {
-                            banner.setBaseColor((DyeColor) cycle(banner.getBaseColor(),
-                                                                 event.getAction()));
+                            //banner.setBaseColor((DyeColor) cycle(banner.getBaseColor(),
+                            //                                     event.getAction()));
+                            BlockData oldData = banner.getBlockData();
+                            banner.setType(cycle(banner.getType(),event.getAction()));
+                            BlockData newData = banner.getBlockData();
+                            if(newData instanceof Rotatable) {
+                                ((Rotatable)newData).setRotation(((Rotatable)oldData).getRotation());
+                            } else {
+                                ((Directional)newData).setFacing(((Directional)oldData).getFacing());
+                            }
                             banner.update(true, false);
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    banner.setBlockData(newData);
+                                    banner.update(true, false);
+                                }
+                            }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
                         }
                         else {
                             sendInvalidPatternId(player,patternId);
@@ -146,6 +166,29 @@ public class BannerListener implements Listener {
         return (DyeColor) cycle(types, ordinal, direction);
     }
     
+    private Material cycle(Material current, Action direction) {
+        Material[] types;
+        if(!BannerUtil.isWallBanner(current)) {
+            types = new Material[]{Material.WHITE_BANNER,Material.ORANGE_BANNER,Material.MAGENTA_BANNER,Material.LIGHT_BLUE_BANNER,
+                                   Material.YELLOW_BANNER,Material.LIME_BANNER,Material.PINK_BANNER,Material.GRAY_BANNER,
+                                   Material.LIGHT_GRAY_BANNER,Material.CYAN_BANNER,Material.PURPLE_BANNER,Material.BLUE_BANNER,
+                                   Material.BROWN_BANNER,Material.GREEN_BANNER,Material.RED_BANNER,Material.BLACK_BANNER};
+        } else {
+            types = new Material[]{Material.WHITE_WALL_BANNER,Material.ORANGE_WALL_BANNER,Material.MAGENTA_WALL_BANNER,Material.LIGHT_BLUE_WALL_BANNER,
+                                   Material.YELLOW_WALL_BANNER,Material.LIME_WALL_BANNER,Material.PINK_WALL_BANNER,Material.GRAY_WALL_BANNER,
+                                   Material.LIGHT_GRAY_WALL_BANNER,Material.CYAN_WALL_BANNER,Material.PURPLE_WALL_BANNER,Material.BLUE_WALL_BANNER,
+                                   Material.BROWN_WALL_BANNER,Material.GREEN_WALL_BANNER,Material.RED_WALL_BANNER,Material.BLACK_WALL_BANNER};
+        }
+        int ordinal = 0;
+        for(int i = 0; i< types.length; i++) {
+            if(types[i].equals(current)) {
+                ordinal = i;
+                break;
+            }
+        }
+        return (Material) cycle(types, ordinal, direction);
+    }
+    
     private Object cycle(Object[] types, int ordinal, Action direction) {
         if(direction.equals(Action.LEFT_CLICK_BLOCK)) {
             ordinal++;
@@ -183,6 +226,10 @@ public class BannerListener implements Listener {
 
     private void sendBaseNoPattern(Player player) {
         PluginData.getMessageUtil().sendErrorMessage(player,"The banner base has no texture to remove.");
+    }
+
+    private void sendBaseNoColor(Player player) {
+        PluginData.getMessageUtil().sendErrorMessage(player,"The banner base color can't .");
     }
 
     private void sendGotBanner(Player player, int amount) {

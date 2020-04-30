@@ -27,4 +27,8 @@ public class BannerUtil {
     public static boolean isBanner(Material mat) {
         return mat.name().contains("BANNER");
     }
+    
+    public static boolean isWallBanner(Material mat) {
+        return isBanner(mat) && mat.name().contains("WALL");
+    }
 }

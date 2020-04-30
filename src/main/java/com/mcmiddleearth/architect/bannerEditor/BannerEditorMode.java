@@ -12,6 +12,7 @@ import lombok.Getter;
  * @author Eriol_Eandur
  */
 public enum BannerEditorMode {
+    ORIENTATION ("o","",": Selects orientation mode."),
     LIST    ("l","",": Selects list patterns mode."),
     TEXTURE ("t","",": Selects cycle texture mode."),
     COLOR   ("c","",": Selects cycle color mode."),
