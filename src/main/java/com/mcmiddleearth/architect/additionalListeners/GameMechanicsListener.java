@@ -138,7 +138,8 @@ public class GameMechanicsListener extends WatchedListener{
     public void onWalkMagma(EntityDamageEvent event) {
         if (PluginData.isModuleEnabled(event.getEntity().getWorld(), Modules.PLAYER_DAMAGE_BLOCKING)
                 && event.getEntity() instanceof Player
-                && event.getCause().equals(DamageCause.HOT_FLOOR)) {
+                && (event.getCause().equals(DamageCause.FALL)
+                     || event.getCause().equals(DamageCause.HOT_FLOOR))) {
             event.setCancelled(true);
         }
     }

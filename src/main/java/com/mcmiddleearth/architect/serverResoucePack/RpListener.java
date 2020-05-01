@@ -73,7 +73,7 @@ public class RpListener implements Listener{
                             //if(data.isAutoRp()) {
                                 String rp = RpManager.getRpForUrl(lastUrl);
 //    Logger.getGlobal().info("On PlayerConnect: Set rp to last url: "+rp+" "+ lastUrl);        
-                                RpManager.setRp(rp, player);
+                                RpManager.setRp(rp, player, false);
                             //}
                         }
                         cancel();
