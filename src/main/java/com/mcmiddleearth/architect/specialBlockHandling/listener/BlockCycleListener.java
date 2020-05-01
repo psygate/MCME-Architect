@@ -112,9 +112,13 @@ public class BlockCycleListener implements Listener {
                 Attribute attrib = blockDataManager.getAttribute(data);
                 if(attrib!=null) {
                     attrib.cycleState();
-                    block.setBlockData(data,false);
-                    PluginData.getMessageUtil().sendInfoMessage(p,"Set Block State: "
+                    if(PluginData.isAllowedBlock(p, data)) {
+                        block.setBlockData(data,false);
+                        PluginData.getMessageUtil().sendInfoMessage(p,"Set Block State: "
                                                                 + attrib.getName()+" : "+attrib.getState());
+                    } else {
+                        PluginData.getMessageUtil().sendErrorMessage(p, "Block state: "+data.toString()+" is not allowed.");
+                    }
                 }
             }
         }
