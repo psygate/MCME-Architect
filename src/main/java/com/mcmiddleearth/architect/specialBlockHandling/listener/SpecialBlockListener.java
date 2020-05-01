@@ -27,10 +27,12 @@ import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOnWater;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -105,9 +107,10 @@ public class SpecialBlockListener extends WatchedListener{
     @EventHandler
     public void placeSpecialBlock(PlayerInteractEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
-                || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || !event.getHand().equals(EquipmentSlot.HAND) 
-                || event.getPlayer().getInventory().getItemInMainHand()==null
+                || event.getAction().equals(Action.LEFT_CLICK_AIR)
+                || event.getAction().equals(Action.PHYSICAL)
+                || event.getAction().equals(Action.LEFT_CLICK_BLOCK)
                 || event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)
                 || !(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())) {
             return;
@@ -116,7 +119,9 @@ public class SpecialBlockListener extends WatchedListener{
         final ItemStack handItem = player.getInventory().getItemInMainHand();
         SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
         if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
-                        || data.getType().equals(SpecialBlockType.DOOR_VANILLA)) {
+                        || data.getType().equals(SpecialBlockType.DOOR_VANILLA)
+                        || (!data.getType().equals(SpecialBlockType.BLOCK_ON_WATER)
+                                && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
             return;
         }
         event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item
@@ -134,7 +139,12 @@ public class SpecialBlockListener extends WatchedListener{
             PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
             return;
         }
-        Block blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
+        Block blockPlace;
+        if(data instanceof SpecialBlockOnWater) {
+            blockPlace = player.getTargetBlockExact(4, FluidCollisionMode.ALWAYS).getRelative(BlockFace.UP);
+        } else {
+            blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
+        }
         if(!blockPlace.isEmpty() 
                 && !blockPlace.getType().equals(Material.GRASS)
                 && !blockPlace.getType().equals(Material.FIRE)
