@@ -97,8 +97,8 @@ public class SpecialBlockDoor extends SpecialBlock {
         new BukkitRunnable() {
             @Override
             public void run() {
-                lowerState.update(true, false);
-                upperState.update(true, false);
+                lowerState.getBlock().setBlockData(lowerState.getBlockData(),false);//update(true, false);
+                upperState.getBlock().setBlockData(upperState.getBlockData(),false);//.update(true, false);
                 DevUtil.log("4 door block place: ID "+lowerState.getType()+" - DV "+lowerState.getRawData());
                 DevUtil.log("4 door block place: ID "+upperState.getType()+" - DV "+upperState.getRawData());
                 final BlockState tempLowerState = lowerState.getBlock().getState();
@@ -147,8 +147,8 @@ public class SpecialBlockDoor extends SpecialBlock {
                         public void run() {
                             DevUtil.log("4 door block place x2: ID "+tempLowerState.getType()+" - DV "+tempLowerState.getRawData());
                             DevUtil.log("4 door block place x2: ID "+tempUpperState.getType()+" - DV "+tempUpperState.getRawData());
-                            tempLowerState.update(true, false);
-                            tempUpperState.update(true, false);
+                            tempLowerState.getBlock().setBlockData(tempLowerState.getBlockData(),false);//.update(true, false);
+                            tempUpperState.getBlock().setBlockData(tempUpperState.getBlockData(),false);//.update(true, false);
                         }
                     }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                 }

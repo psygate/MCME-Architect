@@ -52,30 +52,16 @@ public class SpecialBlockBurningFurnace extends SpecialBlock {
         org.bukkit.block.data.type.Furnace data = (org.bukkit.block.data.type.Furnace)getBlockData();
         data.setLit(true);
         data.setFacing(getBlockFace(playerLoc.getYaw()).getOppositeFace());
-        state.setBlockData(data);
-        /* 1.13 removed 
-        switch(getBlockFace(playerLoc.getYaw())) {
-            case NORTH:
-                //state.setRawData((byte)3);
-                data.setFacing(blockFace);
-                break;
-            case SOUTH:
-                state.setRawData((byte)2);
-                break;
-            case EAST:
-                state.setRawData((byte)4);
-                break;
-            default:
-                state.setRawData((byte)5);
-                break;
-        }*/
-        state.update(true, false);
+        //state.setBlockData(data);
+        //state.update(true, false);
+        blockPlace.setBlockData(data,false);
         new BukkitRunnable() {
             @Override
             public void run() {
                 final Furnace furnace = (Furnace) blockPlace.getState();
                 furnace.setBurnTime(Short.MAX_VALUE);
-                furnace.update(true, false); 
+                //furnace.update(true, false); 
+                blockPlace.setBlockData(furnace.getBlockData(),false);
                 new BukkitRunnable() {
                     @Override
                     public void run(){

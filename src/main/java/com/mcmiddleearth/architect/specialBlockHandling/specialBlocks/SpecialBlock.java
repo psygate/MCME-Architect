@@ -103,14 +103,16 @@ public class SpecialBlock {
         new BukkitRunnable() {
             @Override
             public void run() {
-                state.update(true, false);
+                //state.update(true, false);
+                blockPlace.setBlockData(state.getBlockData(), false);
                 DevUtil.log("Special block place: ID "+state.getType()+" - DV "+state.getRawData());
                 final BlockState tempState = getBlockState(blockPlace, blockFace, playerLoc);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         DevUtil.log("Special block place x2: loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
-                        tempState.update(true, false);
+                        //tempState.update(true, false);
+                        blockPlace.setBlockData(tempState.getBlockData(),false);
                         NoPhysicsListener.connectNoPhysicsBlocks(blockPlace);
                         ChunkUpdateUtil.sendUpdates(blockPlace, player);
                         //new ClientUpdateUtil().sendBlockPlaceUpdates(blockPlace,player);

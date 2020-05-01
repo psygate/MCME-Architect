@@ -55,7 +55,7 @@ public class FurnaceListener extends WatchedListener{
         final Material smelting = ((Furnace) block.getState()).getInventory().getSmelting().getType();
         final Furnace furnace = (Furnace) block.getState();
         furnace.setBurnTime(Short.MAX_VALUE);
-        furnace.update(true, false);
+        furnace.getBlock().setBlockData(furnace.getBlockData(), false);//.update(true, false);
 //Logger.getLogger(this.getClass().getName()).info("smelting "+ smelting.toString());
         new BukkitRunnable() {
             @Override
@@ -98,11 +98,12 @@ public class FurnaceListener extends WatchedListener{
                 //furnace.getInventory().setFuel(new ItemStack(Material.COAL));
             } else {
                 //event.setCurrentItem(new ItemStack(Material.AIR));
-                furnace.setBurnTime((short)2);
+                furnace.setBurnTime((short)-1);
+                
                 smelting = new ItemStack(Material.AIR);
                 fuel = new ItemStack(Material.AIR);
             }
-            furnace.update(true,false);
+            furnace.getBlock().setBlockData(furnace.getBlockData(), false);//.update(true,false);
             final ItemStack finalSmelting = smelting;
             final ItemStack finalFuel = fuel;
             new BukkitRunnable() {

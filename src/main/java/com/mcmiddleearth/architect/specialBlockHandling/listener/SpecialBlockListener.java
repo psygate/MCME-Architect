@@ -254,7 +254,7 @@ public class SpecialBlockListener extends WatchedListener{
                 || event.getBlockPlaced().getType().equals(Material.END_PORTAL_FRAME) ) {
             BlockState state = event.getBlock().getState();
             state.setRawData((byte)0);
-            state.update(true,false);
+            state.getBlock().setBlockData(state.getBlockData(),false);//update(true,false);
         }
     }
     
@@ -817,14 +817,14 @@ public class SpecialBlockListener extends WatchedListener{
                 Furnace furnace = (Furnace) event.getBlock().getState();
                 furnace.setType(Material.FURNACE);
                 furnace.setRawData(getPistonOrFurnaceDat(p.getLocation().getYaw(),0,Material.FURNACE));
-                furnace.update(true, false);
+                furnace.getBlock().setBlockData(furnace.getBlockData(), false);//.update(true, false);
                 final Block block = event.getBlock();
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         final Furnace furnace = (Furnace) block.getState();
                         furnace.setBurnTime(Short.MAX_VALUE);
-                        furnace.update(true, false); 
+                        furnace.getBlock().setBlockData(furnace.getBlockData(), false);//update(true, false); 
                         new BukkitRunnable() {
                             @Override
                             public void run(){

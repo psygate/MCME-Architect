@@ -89,40 +89,8 @@ public class SpecialBlockDoorThreeBlocks extends SpecialBlockDoor {
                     data.setPowered(lowerData.isPowered());
                     data.setHinge(lowerData.getHinge());
                     state.setBlockData(data);
-                    /* 1.13 removed 
-                    if(lowerBlock.getData()%2!=0) {  //check for hinge right
-                        switch(getBlockFace(playerLoc.getYaw())) {
-                            case NORTH:
-                                state.setRawData((byte)3);
-                                break;
-                            case SOUTH:
-                                state.setRawData((byte)1);
-                                break;
-                            case EAST:
-                                state.setRawData((byte)0);
-                                break;
-                            default:
-                                state.setRawData((byte)2);
-                                break;
-                        }
-                    } else {
-                        switch(getBlockFace(playerLoc.getYaw())) {
-                            case NORTH:
-                                state.setRawData((byte)4);
-                                break;
-                            case SOUTH:
-                                state.setRawData((byte)6);
-                                break;
-                            case EAST:
-                                state.setRawData((byte)5);
-                                break;
-                            default:
-                                state.setRawData((byte)7);
-                                break;
-                        }
-                    }*/
                     DevUtil.log("4 half door block place: ID "+state.getType()+" - DV "+state.getRawData());
-                    state.update(true, false);
+                    state.getBlock().setBlockData(state.getBlockData(),false);//.update(true, false);
                 } else {
                     DevUtil.log("invalid door material: ID "+state.getType());
                 }

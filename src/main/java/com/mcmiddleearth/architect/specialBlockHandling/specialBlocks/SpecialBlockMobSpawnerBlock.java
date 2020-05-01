@@ -80,7 +80,7 @@ public class SpecialBlockMobSpawnerBlock extends SpecialBlock {
         final Location loc = blockPlace.getLocation();
         final BlockState state = getBlockState(blockPlace, blockFace, playerLoc);
         state.setType(Material.SPAWNER);
-        state.update(true, false);
+        state.getBlock().setBlockData(state.getBlockData(),false);//.update(true, false);
         final BlockState spawner = blockPlace.getState();
         if(! spawner.getType().equals(Material.SPAWNER)) {
             DevUtil.log("Mob spawner block place failed: "+loc.getBlockX()+" - "

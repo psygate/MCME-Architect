@@ -75,14 +75,14 @@ public class SpecialBlockOpenHalfDoor extends SpecialBlockFourDirections {
         new BukkitRunnable() {
             @Override
             public void run() {
-                state.update(true, false);
+                state.getBlock().setBlockData(state.getBlockData(),false);//.update(true, false);
                 DevUtil.log("Special block place: ID "+state.getType()+" - DV "+state.getRawData());
                 final BlockState tempState = getBlockState(blockPlace, blockFace, playerLoc);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         DevUtil.log("Special block place x2: loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
-                        tempState.update(true, false);
+                        tempState.getBlock().setBlockData(tempState.getBlockData(),false);//.update(true, false);
                         new BukkitRunnable() {
                             @Override
                             public void run() {
