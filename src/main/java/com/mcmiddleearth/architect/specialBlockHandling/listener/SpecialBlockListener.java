@@ -107,6 +107,7 @@ public class SpecialBlockListener extends WatchedListener{
     @EventHandler
     public void placeSpecialBlock(PlayerInteractEvent event) {
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
+                || event.getHand() == null
                 || !event.getHand().equals(EquipmentSlot.HAND) 
                 || event.getAction().equals(Action.LEFT_CLICK_AIR)
                 || event.getAction().equals(Action.PHYSICAL)
