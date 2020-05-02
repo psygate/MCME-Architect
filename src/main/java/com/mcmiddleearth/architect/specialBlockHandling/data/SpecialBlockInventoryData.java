@@ -40,6 +40,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlo
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemTwoDirections;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMatchOrientation;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockMobSpawnerBlock;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOnWater;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOpenHalfDoor;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanilla;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockVanillaDoor;
@@ -185,6 +186,9 @@ public class SpecialBlockInventoryData {
                     switch(type) {
                         case BLOCK:
                             blockData = SpecialBlock.loadFromConfig(section, fullName(rpName,itemKey));
+                            break;
+                        case BLOCK_ON_WATER:
+                            blockData = SpecialBlockOnWater.loadFromConfig(section, fullName(rpName,itemKey));
                             break;
                         case THREE_AXIS:
                             blockData = SpecialBlockThreeAxis.loadFromConfig(section, fullName(rpName,itemKey));

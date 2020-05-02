@@ -61,10 +61,10 @@ public class WorldConfig {
     private static final String ALLOWED_ENCHANTS = "allowedEnchantments";
     private static final String NO_INTERACTION = "noInteraction";
     private static final String DOUBLE_SLAB_REPLACEMENTS = "doubleSlabReplacements";
+    private static final String DISABLED_BLOCK_STATES = "disabledBlockStates";
 
     private static final int defaultItemBlockBaseLimit = 5;
     
-    // 1.13 moved to NoPhysicsData private List<Integer> npList;
     private final String worldName;
 
     @Getter
@@ -73,8 +73,11 @@ public class WorldConfig {
     private YamlConfiguration defaultConfig;
 
     private List<BlockData> noInteraction = new ArrayList<>();
+
+    private List<BlockData> disabledBlockStates = new ArrayList<>();
     
     private Map<String,Integer> allowedEnchants = new HashMap<>();
+    
     
     private Map<String,Map<BlockData,BlockData>> doubleSlabReplacements = new HashMap<>();
     
@@ -110,35 +113,7 @@ public class WorldConfig {
         loadNoInteraction();
         loadAllowedEnchants();
         loadDoubleSlabReplacements();
-        /*} else { 
-            if(defaultConfigFile.exists()) {
-                config = YamlConfiguration.loadConfiguration(defaultConfigFile);
-            }
-            else {
-                config = new YamlConfiguration();
-                for(Modules modul : Modules.values()) {
-                    config.set(modul.getModuleKey(), true);
-                }
-                config.set(NO_PHYSICS_LIST, new ArrayList<Integer>());
-                createInventoryAccess();
-                createNoInteraction();
-                try {
-                    config.save(defaultConfigFile);
-                } catch (IOException ex) {
-                    Logger.getLogger(PluginData.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            npList = config.getIntegerList(NO_PHYSICS_LIST);
-            saveConfigFile();
-        }
-        if(config.getConfigurationSection(INVENTORY_ACCESS)==null) {
-            createInventoryAccess();
-            saveConfigFile();
-        }
-        if(config.getConfigurationSection(NO_INTERACTION)==null) {
-            createNoInteraction();
-            saveConfigFile();
-        }*/
+        loadDisabledBlockStates();
     }
 
     private File getConfigFile() {
@@ -156,18 +131,10 @@ public class WorldConfig {
         createNoInteraction(config);
         createAllowedEnchants(config);
         createDoubleSlabReplacements(config);
+        createDisabledBlockStates(config);
         return config;
     }
 
-    /*public final void saveConfigFile(){
-        worldConfig.set(NO_PHYSICS_LIST, npList);
-        File file = new File(worldConfigDir+"/"+worldName+"."+cfgExtension);
-        try {
-            worldConfig.save(file);
-        } catch (IOException ex) {
-            Logger.getLogger(WorldConfig.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
     private void saveDefaultConfig() {
         try {
             defaultConfig.save(defaultConfigFile);
@@ -202,18 +169,6 @@ public class WorldConfig {
         saveWorldConfig();
     }
 
-    /* 1.13 removed 
-    public String getNoPhysicsListAsString() {
-        String result="";
-       String[] npArray = npList.toArray(new Integer[0]);
-       Arrays.sort(npArray);
-        for(Integer i:npArray) {
-            result = result + i + " ";
-        }
-        return result;
-       return worldConfig
-    }
-     */
     private void convertNoPhysicsList() {
         List<String> npList = worldConfig.getStringList(NO_PHYSICS_LIST);
         List<String> convertedList = new ArrayList<>();
@@ -246,15 +201,6 @@ public class WorldConfig {
         }
     }
 
-    /*
-    public void saveNoPhysicsList(List<String> npList) {
-        if(worldConfig.contains(NO_PHYSICS_LIST)) {
-            updateWorldNPConfig(npList);
-        } else {
-            defaultConfig.set(NO_PHYSICS_LIST, npList);
-            uddateDefaultNPConfig(npList);
-        }
-    }*/
     public boolean addToNpList(String blockId) {
         List<String> npList = getWorldNoPhysicsList();
         if (npList.contains(blockId)) {
@@ -266,29 +212,6 @@ public class WorldConfig {
             checkDeleteWorldNPConfig();
             return true;
         }
-        /* 1.13 removed 
-        boolean isNP = isNoPhysicsBlock(blockId);
-        if(setDefault) {
-            addToDefaultNPConfig(blockId);
-        }
-        if(!isNP) {
-            npList.add(blockId);
-            if(worldConfig.contains(NO_PHYSICS_LIST)) {
-                updateWorldNPConfig();
-            } else {
-                if(!setDefault) {
-                    createWorldNPConfig();
-                }
-            }
-        }
-        checkDeleteWorldNPConfig();
-        return !isNP;
-        /*if(!isNoPhysicsBlock(blockId)) {
-            npList.add(blockId);
-            saveNoPhyisicList();
-            return true;
-        }
-        return false;*/
     }
 
     public boolean removeFromNpList(String blockId) {
@@ -302,58 +225,8 @@ public class WorldConfig {
             checkDeleteWorldNPConfig();
             return true;
         }
-        /* 1.13 removed
-        boolean isNP = isNoPhysicsBlock(blockId);
-        if(setDefault) {
-            removeFromDefaultNPConfig(blockId);
-        }
-        if(isNP) {
-            npList.remove(npList.indexOf(blockId));
-            if(worldConfig.contains(NO_PHYSICS_LIST)) {
-                updateWorldNPConfig();
-            } else {
-                if(!setDefault) {
-                    createWorldNPConfig();
-                }
-            }
-        }
-        checkDeleteWorldNPConfig();
-        return isNP;
-        if(isNoPhysicsBlock(blockId)) {
-            npList.remove(npList.indexOf(blockId));
-            saveConfigFile();
-            return true;
-        }
-        return false;*/
     }
 
-    /* 1.13 removed 
-    private void addToDefaultNPConfig(String blockData) {
-        List<String> defaultList = defaultConfig.getStringList(NO_PHYSICS_LIST);
-        if(!defaultList.contains(blockData)) {
-            defaultList.add(blockData);
-            defaultConfig.set(NO_PHYSICS_LIST, defaultList);
-            saveDefaultConfig();
-        }
-    }
-    
-    private void removeFromDefaultNPConfig(String blockData) {
-        List<String> defaultList = defaultConfig.getStringList(NO_PHYSICS_LIST);
-        if(defaultList.contains(blockData)) {
-            defaultList.remove(defaultList.indexOf(blockData));
-            defaultConfig.set(NO_PHYSICS_LIST, defaultList);
-            saveDefaultConfig();
-        }
-    }
-    
-    private void updateWorldNPConfig(List<String> npList) {
-        worldConfig.set(NO_PHYSICS_LIST, npList);
-        saveWorldConfig();
-    }
-    
-    private void createWorldNPConfig(List<String> npList) {
-        updateWorldNPConfig(npList);
-    }*/
     private List<String> getWorldNoPhysicsList() {
         if (worldConfig.contains(NO_PHYSICS_LIST)) {
             return worldConfig.getStringList(NO_PHYSICS_LIST);
@@ -412,25 +285,6 @@ public class WorldConfig {
             }
             return result == null ? InventoryAccess.TRUE : result;
         }
-        /*    if(key == null) {
-                section.set(inventory.getType().name(), "TRUE");
-                saveDefaultConfig();
-                return InventoryAccess.TRUE;
-            //}
-                ConfigurationSection shulkerConfig 
-                        = section.getConfigurationSection(inventory.getType().name());
-                if(shulkerConfig==null) {
-                    return createNewInventoryConfigEntry(section,inventory.getType().name());
-                }
-                key = shulkerConfig.getString("ID"+((ShulkerBox)inventory.getHolder())
-                                            .getRawData());
-                if(key==null) {
-                    return createNewInventoryConfigEntry(shulkerConfig,
-                                "ID"+((ShulkerBox)inventory.getHolder()).getRawData());
-                }
-            }
-            return InventoryAccess.valueOf(key);
-        }*/
         String configValue = section.getString(inventory.getType().name());
         if (configValue == null && !defaultValue) {
             defaultValue = true;
@@ -454,14 +308,11 @@ public class WorldConfig {
                     = section.getConfigurationSection(key);
             configValue = shulkerConfig.getString("id" + ((ShulkerBox) inventory.getHolder())
                     .getType().getId());
-//Logger.getGlobal().info("Config id: "+configValue);
             if (configValue == null) {
                 configValue = shulkerConfig.getString("default");
-//Logger.getGlobal().info("Config default: "+configValue);
             }
         } else {
             configValue = section.getString(key);
-//Logger.getGlobal().info("Config string: "+configValue);
         }
         return configValue == null ? null : InventoryAccess.valueOf(configValue);
     }
@@ -494,7 +345,6 @@ public class WorldConfig {
     }
 
     public boolean getNoInteraction(BlockData data) {
-//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"CheckNoInteraction: "+data.getAsString());        
         return noInteraction.stream().anyMatch((search) -> (data.matches(search)));
     }
     
@@ -512,12 +362,30 @@ public class WorldConfig {
             }
         }
         noInteraction.clear();
-//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"interactionDAta: "+data.size());
         for(String entry: data) {
-            BlockData blockData = Bukkit.createBlockData(entry);
-            noInteraction.add(blockData);
-//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,blockData.getAsString());
+            try {
+                BlockData blockData = Bukkit.createBlockData(entry);
+                noInteraction.add(blockData);
+            } catch(IllegalArgumentException ex) {
+                Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING,"Illegal block data for no interaction block.");
+            }
         }
+    }
+    
+    private void createNoInteraction(ConfigurationSection config) {
+        List<String> list = new ArrayList<>();
+        list.add("minecraft:acacia_fence_gate");
+        list.add("minecraft:birch_fence_gate[powered=true]");
+        list.add("minecraft:jungle_fence_gate");
+        list.add("minecraft:dark_oak_fence_gate");
+        list.add("minecraft:spruce_fence_gate");
+        list.add("minecraft:acacia_door[powered=false]");
+        list.add("minecraft:jungle_door[powered=false]");
+        list.add("minecraft:dark_oak_door[powered=false]");
+        list.add("minecraft:spruce_door[powered=false]");
+        list.add("minecraft:repeater");
+        list.add("minecraft:comparator");
+        config.set(NO_INTERACTION, list);
     }
     
     public boolean isAllowedEnchantment(String enchantment, int level) {
@@ -545,6 +413,11 @@ public class WorldConfig {
         }
     }
 
+    private void createAllowedEnchants(ConfigurationSection config) {
+        ConfigurationSection section = config.createSection(ALLOWED_ENCHANTS);
+        section.set("Durability", 1);
+    }
+    
     public BlockData getDoubleSlabReplacement(BlockData replace, String rp) {
         Map<BlockData,BlockData> replacements = doubleSlabReplacements.get(rp.toLowerCase());
         if(replacements!=null) {
@@ -580,44 +453,6 @@ public class WorldConfig {
         }
     }
     
-    private void createNoInteraction(ConfigurationSection config) {
-        List<String> list = new ArrayList<>();
-        list.add("minecraft:acacia_fence_gate");
-        list.add("minecraft:birch_fence_gate[powered=true]");
-        list.add("minecraft:jungle_fence_gate");
-        list.add("minecraft:dark_oak_fence_gate");
-        list.add("minecraft:spruce_fence_gate");
-        list.add("minecraft:acacia_door[powered=false]");
-        list.add("minecraft:jungle_door[powered=false]");
-        list.add("minecraft:dark_oak_door[powered=false]");
-        list.add("minecraft:spruce_door[powered=false]");
-        list.add("minecraft:repeater");
-        list.add("minecraft:comparator");
-        config.set(NO_INTERACTION, list);
-        
-        /*section.set(Material.OAK_FENCE_GATE.name(), "8-15"); //1.13 renamed
-        section.set(Material.SPRUCE_FENCE_GATE.name(), "0-15");
-        section.set(Material.BIRCH_FENCE_GATE.name(), "8-15");
-        section.set(Material.JUNGLE_FENCE_GATE.name(), "0-15");
-        section.set(Material.ACACIA_FENCE_GATE.name(), "0-15");
-        section.set(Material.DARK_OAK_FENCE_GATE.name(), "0-15");
-        section.set(Material.ACACIA_FENCE_GATE.name(), "0-15");
-        section.set(Material.OAK_DOOR.name(), "10-11"); //1.13 renamed
-        section.set(Material.JUNGLE_DOOR.name(), "10-11");
-        section.set(Material.SPRUCE_DOOR.name(), "10-11");
-        section.set(Material.ACACIA_DOOR.name(), "10-11");
-        section.set(Material.DARK_OAK_DOOR.name(), "10-11");
-        section.set(Material.REPEATER.name(), "0-15"); //1.13 renamed
-        //1.13 removed section.set(Material.DIODE_BLOCK_OFF.name(), "0-15");
-        section.set(Material.COMPARATOR.name(), "0-15"); //1.13 renamed
-        //1.13 removed section.set(Material.REDSTONE_COMPARATOR_OFF.name(), "0-15");*/
-    }
-    
-    private void createAllowedEnchants(ConfigurationSection config) {
-        ConfigurationSection section = config.createSection(ALLOWED_ENCHANTS);
-        section.set("Durability", 1);
-    }
-    
     private void createDoubleSlabReplacements(ConfigurationSection config) {
         ConfigurationSection section = config.createSection(DOUBLE_SLAB_REPLACEMENTS);
         ConfigurationSection rp = section.createSection("gondor");
@@ -626,5 +461,47 @@ public class WorldConfig {
         eg.set("to", Bukkit.createBlockData(Material.ACACIA_PLANKS).getAsString());
     }
     
+    public boolean isAllowedBlock(BlockData data) {
+Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"isAllowed: "+disabledBlockStates.size());
+        for(BlockData search : disabledBlockStates) {
+Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"check: "+search.getAsString());
+            if(data.matches(search)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void loadDisabledBlockStates() {
+        List<String> data;
+        if(worldConfig.contains(DISABLED_BLOCK_STATES)) {
+            data = worldConfig.getStringList(DISABLED_BLOCK_STATES);
+        } else {
+            if(defaultConfig.contains(DISABLED_BLOCK_STATES)) {
+                data = defaultConfig.getStringList(DISABLED_BLOCK_STATES);
+            } else {
+                createDisabledBlockStates(defaultConfig);
+                saveDefaultConfig();
+                data = defaultConfig.getStringList(DISABLED_BLOCK_STATES);
+            }
+        }
+        disabledBlockStates.clear();
+//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"interactionDAta: "+data.size());
+        for(String entry: data) {
+            try {
+                BlockData blockData = Bukkit.createBlockData(entry);
+                disabledBlockStates.add(blockData);
+            } catch(IllegalArgumentException ex) {
+                Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING,"Illegal block data for disabled block states.");
+            }
+        }
+//Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,blockData.getAsString());
+    }
+    
+    private void createDisabledBlockStates(ConfigurationSection config) {
+        List<String> list = new ArrayList<>();
+        list.add("minecraft:blue_stained_glass_pane[east=false,north=false,south=false,west=false]");
+        config.set(DISABLED_BLOCK_STATES, list);
+    }
     
 }

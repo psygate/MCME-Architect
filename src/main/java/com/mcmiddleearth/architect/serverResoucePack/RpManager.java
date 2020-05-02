@@ -251,7 +251,7 @@ public class RpManager {
 //Logger.getGlobal().info("new: "+newRegion+" current: "+data.getCurrentRegion());
                 data.setCurrentRegion(newRegion);
                 if(newRegion!=null) {
-                    setRp(newRegion.getRp(), player);
+                    setRp(newRegion.getRp(), player, false);
                     return true;
                 }
             }
@@ -259,12 +259,12 @@ public class RpManager {
         return false;
     }
     
-    public static boolean setRp(String rpName, Player player) {
+    public static boolean setRp(String rpName, Player player, boolean force) {
         String url = getRpUrl(rpName, player);
         RpPlayerData data = getPlayerData(player);
 //Logger.getGlobal().info("set Resouce Pack for: "+player.getName()+" "+rpName);
 //Logger.getGlobal().info("url: "+url+" current: "+data.getCurrentRpUrl());
-        if(url!=null && data!=null && !url.equals("") && !url.equals(data.getCurrentRpUrl())) {
+        if(url!=null && data!=null && !url.equals("") && (force || !url.equals(data.getCurrentRpUrl()))) {
             data.setCurrentRpUrl(url);
 //Logger.getGlobal().info("set!");
             player.setResourcePack(url, getSHA(rpName, player));

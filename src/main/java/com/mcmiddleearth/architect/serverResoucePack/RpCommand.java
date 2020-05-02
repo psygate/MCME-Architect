@@ -126,8 +126,9 @@ public class RpCommand extends AbstractArchitectCommand {
                     break;
             }
             RpManager.savePlayerData((Player)cs);
-            if(data.isAutoRp() && data.getCurrentRegion()!=null) {
-                RpManager.setRp(data.getCurrentRegion().getRp(), (Player)cs);
+            if((data.isAutoRp() || !args[0].equalsIgnoreCase("auto"))
+                    && data.getCurrentRegion()!=null) {
+                RpManager.setRp(data.getCurrentRegion().getRp(), (Player)cs, false);
             }
             return true;
         }
@@ -225,7 +226,11 @@ public class RpCommand extends AbstractArchitectCommand {
                                                             +ccStressed+rpName);
             return true;
         }
-        if(RpManager.setRp(rpName,(Player)cs)) {
+        boolean force = false;
+        if(args.length>1 && args[1].equalsIgnoreCase("-force")) {
+            force = true;
+        }
+        if(RpManager.setRp(rpName,(Player)cs,force)) {
             PluginData.getMessageUtil().sendInfoMessage(cs, "Server resource pack set to: "
                                                             +ccStressed+rpName);
         } else {

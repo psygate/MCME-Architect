@@ -175,6 +175,9 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
     private void sendInfoMessage(CommandSender cs, BannerEditorConfig playerConfig) {
                     PluginData.getMessageUtil().sendInfoMessage(cs,"banner editor mode: ");
                     switch(playerConfig.getEditorMode()) {
+                        case ORIENTATION:
+                            PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> change orientation");
+                            break;
                         case LIST:
                             PluginData.getMessageUtil().sendNoPrefixInfoMessage(cs,"   -> list patterns");
                             break;

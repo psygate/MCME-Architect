@@ -56,8 +56,6 @@ public class PluginData {
     @Getter
     private static String defaultKey = "-default";
                                        
-    //private static final Map<String, String> rpUrls = new HashMap<>();
-    
     @Getter
     @Setter
     private static boolean overrideWeather = false;
@@ -100,11 +98,6 @@ public class PluginData {
     }
     
     public static void load(){
-        /*ConfigurationSection rpConfig = ArchitectPlugin.getPluginInstance().getConfig()
-                                                       .getConfigurationSection("ServerResourcePacks");
-        for(String rpKey: rpConfig.getKeys(false)) {
-            rpUrls.put(rpKey, rpConfig.getString(rpKey));
-        }*/
         ConfigurationSection entityConfig = ArchitectPlugin.getPluginInstance().getConfig()
                                                        .getConfigurationSection(ENITIY_LIMIT_SECTION);
         if(entityConfig==null) {
@@ -133,12 +126,6 @@ public class PluginData {
             configureWorld(world);
         }
     }
-    
-    /*public static void save() throws IOException{
-        for(WorldConfig config:worldConfigs.values()) {
-            config.saveConfigFile();
-        }
-    }*/
     
     public static boolean hasPermission(CommandSender player, Permission perm) {
         return player.hasPermission(perm.getPermissionNode());
@@ -218,31 +205,6 @@ public class PluginData {
         return afkPlayerList.remove(player);
     }
     
-    /*public static String getRpUrl(String rpKey) {
-        if(rpUrls.containsKey(rpKey)) {
-            return rpUrls.get(rpKey);
-            }
-        return "";
-    }
-    
-    public static String getRpName(String rpUrl) {
-        for(String search: rpUrls.keySet()) {
-            if(rpUrls.get(search).equalsIgnoreCase(rpUrl)) {
-                return search;
-            }
-        }
-        return "";
-    }
-    
-    public static String matchRpName(String rpKey) {
-        for(String search: rpUrls.keySet()) {
-            if(search.toLowerCase().startsWith(rpKey.toLowerCase())) {
-                return search;
-            }
-        }
-        return "";
-    }*/
-    
     public static boolean moreEntitiesAllowed(Block block) {
         Collection<Entity> entities = block.getWorld().getNearbyEntities(block.getLocation(), 
                                                                             entityLimitRadius, 
@@ -265,6 +227,11 @@ public class PluginData {
             return false;
         } 
         return TheGafferUtil.checkGafferPermission(player,loc);
+   }
+    
+   public static boolean isAllowedBlock(Player player, BlockData data) {
+        WorldConfig config = getOrCreateWorldConfig(player.getWorld().getName());
+        return config.isAllowedBlock(data);
    }
     
 }

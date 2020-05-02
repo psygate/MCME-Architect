@@ -110,13 +110,13 @@ public class DoorUtil {
             Door data = (Door) state.getBlockData();
             if(isUpperDoorBlock(block.getRelative(BlockFace.UP))) {
                 data.setOpen(!data.isOpen());
-                state.setBlockData(data);
-                state.update(true, false);
+                state.getBlock().setBlockData(data,false);
+                //state.update(true, false);
                 state = block.getRelative(BlockFace.UP).getState();
                 data = (Door) state.getBlockData();
                 data.setOpen(!data.isOpen());
-                state.setBlockData(data);
-                state.update(true, false);
+                state.getBlock().setBlockData(data,false);
+                //state.update(true, false);
 //Logger.getGlobal().info("toggle !");
             }
 //Logger.getGlobal().info("dv new "+state.getRawData());

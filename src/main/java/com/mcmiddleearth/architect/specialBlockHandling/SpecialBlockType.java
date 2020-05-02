@@ -23,6 +23,7 @@ package com.mcmiddleearth.architect.specialBlockHandling;
 public enum SpecialBlockType {
     
     BLOCK         ,//("normal"),
+    BLOCK_ON_WATER,//("placed on top of clicked water block"),
     OPEN_HALF_DOOR, //("open half doors")
     FOUR_DIRECTIONS,//("fourFaced"),
     MATCH_ORIENTATION,//("fourFaced"),

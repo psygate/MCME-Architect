@@ -68,7 +68,7 @@ public class HeadUtil {
         try {
             BlockState blockState = block.getState();
             blockState.setType(Material.PLAYER_HEAD);
-            blockState.update(true, false);
+            blockState.getBlock().setBlockData(blockState.getBlockData());//.update(true, false);
             blockState = block.getState();
             Skull skullData = (Skull) blockState;
             //skullData.setSkullType(SkullType.PLAYER);
@@ -81,8 +81,8 @@ public class HeadUtil {
             //skullData.setRawData((byte)1);
             Rotatable data = ((Rotatable)skullData.getBlockData());
             data.setRotation(BlockFace.SOUTH_SOUTH_WEST);
-            skullData.setBlockData(data);
-            skullData.update(true, false);
+            skullData.getBlock().setBlockData(data);
+            //skullData.update(true, false);
         } catch (NoSuchFieldException | SecurityException e) {
             Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
         } catch (IllegalArgumentException | IllegalAccessException e) {
