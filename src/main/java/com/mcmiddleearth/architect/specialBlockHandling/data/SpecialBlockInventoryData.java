@@ -34,6 +34,7 @@ import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockBisected;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockBurningFurnace;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockDoubleY;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemFourDirections;
@@ -64,6 +65,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -190,6 +192,9 @@ public class SpecialBlockInventoryData {
                         case BLOCK_ON_WATER:
                             blockData = SpecialBlockOnWater.loadFromConfig(section, fullName(rpName,itemKey));
                             break;
+                        case BISECTED:
+                            blockData = SpecialBlockBisected.loadFromConfig(section, fullName(rpName,itemKey));
+                            break;
                         case THREE_AXIS:
                             blockData = SpecialBlockThreeAxis.loadFromConfig(section, fullName(rpName,itemKey));
                             break;
@@ -256,6 +261,7 @@ public class SpecialBlockInventoryData {
                     }
                     ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                     if(blockData !=null && inventoryItem!=null && !inventoryItem.getType().equals(Material.AIR)) {
+                        blockData.loadBlockCollection(section,rpName);
                         String category = section.getString("category","Block");
                         blockList.add(blockData);
                         inventory.add(inventoryItem, category);
@@ -277,35 +283,26 @@ public class SpecialBlockInventoryData {
     }
     
     public static boolean openInventory(Player p, String resourcePack) {
-        /*else {
-            resourcePack = resourcePack.toLowerCase();
-        }
-        if(resourcePack.toLowerCase().startsWith("e") 
-                || ArchitectPlugin.getPluginInstance().getConfig().get("Eriador").equals(resourcePack)) {
-            resourcePack = RP_ERIADOR;
-        } else if(resourcePack.toLowerCase().startsWith("r") 
-                || ArchitectPlugin.getPluginInstance().getConfig().get("Rohan").equals(resourcePack)) {
-            resourcePack = RP_ROHAN;
-        } else if(resourcePack.toLowerCase().startsWith("d") 
-                || ArchitectPlugin.getPluginInstance().getConfig().get("Dwarf").equals(resourcePack)) {
-            resourcePack = RP_DWARF;
-        } else if(resourcePack.toLowerCase().startsWith("m") 
-                || ArchitectPlugin.getPluginInstance().getConfig().get("Mordor").equals(resourcePack)) {
-            resourcePack = RP_MORDOR;
-        } else if(resourcePack.toLowerCase().startsWith("l") 
-                || ArchitectPlugin.getPluginInstance().getConfig().get("Lothlorien").equals(resourcePack)) {
-            resourcePack = RP_LOTHLORIEN;
-        } else {
-            resourcePack = RP_GONDOR;
-        }*/
+        return openInventory(p,resourcePack,null);
+    }
+    
+    private static boolean openInventory(Player p, String resourcePack, @Nullable ItemStack collectionBase) {
         CustomInventory inv = inventories.get(resourcePack);
         if(inv==null) {
             DevUtil.log("block inventory not found for "+resourcePack);
-            //inv = inventories.get("Gondor");
         }
         if(inv!=null && !inv.isEmpty()) {
-            inv.open(p);
+            inv.open(p,collectionBase);
             return true;
+        }
+        return false;
+    }
+    
+    public static boolean openInventory(Player p, ItemStack collectionBase) {
+        SpecialBlock baseBlock = getSpecialBlockDataFromItem(collectionBase);
+        if(baseBlock != null) {
+            String rpName = SpecialBlockInventoryData.rpName(baseBlock.getId());
+            return openInventory(p, rpName, collectionBase);
         }
         return false;
     }
@@ -338,14 +335,19 @@ public class SpecialBlockInventoryData {
     }
     
     public static SpecialBlock getSpecialBlockDataFromItem(ItemStack handItem) {
+        return getSpecialBlock(getSpecialBlockId(handItem));
+    }
+
+    public static String getSpecialBlockId(ItemStack handItem) {
         ItemMeta meta = handItem.getItemMeta();
         if(!(meta.hasLore() 
                 && meta.getLore().size()>1 
                 && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG))) {
             return null;
         }
-        return getSpecialBlock(meta.getLore().get(1));
+        return meta.getLore().get(1);
     }
+
     public static ItemStack getItem(Block block, String rpName) {
         //Material material = block.getType();
         //byte dataValue = block.getData();

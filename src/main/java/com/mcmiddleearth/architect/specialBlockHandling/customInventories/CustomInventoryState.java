@@ -16,7 +16,6 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 
-import java.util.List;
 import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,7 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * @author Eriol_Eandur
  */
-public class CustomInventoryState {
+public abstract class CustomInventoryState {
     
     final static public Material pagingMaterial = Material.GOLDEN_HELMET;
     final static public short pageUp = 1;
@@ -37,37 +36,31 @@ public class CustomInventoryState {
     final static public short pageLeft = 3;
     final static public short pageRight = 4;
     
-    private final Map<String,CustomInventoryCategory> categories;
+    protected final Map<String,CustomInventoryCategory> categories;
 
-    private final String[] categoryNames;
+    protected final String[] categoryNames;
     
-    private int upperLeftItem;
+    protected boolean stressCurrentCategoryItem = true;
+    
+    protected int currentCategory;
 
-    private int currentCategory;
-
-    private int leftCategory;
+    protected int leftCategory;
     
-    private final Inventory inventory;
+    protected final Inventory inventory;
     
-    private final Player player;
+    protected final Player player;
+    
+    
     
     public CustomInventoryState(Map<String, CustomInventoryCategory> categories, Inventory inventory, Player player) {
         this.categories = categories;
         this.categoryNames = categories.keySet().toArray(new String[0]);
         this.currentCategory = 0;
         this.leftCategory = 0;
-        this.upperLeftItem = 0;
         this.inventory = inventory;
         this.player = player;
         //showCat();
     }
-    
- /*   public void showCat() {
-        Logger.getGlobal().info("#############Categories###################");
-        for(String cat: categoryNames) {
-Logger.getGlobal().info(cat);
-        }
-    }*/
     
     public void update()  {
         inventory.clear();
@@ -86,7 +79,7 @@ Logger.getGlobal().info(cat);
             ItemStack item;
             CustomInventoryCategory cat = categories.get(categoryNames[i]);
             if(cat.isVisible(player)) {
-                if(i==currentCategory) {
+                if(stressCurrentCategoryItem && i==currentCategory) {
                      item = new ItemStack(cat.getCurrentCategoryItem());
                      ItemMeta meta = item.getItemMeta();
                      meta.setUnbreakable(false);
@@ -97,37 +90,10 @@ Logger.getGlobal().info(cat);
                 inventory.setItem(slotIndex, item);
                 slotIndex++;
             } else {
-//Logger.getGlobal().info("not visible!!!! "+categoryNames[i]);
             }
         }
         if(!isLastCategoryVisible()) {
             inventory.setItem(CustomInventory.CATEGORY_SLOTS-1, newPagingItem(pagingMaterial,pageRight,"next Categories"));
-        }
-        if(category.isVisible(player)) {
-            slotIndex = CustomInventory.CATEGORY_SLOTS;
-            /**while(category !=null && !category.isVisible(player)) {
-                current
-                category = 
-            }*/
-            List<ItemStack> items = category.getItems();
-//Logger.getGlobal().info("Visible slots "+visibleItemSlots());
-            for (int i = upperLeftItem; i < upperLeftItem + visibleItemSlots()
-                                      && i < items.size(); i++) {
-                    if(slotIndex==CustomInventory.CATEGORY_SLOTS+8 && !isFirstItemVisible()) { //leave pageUp slot empty if needed
-                        slotIndex++;
-                    }
-                    inventory.setItem(slotIndex, items.get(i));
-                    slotIndex++;
-                }
-            if(!isFirstItemVisible()) {
-                //inventory.setItem(slotIndex, newPagingItem(pagingMaterial,pageUp, "page up"));
-                inventory.setItem(CustomInventory.CATEGORY_SLOTS+8,
-                                  newPagingItem(pagingMaterial,pageUp, "page up"));
-            }
-            if(!isLastItemVisible()) {
-                inventory.setItem(CustomInventory.CATEGORY_SLOTS+CustomInventory.ITEM_SLOTS-1,
-                                  newPagingItem(pagingMaterial,pageDown, "page down"));
-            }
         }
     }
     
@@ -163,8 +129,7 @@ Logger.getGlobal().info(cat);
         }
     }
     
-    private void setCategory(int newCategory) {
-        upperLeftItem = 0;
+    protected void setCategory(int newCategory) {
         while(newCategory>=leftCategory+visibleCategorySlots()) {
             leftCategory -= visibleCategorySlots();
             if(leftCategory < 0) {
@@ -198,37 +163,16 @@ Logger.getGlobal().info(cat);
         }
     }
     
-    public void pageDown() {
-        if(!isLastItemVisible()) {
-            upperLeftItem += visibleItemSlots();
-        }
-//Logger.getGlobal().info("pageDown "+upperLeftItem);
-    }
+    public void pageDown(){}
     
-    public void pageUp() {
-        if(!isFirstItemVisible()) {
-            if(isLastItemVisible()) {
-                upperLeftItem -=visibleItemSlots()-1;
-            } else {
-                upperLeftItem -= visibleItemSlots();
-            }
-            if(upperLeftItem==1) {
-                upperLeftItem=0;
-            }
-            if(upperLeftItem<0) {
-                upperLeftItem = 0 ;
-            }
-        }
-//Logger.getGlobal().info("pageUp "+upperLeftItem);
-    }
+    public void pageUp(){}
     
     public boolean isPageUpSlot(int slot) {
-        return (slot == CustomInventory.CATEGORY_SLOTS+8 && !isFirstItemVisible());
+        return false;
     }
     
     public boolean isPageDownSlot(int slot) {
-        return (slot == CustomInventory.CATEGORY_SLOTS + CustomInventory.ITEM_SLOTS - 1
-                && !isLastItemVisible());
+        return false;
     }
     
     public boolean isPageLeftSlot(int slot) {
@@ -239,14 +183,6 @@ Logger.getGlobal().info(cat);
         return (slot == CustomInventory.CATEGORY_SLOTS-1
                 && !isLastCategoryVisible());
     }
-    
-    /*public String getCurrentCategory() {
-        return categories.get(currentCategory);
-    }
-
-    public String getLeftCategory() {
-        return categories.get(leftCategory);
-    }*/
     
     private int visibleCategorySlots() {
         if(countVisibleCategories()<=CustomInventory.CATEGORY_SLOTS) {
@@ -276,45 +212,6 @@ Logger.getGlobal().info(cat);
             return true;
         } else {
             return countVisibleCategoriesAfter(leftCategory) <= CustomInventory.CATEGORY_SLOTS-1;
-        }
-        /*return categories.size()<=CustomInventory.CATEGORY_SLOTS 
-                || categories.*/
-    }
-    
-    /*private boolean isFirstCategoryShown() {
-        return currentCategory == 0;
-    }
-    
-    private boolean isLastCategoryShown() {
-        if(categories.size()<=CustomInventory.CATEGORY_SLOTS) {
-            return true;
-        } else {
-            return categories.size() <= leftCategory + CustomInventory.CATEGORY_SLOTS-2;
-        }
-        //return currentCategory.equals(categories.get(categories.size()-1));
-    }*/
-    
-    private int visibleItemSlots() {
-        CustomInventoryCategory category = categories.get(categoryNames[currentCategory]);
-        if(category.size()<=CustomInventory.ITEM_SLOTS) {
-            return CustomInventory.ITEM_SLOTS;
-        } else  if(isFirstItemVisible() || isLastItemVisible()) {
-            return CustomInventory.ITEM_SLOTS-1;
-        } else {
-            return CustomInventory.ITEM_SLOTS-2;
-        }
-    }
-    
-    private boolean isFirstItemVisible() {
-        return upperLeftItem == 0;
-    }
-    
-    private boolean isLastItemVisible() {
-        CustomInventoryCategory category = categories.get(categoryNames[currentCategory]);
-        if(category.size()<=CustomInventory.ITEM_SLOTS) {
-            return true;
-        } else {
-            return category.size() <= upperLeftItem + CustomInventory.ITEM_SLOTS-2;
         }
     }
     
@@ -351,7 +248,7 @@ Logger.getGlobal().info(cat);
         return result;
     }
     
-    private ItemStack newPagingItem(Material material, short damage, String display) {
+    protected ItemStack newPagingItem(Material material, short damage, String display) {
         ItemStack item = new ItemStack(material,1,damage);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(display);

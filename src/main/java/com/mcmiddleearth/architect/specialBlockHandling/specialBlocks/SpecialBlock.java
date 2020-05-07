@@ -22,7 +22,12 @@ import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
 import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsListener;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.util.DevUtil;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,15 +49,14 @@ public class SpecialBlock {
     @Getter
     private final String id;
     
-    // 1.13 removed private final Material material;
-    
     @Getter
     private final BlockData blockData;
     
-    // 1.13 removed private final byte dataValue;
-    
     @Getter
     protected final SpecialBlockType type;
+    
+    @Getter
+    private final Map<String,String> collection = new HashMap<>();
     
     private SpecialBlock(String id, 
                         //Material material, 
@@ -95,6 +99,30 @@ public class SpecialBlock {
             }
         }
         return new SpecialBlock(id, data);
+    }
+    
+    public void loadBlockCollection(ConfigurationSection config, String rpName) {
+        try {
+            ConfigurationSection section = config.getConfigurationSection("collection");
+            if(section != null) {
+                section.getValues(false).forEach((key,entry)
+                     -> collection.put(key, SpecialBlockInventoryData.fullName(rpName,(String) entry)));
+            }
+        } catch(ClassCastException ex) {
+            Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.WARNING, "Error while loading special block collection!", ex);
+        }
+    }
+    
+    public boolean hasIndirectCollection() {
+        return collection.containsKey("indirect");
+    }
+    
+    public SpecialBlock getCollectionBase() {
+        return SpecialBlockInventoryData.getSpecialBlock(collection.get("indirect"));
+    }
+    
+    public boolean hasCollection() {
+        return !collection.isEmpty();
     }
     
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {

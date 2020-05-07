@@ -175,7 +175,7 @@ public class SpecialSavedInventoryData {
             inv = inventories.get("Gondor");
         }
         if(inv!=null) {
-            inv.open(p);
+            inv.open(p,null);
         }
     }
     

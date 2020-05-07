@@ -25,6 +25,7 @@ import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -32,9 +33,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -53,7 +56,7 @@ public class InventoryListener implements Listener{
      * in Architect config file.
      * @param event 
      */
-    @EventHandler(priority=EventPriority.LOWEST)  
+    @EventHandler(priority=EventPriority.LOW)  
     public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
@@ -98,9 +101,6 @@ public class InventoryListener implements Listener{
     /**
      * If module SPECIAL_BLOCK_GET is enabled in world config file
      * opens the custom block inventory when a player droppes two stone blocks from the creative inventory.
-     * Tries to read players metadata set by ResourceRegions plugin. 
-     * If there is no metadata tries to open inventory for resource pack "Gondor" as defined
-     * in Architect config file.
      * @param event 
      */
     @EventHandler(priority=EventPriority.LOWEST) 
@@ -132,6 +132,31 @@ public class InventoryListener implements Listener{
                         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
                     }
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
+            }
+        }
+    }
+    
+    /**
+     * If module SPECIAL_BLOCK_GET is enabled in world config file
+     * opens the custom block collection inventory when a player does a SHIFT-LEFT-CLICK.
+     * @param event 
+     */
+    @EventHandler(priority=EventPriority.LOW)  
+    public void openSpecialInventory(PlayerInteractEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
+                && event.getPlayer().isSneaking()
+                && (event.getAction().equals(Action.LEFT_CLICK_AIR)
+                    || event.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
+            event.setCancelled(true);
+            final Player p = (Player) event.getPlayer();
+            ItemStack handItem = p.getInventory().getItemInMainHand();
+            SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
+            if(base == null || !base.hasCollection()) {
+                sendNoInventoryError(p,"");
+                return;
+            }
+            if(!SpecialBlockInventoryData.openInventory(p, handItem)) {
+                sendNoInventoryError(p,"");
             }
         }
     }
@@ -210,5 +235,5 @@ public class InventoryListener implements Listener{
             PluginData.getMessageUtil().sendErrorMessage(p, "No custom inventory found for rp \""+rp+"\".");
         }
     }
-   
+       
 }
