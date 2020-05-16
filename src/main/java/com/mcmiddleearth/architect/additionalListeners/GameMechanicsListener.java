@@ -160,9 +160,29 @@ public class GameMechanicsListener extends WatchedListener{
         }
     }
 
-    //@EventHandler(ignoreCancelled = true)
-    //public void onFurnaceBurn(FurnaceBurnEvent event) {
-//Logger.getGlobal().info("Furnace "+event.isBurning());
+/*    @EventHandler(ignoreCancelled = false)
+    public void onFurnaceBurn(PlayerInteractEvent event) {
+        if(event.hasBlock()
+                && event.hasItem()
+                && event.getItem().getType().equals(Material.RABBIT_HIDE)) {
+Logger.getGlobal().info("Set biome ");
+            World world = event.getClickedBlock().getWorld();
+            for(int i = 0; i<16; i++) {
+                for(int j= 0; j<256; j++) {
+                    for(int k = 0; k<16;k++) {
+                        if(j<11) 
+                            world.setBiome(event.getClickedBlock().getX()+i, j, event.getClickedBlock().getZ()+k, Biome.FOREST);
+                                    else 
+                            world.setBiome(event.getClickedBlock().getX()+i, j, event.getClickedBlock().getZ()+k, Biome.SWAMP);
+                    }
+                }
+            }
+        }
+        if(event.hasBlock()
+                && event.hasItem()
+                && event.getItem().getType().equals(Material.RABBIT_FOOT)) {
+                    Logger.getGlobal().info("Biome: "+event.getClickedBlock().getBiome().name());
+        }
+    }*/
         
-    //}
 }

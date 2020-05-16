@@ -81,6 +81,7 @@ public enum Modules {
     
     BLOCK_OP_ITEMS            ("modules.protection.blockOpItems"),
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
+    LILY_PAD_PROTECTION       ("modules.protection.lilyPad"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");
     
     @Getter
