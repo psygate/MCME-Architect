@@ -391,12 +391,7 @@ public class RpManager {
                 Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }*/
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                playerRpData.put(uuid, dbConnector.loadRpSettings(uuid));
-            }
-        }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+        dbConnector.loadRpSettings(uuid,playerRpData);
     }
     
     public static void saveRpRegion(RpRegion region) {
