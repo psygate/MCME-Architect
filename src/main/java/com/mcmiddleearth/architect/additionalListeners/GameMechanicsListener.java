@@ -20,8 +20,11 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import org.bukkit.GameMode;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -159,6 +162,16 @@ public class GameMechanicsListener extends WatchedListener{
             event.getPlayer().setAllowFlight(true);
         }
     }
+    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void containerBreak(BlockBreakEvent event) {
+        if (PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.REMOVE_CONTAINER_ITEMS)
+                && event.getBlock().getState() instanceof Container) {
+            ((Container)event.getBlock().getState()).getInventory().clear();
+        }
+    }
+    
+    
 
 /*    @EventHandler(ignoreCancelled = false)
     public void onFurnaceBurn(PlayerInteractEvent event) {
