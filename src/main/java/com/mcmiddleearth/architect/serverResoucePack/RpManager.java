@@ -67,6 +67,8 @@ public class RpManager {
     private static Map<String, RpRegion> regions = new HashMap<>();
     
     private static Map<UUID,RpPlayerData> playerRpData = new HashMap<>();
+    
+    @Getter
     private static RpDatabaseConnector dbConnector = new RpDatabaseConnector(ArchitectPlugin.getPluginInstance().getConfig().getConfigurationSection(rpDatabaseConfig));
     
     @Getter

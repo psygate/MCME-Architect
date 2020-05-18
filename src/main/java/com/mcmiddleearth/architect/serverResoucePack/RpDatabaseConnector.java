@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
@@ -75,6 +76,8 @@ public class RpDatabaseConnector {
             @Override
             public void run() {
                 checkConnection();
+Logger.getGlobal().info("ArchitectTasks: "+Bukkit.getScheduler().getPendingTasks().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
+Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorkers().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
             }
         }.runTaskTimerAsynchronously(ArchitectPlugin.getPluginInstance(),0,1200);
     }
