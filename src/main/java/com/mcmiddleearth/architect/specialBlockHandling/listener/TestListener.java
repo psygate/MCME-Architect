@@ -16,7 +16,13 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
+import java.util.logging.Logger;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 
 /**
@@ -32,6 +38,24 @@ public class TestListener implements Listener{
     @EventHandler
     public void click(InventoryClickEvent event) {
         Logger.getGlobal().info("click "+event.getClick()+" "+event.getHotbarButton());
+    }
+    @EventHandler
+    public void onInventoryClickEvent(InventoryClickEvent event) {
+        Logger.getGlobal().info("InventoryClick action: "+event.getAction());
+        Logger.getGlobal().info("InventoryClick clickType: "+event.getClick());
+    }
+    
+    @EventHandler
+    public void onInventoryCreativeEvent(InventoryCreativeEvent event) {
+        Logger.getGlobal().info("InventoryClick action: "+event.getAction());
+        Logger.getGlobal().info("InventoryClick clickType: "+event.getClick());
+    }
+    
+    @EventHandler(priority=EventPriority.LOWEST)  
+    public void openSpecialInventoryEvent(PlayerSwapHandItemsEvent event) {
+        Logger.getGlobal().info("InventoryClick sneak: "+event.getPlayer().isSneaking());
+        Logger.getGlobal().info("InventoryClick sprint: "+event.getPlayer().isSprinting());
     }*/
+    
     
 }

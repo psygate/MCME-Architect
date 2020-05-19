@@ -122,7 +122,8 @@ public class SpecialBlockListener extends WatchedListener{
         if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
                         || data.getType().equals(SpecialBlockType.DOOR_VANILLA)
                         || (!data.getType().equals(SpecialBlockType.BLOCK_ON_WATER)
-                                && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
+                                && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                        || (event.hasBlock() && event.getClickedBlock().getType().equals(Material.FLOWER_POT))) {
             return;
         }
         event.setCancelled(true); //cancel Event for main and off hand to avoid perks plugin removing the item

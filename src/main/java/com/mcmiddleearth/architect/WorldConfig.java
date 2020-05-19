@@ -462,9 +462,7 @@ public class WorldConfig {
     }
     
     public boolean isAllowedBlock(BlockData data) {
-Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"isAllowed: "+disabledBlockStates.size());
         for(BlockData search : disabledBlockStates) {
-Logger.getLogger(ArchitectPlugin.class.getName()).log(Level.INFO,"check: "+search.getAsString());
             if(data.matches(search)) {
                 return false;
             }

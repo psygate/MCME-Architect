@@ -71,7 +71,7 @@ public class SpecialHeadInventoryData {
     
     
     public static void openInventory(Player p) {
-        inventory.open(p);
+        inventory.open(p,null);
     }
     
     public static void openSearchInventory(Player p, String search) {

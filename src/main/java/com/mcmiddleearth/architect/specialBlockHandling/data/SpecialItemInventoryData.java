@@ -149,7 +149,7 @@ public class SpecialItemInventoryData {
             inv = inventories.get("Gondor");
         }*/
         if(inv!=null && !inv.isEmpty()) {
-            inv.open(p);
+            inv.open(p,null);
             return true;
         }
         return false;

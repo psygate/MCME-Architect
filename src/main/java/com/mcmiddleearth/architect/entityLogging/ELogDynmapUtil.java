@@ -149,7 +149,7 @@ public class ELogDynmapUtil {
         int blue = Math.max(0, (int) Math.max(255-1024*value,-769+1024*value));
         int green = Math.max(0, Math.min(255,(int) Math.min(1024*value,767-1024*value)));
         int red = Math.max(0, Math.min(255,(int)(-256+1024*value)));
-Logger.getGlobal().info("value: "+value+" r: "+red+" g: "+green+" b: "+blue);
+//Logger.getGlobal().info("value: "+value+" r: "+red+" g: "+green+" b: "+blue);
         return red*256*256+green*256+blue;
     }
     

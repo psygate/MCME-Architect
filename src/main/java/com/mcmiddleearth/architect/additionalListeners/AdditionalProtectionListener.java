@@ -21,18 +21,17 @@ import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.TheGafferUtil;
-import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -140,6 +139,15 @@ public class AdditionalProtectionListener extends WatchedListener{
                 && event.hasBlock()
                 && event.getClickedBlock().getType().equals(Material.TURTLE_EGG)) {
             event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority=EventPriority.NORMAL) 
+    public void entityInteract(EntityChangeBlockEvent event) {
+        if(event.getEntity() instanceof Boat) {
+            if((PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.LILY_PAD_PROTECTION))) {
+                event.setCancelled(true);
+            }  
         }
     }
     

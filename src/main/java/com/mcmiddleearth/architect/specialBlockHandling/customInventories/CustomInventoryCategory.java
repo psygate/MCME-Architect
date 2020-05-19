@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -90,5 +91,9 @@ public class CustomInventoryCategory {
             }
             return true;
         }
+    }
+    
+    public ItemStack getItem(String id) {
+        return items.stream().filter(item -> SpecialBlockInventoryData.getSpecialBlockId(item).equals(id)).findAny().orElse(null);
     }
 }

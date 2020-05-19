@@ -67,6 +67,8 @@ public class RpManager {
     private static Map<String, RpRegion> regions = new HashMap<>();
     
     private static Map<UUID,RpPlayerData> playerRpData = new HashMap<>();
+    
+    @Getter
     private static RpDatabaseConnector dbConnector = new RpDatabaseConnector(ArchitectPlugin.getPluginInstance().getConfig().getConfigurationSection(rpDatabaseConfig));
     
     @Getter
@@ -391,12 +393,7 @@ public class RpManager {
                 Logger.getLogger(RpManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }*/
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                playerRpData.put(uuid, dbConnector.loadRpSettings(uuid));
-            }
-        }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+        dbConnector.loadRpSettings(uuid,playerRpData);
     }
     
     public static void saveRpRegion(RpRegion region) {
