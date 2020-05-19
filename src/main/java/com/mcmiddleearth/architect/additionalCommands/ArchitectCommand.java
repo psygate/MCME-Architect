@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
@@ -269,6 +271,15 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             }
             ArchitectPlugin.getPluginInstance().loadData();
             PluginData.getMessageUtil().sendInfoMessage(sender,  "Reload complete!");
+        /*} else if (args[0].equalsIgnoreCase("biome")) {
+            Location loc = ((Player) sender).getLocation();
+            Block block = loc.getBlock().getRelative(BlockFace.NORTH, 3);
+            for (int i= 0; i<4; i++) {
+                block.setBiome(Biome.SWAMP);
+                block.getRelative(BlockFace.UP,5).setBiome(Biome.FOREST);
+                block.getRelative(BlockFace.UP,10).setBiome(Biome.DESERT);
+                block = block.getRelative(BlockFace.UP);
+            }*/
         } else {
             PluginData.getMessageUtil().sendInvalidSubcommandError(sender);
         }

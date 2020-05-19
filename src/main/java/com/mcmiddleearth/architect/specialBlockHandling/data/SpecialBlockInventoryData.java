@@ -340,9 +340,10 @@ public class SpecialBlockInventoryData {
 
     public static String getSpecialBlockId(ItemStack handItem) {
         ItemMeta meta = handItem.getItemMeta();
-        if(!(meta.hasLore() 
+        if(meta==null 
+            || (!(meta.hasLore() 
                 && meta.getLore().size()>1 
-                && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG))) {
+                && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG)))) {
             return null;
         }
         return meta.getLore().get(1);

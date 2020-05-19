@@ -20,8 +20,11 @@ import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
 import org.bukkit.GameMode;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -159,10 +162,40 @@ public class GameMechanicsListener extends WatchedListener{
             event.getPlayer().setAllowFlight(true);
         }
     }
+    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void containerBreak(BlockBreakEvent event) {
+        if (PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.REMOVE_CONTAINER_ITEMS)
+                && event.getBlock().getState() instanceof Container) {
+            ((Container)event.getBlock().getState()).getInventory().clear();
+        }
+    }
+    
+    
 
-    //@EventHandler(ignoreCancelled = true)
-    //public void onFurnaceBurn(FurnaceBurnEvent event) {
-//Logger.getGlobal().info("Furnace "+event.isBurning());
+/*    @EventHandler(ignoreCancelled = false)
+    public void onFurnaceBurn(PlayerInteractEvent event) {
+        if(event.hasBlock()
+                && event.hasItem()
+                && event.getItem().getType().equals(Material.RABBIT_HIDE)) {
+Logger.getGlobal().info("Set biome ");
+            World world = event.getClickedBlock().getWorld();
+            for(int i = 0; i<16; i++) {
+                for(int j= 0; j<256; j++) {
+                    for(int k = 0; k<16;k++) {
+                        if(j<11) 
+                            world.setBiome(event.getClickedBlock().getX()+i, j, event.getClickedBlock().getZ()+k, Biome.FOREST);
+                                    else 
+                            world.setBiome(event.getClickedBlock().getX()+i, j, event.getClickedBlock().getZ()+k, Biome.SWAMP);
+                    }
+                }
+            }
+        }
+        if(event.hasBlock()
+                && event.hasItem()
+                && event.getItem().getType().equals(Material.RABBIT_FOOT)) {
+                    Logger.getGlobal().info("Biome: "+event.getClickedBlock().getBiome().name());
+        }
+    }*/
         
-    //}
 }
