@@ -60,25 +60,38 @@ public class InventoryListener implements Listener{
     public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
-            final Player p = (Player) event.getPlayer();
-            ItemStack handItem = p.getInventory().getItemInMainHand();
-            ItemStack offHandItem = p.getInventory().getItemInOffHand();
-            if((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
-                    && handItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))
-                || (offHandItem.hasItemMeta() && offHandItem.getItemMeta().hasDisplayName()
-                    && offHandItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))) {
-                SpecialHeadInventoryData.openInventory(p);
-                return;
-            }
-            String rpN = RpManager.getCurrentRpName(p);//1.13 removed: PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
-            if(rpN==null || rpN.equals("")) {
-                rpN = getRpName(handItem);
-                if(rpN.equals("")) {
-                    rpN = getRpName(offHandItem);
+            final Player player = event.getPlayer();
+            ItemStack handItem = player.getInventory().getItemInMainHand();
+            if( player.isSneaking() ) {
+                //open block collection if target block has one defined
+                SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
+                if(base == null || !base.hasCollection()) {
+                    sendNoInventoryError(player,"");
+                    return;
                 }
-            }
-            if(!SpecialBlockInventoryData.openInventory(p, rpN)) {
-                sendNoInventoryError(p,rpN);
+                if(!SpecialBlockInventoryData.openInventory(player, handItem)) {
+                    sendNoInventoryError(player,"");
+                }
+            } else {
+                //open custom block inventory
+                ItemStack offHandItem = player.getInventory().getItemInOffHand();
+                if ((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
+                        && handItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))
+                        || (offHandItem.hasItemMeta() && offHandItem.getItemMeta().hasDisplayName()
+                        && offHandItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))) {
+                    SpecialHeadInventoryData.openInventory(player);
+                    return;
+                }
+                String rpName = RpManager.getCurrentRpName(player);//1.13 removed: PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
+                if (rpName == null || rpName.equals("")) {
+                    rpName = getRpName(handItem);
+                    if (rpName.equals("")) {
+                        rpName = getRpName(offHandItem);
+                    }
+                }
+                if (!SpecialBlockInventoryData.openInventory(player, rpName)) {
+                    sendNoInventoryError(player, rpName);
+                }
             }
         }
     }
@@ -137,31 +150,6 @@ public class InventoryListener implements Listener{
     }
     
     /**
-     * If module SPECIAL_BLOCK_GET is enabled in world config file
-     * opens the custom block collection inventory when a player does a SHIFT-LEFT-CLICK.
-     * @param event 
-     */
-    @EventHandler(priority=EventPriority.LOW)  
-    public void openSpecialInventory(PlayerInteractEvent event) {
-        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)
-                && event.getPlayer().isSneaking()
-                && (event.getAction().equals(Action.LEFT_CLICK_AIR)
-                    || event.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
-            event.setCancelled(true);
-            final Player p = (Player) event.getPlayer();
-            ItemStack handItem = p.getInventory().getItemInMainHand();
-            SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
-            if(base == null || !base.hasCollection()) {
-                sendNoInventoryError(p,"");
-                return;
-            }
-            if(!SpecialBlockInventoryData.openInventory(p, handItem)) {
-                sendNoInventoryError(p,"");
-            }
-        }
-    }
-    
-    /**
      * If module INVENTORY_ACCESS is enabled in world config file
      * allowes or blocks opening of inventories as defined in world config file.
      * Possible configurations:
@@ -198,7 +186,6 @@ public class InventoryListener implements Listener{
                         || !NoPhysicsData.hasNoPhysicsException(loc.getBlock())){
                     event.setCancelled(true);
                 }
-                return;
         }
         /*
         if (//event.getInventory().getType().equals(InventoryType.ANVIL)

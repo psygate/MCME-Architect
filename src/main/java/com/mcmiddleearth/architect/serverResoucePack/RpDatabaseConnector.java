@@ -104,13 +104,8 @@ public class RpDatabaseConnector {
                 if(dbConnection!=null) {
                     dbConnection.close();
                 }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        connect();
-                        ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO, "Reconnecting to rp database.");
-                    }
-                }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+                connect();
+                ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO, "Reconnecting to rp database.");
             }
         } catch (SQLException ex) {
             Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
@@ -164,9 +159,7 @@ public class RpDatabaseConnector {
     }
 
     private void checkTables(){
-        executeAsync(player -> {
-            checkTablesSync();
-        },null);
+        executeAsync(player -> checkTablesSync(),null);
     }
 
     public synchronized void loadRpSettings(UUID uuid, Map<UUID,RpPlayerData> dataMap) {
