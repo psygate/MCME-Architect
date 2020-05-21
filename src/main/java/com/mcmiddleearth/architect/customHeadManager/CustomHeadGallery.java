@@ -18,10 +18,6 @@ package com.mcmiddleearth.architect.customHeadManager;
 
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.HeadUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,15 +27,17 @@ import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+
 /**
  *
  * @author Eriol_Eandur
  */
 public class CustomHeadGallery {
     
-    @Getter
     private Location location;
-    
     private Location nextLocation;
     
     private final CustomHeadCollection collection;
@@ -230,5 +228,8 @@ public class CustomHeadGallery {
             blockState.update(true, false);
         }
     }
-                        
+
+    public Location getLocation() {
+        return location;
+    }
 }

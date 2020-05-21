@@ -18,26 +18,23 @@ package com.mcmiddleearth.architect.serverResoucePack;
 
 //import com.sk89q.worldedit.BlockVector2D;
 //import com.sk89q.worldedit.Vector;
+
 import com.sk89q.worldedit.bukkit.BukkitWorld;
-//import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.CylinderRegion;
-import com.sk89q.worldedit.regions.EllipsoidRegion;
-import com.sk89q.worldedit.regions.Polygonal2DRegion;
-import com.sk89q.worldedit.regions.Region;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
+import com.sk89q.worldedit.regions.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+//import com.sk89q.worldedit.bukkit.BukkitWorld;
 
 /**
  *
@@ -45,16 +42,9 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class RpRegion {
     
-    @Getter @Setter
     private String name;
-    
-    @Getter @Setter
     private int weight = 0;
-    
-    @Getter @Setter
     private String rp = "";
-    
-    @Getter @Setter
     private Region region;
     
     public RpRegion(String name, Region region){
@@ -63,11 +53,8 @@ public class RpRegion {
     }
     
     public boolean contains(Location loc) {
-//Logger.getGlobal().info(region.getWorld().getClass().getName() + " "+loc.getWorld().getClass().getName()
-//                         + " "+region.getWorld().equals(loc.getWorld()));
         BlockVector3 vec = BlockVector3.at(loc.getX(),loc.getY(),loc.getZ());
-//Logger.getGlobal().info("contains: "+vec.toString()+" "+region.contains(vec));
-        return region.getWorld().getName().equals(loc.getWorld().getName()) 
+        return region.getWorld().getName().equals(loc.getWorld().getName())
                 && region.contains(BlockVector3.at(loc.getX(),loc.getY(),loc.getZ()));
     }
 
@@ -168,5 +155,37 @@ public class RpRegion {
     private static BlockVector2 getBlockVector2(String data) {
         String[] split = data.split(",");
         return BlockVector2.at(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public String getRp() {
+        return rp;
+    }
+
+    public void setRp(String rp) {
+        this.rp = rp;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 }
