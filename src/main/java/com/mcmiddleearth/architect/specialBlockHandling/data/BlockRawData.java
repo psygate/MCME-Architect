@@ -18,7 +18,6 @@ package com.mcmiddleearth.architect.specialBlockHandling.data;
 
 import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -31,13 +30,11 @@ import org.bukkit.block.data.BlockData;
 public class BlockRawData {
     
     @Deprecated
-    @Setter
     int id=0;
-    
+
     @Deprecated
-    @Setter
     byte dv=0;
-    
+
     @Deprecated
     public BlockRawData(String input) {
         int separatorPos = input.indexOf(":");
@@ -52,27 +49,27 @@ public class BlockRawData {
             if(input.length()<=separatorPos+1) {
                 dv = -1;
             } else {
-                String dvInput =  input.substring(separatorPos+1,input.length());
+                String dvInput =  input.substring(separatorPos+1);
                 dv = (byte) NumericUtil.getInt(dvInput);
             }
         }
     }
-    
+
     @Deprecated
     public boolean allDV() {
         return dv==-1;
     }
-    
+
     @Deprecated
     public byte getDV() {
         return dv<0 ? 0 : dv;
     }
-    
+
     @Deprecated
     public int getId() {
         return id<0 ? 0 : id;
     }
-    
+
     public BlockData getBlockData() {
         Material material = LegacyMaterialUtil.getMaterial(getId());
         if(allDV()) {
@@ -81,4 +78,17 @@ public class BlockRawData {
             return LegacyMaterialUtil.getBlockData(material,getDV());
         }
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public byte getDv() {
+        return dv;
+    }
+
+    public void setDv(byte dv) {
+        this.dv = dv;
+    }
+
 }

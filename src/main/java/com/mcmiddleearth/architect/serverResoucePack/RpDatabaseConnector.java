@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -46,21 +47,21 @@ public class RpDatabaseConnector {
     private final String dbName;
     private final String dbIp;
     private final int port;
-    
+
     private final MySQLDataSource dataBase;
-    
+
     private Connection dbConnection;
-    
+
     private PreparedStatement insertPlayerRpSettings;
     private PreparedStatement updatePlayerRpSettings;
     private PreparedStatement selectPlayerRpSettings;
-    
+
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-    
+
     private BukkitTask keepAliveTask;
-    
-    private boolean connected; 
-    
+
+    private boolean connected;
+
     public RpDatabaseConnector(ConfigurationSection config) {
         if(config==null) {
             config = new MemoryConfiguration();
@@ -76,12 +77,12 @@ public class RpDatabaseConnector {
             @Override
             public void run() {
                 checkConnection();
-Logger.getGlobal().info("ArchitectTasks: "+Bukkit.getScheduler().getPendingTasks().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
-Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorkers().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
+                Logger.getGlobal().info("ArchitectTasks: " + Bukkit.getScheduler().getPendingTasks().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
+                Logger.getGlobal().info("ArchitectWorker: " + Bukkit.getScheduler().getActiveWorkers().stream().filter(task -> task.getOwner().equals(ArchitectPlugin.getPluginInstance())).count());
             }
         }.runTaskTimerAsynchronously(ArchitectPlugin.getPluginInstance(),0,1200);
     }
-    
+
     private void executeAsync(Consumer<Player> method, Player player) {
         new BukkitRunnable() {
             @Override
@@ -93,36 +94,31 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             }
         }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
     }
-    
-    private synchronized boolean checkConnection() {
+
+    private synchronized void checkConnection() {
         try {
             if(connected && dbConnection.isValid(5)) {
-                ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO, 
+                ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO,
                         "Successfully checked connection to rp database.");
-                return true;
             } else {
-                //throw new SQLException("No connection to statistic database!");
                 if(dbConnection!=null) {
                     dbConnection.close();
                 }
                 connect();
-                ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO, 
-                        "Reconnecting to rp database.");
+                ArchitectPlugin.getPluginInstance().getLogger().log(Level.INFO, "Reconnecting to rp database.");
             }
-            return true;
         } catch (SQLException ex) {
             Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
             connected = false;
-            return false;
         }
     }
-    
+
     private synchronized void connect() {
         try {
             dbConnection = dataBase.getConnection(dbUser, dbPassword);
-            
+
             checkTables();
-            
+
             insertPlayerRpSettings = dbConnection.prepareStatement("INSERT INTO architect_rp (uuid, auto, variant, resolution, currentURL) "
                                                                   +"VALUES (?,?,?,?,?)");
             updatePlayerRpSettings = dbConnection.prepareStatement("UPDATE architect_rp SET auto=?, variant=?, resolution=?, currentURL=? "
@@ -136,7 +132,7 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             connected = false;
         }
     }
-    
+
     public synchronized void disconnect() {
         connected = false;
         if(keepAliveTask!=null) {
@@ -150,7 +146,7 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             }
         }
     }
-    
+
     private synchronized void checkTablesSync(){
         try {
             Logger.getLogger(ArchitectPlugin.class.getName()).info("checking tables...");
@@ -161,13 +157,11 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void checkTables(){
-        executeAsync(player -> {
-            checkTablesSync();
-        },null);
+        executeAsync(player -> checkTablesSync(),null);
     }
-    
+
     public synchronized void loadRpSettings(UUID uuid, Map<UUID,RpPlayerData> dataMap) {
         new BukkitRunnable() {
             @Override
@@ -196,8 +190,8 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             }
         }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
     }
-    
-    
+
+
     public synchronized void saveRpSettings(Player player, RpPlayerData data) {
         new BukkitRunnable() {
             @Override
@@ -217,8 +211,8 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
             }
         }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
     }
-    
-    
+
+
     private synchronized void updateRpSettings(Player player, RpPlayerData data) throws SQLException {
         updatePlayerRpSettings.setBoolean(1, data.isAutoRp());
         updatePlayerRpSettings.setString(2, data.getVariant());
@@ -227,7 +221,7 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
         updatePlayerRpSettings.setString(5, player.getUniqueId().toString());
         updatePlayerRpSettings.executeUpdate();
     }
-    
+
     private synchronized void insertRpSettings(Player player, RpPlayerData data) throws SQLException {
         insertPlayerRpSettings.setString(1, player.getUniqueId().toString());
         insertPlayerRpSettings.setBoolean(2, data.isAutoRp());
@@ -236,5 +230,5 @@ Logger.getGlobal().info("ArchitectWorker: "+Bukkit.getScheduler().getActiveWorke
         insertPlayerRpSettings.setString(5, data.getCurrentRpUrl());
         insertPlayerRpSettings.executeUpdate();
     }
-    
+
 }
