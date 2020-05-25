@@ -56,8 +56,6 @@ public class RpDatabaseConnector {
     private PreparedStatement updatePlayerRpSettings;
     private PreparedStatement selectPlayerRpSettings;
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-
     private BukkitTask keepAliveTask;
 
     private boolean connected;
@@ -125,6 +123,9 @@ public class RpDatabaseConnector {
                                                                   +"WHERE uuid = ?");
             selectPlayerRpSettings = dbConnection.prepareStatement("SELECT auto, variant, resolution, currentURL FROM architect_rp "
                                                                  + "WHERE uuid = ?");
+            insertPlayerRpSettings.setQueryTimeout(10);
+            updatePlayerRpSettings.setQueryTimeout(10);
+            selectPlayerRpSettings.setQueryTimeout(10);
 
             connected = true;
         } catch (SQLException ex) {
@@ -162,54 +163,63 @@ public class RpDatabaseConnector {
         executeAsync(player -> checkTablesSync(),null);
     }
 
-    public synchronized void loadRpSettings(UUID uuid, Map<UUID,RpPlayerData> dataMap) {
+    public void loadRpSettings(UUID uuid, Map<UUID,RpPlayerData> dataMap) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                try {
-                    selectPlayerRpSettings.setString(1, uuid.toString());
-                    ResultSet result = selectPlayerRpSettings.executeQuery();
-                    if(result.next()) {
-                        try {
-                            RpPlayerData data = new RpPlayerData();
-                            data.setAutoRp(result.getBoolean("auto"));
-                            data.setCurrentRpUrl(result.getString("currentURL"));
-                            data.setVariant(result.getString("variant"));
-                            data.setResolution(result.getInt("resolution"));
-                            dataMap.put(uuid,data);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
-                            dataMap.put(uuid,null);
-                        }
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
-                    dataMap.put(uuid,null);
-                    connected = false;
-                }
+                loadRpSettingsSync(uuid, dataMap);
             }
         }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
     }
 
+    private synchronized void loadRpSettingsSync(UUID uuid, Map<UUID, RpPlayerData> dataMap) {
+        try {
+            selectPlayerRpSettings.setString(1, uuid.toString());
+            ResultSet result = selectPlayerRpSettings.executeQuery();
+            if(result.next()) {
+                try {
+                    RpPlayerData data = new RpPlayerData();
+                    data.setAutoRp(result.getBoolean("auto"));
+                    data.setCurrentRpUrl(result.getString("currentURL"));
+                    data.setVariant(result.getString("variant"));
+                    data.setResolution(result.getInt("resolution"));
+                    dataMap.put(uuid,data);
+                } catch (SQLException ex) {
+                    Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
+                    dataMap.put(uuid,null);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
+            dataMap.put(uuid,null);
+            connected = false;
+        }
 
-    public synchronized void saveRpSettings(Player player, RpPlayerData data) {
+    }
+
+
+    public void saveRpSettings(Player player, RpPlayerData data) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                try {
-                    selectPlayerRpSettings.setString(1, player.getUniqueId().toString());
-                    ResultSet result = selectPlayerRpSettings.executeQuery();
-                    if(result.next()) {
-                        updateRpSettings(player, data);
-                    } else {
-                        insertRpSettings(player, data);
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
-                    connected = false;
-                }
+                saveRpSettingsSync(player, data);
             }
         }.runTaskAsynchronously(ArchitectPlugin.getPluginInstance());
+    }
+
+    private synchronized void saveRpSettingsSync(Player player, RpPlayerData data) {
+        try {
+            selectPlayerRpSettings.setString(1, player.getUniqueId().toString());
+            ResultSet result = selectPlayerRpSettings.executeQuery();
+            if(result.next()) {
+                updateRpSettings(player, data);
+            } else {
+                insertRpSettings(player, data);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RpDatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
+            connected = false;
+        }
     }
 
 
