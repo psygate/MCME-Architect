@@ -62,7 +62,7 @@ public class RpListener implements Listener{
 //    Logger.getGlobal().info("PlayerConnectEvent: "+player.getName()+" "+ event.getReason().name());        
         if(event.getReason().equals(PlayerConnectEvent.ConnectReason.JOIN_PROXY)) {
             new BukkitRunnable() {
-                int counter = 10;
+                int counter = 11;
                 @Override
                 public void run() {
                     if(RpManager.hasPlayerDataLoaded(player) || counter==0) {
