@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class CustomInventoryCollectionState extends CustomInventoryState {
     
-    private SpecialBlock baseBlock;
+    private final SpecialBlock baseBlock;
     
     public CustomInventoryCollectionState(Map<String, CustomInventoryCategory> categories, 
                                           Inventory inventory, Player player, ItemStack baseItem) {
@@ -63,7 +63,7 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
         super.update();
         inventory.setItem(CustomInventory.CATEGORY_SLOTS+22, getItem(baseBlock.getId()));
         baseBlock.getCollection().forEach((key,entry)-> {
-            List<Character> allowedRows = Arrays.asList(new Character[]{'A','B','C','D','E','F','G','H','I','J','a','b','c','d','e','f','g','h','i','j'});
+            List<Character> allowedRows = Arrays.asList('A','B','C','D','E','F','G','H','I','J','a','b','c','d','e','f','g','h','i','j');
             char row = key.charAt(0);
             if(allowedRows.contains(row) && NumericUtil.isInt(key.substring(1))) {
                 int column = NumericUtil.getInt(key.substring(1));

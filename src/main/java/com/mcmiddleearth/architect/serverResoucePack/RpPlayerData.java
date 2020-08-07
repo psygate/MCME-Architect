@@ -26,7 +26,7 @@ import java.io.Serializable;
  */
 public class RpPlayerData implements Serializable {
     
-    private long serialVerionsUID = 1;
+    private final long serialVerionsUID = 1;
             
     private boolean autoRp = true;
     private String variant = "light";

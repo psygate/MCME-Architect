@@ -27,7 +27,7 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockThreeAxis extends SpecialBlockOrientable {
     
-    private static Orientation[] threeAxis = new Orientation[] {
+    private static final Orientation[] threeAxis = new Orientation[] {
         new Orientation(BlockFace.SOUTH,"Z"),
         new Orientation(BlockFace.WEST,"X"),
         new Orientation(BlockFace.NORTH,"Z"),

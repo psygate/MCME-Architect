@@ -37,7 +37,7 @@ public class SpecialBlockMatchOrientation extends SpecialBlockFourDirections {
     
     List<List<BlockData>> matches = new ArrayList<>();
 
-    private static Orientation[] fourFaces = new Orientation[] {
+    private static final Orientation[] fourFaces = new Orientation[] {
         new Orientation(BlockFace.NORTH,"North"),
         new Orientation(BlockFace.SOUTH,"South"),
         new Orientation(BlockFace.EAST,"East"),

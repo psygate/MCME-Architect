@@ -36,7 +36,7 @@ public class _invalid_SearchInventoryState {
     
     private final List<ItemStack> items;
 
-    private List<ItemStack> foundItems = new ArrayList<>();
+    private final List<ItemStack> foundItems = new ArrayList<>();
     
     private int upperLeftItem;
 

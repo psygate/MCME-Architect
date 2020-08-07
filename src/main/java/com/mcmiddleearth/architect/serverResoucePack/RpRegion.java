@@ -73,7 +73,7 @@ public class RpRegion {
             regionMap.put("maximumPoint", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
         } else if(region instanceof CylinderRegion) {
             regionMap.put("type", "CylinderRegion");
-            BlockVector3 vec = ((CylinderRegion)region).getCenter().toBlockPoint();
+            BlockVector3 vec = region.getCenter().toBlockPoint();
             regionMap.put("center", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
             regionMap.put("minY", region.getMinimumPoint().getBlockY());
             regionMap.put("maxY", region.getMaximumPoint().getBlockY());
@@ -81,7 +81,7 @@ public class RpRegion {
                                    +((CylinderRegion)region).getRadius().toBlockPoint().getBlockZ());
         } else if(region instanceof EllipsoidRegion) {
             regionMap.put("type", "EllipsoidRegion");
-            BlockVector3 vec = ((EllipsoidRegion)region).getCenter().toBlockPoint();
+            BlockVector3 vec = region.getCenter().toBlockPoint();
             regionMap.put("center", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());
             vec = ((EllipsoidRegion)region).getRadius().toBlockPoint();
             regionMap.put("radius", vec.getBlockX()+","+vec.getBlockY()+","+vec.getBlockZ());

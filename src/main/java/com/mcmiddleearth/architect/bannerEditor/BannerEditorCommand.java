@@ -44,7 +44,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
-        if(!PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR)) {
+        if(!PluginData.hasPermission(cs,Permission.BANNER_EDITOR)) {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
@@ -66,7 +66,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                     sendHelpMessage((Player) cs,page);
                     return true;
                 } else if(args[0].equalsIgnoreCase("save")) {
-                    if(!PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR_SAVE)) {
+                    if(!PluginData.hasPermission(cs,Permission.BANNER_EDITOR_SAVE)) {
                         PluginData.getMessageUtil().sendNoPermissionError(cs);
                         return true;
                     }
@@ -98,7 +98,7 @@ public class BannerEditorCommand extends AbstractArchitectCommand {
                         PluginData.getMessageUtil().sendNotEnoughArgumentsError(cs);
                         return true;
                     }
-                    if(!(PluginData.hasPermission((Player)cs,Permission.BANNER_EDITOR_DELETE)
+                    if(!(PluginData.hasPermission(cs,Permission.BANNER_EDITOR_DELETE)
                             || playerConfig.isCreator(args[1],((Player)cs).getUniqueId()))) {
                         PluginData.getMessageUtil().sendNoPermissionError(cs);
                         return true;

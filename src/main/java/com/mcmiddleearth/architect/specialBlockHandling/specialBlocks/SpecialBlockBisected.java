@@ -32,7 +32,7 @@ import org.bukkit.util.Vector;
  */
 public class SpecialBlockBisected extends SpecialBlockOrientable {
     
-    private static Orientation[] half = new Orientation[] {
+    private static final Orientation[] half = new Orientation[] {
         new Orientation(BlockFace.UP,"Down"),
         new Orientation(BlockFace.DOWN,"Up")
     };

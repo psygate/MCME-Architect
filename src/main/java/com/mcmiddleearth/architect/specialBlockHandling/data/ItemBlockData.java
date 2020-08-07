@@ -35,10 +35,10 @@ import java.util.Objects;
  */
 public class ItemBlockData implements BlockData {
     
-    private SpecialBlockItemBlock specialItemBlock;
-    private BlockData blockData;
-    private int currentDamage;
-    private float yaw;
+    private final SpecialBlockItemBlock specialItemBlock;
+    private final BlockData blockData;
+    private final int currentDamage;
+    private final float yaw;
     
     public static final String NAMESPACE = "mcme";
     
@@ -48,7 +48,7 @@ public class ItemBlockData implements BlockData {
             SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(item);
             if(data instanceof SpecialBlockItemBlock) {
                 SpecialBlockItemBlock itemBlockData = (SpecialBlockItemBlock) data;
-                ArmorStand armorStand = itemBlockData.getArmorStand(block.getLocation());
+                ArmorStand armorStand = SpecialBlockItemBlock.getArmorStand(block.getLocation());
                 ItemStack contentItem = armorStand.getHelmet();
                 ItemMeta meta = contentItem.getItemMeta();
                 int contentDamage = 0;

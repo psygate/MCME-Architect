@@ -45,7 +45,7 @@ public class Clipboard1 implements IStoragePlot {
     
     protected int rotation; //0, 1, 2 or 3 (90 degree steps)
     
-    private boolean[] flip = new boolean[3];
+    private final boolean[] flip = new boolean[3];
 
     private final Location lowCorner;
     private final Location highCorner;

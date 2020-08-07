@@ -56,7 +56,7 @@ public class GetData {
         }
     }
     
-    private static Map<String, ItemSet> sets = new HashMap<>();
+    private static final Map<String, ItemSet> sets = new HashMap<>();
     
     private static final File dataFile = new File(ArchitectPlugin.getPluginInstance()
                                                        .getDataFolder(),"itemSets.yml");

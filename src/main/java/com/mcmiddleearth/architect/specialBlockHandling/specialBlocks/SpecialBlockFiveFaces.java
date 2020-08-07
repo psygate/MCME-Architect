@@ -27,7 +27,7 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockFiveFaces extends SpecialBlockOrientable {
     
-    private static Orientation[] fiveFaces = new Orientation[] {
+    private static final Orientation[] fiveFaces = new Orientation[] {
             new Orientation(BlockFace.SOUTH,"South"),
             new Orientation(BlockFace.WEST,"West"),
             new Orientation(BlockFace.NORTH,"North"),

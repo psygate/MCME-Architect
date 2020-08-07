@@ -58,13 +58,13 @@ public class RpManager {
     
     private static final String rpDatabaseConfig = "rpSettingsDatabase";
     
-    private static Map<String, RpRegion> regions = new HashMap<>();
+    private static final Map<String, RpRegion> regions = new HashMap<>();
     
-    private static Map<UUID,RpPlayerData> playerRpData = new HashMap<>();
+    private static final Map<UUID,RpPlayerData> playerRpData = new HashMap<>();
     
-    private static RpDatabaseConnector dbConnector = new RpDatabaseConnector(ArchitectPlugin.getPluginInstance().getConfig().getConfigurationSection(rpDatabaseConfig));
+    private static final RpDatabaseConnector dbConnector = new RpDatabaseConnector(ArchitectPlugin.getPluginInstance().getConfig().getConfigurationSection(rpDatabaseConfig));
     
-    private static RegionEditConversationFactory regionEditConversationFactory
+    private static final RegionEditConversationFactory regionEditConversationFactory
             = new RegionEditConversationFactory(ArchitectPlugin.getPluginInstance());
     
     public static void init() {

@@ -52,7 +52,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(cs);
             return true;
         }
-        if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST)) {
+        if(!PluginData.hasPermission(cs,Permission.NO_PHYSICS_LIST)) {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
@@ -74,7 +74,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                 return true;
             }
             if(args[0].equalsIgnoreCase("exception")) {
-                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EXCEPT)) {
+                if(!PluginData.hasPermission(cs,Permission.NO_PHYSICS_LIST_EXCEPT)) {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
                 }
@@ -153,7 +153,7 @@ public class NoPhysicsCommand extends AbstractArchitectCommand {
                                                PluginData.getMessageUtil().STRESSED+ line);
                 }
             } else if(args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
-                if(!PluginData.hasPermission((Player)cs,Permission.NO_PHYSICS_LIST_EDIT)) {
+                if(!PluginData.hasPermission(cs,Permission.NO_PHYSICS_LIST_EDIT)) {
                     PluginData.getMessageUtil().sendNoPermissionError(cs);
                     return true;
                 }

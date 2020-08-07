@@ -43,7 +43,7 @@ public class VvCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
-        if(!PluginData.hasPermission((Player)sender,Permission.VOXEL_VIEWER)) {
+        if(!PluginData.hasPermission(sender,Permission.VOXEL_VIEWER)) {
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
@@ -79,7 +79,7 @@ public class VvCommand extends AbstractArchitectCommand {
                          "/vv stencil", 
                          "/b st", true);
         } else if(args[0].equalsIgnoreCase("delete")) {
-            if(!PluginData.hasPermission((Player)sender,Permission.VOXEL_VIEWER_DELETE)) {
+            if(!PluginData.hasPermission(sender,Permission.VOXEL_VIEWER_DELETE)) {
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }

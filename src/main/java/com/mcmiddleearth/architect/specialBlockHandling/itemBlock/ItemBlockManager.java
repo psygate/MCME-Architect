@@ -44,10 +44,10 @@ public class ItemBlockManager {
     
     private static final File regionFolder = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"itemBlockRegions");
     
-    private static Map<String, ItemBlockRegion> regions = new HashMap<>();
+    private static final Map<String, ItemBlockRegion> regions = new HashMap<>();
     
-    private static Map<Player, Integer> glowPlayer = new HashMap<>();
-    private static List<Entity> glowEntities = new ArrayList<>();
+    private static final Map<Player, Integer> glowPlayer = new HashMap<>();
+    private static final List<Entity> glowEntities = new ArrayList<>();
     
     
     private static BukkitTask glowTask;

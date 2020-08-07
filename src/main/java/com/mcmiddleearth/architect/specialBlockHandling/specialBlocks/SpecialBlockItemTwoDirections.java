@@ -31,7 +31,7 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SpecialBlockItemTwoDirections extends SpecialBlockItemOrientable {
     
-    private static SpecialBlockOrientable.Orientation[] twoAxis = new SpecialBlockOrientable.Orientation[] {
+    private static final SpecialBlockOrientable.Orientation[] twoAxis = new SpecialBlockOrientable.Orientation[] {
         new SpecialBlockOrientable.Orientation(BlockFace.SOUTH,"Z"),
         new SpecialBlockOrientable.Orientation(BlockFace.WEST,"X"),
         new SpecialBlockOrientable.Orientation(BlockFace.NORTH,"Z"),

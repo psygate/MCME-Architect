@@ -247,9 +247,7 @@ public class CustomInventory implements Listener {
     
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     void onClose(final InventoryCloseEvent event) {
-        if(openInventories.containsKey(event.getInventory())) {
-            openInventories.remove(event.getInventory());
-        }
+        openInventories.remove(event.getInventory());
     }
     
     private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {

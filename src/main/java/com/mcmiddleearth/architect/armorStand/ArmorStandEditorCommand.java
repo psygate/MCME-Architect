@@ -50,7 +50,7 @@ public class ArmorStandEditorCommand extends AbstractArchitectCommand {
         if(args.length>0 && args[0].equalsIgnoreCase("rollback")) {
             return ArmorStandRollbackCommand.execute((Player)cs, args, configList);
         }
-        if(!PluginData.hasPermission((Player)cs,Permission.ARMOR_STAND_EDITOR)) {
+        if(!PluginData.hasPermission(cs,Permission.ARMOR_STAND_EDITOR)) {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         } else {

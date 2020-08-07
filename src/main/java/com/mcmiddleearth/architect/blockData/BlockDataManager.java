@@ -13,6 +13,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.Jigsaw;
 import org.bukkit.block.data.*;
 import org.bukkit.block.data.type.Comparator;
 import org.bukkit.block.data.type.Tripwire;
@@ -103,7 +104,14 @@ public class BlockDataManager {
         attributes.add(new BooleanAttribute("Bottom", Scaffolding.class));
         attributes.add(new IntAttribute("Distance", Scaffolding.class));
         //attributes.add(new SetAttribute("Face")) Grindstone???
-        
+
+        //1.15 - 1.16 additions
+        attributes.add(new BooleanAttribute("Drag", BubbleColumn.class));
+        attributes.add(new SetAttribute("Orientation", Jigsaw.class, Jigsaw.Orientation.class));
+        attributes.add(new IntAttribute("Charges", RespawnAnchor.class));
+        attributes.add(new BooleanAttribute("Up", Wall.class));
+        attributes.add(new WallAttribute("Height"));
+
         
     }
     
@@ -354,7 +362,7 @@ public class BlockDataManager {
                 private int y, x, z;
                 private int matCounter = -1;
                 private int stateCounter = 0;
-                private BlockDataManager attributeManager = new BlockDataManager();
+                private final BlockDataManager attributeManager = new BlockDataManager();
                 private boolean rowStarted = false;
                 private List cachedStatesTree = new ArrayList();
 

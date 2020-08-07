@@ -55,7 +55,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
                 return true;
             }
-            if(!PluginData.hasPermission((Player)sender,Permission.ARCHITECT_HELP)) {
+            if(!PluginData.hasPermission(sender,Permission.ARCHITECT_HELP)) {
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
@@ -100,7 +100,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             return true;
         }
         if(args[0].equalsIgnoreCase("checkNBT")) {
-            if((sender instanceof Player) && !PluginData.hasPermission((Player)sender, Permission.CHECK_NBT)) {
+            if((sender instanceof Player) && !PluginData.hasPermission(sender, Permission.CHECK_NBT)) {
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
@@ -127,7 +127,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
                 return true;
             } 
-            if(!PluginData.hasPermission((Player)sender, Permission.ARCHITECT_WEATHER)) {
+            if(!PluginData.hasPermission(sender, Permission.ARCHITECT_WEATHER)) {
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
@@ -157,8 +157,8 @@ public class ArchitectCommand extends AbstractArchitectCommand{
         }
         if(!(sender instanceof ConsoleCommandSender 
                 || (sender instanceof Player 
-                    && (PluginData.hasPermission((Player)sender, Permission.ARCHITECT_INFO)
-                         || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))))) {
+                    && (PluginData.hasPermission(sender, Permission.ARCHITECT_INFO)
+                         || PluginData.hasPermission(sender, Permission.ARCHITECT_RELOAD))))) {
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
@@ -195,7 +195,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                     showDetails(sender);
                     return true;
                 }
-                catch(NumberFormatException e){};
+                catch(NumberFormatException e){}
             }
             if(sender instanceof Player) {
                 Player player = (Player) sender;
@@ -237,7 +237,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
             return true;*/
         } 
         if(!(sender instanceof ConsoleCommandSender 
-                    || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
+                    || PluginData.hasPermission(sender, Permission.ARCHITECT_RELOAD))) {
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }
@@ -265,7 +265,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                                                      .getDescription().getVersion());
         } else if (args[0].equalsIgnoreCase("reload")) {
             if(!(sender instanceof ConsoleCommandSender 
-                    || PluginData.hasPermission((Player)sender, Permission.ARCHITECT_RELOAD))) {
+                    || PluginData.hasPermission(sender, Permission.ARCHITECT_RELOAD))) {
                 PluginData.getMessageUtil().sendNoPermissionError(sender);
                 return true;
             }
@@ -317,7 +317,7 @@ public class ArchitectCommand extends AbstractArchitectCommand{
                 Object nmsItem = NMSUtil.getCraftBukkitDeclaredField("inventory.CraftItemStack","handle",item);
                 Object tag = NMSUtil.invokeNMS("ItemStack", "getTag", new Class[]{}, nmsItem);
                 nbt = NBTTagUtil.asString(tag);
-            } catch(NullPointerException ex) {};
+            } catch(NullPointerException ex) {}
         }
         return nbt;
     }

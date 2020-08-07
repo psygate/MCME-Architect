@@ -25,6 +25,6 @@ public enum InventoryAccess {
     TRUE,
     BUILDER,
     EXCEPTION,
-    FALSE;
+    FALSE
 
 }

@@ -56,7 +56,7 @@ public class RpDatabaseConnector {
     private PreparedStatement updatePlayerRpSettings;
     private PreparedStatement selectPlayerRpSettings;
 
-    private BukkitTask keepAliveTask;
+    private final BukkitTask keepAliveTask;
 
     private boolean connected;
 
