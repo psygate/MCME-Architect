@@ -64,11 +64,11 @@ public class InventoryListener implements Listener{
             ItemStack handItem = player.getInventory().getItemInMainHand();
             if( player.isSneaking() ) {
                 //open block collection if target block has one defined
-                SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
+                /*SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
                 if(base == null || !base.hasCollection()) {
                     sendNoInventoryError(player,"");
                     return;
-                }
+                }*/
                 if(!SpecialBlockInventoryData.openInventory(player, handItem)) {
                     sendNoInventoryError(player,"");
                 }
@@ -215,7 +215,7 @@ public class InventoryListener implements Listener{
     }*/
     
 
-    private void sendNoInventoryError(CommandSender p, String rp) {
+    static void sendNoInventoryError(CommandSender p, String rp) {
         if(rp.equals("")) {
             PluginData.getMessageUtil().sendErrorMessage(p, "Custom inventory not found.");
         } else {

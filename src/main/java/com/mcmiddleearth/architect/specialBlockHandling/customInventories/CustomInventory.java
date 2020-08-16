@@ -39,7 +39,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
- 
+import java.util.logging.Logger;
+
 public class CustomInventory implements Listener {
  
     //sum should be 54
@@ -132,6 +133,7 @@ public class CustomInventory implements Listener {
     
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     void onInventoryClick(final InventoryClickEvent event) {
+//Logger.getGlobal().info(event.getClick().name());
         if (openInventories.containsKey(event.getInventory())) { //.getTitle.equals(name)) {
             if(event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)
                     || event.getRawSlot() >= event.getInventory().getSize()
@@ -141,7 +143,7 @@ public class CustomInventory implements Listener {
             event.setCancelled(true);
             CustomInventoryState state = openInventories.get(event.getInventory());
 //Logger.getGlobal().info("onInventoryClick: "+event.isLeftClick() +" "+event.isShiftClick());
-            if(event.isLeftClick() && event.isShiftClick()
+            if((event.isRightClick() || (event.isLeftClick() && event.isShiftClick()))
                     && event.getCurrentItem() != null) {
 //Logger.getGlobal().info("Create collection view.");
                 if(hasCollection(event.getCurrentItem())) {

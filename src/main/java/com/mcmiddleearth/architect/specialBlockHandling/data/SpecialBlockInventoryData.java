@@ -29,6 +29,7 @@ import com.mcmiddleearth.util.ZipUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -272,10 +273,12 @@ public class SpecialBlockInventoryData {
     }
     
     public static boolean openInventory(Player p, ItemStack collectionBase) {
-        SpecialBlock baseBlock = getSpecialBlockDataFromItem(collectionBase);
+//Logger.getGlobal().info(collectionBase.toString());
+        SpecialBlock baseBlock = matchSpecialBlock(collectionBase);
+//Logger.getGlobal().info(""+baseBlock);
         if(baseBlock != null) {
             String rpName = SpecialBlockInventoryData.rpName(baseBlock.getId());
-            return openInventory(p, rpName, collectionBase);
+            return openInventory(p, rpName, inventories.get(rpName).getItem(baseBlock.getId()));
         }
         return false;
     }
@@ -297,7 +300,20 @@ public class SpecialBlockInventoryData {
     public static boolean hasBlockInventory(String rpName) {
         return inventories.containsKey(rpName);
     }
-    
+
+    private static SpecialBlock matchSpecialBlock(ItemStack item) {
+        SpecialBlock block = getSpecialBlockDataFromItem(item);
+        if(block!=null) {
+            return block;
+        } else {
+            BlockData data = SpecialBlockVanilla.matchBlockData(item.getType().name());
+            if(data.matches(Material.AIR.createBlockData())) {
+                return null;
+            }
+            return blockList.stream().filter(search->search.matches(data)).findFirst().orElse(null);
+        }
+    }
+
     public static SpecialBlock getSpecialBlock(String id) {
         for(SpecialBlock data: blockList) {
             if(data.getId().equals(id)) {

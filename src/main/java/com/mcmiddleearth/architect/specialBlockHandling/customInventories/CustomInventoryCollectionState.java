@@ -67,7 +67,7 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
             char row = key.charAt(0);
             if(allowedRows.contains(row) && NumericUtil.isInt(key.substring(1))) {
                 int column = NumericUtil.getInt(key.substring(1));
-                if(column > 0 && column < 5) {
+                if(column >= 0 && column < 5) {
                     inventory.setItem(getIndex(row,column), getItem(entry));
                 }
             } 

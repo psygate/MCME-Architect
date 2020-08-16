@@ -109,6 +109,7 @@ public class BlockDataManager {
         attributes.add(new BooleanAttribute("Drag", BubbleColumn.class));
         attributes.add(new SetAttribute("Orientation", Jigsaw.class, Jigsaw.Orientation.class));
         attributes.add(new IntAttribute("Charges", RespawnAnchor.class));
+        attributes.add(new IntAttribute("HoneyLevel", Beehive.class));
         attributes.add(new BooleanAttribute("Up", Wall.class));
         attributes.add(new WallAttribute("Height"));
 

@@ -77,7 +77,13 @@ public class BlockPickerListener implements Listener {
         if(item!=null) {
 //Logger.getGlobal().info("4 "+item);
             event.setCancelled(true);
-            event.getPlayer().getInventory().addItem(item);
+            if(!event.getPlayer().isSneaking()) {
+                event.getPlayer().getInventory().addItem(item);
+            } else {
+                if(!SpecialBlockInventoryData.openInventory(event.getPlayer(), item)) {
+                    InventoryListener.sendNoInventoryError(event.getPlayer(),"");
+                }
+            }
         }
     }
 

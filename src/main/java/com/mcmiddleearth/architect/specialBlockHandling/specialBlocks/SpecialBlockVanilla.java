@@ -28,6 +28,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Eriol_Eandur
@@ -56,9 +58,30 @@ public class SpecialBlockVanilla extends SpecialBlock {
             config.set("dataValue",null);
         }
         // end convert old data
-        return new SpecialBlockVanilla(id, Material.AIR.createBlockData());
+//Logger.getGlobal().info("\n"+id);
+        String name = config.getString("itemMaterial","AIR");
+//Logger.getGlobal().info(name);
+        BlockData data = matchBlockData(name);
+//Logger.getGlobal().info(data.getAsString());
+        return new SpecialBlockVanilla(id, data);
     }
-    
+
+    public static BlockData matchBlockData(String itemMaterial) {
+        Material material = Material.AIR;
+        if (itemMaterial!=null) {
+            material = Material.getMaterial(itemMaterial);
+        }
+        if(material == null) {
+            material = Material.AIR;
+        }
+//Logger.getGlobal().info(material.name());
+        BlockData data = Material.AIR.createBlockData();
+        try {
+            data = material.createBlockData();
+        } catch(IllegalArgumentException ex){};
+        return data;
+    }
+
     @Override
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
     }
@@ -67,5 +90,6 @@ public class SpecialBlockVanilla extends SpecialBlock {
     protected BlockState getBlockState(Block blockPlace, BlockFace blockFace, Location playerLoc) {
         return blockPlace.getState();
     }
-    
+
+
 }

@@ -199,6 +199,8 @@ public class SpecialBlock {
         return block.getBlockData().matches(blockData);
     }
 
+    public boolean matches(BlockData data) { return data.matches(blockData);}
+
     public String getId() {
         return id;
     }
