@@ -50,28 +50,35 @@ public class CustomInventory implements Listener {
     private final String name;
    
     private final Map<String, CustomInventoryCategory> categories = new LinkedHashMap<>();
+
+    private final CustomInventoryCategory withoutCategory = new CustomInventoryCategory(null, true, null,
+                                                                        null, false);
     
     private final Map<Inventory,CustomInventoryState> openInventories = new HashMap<>();
     
     private final String menueItemId = "MCME Inventory Category";
-   
+
     public CustomInventory(String name) {
         this.name = name;
         Plugin plugin = ArchitectPlugin.getPluginInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
    
-    public CustomInventory add(ItemStack item, String category) {//, String name, String... info) {
-        createCategoryIfNotExists(category, null, true,
-                                            new ItemStack(Material.GOLD_NUGGET),
-                                            new ItemStack(Material.GOLD_NUGGET));
-        categories.get(category).addItem(item);
+    public CustomInventory add(ItemStack item, String category, boolean withSubcategories) {//, String name, String... info) {
+        if(category == null || category.equalsIgnoreCase("")) {
+            withoutCategory.addItem(item);
+        } else {
+            createCategoryIfNotExists(category, null, true,
+                    new ItemStack(Material.GOLD_NUGGET),
+                    new ItemStack(Material.GOLD_NUGGET), withSubcategories);
+            categories.get(category).addItem(item);
+        }
         return this;
     }
    
     public void setCategoryItems(String category, UUID owner, boolean isPublic,
-                                 ItemStack item, ItemStack currentItem) {
-        createCategoryIfNotExists(category, owner, isPublic, item, currentItem);
+                                 ItemStack item, ItemStack currentItem, boolean withSubcategories) {
+        createCategoryIfNotExists(category, owner, isPublic, item, currentItem, withSubcategories);
         CustomInventoryCategory cat = categories.get(category);
         if(item!=null) 
             cat.setCategoryItem(setMenueItemMeta(item,category));
@@ -79,11 +86,13 @@ public class CustomInventory implements Listener {
             cat.setCurrentCategoryItem(setMenueItemMeta(currentItem,category));
     }
     
-    private void createCategoryIfNotExists(String category, UUID owner, boolean isPublic, ItemStack item, ItemStack currentItem) {
+    private void createCategoryIfNotExists(String category, UUID owner, boolean isPublic, ItemStack item,
+                                           ItemStack currentItem, boolean usesSubcategories) {
         if(!categories.containsKey(category)) {
             categories.put(category, new CustomInventoryCategory(owner, isPublic,
                                                                  setMenueItemMeta(item,category),
-                                                                 setMenueItemMeta(currentItem,category)));
+                                                                 setMenueItemMeta(currentItem,category),
+                                                                 usesSubcategories));
         }
     }
     
@@ -97,9 +106,9 @@ public class CustomInventory implements Listener {
             if(startCategory == null) {
                 startCategory = "";
             }
-            state = new CustomInventoryCategoryState(categories, inventory, player);
+            state = new CustomInventoryCategoryState(categories, withoutCategory, inventory, player);
         } else {
-            state = new CustomInventoryCollectionState(categories, inventory, player, collectionBase);
+            state = new CustomInventoryCollectionState(categories, withoutCategory, inventory, player, collectionBase);
         }
         openInventories.put(inventory, state);
         state.update();
@@ -142,18 +151,6 @@ public class CustomInventory implements Listener {
             }
             event.setCancelled(true);
             CustomInventoryState state = openInventories.get(event.getInventory());
-//Logger.getGlobal().info("onInventoryClick: "+event.isLeftClick() +" "+event.isShiftClick());
-            if((event.isRightClick() || (event.isLeftClick() && event.isShiftClick()))
-                    && event.getCurrentItem() != null) {
-//Logger.getGlobal().info("Create collection view.");
-                if(hasCollection(event.getCurrentItem())) {
-//Logger.getGlobal().info("Found collection.");
-                    state = new CustomInventoryCollectionState(state,event.getCurrentItem());
-                    openInventories.put(state.inventory, state);
-                    state.update();
-                }
-                return;
-            }
             if(state.isPageUpSlot(event.getRawSlot())) {
                 state.pageUp();
                 state.update();
@@ -162,6 +159,20 @@ public class CustomInventory implements Listener {
             if(state.isPageDownSlot(event.getRawSlot())) {
                 state.pageDown();
                 state.update();
+                return;
+            }
+//Logger.getGlobal().info("onInventoryClick: "+event.isLeftClick() +" "+event.isShiftClick());
+            if(event.getCurrentItem() != null
+                && (event.isRightClick()
+                    || (event.isLeftClick() && event.isShiftClick()))
+                    || (state.usesSubcategories() && hasCollection(event.getCurrentItem()))) {
+//Logger.getGlobal().info("Create collection view.");
+                if(hasCollection(event.getCurrentItem())) {
+//Logger.getGlobal().info("Found collection.");
+                    state = new CustomInventoryCollectionState(state,event.getCurrentItem());
+                    openInventories.put(state.inventory, state);
+                    state.update();
+                }
                 return;
             }
             if(event.getCurrentItem() != null) {

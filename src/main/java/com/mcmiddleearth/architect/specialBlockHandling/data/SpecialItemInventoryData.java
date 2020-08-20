@@ -114,7 +114,7 @@ public class SpecialItemInventoryData {
                 if(section.contains("damageCurrent")) {
                     currentCategoryItem.setDurability((short)section.getInt("damageCurrent"));
                 }
-                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem);
+                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem, false);
             }
         }
         ConfigurationSection itemConfig = config.getConfigurationSection("Items");
@@ -130,7 +130,7 @@ public class SpecialItemInventoryData {
                 ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                 if(inventoryItem!=null) {
                     String category = section.getString("category","item");
-                    inventory.add(inventoryItem, category);
+                    inventory.add(inventoryItem, category,false);
                     searchInventory.add(inventoryItem);
                 } else {
                     Logger.getLogger(SpecialBlockInventoryData.class.getName())

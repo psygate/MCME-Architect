@@ -135,7 +135,8 @@ public class SpecialBlockInventoryData {
                 if(section.contains("damageCurrent")) {
                     currentCategoryItem.setDurability((short)section.getInt("damageCurrent"));
                 }
-                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem);
+                boolean useSubcategories = section.getBoolean("useSubcategories",false);
+                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem, useSubcategories);
             }
         }
         ConfigurationSection itemConfig = config.getConfigurationSection("Items");
@@ -236,9 +237,17 @@ public class SpecialBlockInventoryData {
                     ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                     if(blockData !=null && inventoryItem!=null && !inventoryItem.getType().equals(Material.AIR)) {
                         blockData.loadBlockCollection(section,rpName);
-                        String category = section.getString("category","Block");
                         blockList.add(blockData);
-                        inventory.add(inventoryItem, category);
+
+                        Object categoryObject = section.get("category");
+                        if(categoryObject instanceof String) {
+                            inventory.add(inventoryItem, (String) categoryObject, false);
+                        } else if((categoryObject instanceof List) && ! ((List<?>)categoryObject).isEmpty()) {
+                            ((List<String>)categoryObject).forEach(category -> inventory.add(inventoryItem, category,false));
+                        } else {
+                            inventory.add(inventoryItem,null,false);
+                            Logger.getGlobal().info("category object: "+categoryObject);
+                        }
                         searchInventory.add(inventoryItem);
                     } else {
                         Logger.getLogger(SpecialBlockInventoryData.class.getName())
@@ -317,9 +326,11 @@ public class SpecialBlockInventoryData {
     public static SpecialBlock getSpecialBlock(String id) {
         for(SpecialBlock data: blockList) {
             if(data.getId().equals(id)) {
+//Logger.getGlobal().info("get data "+data.getId());
                 return data;
             }
         }
+//Logger.getGlobal().info("get data NULL");
         return null;
     }
     
@@ -328,13 +339,16 @@ public class SpecialBlockInventoryData {
     }
 
     public static String getSpecialBlockId(ItemStack handItem) {
+//Logger.getGlobal().info("getID start");
         ItemMeta meta = handItem.getItemMeta();
         if(meta==null 
             || (!(meta.hasLore() 
                 && meta.getLore().size()>1 
                 && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG)))) {
+//Logger.getGlobal().info("getID return null");
             return null;
         }
+//Logger.getGlobal().info("getID return "+meta.getLore().get(1));
         return meta.getLore().get(1);
     }
 

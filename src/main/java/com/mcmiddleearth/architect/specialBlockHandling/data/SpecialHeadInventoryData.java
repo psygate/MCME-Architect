@@ -56,7 +56,7 @@ public class SpecialHeadInventoryData {
             collection.getAllHeadsIncludingSubCollections(heads);
 //Logger.getGlobal().info("Loading head collection: "+name+ " count: "+heads.size());
             for(ItemStack head: heads.values()) {
-                inventory.add(head, name);
+                inventory.add(head, name, false);
                 searchInventory.add(head);
             }
             if(!heads.isEmpty()) {
@@ -64,7 +64,7 @@ public class SpecialHeadInventoryData {
                 inventory.setCategoryItems(name, null, true, 
                                            categoryItem.clone(), 
                                            new ItemStack(CustomInventoryState.pagingMaterial,1,
-                                                 CustomInventoryState.pageDown));
+                                                 CustomInventoryState.pageDown),false);
             }
         }
     }

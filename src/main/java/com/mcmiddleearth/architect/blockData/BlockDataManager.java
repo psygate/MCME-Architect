@@ -70,12 +70,11 @@ public class BlockDataManager {
         attributes.add(new SetAttribute("Type",Slab.class,Slab.Type.class));
         attributes.add(new IntAttribute("Layers",Snow.class));
         attributes.add(new SetAttribute("Mode",StructureBlock.class,StructureBlock.Mode.class));
-        attributes.add(new SetAttribute("Face",Switch.class,Switch.Face.class));
         attributes.add(new SetAttribute("Type",TechnicalPiston.class,TechnicalPiston.Type.class));
         attributes.add(new BooleanAttribute("Short",PistonHead.class));
         attributes.add(new IntAttribute("Eggs",TurtleEgg.class));
         attributes.add(new IntAttribute("Hatch",TurtleEgg.class));
-        
+
         attributes.add(new BooleanAttribute("Powered",Powerable.class));
         attributes.add(new SetAttribute("Half",Bisected.class,Bisected.Half.class));
         attributes.add(new SetAttribute("Hinge",Door.class,Door.Hinge.class));
@@ -95,7 +94,7 @@ public class BlockDataManager {
         attributes.add(new IntAttribute("Power",AnaloguePowerable.class));
         attributes.add(new IntAttribute("Level",Levelled.class));
         attributes.add(new RotatableAttribute("Rotation"));
-        
+
         //1.13 - 1.4 additions
         attributes.add(new SetAttribute("Leaves", Bamboo.class, Bamboo.Leaves.class));
         attributes.add(new SetAttribute("Attachment", Bell.class, Bell.Attachment.class));
@@ -112,10 +111,11 @@ public class BlockDataManager {
         attributes.add(new IntAttribute("HoneyLevel", Beehive.class));
         attributes.add(new BooleanAttribute("Up", Wall.class));
         attributes.add(new WallAttribute("Height"));
+        attributes.add(new SetAttribute("AttachedFace",FaceAttachable.class,FaceAttachable.AttachedFace.class));
 
-        
+
     }
-    
+
     public Attribute getAttribute(BlockData data) {
         int sum = -1;
         Attribute last = null;

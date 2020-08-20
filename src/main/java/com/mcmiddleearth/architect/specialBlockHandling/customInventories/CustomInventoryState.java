@@ -38,6 +38,8 @@ public abstract class CustomInventoryState {
     
     protected final Map<String,CustomInventoryCategory> categories;
 
+    protected final CustomInventoryCategory withoutCategory;
+
     protected final String[] categoryNames;
     
     protected boolean stressCurrentCategoryItem = true;
@@ -50,15 +52,14 @@ public abstract class CustomInventoryState {
     
     protected final Player player;
     
-    
-    
-    public CustomInventoryState(Map<String, CustomInventoryCategory> categories, Inventory inventory, Player player) {
+    public CustomInventoryState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory, Inventory inventory, Player player) {
         this.categories = categories;
         this.categoryNames = categories.keySet().toArray(new String[0]);
         this.currentCategory = 0;
         this.leftCategory = 0;
         this.inventory = inventory;
         this.player = player;
+        this.withoutCategory = withoutCategory;
         //showCat();
     }
     
@@ -258,4 +259,6 @@ public abstract class CustomInventoryState {
         item.setItemMeta(meta);
         return item;
     }
+
+    public abstract boolean usesSubcategories();
 }

@@ -23,9 +23,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -34,10 +42,13 @@ import org.bukkit.inventory.ItemStack;
 public class CustomInventoryCollectionState extends CustomInventoryState {
     
     private final SpecialBlock baseBlock;
-    
-    public CustomInventoryCollectionState(Map<String, CustomInventoryCategory> categories, 
+
+    private final int maskIndex = CustomInventory.CATEGORY_SLOTS + 13;
+    private final ItemStack maskItem = new ItemStack(Material.GOLDEN_HELMET,1);
+
+    public CustomInventoryCollectionState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory,
                                           Inventory inventory, Player player, ItemStack baseItem) {
-        super(categories, inventory, player);
+        super(categories, withoutCategory, inventory, player);
         stressCurrentCategoryItem = false;
         SpecialBlock tempBase = SpecialBlockInventoryData.getSpecialBlockDataFromItem(baseItem);
 //Logger.getGlobal().info("first base: "+tempBase.getId());
@@ -51,11 +62,16 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
             }
         }
         baseBlock = tempBase;
+        ItemMeta meta = Bukkit.getServer().getItemFactory().getItemMeta(Material.GOLDEN_HELMET);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        meta.setUnbreakable(true);
+        ((Damageable)meta).setDamage(35);
+        maskItem.setItemMeta(meta);
 //Logger.getGlobal().info("final base: "+baseBlock.getId());
     }
 
     CustomInventoryCollectionState(CustomInventoryState state, ItemStack baseItem) {
-        this(state.categories, state.inventory, state.player, baseItem);
+        this(state.categories, state.withoutCategory, state.inventory, state.player, baseItem);
     }
     
     @Override
@@ -72,8 +88,18 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
                 }
             } 
         });
+        inventory.setItem(maskIndex, maskItem);
+        //inventory.setItem(maskIndex -1, customItem(2));
+        //inventory.setItem(maskIndex +1, customItem(3));
     }
-    
+
+    private ItemStack customItem(int value) {
+        ItemStack item = new ItemStack(Material.BROWN_DYE);
+        ItemMeta meta = Bukkit.getServer().getItemFactory().getItemMeta(Material.BROWN_DYE);
+        meta.setCustomModelData(value);
+        item.setItemMeta(meta);
+        return item;
+    }
     private int getIndex(char row, int column) {
         int rowBase=CustomInventory.CATEGORY_SLOTS+22;
         boolean rowAdd=true;
@@ -133,13 +159,20 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
     }
     
     private ItemStack getItem(String id) {
+        ItemStack item = withoutCategory.getItem(id);
+        if(item != null) {
+            return item;
+        }
         for(CustomInventoryCategory category: categories.values()) {
-            ItemStack item = category.getItem(id);
+            item = category.getItem(id);
             if(item != null) {
                 return item;
             }
         }
         return null;
     }
-    
+
+    @Override
+    public boolean usesSubcategories() {return false;}
+
 }
