@@ -22,14 +22,11 @@ import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -43,7 +40,9 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
     
     private final SpecialBlock baseBlock;
 
-    private final int maskIndex = CustomInventory.CATEGORY_SLOTS + 13;
+    private final int maskSlot = CustomInventory.CATEGORY_SLOTS + 13;
+    private final int backSlot = CustomInventory.CATEGORY_SLOTS + 31;
+
     private final ItemStack maskItem = new ItemStack(Material.GOLDEN_HELMET,1);
 
     public CustomInventoryCollectionState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory,
@@ -88,7 +87,10 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
                 }
             } 
         });
-        inventory.setItem(maskIndex, maskItem);
+        inventory.setItem(maskSlot, maskItem);
+        CustomInventoryCategory cat = categories.get(categoryNames[currentCategory]);
+        inventory.setItem(backSlot, cat.getCategoryItem());
+
         //inventory.setItem(maskIndex -1, customItem(2));
         //inventory.setItem(maskIndex +1, customItem(3));
     }
@@ -100,6 +102,7 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
         item.setItemMeta(meta);
         return item;
     }
+
     private int getIndex(char row, int column) {
         int rowBase=CustomInventory.CATEGORY_SLOTS+22;
         boolean rowAdd=true;
@@ -175,4 +178,11 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
     @Override
     public boolean usesSubcategories() {return false;}
 
+    public int getMaskSlot() {
+        return maskSlot;
+    }
+
+    public int getBackSlot() {
+        return backSlot;
+    }
 }

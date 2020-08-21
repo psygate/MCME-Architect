@@ -46,7 +46,7 @@ public class CustomInventory implements Listener {
     //sum should be 54
     public static final int CATEGORY_SLOTS = 9;
     public static final int ITEM_SLOTS = 45;
-    
+
     private final String name;
    
     private final Map<String, CustomInventoryCategory> categories = new LinkedHashMap<>();
@@ -160,6 +160,17 @@ public class CustomInventory implements Listener {
                 state.pageDown();
                 state.update();
                 return;
+            }
+            if(state instanceof CustomInventoryCollectionState) {
+                if(event.getRawSlot() == ((CustomInventoryCollectionState)state).getBackSlot()) {
+                    state = new CustomInventoryCategoryState(state);
+                    openInventories.put(state.inventory, state);
+                    state.update();
+                    return;
+                }
+                if(event.getRawSlot() == ((CustomInventoryCollectionState)state).getMaskSlot()) {
+                    return;
+                }
             }
 //Logger.getGlobal().info("onInventoryClick: "+event.isLeftClick() +" "+event.isShiftClick());
             if(event.getCurrentItem() != null
