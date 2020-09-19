@@ -230,6 +230,9 @@ public class SpecialBlockInventoryData {
                         case DOUBLE_Y_BLOCK:
                             blockData = SpecialBlockDoubleY.loadFromConfig(section, fullName(rpName, itemKey));
                             break;
+                        case UPSHIFT:
+                            blockData = SpecialBlockUpshift.loadFromConfig(section, fullName(rpName, itemKey));
+                            break;
                         case VANILLA:
                             blockData = SpecialBlockVanilla.loadFromConfig(section, fullName(rpName, itemKey));
                             break;
