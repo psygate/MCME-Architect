@@ -122,30 +122,36 @@ public class InventoryListener implements Listener{
     public void selectItem(PlayerDropItemEvent event) {
         if((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting // check if player has no open inventory (internal crafting inventory is returned in this case)
                 && PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
-            event.setCancelled(true);
-            final Player player = event.getPlayer();
-            //ItemStack handItem = player.getInventory().getItemInMainHand();
-            ItemStack droppedItem = event.getItemDrop().getItemStack();
-            SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(droppedItem);
-            if (droppedItem.getAmount() > 1) {
-                //open block collection if target block has one defined
-                //Logger.getLogger("InventoryListener").info(droppedItem.getType()+" "+droppedItem.getAmount());
-                if (base == null || !base.hasCollection()) {
-                    sendNoInventoryError(player, "");
-                    return;
+            if (SpecialBlockInventoryData.getSpecialBlockDataFromItem(event.getItemDrop().getItemStack()) != null) {
+                //event.setCancelled(true);
+                final Player player = event.getPlayer();
+                //ItemStack handItem = player.getInventory().getItemInMainHand();
+                ItemStack droppedItem = event.getItemDrop().getItemStack();
+                SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(droppedItem);
+                if (droppedItem.getAmount() > 1) {
+                    //open block collection if target block has one defined
+                    //Logger.getLogger("InventoryListener").info(droppedItem.getType()+" "+droppedItem.getAmount());
+                    if (base == null || !base.hasCollection()
+                            || !SpecialBlockInventoryData.openInventory(player, droppedItem)) {
+                        sendNoInventoryError(player, "");
+                    }
+                } else {
+                    if (base != null && base.hasNextBlock()) {
+                        base = base.getNextBlock();
+                        /*nextItem.setAmount(2);
+                        new BukkitRunnable(){
+                            @Override
+                            public void run() {
+                                player.getInventory().setItemInMainHand(nextItem);
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(),20);*/
+                    }
                 }
-                if (!SpecialBlockInventoryData.openInventory(player, droppedItem)) {
-                    sendNoInventoryError(player, "");
-                }
+                ItemStack nextItem = SpecialBlockInventoryData.getItem(base);
+                nextItem.setAmount(2);
+                player.getInventory().setItemInMainHand(nextItem);
             } else {
-                if(base != null && base.hasNextBlock()) {
-                    new BukkitRunnable(){
-                        @Override
-                        public void run() {
-                            player.getInventory().setItemInMainHand(SpecialBlockInventoryData.getItem(base.getNextBlock()));
-                        }
-                    }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
-                }
+                event.setCancelled(true);
             }
         }
         /*Logger.getLogger(InventoryListener.class.getSimpleName()).info("Drop event "+ event.getItemDrop().getItemStack().getAmount()

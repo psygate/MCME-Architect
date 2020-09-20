@@ -372,7 +372,7 @@ public class SpecialBlockInventoryData {
     public static ItemStack getItem(SpecialBlock block) {
         CustomInventory inventory = inventories.get(rpName(block.getId()));
         if (inventory != null) {
-            return inventory.getItem(block.getId());
+            return inventory.getItem(block.getId()).clone();
         } else {
             return null;
         }
