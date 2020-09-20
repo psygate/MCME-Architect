@@ -37,6 +37,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -188,7 +189,9 @@ public class CustomInventory implements Listener {
             }
             if(event.getCurrentItem() != null) {
                 if(event.getCursor() !=null && event.getCursor().getType().equals(Material.AIR)) {
-                    event.setCursor(new ItemStack(event.getCurrentItem()));
+                    ItemStack item = new ItemStack(event.getCurrentItem());
+                    item.setAmount(2);
+                    event.setCursor(item);
                 } else if(event.getCursor().isSimilar(event.getCurrentItem())) { 
                     if(event.getCursor().getMaxStackSize()>event.getCursor().getAmount()) {
                         event.getCursor().setAmount(event.getCursor().getAmount()+1);
@@ -199,6 +202,23 @@ public class CustomInventory implements Listener {
             }
         }
     }
+
+    /*@EventHandler
+    public void onPlayerInventoryClick(final InventoryClickEvent event) {
+        Logger.getLogger("CustomInventory").info(""+event.getClickedInventory().getType());
+        Logger.getLogger("CustomInventory").info(""+event.getSlotType());
+        if(event.getSlotType().equals(SlotType.QUICKBAR)) {//event.getClickedInventory().getType().equals(InventoryType.PLAYER)){
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    event.getClickedInventory().getItem(event.getSlot()).setAmount(new Random().nextInt(4)-2);
+                }
+            }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
+            //event.getCurrentItem()item.setAmount(new Random().nextInt(4)-2);
+
+
+        }
+    }*/
     
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     void onMenueClick(final InventoryClickEvent event) {

@@ -16,31 +16,26 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
-import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.InventoryAccess;
-import com.mcmiddleearth.architect.Modules;
-import com.mcmiddleearth.architect.Permission;
-import com.mcmiddleearth.architect.PluginData;
+import com.mcmiddleearth.architect.*;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftInventoryCrafting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,17 +57,6 @@ public class InventoryListener implements Listener{
             event.setCancelled(true);
             final Player player = event.getPlayer();
             ItemStack handItem = player.getInventory().getItemInMainHand();
-            if( player.isSneaking() ) {
-                //open block collection if target block has one defined
-                /*SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
-                if(base == null || !base.hasCollection()) {
-                    sendNoInventoryError(player,"");
-                    return;
-                }*/
-                if(!SpecialBlockInventoryData.openInventory(player, handItem)) {
-                    sendNoInventoryError(player,"");
-                }
-            } else {
                 //open custom block inventory
                 ItemStack offHandItem = player.getInventory().getItemInOffHand();
                 if ((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
@@ -84,39 +68,24 @@ public class InventoryListener implements Listener{
                 }
                 String rpName = RpManager.getCurrentRpName(player);//1.13 removed: PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
                 if (rpName == null || rpName.equals("")) {
-                    rpName = getRpName(handItem);
+                    rpName = SpecialBlockInventoryData.getRpName(handItem);
                     if (rpName.equals("")) {
-                        rpName = getRpName(offHandItem);
+                        rpName = SpecialBlockInventoryData.getRpName(offHandItem);
                     }
                 }
                 if (!SpecialBlockInventoryData.openInventory(player, rpName)) {
                     sendNoInventoryError(player, rpName);
                 }
-            }
+            //}
         }
     }
-    
-    public static String getRpName(ItemStack item) {
-        String rpN="";
-        if(item.hasItemMeta()
-                && item.getItemMeta().hasDisplayName()) {
-            String displayName = item.getItemMeta().getDisplayName();
-            if(displayName.indexOf(' ')>0) {
-                displayName = displayName.substring(0,displayName.indexOf(' '));
-            }
-            if(!RpManager.getRpUrl(displayName,null).equalsIgnoreCase("")) {
-                rpN = displayName;
-            }
-        } 
-        return rpN;
-    }
-    
+
     /**
      * If module SPECIAL_BLOCK_GET is enabled in world config file
      * opens the custom block inventory when a player droppes two stone blocks from the creative inventory.
      * @param event 
      */
-    @EventHandler(priority=EventPriority.LOWEST) 
+    /*@EventHandler(priority=EventPriority.LOWEST)
     public void openSpecialInventory(InventoryCreativeEvent event) {
         if(PluginData.isModuleEnabled(event.getWhoClicked().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             if(event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)
@@ -147,8 +116,45 @@ public class InventoryListener implements Listener{
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }
         }
+    }*/
+
+    @EventHandler
+    public void selectItem(PlayerDropItemEvent event) {
+        if((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting // check if player has no open inventory (internal crafting inventory is returned in this case)
+                && PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
+            event.setCancelled(true);
+            final Player player = event.getPlayer();
+            //ItemStack handItem = player.getInventory().getItemInMainHand();
+            ItemStack droppedItem = event.getItemDrop().getItemStack();
+            SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(droppedItem);
+            if (droppedItem.getAmount() > 1) {
+                //open block collection if target block has one defined
+                //Logger.getLogger("InventoryListener").info(droppedItem.getType()+" "+droppedItem.getAmount());
+                if (base == null || !base.hasCollection()) {
+                    sendNoInventoryError(player, "");
+                    return;
+                }
+                if (!SpecialBlockInventoryData.openInventory(player, droppedItem)) {
+                    sendNoInventoryError(player, "");
+                }
+            } else {
+                if(base != null && base.hasNextBlock()) {
+                    new BukkitRunnable(){
+                        @Override
+                        public void run() {
+                            player.getInventory().setItemInMainHand(SpecialBlockInventoryData.getItem(base.getNextBlock()));
+                        }
+                    }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
+                }
+            }
+        }
+        /*Logger.getLogger(InventoryListener.class.getSimpleName()).info("Drop event "+ event.getItemDrop().getItemStack().getAmount()
+        +" "+(event.getPlayer().getOpenInventory())+" InventoryView "+((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting)
+        +"\n InventoryType"+(event.getPlayer().getOpenInventory().getType())
+                +"\n Bottom Inventory"+(event.getPlayer().getOpenInventory().getBottomInventory())
+        +"\n Top Inventory"+(event.getPlayer().getOpenInventory().getTopInventory()));*/
     }
-    
+
     /**
      * If module INVENTORY_ACCESS is enabled in world config file
      * allowes or blocks opening of inventories as defined in world config file.

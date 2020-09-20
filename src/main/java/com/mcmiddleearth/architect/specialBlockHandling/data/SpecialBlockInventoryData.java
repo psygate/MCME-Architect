@@ -239,6 +239,7 @@ public class SpecialBlockInventoryData {
                     }
                     ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                     if(blockData !=null && inventoryItem!=null && !inventoryItem.getType().equals(Material.AIR)) {
+                        blockData.loadNextBlock(section,rpName);
                         blockData.loadBlockCollection(section,rpName);
                         blockList.add(blockData);
 
@@ -367,6 +368,15 @@ public class SpecialBlockInventoryData {
         return getHandItem(new ItemStack(block.getType(),1));
         //1.13 removed: return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));
     }
+
+    public static ItemStack getItem(SpecialBlock block) {
+        CustomInventory inventory = inventories.get(rpName(block.getId()));
+        if (inventory != null) {
+            return inventory.getItem(block.getId());
+        } else {
+            return null;
+        }
+    }
     
     private static ItemStack getHandItem(ItemStack item) {
         switch(item.getType()) {
@@ -459,5 +469,20 @@ public class SpecialBlockInventoryData {
     
     public static String rpName(String id) {
         return id.substring(0,id.indexOf("/"));
+    }
+
+    public static String getRpName(ItemStack item) {
+        String rpN="";
+        if(item.hasItemMeta()
+                && item.getItemMeta().hasDisplayName()) {
+            String displayName = item.getItemMeta().getDisplayName();
+            if(displayName.indexOf(' ')>0) {
+                displayName = displayName.substring(0,displayName.indexOf(' '));
+            }
+            if(!RpManager.getRpUrl(displayName,null).equalsIgnoreCase("")) {
+                rpN = displayName;
+            }
+        }
+        return rpN;
     }
 }

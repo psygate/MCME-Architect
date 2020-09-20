@@ -49,6 +49,7 @@ public class SpecialBlock {
     private final String id;
     private final BlockData blockData;
     protected final SpecialBlockType type;
+    private String nextBlockId;
     
     private final Map<String,String> collection = new HashMap<>();
     
@@ -61,7 +62,7 @@ public class SpecialBlock {
         this.blockData = data;
         this.type = type;
     }
-    
+
     public static SpecialBlock loadFromConfig(ConfigurationSection config, String id) {
         BlockData data;
         //convert old data
@@ -85,7 +86,11 @@ public class SpecialBlock {
         }
         return new SpecialBlock(id, data);
     }
-    
+
+    public void loadNextBlock(ConfigurationSection config, String rpName) {
+        nextBlockId = SpecialBlockInventoryData.fullName(rpName,config.getString("nextBlock",null));
+    }
+
     public void loadBlockCollection(ConfigurationSection config, String rpName) {
         try {
             ConfigurationSection section = config.getConfigurationSection("collection");
@@ -108,6 +113,14 @@ public class SpecialBlock {
     
     public boolean hasCollection() {
         return !collection.isEmpty();
+    }
+
+    public boolean hasNextBlock() {
+        return nextBlockId!=null && SpecialBlockInventoryData.getSpecialBlock(nextBlockId)!=null;
+    }
+
+    public SpecialBlock getNextBlock() {
+        return SpecialBlockInventoryData.getSpecialBlock(nextBlockId);
     }
     
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
