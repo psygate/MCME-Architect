@@ -79,6 +79,7 @@ public enum Modules {
     
     REMOVE_CONTAINER_ITEMS    ("modules.protection.removeContainerItemsOnBreak"),
     BLOCK_OP_ITEMS            ("modules.protection.blockOpItems"),
+    BLOCK_ARROW_SHOOTING      ("modules.protection.blockArrowShooting"),
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     LILY_PAD_PROTECTION       ("modules.protection.lilyPad"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");

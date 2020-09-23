@@ -55,8 +55,9 @@ public class InventoryListener implements Listener{
     public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
-            final Player player = event.getPlayer();
-            ItemStack handItem = player.getInventory().getItemInMainHand();
+            if((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting) {
+                final Player player = event.getPlayer();
+                ItemStack handItem = player.getInventory().getItemInMainHand();
                 //open custom block inventory
                 ItemStack offHandItem = player.getInventory().getItemInOffHand();
                 if ((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
@@ -76,6 +77,9 @@ public class InventoryListener implements Listener{
                 if (!SpecialBlockInventoryData.openInventory(player, rpName)) {
                     sendNoInventoryError(player, rpName);
                 }
+            } else {
+                event.getPlayer().getOpenInventory().close();
+            }
             //}
         }
     }
