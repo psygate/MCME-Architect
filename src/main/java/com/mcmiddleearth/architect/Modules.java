@@ -45,6 +45,7 @@ public enum Modules {
     WEATHER_BLOCKING       ("modules.environment.weatherBlocking"),
     DECAY_BLOCKING         ("modules.environment.decayBlocking"),
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
+    BLOCK_FADE_BLOCKING    ("modules.environment.fadeBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
     NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
     NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),

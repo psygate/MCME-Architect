@@ -92,7 +92,7 @@ public class GameMechanicsListener extends WatchedListener{
 //Logger.getGlobal().info("Block decay: "+event.getBlock().getType().name()+" "
 //                                       +event.getBlock().getX()
 //                                       +" "+event.getBlock().getZ());
-    if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.DECAY_BLOCKING)) {
+    if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FADE_BLOCKING)) {
 //Logger.getGlobal().info("Block decay canceled");
 //Logger.getGlobal().info("cancel.");
             event.setCancelled(true);
