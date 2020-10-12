@@ -24,7 +24,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventor
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftInventoryCrafting;
+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryCrafting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
