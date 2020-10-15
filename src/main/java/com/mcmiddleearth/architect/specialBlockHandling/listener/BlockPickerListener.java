@@ -24,6 +24,7 @@ import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.EventUtil;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -73,15 +74,17 @@ public class BlockPickerListener implements Listener {
         } else {
             rpName = SpecialBlockInventoryData.getRpName(handItem);
         }
+//Logger.getGlobal().info("flint "+rpName);
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
+//Logger.getGlobal().info("item "+item.getType());
+//Logger.getGlobal().info("item "+item.hasItemMeta());
         if(item!=null) {
-//Logger.getGlobal().info("4 "+item);
             event.setCancelled(true);
             if(!event.getPlayer().isSneaking()) {
                 event.getPlayer().getInventory().addItem(item);
-            } else {
+            } else if(item.hasItemMeta()){
                 if(!SpecialBlockInventoryData.openInventory(event.getPlayer(), item)) {
-                    InventoryListener.sendNoInventoryError(event.getPlayer(),"");
+                    InventoryListener.sendNoInventoryError(event.getPlayer(),rpName);
                 }
             }
         }

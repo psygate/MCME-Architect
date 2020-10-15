@@ -21,11 +21,17 @@ import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryState;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.mcmiddleearth.util.HeadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -79,7 +85,7 @@ public class SpecialHeadInventoryData {
     }
     
     private static void createInventories() {
-        inventory = new CustomInventory(ChatColor.WHITE+"MCME Head Collection");
+        inventory = new CustomInventory(ChatColor.WHITE+ HeadUtil.headCollectionTag);
         searchInventory = new SearchInventory(ChatColor.WHITE+"heads");
     }
     

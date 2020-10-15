@@ -16,6 +16,8 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.data;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
@@ -26,8 +28,10 @@ import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.ConversionUtil_1_13;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ZipUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -36,6 +40,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -250,7 +255,7 @@ public class SpecialBlockInventoryData {
                             ((List<String>)categoryObject).forEach(category -> inventory.add(inventoryItem, category,false));
                         } else {
                             inventory.add(inventoryItem,null,false);
-                            Logger.getGlobal().info("category object: "+categoryObject);
+                            //Logger.getGlobal().info("category object: "+categoryObject);
                         }
                         searchInventory.add(inventoryItem);
                     } else {
@@ -288,10 +293,11 @@ public class SpecialBlockInventoryData {
     public static boolean openInventory(Player p, ItemStack collectionBase) {
 //Logger.getGlobal().info(collectionBase.toString());
         SpecialBlock baseBlock = matchSpecialBlock(collectionBase);
-//Logger.getGlobal().info(""+baseBlock);
+//Logger.getGlobal().info("open Inventory: "+baseBlock);
         if(baseBlock != null) {
             String rpName = SpecialBlockInventoryData.rpName(baseBlock.getId());
-            return openInventory(p, rpName, inventories.get(rpName).getItem(baseBlock.getId()));
+//Logger.getGlobal().info("open Inventory rp: "+rpName);
+            return openInventory(p, rpName, searchInventories.get(rpName).getItem(baseBlock.getId()));
         }
         return false;
     }
@@ -362,7 +368,7 @@ public class SpecialBlockInventoryData {
         for(SpecialBlock data: blockList) {
             if(rpName(data.getId()).equals(rpName)
                     && data.matches(block)) {
-                return inventories.get(rpName).getItem(data.getId());
+                return searchInventories.get(rpName).getItem(data.getId());
             }
         }
         return getHandItem(new ItemStack(block.getType(),1));
@@ -370,7 +376,7 @@ public class SpecialBlockInventoryData {
     }
 
     public static ItemStack getItem(SpecialBlock block) {
-        CustomInventory inventory = inventories.get(rpName(block.getId()));
+        SearchInventory inventory = searchInventories.get(rpName(block.getId()));
         if (inventory != null) {
             return inventory.getItem(block.getId()).clone();
         } else {
@@ -484,5 +490,28 @@ public class SpecialBlockInventoryData {
             }
         }
         return rpN;
+    }
+
+    /*public static void setRecipes(String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        Bukkit.clearRecipes();
+        if(inv!=null) {
+            inv.setRecipes();
+        }
+    }*/
+    public static Set<NamespacedKey> getRecipeKeys(String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        if(inv!=null) {
+            return inv.getRecipeKeys();
+        }
+        return Sets.newHashSet();
+    }
+
+    public static Recipe getRecipe(NamespacedKey key, String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        if(inv!=null) {
+            return inv.getRecipe(key);
+        }
+        return null;
     }
 }

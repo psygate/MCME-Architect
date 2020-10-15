@@ -282,7 +282,7 @@ public class RpCommand extends AbstractArchitectCommand {
                                        {"/rp d","",": Dwarven (Moria)"},
                                        {"/rp m","",": Mordor"}};
         super.sendHelpMessage(player, page);
-        PluginData.getMessageUtil().sendNoPrefixInfoMessage(player, "Enable server textures enabled to use this command: Disconnect > Edit MCME Server > Server Resource Packs: enabled");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(player, "Enable server textures to use this command: Disconnect > Edit MCME Server > Server Resource Packs: enabled");
     }
 
     private void sendNoRegionFoundMessage(CommandSender cs) {

@@ -9,8 +9,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.RedstoneWire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.configuration.ConfigurationSection;
-import sun.jvm.hotspot.gc.parallel.ImmutableSpace;
-
 import java.util.HashSet;
 import java.util.Set;
 

@@ -59,7 +59,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
-import sun.rmi.runtime.Log;
 
 import java.util.logging.Logger;
 

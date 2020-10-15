@@ -22,15 +22,14 @@ package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
  */
 
 import com.mcmiddleearth.architect.ArchitectPlugin;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,8 +42,13 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
- 
+
+import javax.xml.stream.events.Namespace;
+
 public class SearchInventory implements Listener {
  
     public static final int ITEM_SLOTS = 54;
@@ -52,6 +56,8 @@ public class SearchInventory implements Listener {
     private final String name;
    
     private final List<ItemStack> items = new ArrayList<>();
+
+    private final Map<NamespacedKey,Recipe> recipes = new HashMap<>();
     
     private final Map<Inventory,SearchInventoryState> openInventories = new HashMap<>();
     
@@ -69,6 +75,13 @@ public class SearchInventory implements Listener {
    
     public SearchInventory add(ItemStack item) {//, String name, String... info) {
         items.add(item);
+        String key = item.getItemMeta().getDisplayName().replaceAll("[^0-9a-z/._-]","")+recipes.size();
+        NamespacedKey namespacedKey = new NamespacedKey(ArchitectPlugin.getPluginInstance(),key);
+        ShapelessRecipe recipe = new ShapelessRecipe(namespacedKey,item);
+        recipe.setGroup(""+recipes.size());
+        recipe.addIngredient(item);
+        recipes.put(namespacedKey,recipe);
+        Bukkit.addRecipe(recipe);
         return this;
     }
    
@@ -206,4 +219,30 @@ public class SearchInventory implements Listener {
         return items.size()>0;
     }
 
+    public ItemStack getItem(String id) {
+//Logger.getGlobal().info("search getItem: "+id);
+        return items.stream().filter(item -> item.getItemMeta().getLore().get(1).equals(id)).findFirst().orElse(null);
+    }
+
+    public Set<NamespacedKey> getRecipeKeys() {
+        return recipes.keySet();
+    }
+
+    public Recipe getRecipe(NamespacedKey key) {
+        return recipes.get(key);
+    }
+
+    /*public void setRecipes() {
+        for(int i = 0 ; i<items.size();i++) {
+            ItemStack item = items.get(i);
+            String key = item.getItemMeta().getDisplayName().replaceAll("[^0-9a-z/._-]","")+i;
+//Logger.getGlobal().info(key);
+            //key = key.split("\\[")[0];
+//Logger.getGlobal().info(key);
+            ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(ArchitectPlugin.getPluginInstance(),key),item);
+            recipe.setGroup(name);
+            recipe.addIngredient(item);
+            Bukkit.addRecipe(recipe);
+        }
+    }*/
 }
