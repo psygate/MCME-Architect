@@ -13,6 +13,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.Jigsaw;
 import org.bukkit.block.data.*;
 import org.bukkit.block.data.type.Comparator;
 import org.bukkit.block.data.type.Tripwire;
@@ -69,12 +70,11 @@ public class BlockDataManager {
         attributes.add(new SetAttribute("Type",Slab.class,Slab.Type.class));
         attributes.add(new IntAttribute("Layers",Snow.class));
         attributes.add(new SetAttribute("Mode",StructureBlock.class,StructureBlock.Mode.class));
-        attributes.add(new SetAttribute("Face",Switch.class,Switch.Face.class));
         attributes.add(new SetAttribute("Type",TechnicalPiston.class,TechnicalPiston.Type.class));
         attributes.add(new BooleanAttribute("Short",PistonHead.class));
         attributes.add(new IntAttribute("Eggs",TurtleEgg.class));
         attributes.add(new IntAttribute("Hatch",TurtleEgg.class));
-        
+
         attributes.add(new BooleanAttribute("Powered",Powerable.class));
         attributes.add(new SetAttribute("Half",Bisected.class,Bisected.Half.class));
         attributes.add(new SetAttribute("Hinge",Door.class,Door.Hinge.class));
@@ -94,7 +94,7 @@ public class BlockDataManager {
         attributes.add(new IntAttribute("Power",AnaloguePowerable.class));
         attributes.add(new IntAttribute("Level",Levelled.class));
         attributes.add(new RotatableAttribute("Rotation"));
-        
+
         //1.13 - 1.4 additions
         attributes.add(new SetAttribute("Leaves", Bamboo.class, Bamboo.Leaves.class));
         attributes.add(new SetAttribute("Attachment", Bell.class, Bell.Attachment.class));
@@ -103,10 +103,19 @@ public class BlockDataManager {
         attributes.add(new BooleanAttribute("Bottom", Scaffolding.class));
         attributes.add(new IntAttribute("Distance", Scaffolding.class));
         //attributes.add(new SetAttribute("Face")) Grindstone???
-        
-        
+
+        //1.15 - 1.16 additions
+        attributes.add(new BooleanAttribute("Drag", BubbleColumn.class));
+        attributes.add(new SetAttribute("Orientation", Jigsaw.class, Jigsaw.Orientation.class));
+        attributes.add(new IntAttribute("Charges", RespawnAnchor.class));
+        attributes.add(new IntAttribute("HoneyLevel", Beehive.class));
+        attributes.add(new BooleanAttribute("Up", Wall.class));
+        attributes.add(new WallAttribute("Height"));
+        attributes.add(new SetAttribute("AttachedFace",FaceAttachable.class,FaceAttachable.AttachedFace.class));
+
+
     }
-    
+
     public Attribute getAttribute(BlockData data) {
         int sum = -1;
         Attribute last = null;
@@ -354,7 +363,7 @@ public class BlockDataManager {
                 private int y, x, z;
                 private int matCounter = -1;
                 private int stateCounter = 0;
-                private BlockDataManager attributeManager = new BlockDataManager();
+                private final BlockDataManager attributeManager = new BlockDataManager();
                 private boolean rowStarted = false;
                 private List cachedStatesTree = new ArrayList();
 

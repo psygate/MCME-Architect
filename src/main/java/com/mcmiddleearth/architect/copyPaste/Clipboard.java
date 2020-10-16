@@ -48,7 +48,7 @@ public class Clipboard implements IStoragePlot {
     
     protected int rotation; //0, 1, 2 or 3 (90 degree steps)
     
-    private boolean[] flip = new boolean[3];
+    private final boolean[] flip = new boolean[3];
 
     private final Location lowCorner;
     private final Location highCorner;
@@ -288,8 +288,8 @@ public class Clipboard implements IStoragePlot {
         try(DataInputStream inStream = new DataInputStream(
                                          new BufferedInputStream(
                                          new FileInputStream(file)));
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                ) {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
+        ) {
             referencePoint = readLocation(inStream);
             shift = readLocation(inStream);
             lowCorner = readLocation(inStream);

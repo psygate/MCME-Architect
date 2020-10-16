@@ -38,7 +38,8 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class SpecialBlockDoor extends SpecialBlock {
     
-   private boolean powered, hingeRight;
+   private final boolean powered;
+    private final boolean hingeRight;
     
     private SpecialBlockDoor(String id, 
                         Material material, boolean powered, boolean hingeRight) {

@@ -21,11 +21,17 @@ import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.CustomInventoryState;
 import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.mcmiddleearth.util.HeadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -56,7 +62,7 @@ public class SpecialHeadInventoryData {
             collection.getAllHeadsIncludingSubCollections(heads);
 //Logger.getGlobal().info("Loading head collection: "+name+ " count: "+heads.size());
             for(ItemStack head: heads.values()) {
-                inventory.add(head, name);
+                inventory.add(head, name, false);
                 searchInventory.add(head);
             }
             if(!heads.isEmpty()) {
@@ -64,7 +70,7 @@ public class SpecialHeadInventoryData {
                 inventory.setCategoryItems(name, null, true, 
                                            categoryItem.clone(), 
                                            new ItemStack(CustomInventoryState.pagingMaterial,1,
-                                                 CustomInventoryState.pageDown));
+                                                 CustomInventoryState.pageDown),false);
             }
         }
     }
@@ -79,7 +85,7 @@ public class SpecialHeadInventoryData {
     }
     
     private static void createInventories() {
-        inventory = new CustomInventory(ChatColor.WHITE+"MCME Head Collection");
+        inventory = new CustomInventory(ChatColor.WHITE+ HeadUtil.headCollectionTag);
         searchInventory = new SearchInventory(ChatColor.WHITE+"heads");
     }
     

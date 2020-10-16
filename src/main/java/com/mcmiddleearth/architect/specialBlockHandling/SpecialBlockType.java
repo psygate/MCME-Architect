@@ -43,6 +43,7 @@ public enum SpecialBlockType {
     DOOR,
     THIN_WALL,
     DOUBLE_Y_BLOCK,
+    UPSHIFT,
     VANILLA,
     DOOR_VANILLA,
     DOOR_THREE_BLOCKS,

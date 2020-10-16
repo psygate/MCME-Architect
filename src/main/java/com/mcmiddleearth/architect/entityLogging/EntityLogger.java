@@ -50,13 +50,13 @@ public class EntityLogger{
     
     private static BukkitTask loggerTask;
     
-    private static Map<Coordinates,Integer[]> logData = new HashMap<>();
+    private static final Map<Coordinates,Integer[]> logData = new HashMap<>();
     
-    private static File logFile = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"entityLog.dat");
+    private static final File logFile = new File(ArchitectPlugin.getPluginInstance().getDataFolder(),"entityLog.dat");
     
     private static Listener listener; 
     
-    private static Class[] entityTypes = new Class[]{ArmorStand.class,
+    private static final Class[] entityTypes = new Class[]{ArmorStand.class,
                                                        Boat.class,
                                                        Arrow.class,
                                                        Item.class,

@@ -38,14 +38,18 @@ public class CustomInventoryCategory {
     private ItemStack currentCategoryItem;
     
     private final List<ItemStack> items;
+
+    private final boolean usesSubcategories;
     
-    public CustomInventoryCategory(UUID owner, boolean isPublic, ItemStack categoryItem, ItemStack currentCategoryItem) {
+    public CustomInventoryCategory(UUID owner, boolean isPublic, ItemStack categoryItem,
+                                   ItemStack currentCategoryItem, boolean usesSubcategories) {
         //this.name = name;
         this.categoryItem = categoryItem;
         this.currentCategoryItem = currentCategoryItem;
         items = new ArrayList<>();
         this.isPublic = isPublic;
         this.owner = owner;
+        this.usesSubcategories = usesSubcategories;
     }
     
     public void addItem(ItemStack item) {
@@ -111,4 +115,6 @@ public class CustomInventoryCategory {
     public List<ItemStack> getItems() {
         return items;
     }
+
+    public boolean usesSubcategories() {return usesSubcategories;}
 }

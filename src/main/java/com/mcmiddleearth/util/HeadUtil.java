@@ -19,6 +19,7 @@ package com.mcmiddleearth.util;
 import com.google.common.io.BaseEncoding;
 import com.mcmiddleearth.architect.customHeadManager.CustomHeadManagerData;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.Material;
@@ -40,9 +41,11 @@ import org.bukkit.inventory.meta.SkullMeta;
  * @author Eriol_Eandur
  */
 public class HeadUtil {
-    
+
+    public static String headCollectionTag = "MCME Head Collection";
+
     public static ItemStack getCustomHead(String name, UUID uuid, String headTexture) {
-        GameProfile profile = new GameProfile(uuid, (String) null);
+        GameProfile profile = new GameProfile(uuid, null);
         PropertyMap propertyMap = profile.getProperties();
         if(propertyMap == null)
             throw new IllegalStateException("Profile doesn't contain a property map!");
@@ -60,6 +63,7 @@ public class HeadUtil {
         }
         ((SkullMeta)headMeta).setOwner(uuid.toString());
         headMeta.setDisplayName(name);
+        headMeta.setLore(Collections.singletonList(headCollectionTag));
         itemStack.setItemMeta(headMeta);
         return itemStack;
     }        

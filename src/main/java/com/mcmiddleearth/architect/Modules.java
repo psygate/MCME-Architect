@@ -45,6 +45,7 @@ public enum Modules {
     WEATHER_BLOCKING       ("modules.environment.weatherBlocking"),
     DECAY_BLOCKING         ("modules.environment.decayBlocking"),
     BLOCK_FORM_BLOCKING    ("modules.environment.formBlocking"),
+    BLOCK_FADE_BLOCKING    ("modules.environment.fadeBlocking"),
     NO_PHYSICS_LIST_ENABLED("modules.environment.noPhysicsListEnabled"),
     NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
     NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),
@@ -79,6 +80,7 @@ public enum Modules {
     
     REMOVE_CONTAINER_ITEMS    ("modules.protection.removeContainerItemsOnBreak"),
     BLOCK_OP_ITEMS            ("modules.protection.blockOpItems"),
+    BLOCK_ARROW_SHOOTING      ("modules.protection.blockArrowShooting"),
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     LILY_PAD_PROTECTION       ("modules.protection.lilyPad"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");

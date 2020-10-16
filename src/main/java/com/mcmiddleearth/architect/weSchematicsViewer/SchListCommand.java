@@ -41,7 +41,7 @@ public class SchListCommand extends AbstractArchitectCommand {
             PluginData.getMessageUtil().sendPlayerOnlyCommandError(sender);
             return true;
         }
-        if(!PluginData.hasPermission((Player)sender,Permission.WE_SCHEMATICS_VIEWER)) {
+        if(!PluginData.hasPermission(sender,Permission.WE_SCHEMATICS_VIEWER)) {
             PluginData.getMessageUtil().sendNoPermissionError(sender);
             return true;
         }

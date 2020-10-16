@@ -45,7 +45,7 @@ public class RpListener implements Listener{
                 PluginData.getMessageUtil().sendInfoMessage(player, "Resource pack download failed. Please check your connection.");
                 break;
             case DECLINED:
-                PluginData.getMessageUtil().sendInfoMessage(player, "Resource pack loading failed. Did you enable server resource packs enabled (edit server in multiplayer list)?");
+                PluginData.getMessageUtil().sendInfoMessage(player, "Resource pack loading failed. Did you enable server resource packs (edit server in multiplayer list)?");
                 break;
         }
         RpManager.getPlayerData(player).setCurrentRpStatus(event.getStatus());

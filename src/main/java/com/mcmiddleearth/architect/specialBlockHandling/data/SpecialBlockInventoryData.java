@@ -16,6 +16,8 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.data;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
@@ -26,15 +28,19 @@ import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.util.ConversionUtil_1_13;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.ZipUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -134,7 +140,8 @@ public class SpecialBlockInventoryData {
                 if(section.contains("damageCurrent")) {
                     currentCategoryItem.setDurability((short)section.getInt("damageCurrent"));
                 }
-                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem);
+                boolean useSubcategories = section.getBoolean("useSubcategories",false);
+                inventory.setCategoryItems(categoryKey, null, true, categoryItem, currentCategoryItem, useSubcategories);
             }
         }
         ConfigurationSection itemConfig = config.getConfigurationSection("Items");
@@ -228,16 +235,28 @@ public class SpecialBlockInventoryData {
                         case DOUBLE_Y_BLOCK:
                             blockData = SpecialBlockDoubleY.loadFromConfig(section, fullName(rpName, itemKey));
                             break;
+                        case UPSHIFT:
+                            blockData = SpecialBlockUpshift.loadFromConfig(section, fullName(rpName, itemKey));
+                            break;
                         case VANILLA:
                             blockData = SpecialBlockVanilla.loadFromConfig(section, fullName(rpName, itemKey));
                             break;
                     }
                     ItemStack inventoryItem = loadItemFromConfig(section, itemKey, rpName);
                     if(blockData !=null && inventoryItem!=null && !inventoryItem.getType().equals(Material.AIR)) {
+                        blockData.loadNextBlock(section,rpName);
                         blockData.loadBlockCollection(section,rpName);
-                        String category = section.getString("category","Block");
                         blockList.add(blockData);
-                        inventory.add(inventoryItem, category);
+
+                        Object categoryObject = section.get("category");
+                        if(categoryObject instanceof String) {
+                            inventory.add(inventoryItem, (String) categoryObject, false);
+                        } else if((categoryObject instanceof List) && ! ((List<?>)categoryObject).isEmpty()) {
+                            ((List<String>)categoryObject).forEach(category -> inventory.add(inventoryItem, category,false));
+                        } else {
+                            inventory.add(inventoryItem,null,false);
+                            //Logger.getGlobal().info("category object: "+categoryObject);
+                        }
                         searchInventory.add(inventoryItem);
                     } else {
                         Logger.getLogger(SpecialBlockInventoryData.class.getName())
@@ -272,10 +291,13 @@ public class SpecialBlockInventoryData {
     }
     
     public static boolean openInventory(Player p, ItemStack collectionBase) {
-        SpecialBlock baseBlock = getSpecialBlockDataFromItem(collectionBase);
+//Logger.getGlobal().info(collectionBase.toString());
+        SpecialBlock baseBlock = matchSpecialBlock(collectionBase);
+//Logger.getGlobal().info("open Inventory: "+baseBlock);
         if(baseBlock != null) {
             String rpName = SpecialBlockInventoryData.rpName(baseBlock.getId());
-            return openInventory(p, rpName, collectionBase);
+//Logger.getGlobal().info("open Inventory rp: "+rpName);
+            return openInventory(p, rpName, searchInventories.get(rpName).getItem(baseBlock.getId()));
         }
         return false;
     }
@@ -297,13 +319,28 @@ public class SpecialBlockInventoryData {
     public static boolean hasBlockInventory(String rpName) {
         return inventories.containsKey(rpName);
     }
-    
+
+    private static SpecialBlock matchSpecialBlock(ItemStack item) {
+        SpecialBlock block = getSpecialBlockDataFromItem(item);
+        if(block!=null) {
+            return block;
+        } else {
+            BlockData data = SpecialBlockVanilla.matchBlockData(item.getType().name());
+            if(data.matches(Material.AIR.createBlockData())) {
+                return null;
+            }
+            return blockList.stream().filter(search->search.matches(data)).findFirst().orElse(null);
+        }
+    }
+
     public static SpecialBlock getSpecialBlock(String id) {
         for(SpecialBlock data: blockList) {
             if(data.getId().equals(id)) {
+//Logger.getGlobal().info("get data "+data.getId());
                 return data;
             }
         }
+//Logger.getGlobal().info("get data NULL");
         return null;
     }
     
@@ -312,13 +349,16 @@ public class SpecialBlockInventoryData {
     }
 
     public static String getSpecialBlockId(ItemStack handItem) {
+//Logger.getGlobal().info("getID start");
         ItemMeta meta = handItem.getItemMeta();
         if(meta==null 
             || (!(meta.hasLore() 
                 && meta.getLore().size()>1 
                 && meta.getLore().get(0).equals(SPECIAL_BLOCK_TAG)))) {
+//Logger.getGlobal().info("getID return null");
             return null;
         }
+//Logger.getGlobal().info("getID return "+meta.getLore().get(1));
         return meta.getLore().get(1);
     }
 
@@ -328,11 +368,20 @@ public class SpecialBlockInventoryData {
         for(SpecialBlock data: blockList) {
             if(rpName(data.getId()).equals(rpName)
                     && data.matches(block)) {
-                return inventories.get(rpName).getItem(data.getId());
+                return searchInventories.get(rpName).getItem(data.getId());
             }
         }
         return getHandItem(new ItemStack(block.getType(),1));
         //1.13 removed: return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));
+    }
+
+    public static ItemStack getItem(SpecialBlock block) {
+        SearchInventory inventory = searchInventories.get(rpName(block.getId()));
+        if (inventory != null) {
+            return inventory.getItem(block.getId()).clone();
+        } else {
+            return null;
+        }
     }
     
     private static ItemStack getHandItem(ItemStack item) {
@@ -426,5 +475,43 @@ public class SpecialBlockInventoryData {
     
     public static String rpName(String id) {
         return id.substring(0,id.indexOf("/"));
+    }
+
+    public static String getRpName(ItemStack item) {
+        String rpN="";
+        if(item.hasItemMeta()
+                && item.getItemMeta().hasDisplayName()) {
+            String displayName = item.getItemMeta().getDisplayName();
+            if(displayName.indexOf(' ')>0) {
+                displayName = displayName.substring(0,displayName.indexOf(' '));
+            }
+            if(!RpManager.getRpUrl(displayName,null).equalsIgnoreCase("")) {
+                rpN = displayName;
+            }
+        }
+        return rpN;
+    }
+
+    /*public static void setRecipes(String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        Bukkit.clearRecipes();
+        if(inv!=null) {
+            inv.setRecipes();
+        }
+    }*/
+    public static Set<NamespacedKey> getRecipeKeys(String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        if(inv!=null) {
+            return inv.getRecipeKeys();
+        }
+        return Sets.newHashSet();
+    }
+
+    public static Recipe getRecipe(NamespacedKey key, String rpName) {
+        SearchInventory inv = searchInventories.get(rpName);
+        if(inv!=null) {
+            return inv.getRecipe(key);
+        }
+        return null;
     }
 }

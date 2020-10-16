@@ -16,31 +16,38 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
-import com.mcmiddleearth.architect.ArchitectPlugin;
-import com.mcmiddleearth.architect.InventoryAccess;
-import com.mcmiddleearth.architect.Modules;
-import com.mcmiddleearth.architect.Permission;
-import com.mcmiddleearth.architect.PluginData;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.*;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import com.mcmiddleearth.architect.*;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
+import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
+import com.mcmiddleearth.util.HeadUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -60,63 +67,83 @@ public class InventoryListener implements Listener{
     public void openSpecialInventory(PlayerSwapHandItemsEvent event) {
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             event.setCancelled(true);
-            final Player player = event.getPlayer();
-            ItemStack handItem = player.getInventory().getItemInMainHand();
-            if( player.isSneaking() ) {
-                //open block collection if target block has one defined
-                SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
-                if(base == null || !base.hasCollection()) {
-                    sendNoInventoryError(player,"");
-                    return;
-                }
-                if(!SpecialBlockInventoryData.openInventory(player, handItem)) {
-                    sendNoInventoryError(player,"");
-                }
-            } else {
+            //if((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting) {
+                final Player player = event.getPlayer();
+                ItemStack handItem = player.getInventory().getItemInMainHand();
                 //open custom block inventory
                 ItemStack offHandItem = player.getInventory().getItemInOffHand();
-                if ((handItem.hasItemMeta() && handItem.getItemMeta().hasDisplayName()
-                        && handItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))
-                        || (offHandItem.hasItemMeta() && offHandItem.getItemMeta().hasDisplayName()
-                        && offHandItem.getItemMeta().getDisplayName().startsWith("Head Inventory"))) {
+//Logger.getGlobal().info("openSpecial: "+(handItem.hasItemMeta()?handItem.getItemMeta().getDisplayName():handItem));
+//Logger.getGlobal().info("openSpecial: "+(handItem.hasItemMeta()?handItem.getItemMeta().getLore().get(0):handItem));
+
+                /*if ((handItem.hasItemMeta() && handItem.getItemMeta().hasLore()
+                        && handItem.getItemMeta().getLore().get(0).equals(HeadUtil.headCollectionTag))
+                        || (offHandItem.hasItemMeta() && offHandItem.getItemMeta().hasLore()
+                        && offHandItem.getItemMeta().getLore().get(0).equals(HeadUtil.headCollectionTag))) {*/
+                if(player.isSneaking()) {
+                    //Player player = event.getPlayer();
+//Logger.getGlobal().info("Open search inv!!");
+                    /*String rpName = RpManager.getCurrentRpName(player);
+                    player.discoverRecipes(SpecialBlockInventoryData.getRecipeKeys(rpName));
+                    InventoryView view = player.openWorkbench(null,true);
+                    Inventory inv = view.getTopInventory();
+                    ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+                    PacketAdapter packetListener = new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.AUTO_RECIPE) {
+                        @Override
+                        public void onPacketReceiving(PacketEvent event) {
+                            Player thisPlayer = event.getPlayer();
+//Logger.getGlobal().info("Auto Recipe ************************");
+                            if(thisPlayer.equals(player)) {
+                                PacketContainer packet = event.getPacket();
+                                NamespacedKey key = new NamespacedKey(packet.getMinecraftKeys().read(0).getPrefix(),
+                                        packet.getMinecraftKeys().read(0).getKey());
+                                Recipe recipe = SpecialBlockInventoryData.getRecipe(key,rpName);
+                                ItemStack item = recipe.getResult().clone();
+                                item.setAmount(2);
+                                view.setCursor(item);
+                                event.setCancelled(true);
+                            }
+                        }
+                    };
+                    manager.addPacketListener(packetListener);
+                    Listener listener = new Listener(){
+                        @EventHandler
+                        public void viewClose(InventoryCloseEvent event) {
+                            if (event.getInventory() != inv) {
+                                return;
+                            }
+//Logger.getGlobal().info("Close ************************");
+                            manager.removePacketListener(packetListener);
+                            player.undiscoverRecipes(SpecialBlockInventoryData.getRecipeKeys(rpName));
+                            HandlerList.unregisterAll(this);
+                        }
+                    };
+                    Bukkit.getPluginManager().registerEvents(listener, ArchitectPlugin.getPluginInstance());*/
                     SpecialHeadInventoryData.openInventory(player);
                     return;
                 }
                 String rpName = RpManager.getCurrentRpName(player);//1.13 removed: PluginData.getRpName(ResourceRegionsUtil.getResourceRegionsUrl(p));
                 if (rpName == null || rpName.equals("")) {
-                    rpName = getRpName(handItem);
+                    rpName = SpecialBlockInventoryData.getRpName(handItem);
                     if (rpName.equals("")) {
-                        rpName = getRpName(offHandItem);
+                        rpName = SpecialBlockInventoryData.getRpName(offHandItem);
                     }
                 }
                 if (!SpecialBlockInventoryData.openInventory(player, rpName)) {
                     sendNoInventoryError(player, rpName);
                 }
-            }
+            /*} else {
+                event.getPlayer().getOpenInventory().close();
+            }*/
+            //}
         }
     }
-    
-    public static String getRpName(ItemStack item) {
-        String rpN="";
-        if(item.hasItemMeta()
-                && item.getItemMeta().hasDisplayName()) {
-            String displayName = item.getItemMeta().getDisplayName();
-            if(displayName.indexOf(' ')>0) {
-                displayName = displayName.substring(0,displayName.indexOf(' '));
-            }
-            if(!RpManager.getRpUrl(displayName,null).equalsIgnoreCase("")) {
-                rpN = displayName;
-            }
-        } 
-        return rpN;
-    }
-    
+
     /**
      * If module SPECIAL_BLOCK_GET is enabled in world config file
      * opens the custom block inventory when a player droppes two stone blocks from the creative inventory.
      * @param event 
      */
-    @EventHandler(priority=EventPriority.LOWEST) 
+    /*@EventHandler(priority=EventPriority.LOWEST)
     public void openSpecialInventory(InventoryCreativeEvent event) {
         if(PluginData.isModuleEnabled(event.getWhoClicked().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
             if(event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)
@@ -147,8 +174,193 @@ public class InventoryListener implements Listener{
                 }.runTaskLater(ArchitectPlugin.getPluginInstance(), 1);
             }
         }
+    }*/
+
+    @EventHandler
+    public void selectItem(PlayerDropItemEvent event) {
+        if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_GET)) {
+            if(!event.getPlayer().isSneaking()) {
+                return;
+            }
+            if (SpecialBlockInventoryData.getSpecialBlockDataFromItem(event.getItemDrop().getItemStack()) != null) {
+                //event.setCancelled(true);
+                final Player player = event.getPlayer();
+                //ItemStack handItem = player.getInventory().getItemInMainHand();
+                ItemStack droppedItem = event.getItemDrop().getItemStack();
+                SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(droppedItem);
+//Logger.getLogger("InventoryListener").info(droppedItem.getType()+" "+droppedItem.getAmount());
+                if (droppedItem.getAmount() > 1) {
+                    //open block collection if target block has one defined
+                    if (base != null && base.hasCollection()) {
+                        if(!SpecialBlockInventoryData.openInventory(player, droppedItem)) {
+                            sendNoInventoryError(player, "");
+                        }
+                    }
+                } else {
+                    if (base != null && base.hasNextBlock()) {
+                        base = base.getNextBlock();
+                        /*nextItem.setAmount(2);
+                        new BukkitRunnable(){
+                            @Override
+                            public void run() {
+                                player.getInventory().setItemInMainHand(nextItem);
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(),20);*/
+                    }
+                }
+//Logger.getGlobal().info("base: "+base);
+//Logger.getGlobal().info("base: "+base.getId());
+                ItemStack nextItem = SpecialBlockInventoryData.getItem(base);
+                nextItem.setAmount(2);
+                player.getInventory().setItemInMainHand(nextItem);
+            } else {
+                event.setCancelled(true);
+            }
+        }
+        /*Logger.getLogger(InventoryListener.class.getSimpleName()).info("Drop event "+ event.getItemDrop().getItemStack().getAmount()
+        +" "+(event.getPlayer().getOpenInventory())+" InventoryView "+((event.getPlayer().getOpenInventory().getTopInventory()) instanceof CraftInventoryCrafting)
+        +"\n InventoryType"+(event.getPlayer().getOpenInventory().getType())
+                +"\n Bottom Inventory"+(event.getPlayer().getOpenInventory().getBottomInventory())
+        +"\n Top Inventory"+(event.getPlayer().getOpenInventory().getTopInventory()));*/
     }
-    
+
+    /*@EventHandler
+    public void prepare(CraftItemEvent event) {
+        Logger.getGlobal().info("Craft item event");
+    }
+    @EventHandler
+    public void prepare(PrepareItemCraftEvent event) {
+        Logger.getGlobal().info("Prepare item craft event");
+    }
+    static {
+        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        manager.addPacketListener(new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.AUTO_RECIPE) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                Logger.getGlobal().info("Auto Recipe ************************");
+                PacketContainer packet = event.getPacket();
+                for(int i = 0; i < packet.getStrings().size();i++) {
+                   Logger.getGlobal().info("Strings: " + packet.getStrings().read(i));
+                }
+                for(int i = 0; i < packet.getMinecraftKeys().size();i++) {
+                    Logger.getGlobal().info("Keys " + packet.getMinecraftKeys().read(i).getFullKey());
+                }
+                for(int i = 0; i < packet.getIntegers().size();i++) {
+                    Logger.getGlobal().info("Ints " + packet.getIntegers().read(i));
+                }
+                for(int i = 0; i < packet.getItemModifier().size();i++) {
+                    Logger.getGlobal().info("Items " + packet.getItemModifier().read(i));
+                }
+                for(int i = 0; i < packet.getBytes().size();i++) {
+                    Logger.getGlobal().info("Bytes " + packet.getBytes().read(i));
+                }
+                for(int i = 0; i < packet.getFloat().size();i++) {
+                    Logger.getGlobal().info("Floats " + packet.getFloat().read(i));
+                }
+                for(int i = 0; i < packet.getDoubles().size();i++) {
+                    Logger.getGlobal().info("Doubles " + packet.getDoubles().read(i));
+                }
+                for(int i = 0; i < packet.getBooleans().size();i++) {
+                    Logger.getGlobal().info("Booleans " + packet.getBooleans().read(i));
+                }
+            }
+        });
+        manager.addPacketListener(new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.CLIENT_COMMAND) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                Logger.getGlobal().info("Client Command ************************");
+                PacketContainer packet = event.getPacket();
+                for(int i = 0; i < packet.getStrings().size();i++) {
+                    Logger.getGlobal().info("Strings: " + packet.getStrings().read(i));
+                }
+            }
+        });
+    }*/
+
+    /*@EventHandler
+    public void openSearchInventory(PlayerJumpEvent event) {
+        Logger.getGlobal().info("Open search inv");
+        if(event.getPlayer().isSneaking()) {
+            Player player = event.getPlayer();
+            Logger.getGlobal().info("Open search inv!!");
+            String rpName = RpManager.getCurrentRpName(player);
+            player.discoverRecipes(SpecialBlockInventoryData.getRecipeKeys(rpName));
+            InventoryView view = player.openWorkbench(null,true);
+            Inventory inv = view.getTopInventory();
+            ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+            PacketAdapter packetListener = new PacketAdapter(ArchitectPlugin.getPluginInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.AUTO_RECIPE) {
+                @Override
+                public void onPacketReceiving(PacketEvent event) {
+                    Player thisPlayer = event.getPlayer();
+Logger.getGlobal().info("Auto Recipe ************************");
+                    if(thisPlayer.equals(player)) {
+                        PacketContainer packet = event.getPacket();
+                        NamespacedKey key = new NamespacedKey(packet.getMinecraftKeys().read(0).getPrefix(),
+                                                              packet.getMinecraftKeys().read(0).getKey());
+                        Recipe recipe = SpecialBlockInventoryData.getRecipe(key,rpName);
+                        view.setCursor(recipe.getResult());
+                        event.setCancelled(true);
+                    }
+                }
+            };
+            manager.addPacketListener(packetListener);
+            Listener listener = new Listener(){
+                @EventHandler
+                public void viewClose(InventoryCloseEvent event) {
+                    if (event.getInventory() != inv) {
+                        return;
+                    }
+Logger.getGlobal().info("Close ************************");
+                    manager.removePacketListener(packetListener);
+                    HandlerList.unregisterAll(this);
+                }
+            };
+            Bukkit.getPluginManager().registerEvents(listener, ArchitectPlugin.getPluginInstance());
+            //Search with AnvilInventory
+            //ItemStack item = new ItemStack(Material.STONE);
+            //ItemMeta meta = item.getItemMeta();
+            //meta.setDisplayName("asd");
+            //item.setItemMeta(meta);
+            //inv.setItem(0,item);
+            //inv.
+            //InventoryView view = player.openInventory(inv);
+            //inv.setItem(1,item.clone());
+            //inv.setItem(2,item.clone());
+            /*if(view != null) {
+                Listener listener = new Listener() {
+                    @EventHandler
+                    public void viewClose(InventoryCloseEvent event) {
+                        if (event.getInventory() != inv) {
+                            return;
+                        }
+                        HandlerList.unregisterAll(this);
+                    }
+
+                    @EventHandler
+                    public void getSearch(InventoryClickEvent event) {
+Logger.getGlobal().info("slot "+event.getSlotType());
+Logger.getGlobal().info("item "+event.getCurrentItem());
+                        if (event.getInventory() != inv) {
+                            return;
+                        }
+                        if(event.getSlotType().equals(InventoryType.SlotType.RESULT)) {
+                            ItemStack item = event.getCurrentItem();
+                            if(item != null && item.hasItemMeta()) {
+                                String search = item.getItemMeta().getDisplayName();
+Logger.getGlobal().info("search "+search);
+                            }
+                            view.close();
+                            HandlerList.unregisterAll(this);
+                        }
+                    }
+                };
+                Bukkit.getPluginManager().registerEvents(listener, ArchitectPlugin.getPluginInstance());
+            }
+        }
+    }*/
+
     /**
      * If module INVENTORY_ACCESS is enabled in world config file
      * allowes or blocks opening of inventories as defined in world config file.
@@ -215,7 +427,7 @@ public class InventoryListener implements Listener{
     }*/
     
 
-    private void sendNoInventoryError(CommandSender p, String rp) {
+    static void sendNoInventoryError(CommandSender p, String rp) {
         if(rp.equals("")) {
             PluginData.getMessageUtil().sendErrorMessage(p, "Custom inventory not found.");
         } else {

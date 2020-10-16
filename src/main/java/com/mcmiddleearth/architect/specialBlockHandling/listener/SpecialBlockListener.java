@@ -60,6 +60,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Eriol_Eandur
@@ -119,6 +121,7 @@ public class SpecialBlockListener extends WatchedListener{
         final Player player = event.getPlayer();
         final ItemStack handItem = player.getInventory().getItemInMainHand();
         SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
+//Logger.getGlobal().info("place special: "+data);
         if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
                         || data.getType().equals(SpecialBlockType.DOOR_VANILLA)
                         || (!data.getType().equals(SpecialBlockType.BLOCK_ON_WATER)

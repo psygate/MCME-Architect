@@ -33,13 +33,13 @@ public class ArmorStandData {
     
     private final static int visible=0, marker=1, base=2, arms=3, gravity=4, small=5;
     
-    private boolean[] flags = new boolean[6];
+    private final boolean[] flags = new boolean[6];
     
-    private EulerAngle[] poses = new EulerAngle[ArmorStandPart.values().length];
+    private final EulerAngle[] poses = new EulerAngle[ArmorStandPart.values().length];
     
     private static final int helmet=0, plate = 1, hand = 2, leggins = 3, boots = 4;
     
-    private ItemStack[] items = new ItemStack[5];
+    private final ItemStack[] items = new ItemStack[5];
     
     private Double turn;
     

@@ -57,18 +57,18 @@ public class WorldConfig {
     
     private final String worldName;
 
-    private YamlConfiguration worldConfig;
+    private final YamlConfiguration worldConfig;
 
     private YamlConfiguration defaultConfig;
 
-    private List<BlockData> noInteraction = new ArrayList<>();
+    private final List<BlockData> noInteraction = new ArrayList<>();
 
-    private List<BlockData> disabledBlockStates = new ArrayList<>();
+    private final List<BlockData> disabledBlockStates = new ArrayList<>();
     
-    private Map<String,Integer> allowedEnchants = new HashMap<>();
+    private final Map<String,Integer> allowedEnchants = new HashMap<>();
     
     
-    private Map<String,Map<BlockData,BlockData>> doubleSlabReplacements = new HashMap<>();
+    private final Map<String,Map<BlockData,BlockData>> doubleSlabReplacements = new HashMap<>();
     
     static {
         if (!worldConfigDir.exists()) {

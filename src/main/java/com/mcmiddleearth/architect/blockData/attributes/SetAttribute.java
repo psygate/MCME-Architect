@@ -84,7 +84,7 @@ public class SetAttribute extends Attribute {
                         try {
                             clazz.getDeclaredMethod("set"+name, enumm).invoke(blockData, values[i]);
                             break;
-                        } catch(IllegalArgumentException e) {};
+                        } catch(IllegalArgumentException e) {}
                     }
                 }
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException 

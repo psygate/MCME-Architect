@@ -25,6 +25,7 @@ import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInvento
 import com.mcmiddleearth.pluginutil.EventUtil;
 import java.util.List;
 import java.util.logging.Logger;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,7 +57,7 @@ public class BlockPickerListener implements Listener {
                 || !(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                         || event.getAction().equals(Action.RIGHT_CLICK_AIR))
                 || !(event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
-                     || !InventoryListener.getRpName(event.getPlayer().getInventory().getItemInMainHand()).equals(""))
+                     || !SpecialBlockInventoryData.getRpName(event.getPlayer().getInventory().getItemInMainHand()).equals(""))
                 || !EventUtil.isMainHandEvent(event)) {
 //Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
             return;
@@ -71,13 +72,21 @@ public class BlockPickerListener implements Listener {
                 PluginData.getMessageUtil().sendErrorMessage(event.getPlayer(),"Your resource pack could not be determined. If you clicked on a special MCME block you will get a block from mc creative inventory instead.");
             }
         } else {
-            rpName = InventoryListener.getRpName(handItem);
+            rpName = SpecialBlockInventoryData.getRpName(handItem);
         }
+//Logger.getGlobal().info("flint "+rpName);
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
+//Logger.getGlobal().info("item "+item.getType());
+//Logger.getGlobal().info("item "+item.hasItemMeta());
         if(item!=null) {
-//Logger.getGlobal().info("4 "+item);
             event.setCancelled(true);
-            event.getPlayer().getInventory().addItem(item);
+            if(!event.getPlayer().isSneaking()) {
+                event.getPlayer().getInventory().addItem(item);
+            } else if(item.hasItemMeta()){
+                if(!SpecialBlockInventoryData.openInventory(event.getPlayer(), item)) {
+                    InventoryListener.sendNoInventoryError(event.getPlayer(),rpName);
+                }
+            }
         }
     }
 

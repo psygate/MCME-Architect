@@ -81,7 +81,7 @@ public class MultiFaceAttribute extends Attribute {
         return false;
     }
     
-    private Set<BlockFace> getAllowedFaces() {
+    protected Set<BlockFace> getAllowedFaces() {
         if(blockData==null || !clazz.isInstance(blockData)) {
             return null;
         }

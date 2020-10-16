@@ -33,6 +33,7 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -91,7 +92,7 @@ public class GameMechanicsListener extends WatchedListener{
 //Logger.getGlobal().info("Block decay: "+event.getBlock().getType().name()+" "
 //                                       +event.getBlock().getX()
 //                                       +" "+event.getBlock().getZ());
-    if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.DECAY_BLOCKING)) {
+    if (PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.BLOCK_FADE_BLOCKING)) {
 //Logger.getGlobal().info("Block decay canceled");
 //Logger.getGlobal().info("cancel.");
             event.setCancelled(true);
@@ -162,7 +163,7 @@ public class GameMechanicsListener extends WatchedListener{
             event.getPlayer().setAllowFlight(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void containerBreak(BlockBreakEvent event) {
         if (PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.REMOVE_CONTAINER_ITEMS)
@@ -170,8 +171,15 @@ public class GameMechanicsListener extends WatchedListener{
             ((Container)event.getBlock().getState()).getInventory().clear();
         }
     }
-    
-    
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void shootArrow(EntityShootBowEvent event) {
+        if (PluginData.isModuleEnabled(event.getEntity().getWorld(), Modules.BLOCK_ARROW_SHOOTING)) {
+            event.setCancelled(true);
+        }
+    }
+
+
 
 /*    @EventHandler(ignoreCancelled = false)
     public void onFurnaceBurn(PlayerInteractEvent event) {

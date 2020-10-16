@@ -95,10 +95,10 @@ public class SpecialSavedInventoryData {
         boolean isPrivate = categoryConfig.getBoolean("isPrivate");
         inventory.setCategoryItems(categoryName, owner, isPrivate, item, 
                                    new ItemStack(CustomInventoryState.pagingMaterial,1,
-                                                 CustomInventoryState.pageDown));
+                                                 CustomInventoryState.pageDown), false);
         List<?> itemConfig = config.getList("items");
         for(Object itemData: itemConfig) {
-            inventory.add((ItemStack)itemData, categoryName);
+            inventory.add((ItemStack)itemData, categoryName, false);
         }
     }
     

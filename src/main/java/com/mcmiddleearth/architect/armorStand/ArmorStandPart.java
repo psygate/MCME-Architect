@@ -19,7 +19,7 @@ public enum ArmorStandPart {
     
     private final String name;
 
-    private ArmorStandPart(String name) {
+    ArmorStandPart(String name) {
         this.name = name;
     }
     

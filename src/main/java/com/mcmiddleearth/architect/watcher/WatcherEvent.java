@@ -29,7 +29,7 @@ public class WatcherEvent extends org.bukkit.event.Event {
     
     private static final HandlerList handlers = new HandlerList();
   
-    private Set<String> confirmations = new HashSet<>();
+    private final Set<String> confirmations = new HashSet<>();
     
     public WatcherEvent() {
         

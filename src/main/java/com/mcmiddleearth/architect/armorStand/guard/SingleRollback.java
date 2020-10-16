@@ -24,7 +24,7 @@ import org.bukkit.entity.ArmorStand;
  */
 public class SingleRollback extends AbstractRollback {
     
-    private ArmorStand armorStand;
+    private final ArmorStand armorStand;
     
     public SingleRollback(ArmorStand armorStand) {
         this.armorStand = armorStand;

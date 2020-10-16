@@ -68,7 +68,7 @@ public class RpCommand extends AbstractArchitectCommand {
             sendNotActivatedMessage(cs);
             return true;
         }
-        if(!PluginData.hasPermission((Player)cs,Permission.RESOURCE_PACK_SWITCH)) {
+        if(!PluginData.hasPermission(cs,Permission.RESOURCE_PACK_SWITCH)) {
             PluginData.getMessageUtil().sendNoPermissionError(cs);
             return true;
         }
@@ -83,11 +83,7 @@ public class RpCommand extends AbstractArchitectCommand {
                     if(args.length<2) {
                         data.setAutoRp(!data.isAutoRp());
                     } else {
-                        if(args[1].equals("on") || args[1].equals("true")) {
-                            data.setAutoRp(true);
-                        } else {
-                            data.setAutoRp(false);
-                        }
+                        data.setAutoRp(args[1].equals("on") || args[1].equals("true"));
                     }
                     String on = (data.isAutoRp()?"on":"off");
                     PluginData.getMessageUtil().sendInfoMessage(cs,"Auto rp switching set to " 
@@ -286,7 +282,7 @@ public class RpCommand extends AbstractArchitectCommand {
                                        {"/rp d","",": Dwarven (Moria)"},
                                        {"/rp m","",": Mordor"}};
         super.sendHelpMessage(player, page);
-        PluginData.getMessageUtil().sendNoPrefixInfoMessage(player, "Enable server textures enabled to use this command: Disconnect > Edit MCME Server > Server Resource Packs: enabled");
+        PluginData.getMessageUtil().sendNoPrefixInfoMessage(player, "Enable server textures to use this command: Disconnect > Edit MCME Server > Server Resource Packs: enabled");
     }
 
     private void sendNoRegionFoundMessage(CommandSender cs) {

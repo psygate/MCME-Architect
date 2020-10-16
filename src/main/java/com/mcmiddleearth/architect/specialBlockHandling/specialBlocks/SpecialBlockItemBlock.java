@@ -57,7 +57,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
     
     protected Material contentItem;
     protected Integer[] contentDamage;
-    private double contentHeight;
+    private final double contentHeight;
     
     private SpecialBlockItemBlock(String id, 
                         BlockData blockData,
@@ -219,7 +219,7 @@ public class SpecialBlockItemBlock extends SpecialBlock {
             while(scanner.hasNext()) {
                 String dataValue = scanner.next();
                 if(NumericUtil.isInt(dataValue)) {
-                    int value = (int) NumericUtil.getInt(dataValue);
+                    int value = NumericUtil.getInt(dataValue);
                     contentDamageList.add(value);
                 }
             }

@@ -47,7 +47,7 @@ public class PluginData {
     
     private static YamlConfiguration defaultWorldConfig = new YamlConfiguration();
     
-    private static String defaultKey = "-default";
+    private static final String defaultKey = "-default";
                                        
     private static boolean overrideWeather = false;
     

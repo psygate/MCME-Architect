@@ -18,6 +18,7 @@ package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -30,13 +31,14 @@ public class CustomInventoryCategoryState extends CustomInventoryState {
     
     private int upperLeftItem;
 
-    public CustomInventoryCategoryState(Map<String, CustomInventoryCategory> categories, Inventory inventory, Player player) {
-        super(categories, inventory, player);
+    public CustomInventoryCategoryState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory,
+                                        Inventory inventory, Player player) {
+        super(categories, withoutCategory, inventory, player);
         upperLeftItem = 0;
     }
 
     CustomInventoryCategoryState(CustomInventoryState state) {
-        this(state.categories,state.inventory,state.player);
+        this(state.categories,state.withoutCategory,state.inventory,state.player);
         currentCategory = state.currentCategory;
         leftCategory = state.leftCategory;
     }
@@ -133,5 +135,8 @@ public class CustomInventoryCategoryState extends CustomInventoryState {
             return category.size() <= upperLeftItem + CustomInventory.ITEM_SLOTS-2;
         }
     }
-    
+
+    @Override
+    public boolean usesSubcategories() {return categories.get(categoryNames[currentCategory]).usesSubcategories();}
+
 }
