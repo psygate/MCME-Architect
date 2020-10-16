@@ -53,7 +53,7 @@ public class SearchInventory implements Listener {
  
     public static final int ITEM_SLOTS = 54;
     
-    private final String name;
+    private final String name, rpName;
    
     private final List<ItemStack> items = new ArrayList<>();
 
@@ -61,8 +61,9 @@ public class SearchInventory implements Listener {
     
     private final Map<Inventory,SearchInventoryState> openInventories = new HashMap<>();
     
-    public SearchInventory(String name) {
+    public SearchInventory(String name, String rpName) {
         this.name = name;
+        this.rpName = rpName;
         Plugin plugin = ArchitectPlugin.getPluginInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         /*for(Material type: Material.values()) {
@@ -75,7 +76,7 @@ public class SearchInventory implements Listener {
    
     public SearchInventory add(ItemStack item) {//, String name, String... info) {
         items.add(item);
-        String key = item.getItemMeta().getDisplayName().replaceAll("[^0-9a-z/._-]","")+recipes.size();
+        String key = (item.getItemMeta().getDisplayName()+rpName+recipes.size()).replaceAll("[^0-9a-z/._-]","");
         NamespacedKey namespacedKey = new NamespacedKey(ArchitectPlugin.getPluginInstance(),key);
         ShapelessRecipe recipe = new ShapelessRecipe(namespacedKey,item);
         recipe.setGroup(""+recipes.size());
