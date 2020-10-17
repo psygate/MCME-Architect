@@ -102,7 +102,7 @@ public class SpecialBlockInventoryData {
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
         CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"MCME Blocks - "+rpName);
         inventories.put(rpName, inventory);
-        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks");
+        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks", rpName);
         searchInventories.put(rpName, searchInventory);
         File blockFile = new File(folder,"categories.yml");
         if(blockFile.exists()) {

@@ -66,6 +66,22 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
         meta.setUnbreakable(true);
         ((Damageable)meta).setDamage(35);
         maskItem.setItemMeta(meta);
+        String foundCat = null;
+        for(Map.Entry<String,CustomInventoryCategory> cat: categories.entrySet()) {
+            if(cat.getValue().getItem(baseBlock.getId())!=null) {
+                foundCat = cat.getKey();
+                break;
+            }
+        }
+        if(foundCat!=null) {
+            for (int i = 0; i < categoryNames.length; i++) {
+                if (categoryNames[i].equals(foundCat)) {
+                    currentCategory = i;
+                    break;
+                }
+            }
+        }
+        currentCategory = -1;
 //Logger.getGlobal().info("final base: "+baseBlock.getId());
     }
 
@@ -88,8 +104,10 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
             } 
         });
         inventory.setItem(maskSlot, maskItem);
-        CustomInventoryCategory cat = categories.get(categoryNames[currentCategory]);
-        inventory.setItem(backSlot, cat.getCategoryItem());
+        if(currentCategory>=0) {
+            CustomInventoryCategory cat = categories.get(categoryNames[currentCategory]);
+            inventory.setItem(backSlot, cat.getCategoryItem());
+        }
 
         //inventory.setItem(maskIndex -1, customItem(2));
         //inventory.setItem(maskIndex +1, customItem(3));

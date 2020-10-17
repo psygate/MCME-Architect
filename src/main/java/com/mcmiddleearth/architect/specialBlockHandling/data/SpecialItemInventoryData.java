@@ -83,7 +83,7 @@ public class SpecialItemInventoryData {
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
         CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"MCME Items - "+rpName);
         inventories.put(rpName, inventory);
-        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"items");
+        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"items","items");
         searchInventories.put(rpName, searchInventory);
         for(File file: files) {
             loadFromFile(inventory, rpName, file);
