@@ -16,38 +16,25 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.*;
-import com.destroystokyo.paper.event.player.PlayerJumpEvent;
-import com.mcmiddleearth.architect.*;
+import com.mcmiddleearth.architect.InventoryAccess;
+import com.mcmiddleearth.architect.Modules;
+import com.mcmiddleearth.architect.Permission;
+import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.noPhysicsEditor.NoPhysicsData;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
-import com.mcmiddleearth.architect.specialBlockHandling.customInventories.SearchInventory;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialHeadInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
-import com.mcmiddleearth.util.HeadUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.*;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -188,7 +175,6 @@ public class InventoryListener implements Listener{
                 //ItemStack handItem = player.getInventory().getItemInMainHand();
                 ItemStack droppedItem = event.getItemDrop().getItemStack();
                 SpecialBlock base = SpecialBlockInventoryData.getSpecialBlockDataFromItem(droppedItem);
-//Logger.getLogger("InventoryListener").info(droppedItem.getType()+" "+droppedItem.getAmount());
                 if (droppedItem.getAmount() > 1) {
                     //open block collection if target block has one defined
                     if (base != null && base.hasCollection()) {
@@ -208,8 +194,6 @@ public class InventoryListener implements Listener{
                         }.runTaskLater(ArchitectPlugin.getPluginInstance(),20);*/
                     }
                 }
-//Logger.getGlobal().info("base: "+base);
-//Logger.getGlobal().info("base: "+base.getId());
                 ItemStack nextItem = SpecialBlockInventoryData.getItem(base);
                 nextItem.setAmount(2);
                 player.getInventory().setItemInMainHand(nextItem);

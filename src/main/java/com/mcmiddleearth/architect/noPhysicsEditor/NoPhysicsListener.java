@@ -16,9 +16,11 @@
  */
 package com.mcmiddleearth.architect.noPhysicsEditor;
 
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.PluginData;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
+import com.mcmiddleearth.architect.watcher.WatcherEvent;
 import com.mcmiddleearth.pluginutil.BlockUtil;
 import com.mcmiddleearth.util.DevUtil;
 import com.mcmiddleearth.util.TheGafferUtil;
@@ -42,13 +44,27 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 
 /**
  *
  * @author Eriol_Eandur
  */
 public class NoPhysicsListener extends WatchedListener{
-    
+
+    @EventHandler
+    private void blockDestroy(BlockDestroyEvent event) {
+        if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
+                && NoPhysicsData.isNoPhysicsBlock(event.getBlock())
+                && !NoPhysicsData.hasNoPhysicsException(event.getBlock())) {
+            DevUtil.log(4,"no Destroy "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ()+" "+event.getNewState());
+            event.setCancelled(true);
+        } else {
+            DevUtil.log(4,"allow Destroy "+event.getBlock().getType().name()+" "+event.getBlock().getX()+" "+event.getBlock().getY()+" "+event.getBlock().getZ()+" From: "
+                    +event.getBlock().getType()+" To: "+event.getNewState());
+        }
+    }
+
     @EventHandler
     private void noPhysicsList(BlockPhysicsEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)

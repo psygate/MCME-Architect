@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.additionalListeners;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
@@ -23,6 +24,7 @@ import com.mcmiddleearth.architect.watcher.WatchedListener;
 import com.mcmiddleearth.util.TheGafferUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Boat;
@@ -37,6 +39,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  *
@@ -141,15 +144,31 @@ public class AdditionalProtectionListener extends WatchedListener{
             event.setCancelled(true);
         }
     }
-    
-    @EventHandler(priority=EventPriority.NORMAL) 
+
+    @EventHandler(priority=EventPriority.NORMAL)
     public void entityInteract(EntityChangeBlockEvent event) {
         if(event.getEntity() instanceof Boat) {
             if((PluginData.isModuleEnabled(event.getEntity().getWorld(),Modules.LILY_PAD_PROTECTION))) {
                 event.setCancelled(true);
-            }  
+            }
         }
     }
-    
-    
+
+    @EventHandler(priority=EventPriority.NORMAL)
+    public void restoneInteract(PlayerInteractEvent event) {
+        if(event.hasBlock() && event.getClickedBlock().getType().equals(Material.REDSTONE_WIRE)) {
+            if((PluginData.isModuleEnabled(event.getPlayer().getWorld(),Modules.REDSTONE_PROTECTION))) {
+                if(!TheGafferUtil.checkGafferPermission(event.getPlayer(), event.getClickedBlock().getLocation())) {
+                    event.setCancelled(true);
+                    BlockData data = event.getClickedBlock().getBlockData();
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            event.getClickedBlock().setBlockData(data,false);
+                        }
+                    }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
+                }
+            }
+        }
+    }
 }

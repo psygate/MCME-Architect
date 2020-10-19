@@ -83,6 +83,7 @@ public enum Modules {
     BLOCK_ARROW_SHOOTING      ("modules.protection.blockArrowShooting"),
     ARMOR_STAND_PROTECTION    ("modules.protection.armorStand"),
     LILY_PAD_PROTECTION       ("modules.protection.lilyPad"),
+    REDSTONE_PROTECTION       ("modules.protection.redstone"),
     HANGING_ENTITY_PROTECTION ("modules.protection.hangingEntity");
     
     private final String moduleKey;

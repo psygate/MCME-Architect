@@ -79,7 +79,8 @@ public class SpecialBlock {
         // end convert old data
         }else {
             try {
-                data = Bukkit.getServer().createBlockData(config.getString("blockData",""));
+                String configData = config.getString("blockData", "");
+                data = Bukkit.getServer().createBlockData(null,configData);
             } catch(IllegalArgumentException e) {
                 return null;
             }
