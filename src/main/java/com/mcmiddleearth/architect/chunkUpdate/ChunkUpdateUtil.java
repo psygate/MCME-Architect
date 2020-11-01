@@ -28,7 +28,9 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.Wall;
 import org.bukkit.entity.Player;
 
 /**
@@ -38,12 +40,12 @@ import org.bukkit.entity.Player;
 public class ChunkUpdateUtil {
     
     private final static int updateRadius = 5;
-    
+    private final static BlockFace[] allowedWallFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
     //private static final Map<Material,BlockFace[]> blockPlaceUpdateSpread = new HashMap<>();
     
     private static final int maxStep = 16*Bukkit.getServer().getViewDistance();
-    private static final Set<Chunk> finishedChunks = new HashSet<>();
-    private static final Set<Block> visitedBlocks = new HashSet<>();
+    //private static final Set<Chunk> finishedChunks = new HashSet<>();
+    //private static final Set<Block> visitedBlocks = new HashSet<>();
     
     public static synchronized void sendUpdates(Block block, Player player) {
         Location loc = block.getLocation();
@@ -68,6 +70,8 @@ public class ChunkUpdateUtil {
                     current = current.getRelative(direction);
                 }
             }
+        } else if(block.getBlockData() instanceof Fence || block.getBlockData() instanceof Fence) {
+            floodFillUpdate(player,block,0,new HashSet<Block>());
         }
         /*    visitedBlocks.clear();
             finishedChunks.clear();
@@ -82,10 +86,10 @@ public class ChunkUpdateUtil {
             }
         }*/
     }
-    
-    private static synchronized void floodFillUpdate(Player player, Block block, int step, boolean condition) {
-        if(!(block.getBlockData() instanceof MultipleFacing) 
-                || visitedBlocks.contains(block) 
+
+    /*private static synchronized void floodFillUpdate(Player player, Block block, int step, boolean condition) {
+        if(!(block.getBlockData() instanceof MultipleFacing)
+                || visitedBlocks.contains(block)
                 || step == maxStep) {
             return;
         }
@@ -97,8 +101,21 @@ public class ChunkUpdateUtil {
                 Block neighbour = block.getRelative(face);
                 if(neighbour.getType().equals(block.getType())) {
                     floodFillUpdate(player,neighbour,step+1,condition);
-                }        
+                }
             }
+        }
+    }*/
+    private static synchronized void floodFillUpdate(Player player, Block block, int step, Set<Block> visited) {
+        if(!(block.getBlockData() instanceof Wall || block.getBlockData() instanceof Fence)
+                || visited.contains(block)
+                || step == maxStep) {
+            return;
+        }
+        player.sendBlockChange(block.getLocation(), block.getBlockData());
+        visited.add(block);
+        for(BlockFace face: allowedWallFaces) {
+            Block neighbour = block.getRelative(face);
+            floodFillUpdate(player,neighbour,step+1,visited);
         }
     }
 }

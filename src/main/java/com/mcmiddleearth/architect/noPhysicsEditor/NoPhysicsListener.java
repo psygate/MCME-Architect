@@ -32,13 +32,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Chest;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.block.data.type.GlassPane;
-import org.bukkit.block.data.type.RedstoneWire;
+import org.bukkit.block.data.type.*;
 import org.bukkit.block.data.type.RedstoneWire.Connection;
-import org.bukkit.block.data.type.Slab;
-import org.bukkit.block.data.type.Stairs;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -91,20 +86,32 @@ public class NoPhysicsListener extends WatchedListener{
                 && NoPhysicsData.isNoPhysicsBlock(block)
                 && !NoPhysicsData.hasNoPhysicsException(block)) {*/
             DevUtil.log(4,"place no physics block"+block.getType().name()+" "+block.getX()+" "+block.getZ());
-            if(((block.getBlockData() instanceof Fence) 
+            if(((block.getBlockData() instanceof Fence)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_FENCES))
-               || ((block.getBlockData() instanceof GlassPane) 
+               || ((block.getBlockData() instanceof GlassPane)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_GLASS))) {
                 MultipleFacing data = (MultipleFacing) block.getBlockData();
-                for(BlockFace face: data.getAllowedFaces()) {
+                for (BlockFace face : data.getAllowedFaces()) {
                     Block neighbour = block.getRelative(face);
-                    if(neighbour.getBlockData().getClass().equals(data.getClass())) {
-                        MultipleFacing neighbourData = (MultipleFacing)neighbour.getBlockData();
-                        neighbourData.setFace(BlockUtil.rotateBlockFace(face,2), true);
+                    if (neighbour.getBlockData().getClass().equals(data.getClass())) {
+                        MultipleFacing neighbourData = (MultipleFacing) neighbour.getBlockData();
+                        neighbourData.setFace(BlockUtil.rotateBlockFace(face, 2), true);
+                        neighbour.setBlockData(neighbourData, false);
+                    }
+                }
+            } else if(((block.getBlockData() instanceof Wall)
+                    && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_WALLS))) {
+                Wall data = (Wall) block.getBlockData();
+                BlockFace[] allowedFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
+                for(BlockFace face: allowedFaces) {
+                    Block neighbour = block.getRelative(face);
+                    if(neighbour.getBlockData() instanceof Wall) {
+                        Wall neighbourData = (Wall)neighbour.getBlockData();
+                        neighbourData.setHeight(BlockUtil.rotateBlockFace(face,2), Wall.Height.LOW);
                         neighbour.setBlockData(neighbourData,false);
                     }
                 }
-            } else if ((block.getBlockData() instanceof Chest) 
+            } else if ((block.getBlockData() instanceof Chest)
                 && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_CHESTS)) {
                 Chest chest = (Chest) block.getBlockData();
                 BlockFace face = chest.getFacing();
@@ -221,8 +228,7 @@ public class NoPhysicsListener extends WatchedListener{
                 && PluginData.isModuleEnabled(block.getWorld(), Modules.DRAIN_WATERLOGGED_DOUBLE_SLABS)) {
                     event.setCancelled(true);
                     block.setBlockData(Bukkit.createBlockData(Material.AIR),false);
-                }
-            else if((block.getBlockData() instanceof Fence) 
+            } else if((block.getBlockData() instanceof Fence)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_FENCES)) {
                 Fence fence = (Fence) block.getBlockData();
                 for(BlockFace face: fence.getAllowedFaces()) {
@@ -233,7 +239,19 @@ public class NoPhysicsListener extends WatchedListener{
                         neighbour.setBlockData(neighbourFence,false);
                     }
                 }
-            } else if((block.getBlockData() instanceof Stairs) 
+            } else if((block.getBlockData() instanceof Fence)
+                    && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_WALLS)) {
+                Wall fence = (Wall) block.getBlockData();
+                BlockFace[] allowedFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
+                for(BlockFace face: allowedFaces) {
+                    Block neighbour = block.getRelative(face);
+                    if(neighbour.getBlockData() instanceof Wall) {
+                        Wall neighbourWall = (Wall) neighbour.getBlockData();
+                        neighbourWall.setHeight(BlockUtil.rotateBlockFace(face,2), Wall.Height.NONE);
+                        neighbour.setBlockData(neighbourWall,false);
+                    }
+                }
+            } else if((block.getBlockData() instanceof Stairs)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_STAIRS)) {
                 Stairs stair = (Stairs) block.getBlockData();
                 BlockFace face = stair.getFacing();

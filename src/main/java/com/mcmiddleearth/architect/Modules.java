@@ -50,6 +50,7 @@ public enum Modules {
     NO_PHYSICS_LIST_INVERTED("modules.environment.noPhysicsListInverted"),
     NO_PHYSICS_CONNECT_STAIRS("modules.environment.noPhysicsConnectStairs"),
     NO_PHYSICS_CONNECT_FENCES("modules.environment.noPhysicsConnectFences"),
+    NO_PHYSICS_CONNECT_WALLS("modules.environment.noPhysicsConnectWalls"),
     NO_PHYSICS_CONNECT_CHORUS("modules.environment.noPhysicsConnectChorus"),
     NO_PHYSICS_CONNECT_CHESTS("modules.environment.noPhysicsConnectChests"),
     NO_PHYSICS_CONNECT_GLASS("modules.environment.noPhysicsConnectGlass"),
