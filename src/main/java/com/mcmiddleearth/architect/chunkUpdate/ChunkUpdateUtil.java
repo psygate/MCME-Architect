@@ -70,7 +70,7 @@ public class ChunkUpdateUtil {
                     current = current.getRelative(direction);
                 }
             }
-        } else if(block.getBlockData() instanceof Fence || block.getBlockData() instanceof Fence) {
+        } else if(block.getBlockData() instanceof Fence || block.getBlockData() instanceof Wall) {
             floodFillUpdate(player,block,0,new HashSet<Block>());
         }
         /*    visitedBlocks.clear();

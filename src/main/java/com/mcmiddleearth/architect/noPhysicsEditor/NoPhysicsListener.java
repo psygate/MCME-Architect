@@ -47,6 +47,8 @@ import org.bukkit.event.block.BlockRedstoneEvent;
  */
 public class NoPhysicsListener extends WatchedListener{
 
+    private static final BlockFace[] allowedWallFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
+
     @EventHandler
     private void blockDestroy(BlockDestroyEvent event) {
         if(PluginData.isModuleEnabled(event.getBlock().getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
@@ -101,13 +103,12 @@ public class NoPhysicsListener extends WatchedListener{
                 }
             } else if(((block.getBlockData() instanceof Wall)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_WALLS))) {
-                Wall data = (Wall) block.getBlockData();
-                BlockFace[] allowedFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
-                for(BlockFace face: allowedFaces) {
+                for(BlockFace face: allowedWallFaces) {
                     Block neighbour = block.getRelative(face);
                     if(neighbour.getBlockData() instanceof Wall) {
                         Wall neighbourData = (Wall)neighbour.getBlockData();
                         neighbourData.setHeight(BlockUtil.rotateBlockFace(face,2), Wall.Height.LOW);
+                        neighbourData.setUp(getVanillaUp(neighbourData));
                         neighbour.setBlockData(neighbourData,false);
                     }
                 }
@@ -239,15 +240,14 @@ public class NoPhysicsListener extends WatchedListener{
                         neighbour.setBlockData(neighbourFence,false);
                     }
                 }
-            } else if((block.getBlockData() instanceof Fence)
+            } else if((block.getBlockData() instanceof Wall)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_WALLS)) {
-                Wall fence = (Wall) block.getBlockData();
-                BlockFace[] allowedFaces = new BlockFace[]{BlockFace.NORTH,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST};
-                for(BlockFace face: allowedFaces) {
+                for(BlockFace face: allowedWallFaces) {
                     Block neighbour = block.getRelative(face);
                     if(neighbour.getBlockData() instanceof Wall) {
                         Wall neighbourWall = (Wall) neighbour.getBlockData();
                         neighbourWall.setHeight(BlockUtil.rotateBlockFace(face,2), Wall.Height.NONE);
+                        neighbourWall.setUp(getVanillaUp(neighbourWall));
                         neighbour.setBlockData(neighbourWall,false);
                     }
                 }
@@ -343,7 +343,27 @@ public class NoPhysicsListener extends WatchedListener{
             }
         //}            
     }
-    
+
+    private static boolean getVanillaUp(Wall data) {
+        if(data.getHeight(BlockFace.EAST).equals(Wall.Height.NONE)
+                && data.getHeight(BlockFace.WEST).equals(Wall.Height.NONE)
+                && data.getHeight(BlockFace.NORTH).equals(Wall.Height.NONE)
+                && data.getHeight(BlockFace.SOUTH).equals(Wall.Height.NONE)) {
+            return true;
+        }
+        if(data.getHeight(BlockFace.EAST).equals(data.getHeight(BlockFace.WEST))
+                && data.getHeight(BlockFace.NORTH).equals(Wall.Height.NONE)
+                && data.getHeight(BlockFace.SOUTH).equals(Wall.Height.NONE)) {
+            return false;
+        }
+        if(data.getHeight(BlockFace.NORTH).equals(data.getHeight(BlockFace.SOUTH))
+                && data.getHeight(BlockFace.EAST).equals(Wall.Height.NONE)
+                && data.getHeight(BlockFace.WEST).equals(Wall.Height.NONE)) {
+            return false;
+        }
+        return true;
+    }
+
     private static boolean canBecomeDoubleChest(Block block, Material match) {
         return block.getBlockData() instanceof Chest
                 && !block.getType().equals(Material.ENDER_CHEST)
