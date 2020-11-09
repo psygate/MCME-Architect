@@ -27,6 +27,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Gate;
@@ -51,6 +52,16 @@ public class ChunkUpdateUtil {
         Location loc = block.getLocation();
         if(!PluginData.isModuleEnabled(loc.getWorld(),Modules.CHUNK_UPDATE_AUTO)) {
             return;
+        }
+        if(block.getBlockData() instanceof Bisected) {
+            Bisected bisectData = (Bisected) block.getBlockData();
+            Block update;
+            if(bisectData.getHalf().equals(Bisected.Half.TOP)) {
+                update = block.getRelative(BlockFace.DOWN);
+            } else {
+                update = block.getRelative(BlockFace.UP);
+            }
+            player.sendBlockChange(update.getLocation(),update.getBlockData());
         }
         if(block.getBlockData() instanceof Gate) {
             DevUtil.log("Sending block specific chunk updates.");
