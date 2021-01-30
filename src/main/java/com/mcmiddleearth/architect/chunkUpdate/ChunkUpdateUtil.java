@@ -81,7 +81,7 @@ public class ChunkUpdateUtil {
                     current = current.getRelative(direction);
                 }
             }
-        } else if(block.getBlockData() instanceof Fence || block.getBlockData() instanceof Wall) {
+        } else {
             floodFillUpdate(player,block,0,new HashSet<Block>());
         }
         /*    visitedBlocks.clear();
@@ -117,7 +117,8 @@ public class ChunkUpdateUtil {
         }
     }*/
     private static synchronized void floodFillUpdate(Player player, Block block, int step, Set<Block> visited) {
-        if(!(block.getBlockData() instanceof Wall || block.getBlockData() instanceof Fence)
+        if(!(block.getBlockData() instanceof Wall || block.getBlockData() instanceof Fence
+                                                  || block.getType().name().contains("CONCRETE_POWDER"))
                 || visited.contains(block)
                 || step == maxStep) {
             return;

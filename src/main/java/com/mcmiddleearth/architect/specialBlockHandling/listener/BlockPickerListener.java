@@ -59,7 +59,8 @@ public class BlockPickerListener implements Listener {
                 || !EventUtil.isMainHandEvent(event)) {
             return;
         }
-        Block block =  event.getPlayer().getTargetBlock(null, 1000);
+        Block block =  (event.getClickedBlock()!=null?
+                        event.getClickedBlock():event.getPlayer().getTargetBlock(null, 1000));
         ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
         String rpName = "";
         if(handItem.getType().equals(Material.FLINT)) {
@@ -94,7 +95,8 @@ public class BlockPickerListener implements Listener {
                 && event.getHand().equals(EquipmentSlot.HAND)
                 && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)) {
             event.setCancelled(true);
-            Block block = event.getPlayer().getTargetBlock(null, 1000);
+            Block block =  (event.getClickedBlock()!=null?
+                    event.getClickedBlock():event.getPlayer().getTargetBlock(null, 1000));
             Player player = event.getPlayer();
             if(player.isSneaking()) {
                 PluginData.getMessageUtil().sendInfoMessage(player, block.getBlockData().getAsString());
