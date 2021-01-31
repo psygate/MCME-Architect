@@ -51,11 +51,16 @@ public abstract class CustomInventoryState {
     protected final Inventory inventory;
     
     protected final Player player;
-    
+
     public CustomInventoryState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory, Inventory inventory, Player player) {
+        this(categories, withoutCategory,inventory,player,0);
+    }
+
+    public CustomInventoryState(Map<String, CustomInventoryCategory> categories, CustomInventoryCategory withoutCategory,
+                                Inventory inventory, Player player,int currentCategory) {
         this.categories = categories;
         this.categoryNames = categories.keySet().toArray(new String[0]);
-        this.currentCategory = 0;
+        this.currentCategory = currentCategory;
         this.leftCategory = 0;
         this.inventory = inventory;
         this.player = player;

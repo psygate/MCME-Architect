@@ -86,7 +86,7 @@ public class SpecialHeadInventoryData {
     
     private static void createInventories() {
         inventory = new CustomInventory(ChatColor.WHITE+ HeadUtil.headCollectionTag);
-        searchInventory = new SearchInventory(ChatColor.WHITE+"heads");
+        searchInventory = new SearchInventory(ChatColor.WHITE+"heads","heads");
     }
     
 }

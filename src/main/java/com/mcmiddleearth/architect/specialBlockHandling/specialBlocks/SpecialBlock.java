@@ -79,7 +79,8 @@ public class SpecialBlock {
         // end convert old data
         }else {
             try {
-                data = Bukkit.getServer().createBlockData(config.getString("blockData",""));
+                String configData = config.getString("blockData", "");
+                data = Bukkit.getServer().createBlockData(null,configData);
             } catch(IllegalArgumentException e) {
                 return null;
             }
@@ -139,7 +140,8 @@ public class SpecialBlock {
                         DevUtil.log("Special block place x2: loc: "+tempState.getX()+" "+tempState.getY()+" "+tempState.getZ()+" - ID "+state.getType()+" - DV "+state.getRawData());
                         //tempState.update(true, false);
                         blockPlace.setBlockData(tempState.getBlockData(),false);
-                        NoPhysicsListener.connectNoPhysicsBlocks(blockPlace);
+                        // We just want VANILLA block type to connect.
+                        // NoPhysicsListener.connectNoPhysicsBlocks(blockPlace);
                         ChunkUpdateUtil.sendUpdates(blockPlace, player);
                         //new ClientUpdateUtil().sendBlockPlaceUpdates(blockPlace,player);
                     }

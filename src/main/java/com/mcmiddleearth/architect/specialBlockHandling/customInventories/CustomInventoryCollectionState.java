@@ -19,10 +19,6 @@ package com.mcmiddleearth.architect.specialBlockHandling.customInventories;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.pluginutil.NumericUtil;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,6 +28,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author Eriol_Eandur
@@ -39,6 +39,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class CustomInventoryCollectionState extends CustomInventoryState {
     
     private final SpecialBlock baseBlock;
+
+    private int returnCategory;
 
     private final int maskSlot = CustomInventory.CATEGORY_SLOTS + 13;
     private final int backSlot = CustomInventory.CATEGORY_SLOTS + 31;
@@ -50,12 +52,10 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
         super(categories, withoutCategory, inventory, player);
         stressCurrentCategoryItem = false;
         SpecialBlock tempBase = SpecialBlockInventoryData.getSpecialBlockDataFromItem(baseItem);
-//Logger.getGlobal().info("first base: "+tempBase.getId());
         while(tempBase.hasIndirectCollection()) {
             SpecialBlock nextBase = tempBase.getCollectionBase();
             if(nextBase!=null) {
                 tempBase = nextBase;
-//Logger.getGlobal().info("found base: "+tempBase.getId());
             } else {
                 break;
             }
@@ -66,7 +66,24 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
         meta.setUnbreakable(true);
         ((Damageable)meta).setDamage(35);
         maskItem.setItemMeta(meta);
-//Logger.getGlobal().info("final base: "+baseBlock.getId());
+        String foundCat = null;
+        for(Map.Entry<String,CustomInventoryCategory> cat: categories.entrySet()) {
+            if(cat.getValue().getItem(baseBlock.getId())!=null) {
+                foundCat = cat.getKey();
+                break;
+            }
+        }
+        currentCategory = 0;
+        returnCategory = -1;
+        if(foundCat!=null) {
+            for (int i = 0; i < categoryNames.length; i++) {
+                if (categoryNames[i].equals(foundCat)) {
+                    currentCategory = i;
+                    returnCategory = i;
+                    break;
+                }
+            }
+        }
     }
 
     CustomInventoryCollectionState(CustomInventoryState state, ItemStack baseItem) {
@@ -88,11 +105,10 @@ public class CustomInventoryCollectionState extends CustomInventoryState {
             } 
         });
         inventory.setItem(maskSlot, maskItem);
-        CustomInventoryCategory cat = categories.get(categoryNames[currentCategory]);
-        inventory.setItem(backSlot, cat.getCategoryItem());
-
-        //inventory.setItem(maskIndex -1, customItem(2));
-        //inventory.setItem(maskIndex +1, customItem(3));
+        if(returnCategory>=0) {
+            CustomInventoryCategory cat = categories.get(categoryNames[returnCategory]);
+            inventory.setItem(backSlot, cat.getCategoryItem());
+        }
     }
 
     private ItemStack customItem(int value) {

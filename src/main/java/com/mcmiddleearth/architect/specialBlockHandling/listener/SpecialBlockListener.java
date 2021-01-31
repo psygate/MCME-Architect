@@ -16,8 +16,6 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
-import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
-import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
@@ -26,6 +24,8 @@ import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.serverResoucePack.RpRegion;
 import com.mcmiddleearth.architect.specialBlockHandling.MushroomBlocks;
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
+import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
+import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockOnWater;
 import com.mcmiddleearth.architect.watcher.WatchedListener;
@@ -59,8 +59,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.logging.Logger;
 
 /**
  *
@@ -121,7 +119,6 @@ public class SpecialBlockListener extends WatchedListener{
         final Player player = event.getPlayer();
         final ItemStack handItem = player.getInventory().getItemInMainHand();
         SpecialBlock data = SpecialBlockInventoryData.getSpecialBlockDataFromItem(handItem);
-//Logger.getGlobal().info("place special: "+data);
         if(data == null || data.getType().equals(SpecialBlockType.VANILLA)
                         || data.getType().equals(SpecialBlockType.DOOR_VANILLA)
                         || (!data.getType().equals(SpecialBlockType.BLOCK_ON_WATER)
@@ -196,12 +193,10 @@ public class SpecialBlockListener extends WatchedListener{
         if(PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_PLACE)
                 && event.getBlockPlaced().getBlockData() instanceof Slab
                 && ((Slab)event.getBlockPlaced().getBlockData()).getType().equals(Slab.Type.DOUBLE)) {
-            RpRegion rpRegion = RpManager.getRegion(event.getBlock().getLocation());
-            String rp;
-            if(rpRegion!=null) {
+            String rp = RpManager.getCurrentRpName(event.getPlayer());
+            if(rp.equalsIgnoreCase("")) {
+                RpRegion rpRegion = RpManager.getRegion(event.getBlock().getLocation());
                 rp = rpRegion.getRp();
-            } else {
-                rp = RpManager.getCurrentRpName(event.getPlayer());
             }
             if(rp!=null && !rp.equals("")) {
                 BlockData data = PluginData.getOrCreateWorldConfig(event.getBlock().getWorld().getName())

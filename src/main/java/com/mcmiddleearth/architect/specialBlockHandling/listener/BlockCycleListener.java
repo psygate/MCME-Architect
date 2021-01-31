@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.architect.specialBlockHandling.listener;
 
+import com.mcmiddleearth.architect.ArchitectPlugin;
 import com.mcmiddleearth.architect.Modules;
 import com.mcmiddleearth.architect.Permission;
 import com.mcmiddleearth.architect.PluginData;
@@ -27,8 +28,6 @@ import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.architect.specialBlockHandling.specialBlocks.SpecialBlockItemBlock;
 import com.mcmiddleearth.pluginutil.EventUtil;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -43,6 +42,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -114,6 +117,12 @@ public class BlockCycleListener implements Listener {
                     attrib.cycleState();
                     if(PluginData.isAllowedBlock(p, data)) {
                         block.setBlockData(data,false);
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                block.setBlockData(data,false);
+                            }
+                        }.runTaskLater(ArchitectPlugin.getPluginInstance(),1);
                         PluginData.getMessageUtil().sendInfoMessage(p,"Set Block State: "
                                                                 + attrib.getName()+" : "+attrib.getState());
                     } else {
@@ -128,7 +137,6 @@ public class BlockCycleListener implements Listener {
         if(armorStand.getCustomName() != null 
                 && armorStand.getCustomName().startsWith(SpecialBlockItemBlock.PREFIX)) {
             ItemStack item = armorStand.getHelmet();
-            //item.setDurability((short)((item.getDurability()+1)%Short.MAX_VALUE));
             String id = SpecialBlockItemBlock.getIdFromArmorStandName(armorStand.getCustomName());
             SpecialBlockItemBlock itemBlock 
                     = (SpecialBlockItemBlock) SpecialBlockInventoryData.getSpecialBlock(id);

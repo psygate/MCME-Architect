@@ -50,12 +50,15 @@ public class ChunkUpdateListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.UP),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.DOWN),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.WEST),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.EAST),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());
+                if(!event.isCancelled()) {
+                    ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
+                    ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.WEST),event.getPlayer());
+                    ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.EAST),event.getPlayer());
+                    ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());
+                }
             }
             
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
@@ -68,12 +71,13 @@ public class ChunkUpdateListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                ChunkUpdateUtil.sendUpdates(event.getBlock(),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.UP),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.DOWN),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
+                /*ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.SOUTH),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.WEST),event.getPlayer());
                 ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.EAST),event.getPlayer());
-                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());
+                ChunkUpdateUtil.sendUpdates(event.getBlock().getRelative(BlockFace.NORTH),event.getPlayer());*/
             }
         }.runTaskLater(ArchitectPlugin.getPluginInstance(), 2);
     }

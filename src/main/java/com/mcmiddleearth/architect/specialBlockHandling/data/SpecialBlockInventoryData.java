@@ -102,7 +102,7 @@ public class SpecialBlockInventoryData {
         File[] files = folder.listFiles(FileUtil.getFileExtFilter("yml"));
         CustomInventory inventory = new CustomInventory(ChatColor.WHITE+"MCME Blocks - "+rpName);
         inventories.put(rpName, inventory);
-        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks");
+        SearchInventory searchInventory = new SearchInventory(ChatColor.WHITE+"blocks", rpName);
         searchInventories.put(rpName, searchInventory);
         File blockFile = new File(folder,"categories.yml");
         if(blockFile.exists()) {
@@ -365,11 +365,23 @@ public class SpecialBlockInventoryData {
     public static ItemStack getItem(Block block, String rpName) {
         //Material material = block.getType();
         //byte dataValue = block.getData();
+        List<SpecialBlock> vanillaMatches = new ArrayList<>();
         for(SpecialBlock data: blockList) {
+if(data.getId().contains("redstone_dust_power4_center")) {
+Logger.getGlobal().info("data " + data.getBlockData().getAsString(true));
+Logger.getGlobal().info("block " + block.getBlockData().getAsString(true));
+}
             if(rpName(data.getId()).equals(rpName)
                     && data.matches(block)) {
-                return searchInventories.get(rpName).getItem(data.getId());
+                if(data instanceof SpecialBlockVanilla) {
+                    vanillaMatches.add(data);
+                } else {
+                    return searchInventories.get(rpName).getItem(data.getId());
+                }
             }
+        }
+        if(!vanillaMatches.isEmpty()) {
+            return searchInventories.get(rpName).getItem(vanillaMatches.get(0).getId());
         }
         return getHandItem(new ItemStack(block.getType(),1));
         //1.13 removed: return getHandItem(new ItemStack(block.getType(),1,(short)0,block.getData()));

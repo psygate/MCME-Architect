@@ -41,6 +41,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Eriol_Eandur

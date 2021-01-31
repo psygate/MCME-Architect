@@ -82,7 +82,7 @@ public class SearchInventory implements Listener {
         recipe.setGroup(""+recipes.size());
         recipe.addIngredient(item);
         recipes.put(namespacedKey,recipe);
-        Bukkit.addRecipe(recipe);
+        //Bukkit.addRecipe(recipe);
         return this;
     }
    

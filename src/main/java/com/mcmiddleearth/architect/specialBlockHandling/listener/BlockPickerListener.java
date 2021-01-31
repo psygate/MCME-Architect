@@ -23,9 +23,6 @@ import com.mcmiddleearth.architect.chunkUpdate.ChunkUpdateUtil;
 import com.mcmiddleearth.architect.serverResoucePack.RpManager;
 import com.mcmiddleearth.architect.specialBlockHandling.data.SpecialBlockInventoryData;
 import com.mcmiddleearth.pluginutil.EventUtil;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,6 +34,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  *
@@ -52,18 +51,16 @@ public class BlockPickerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false) 
     public void flintBlock(PlayerInteractEvent event) {
-//Logger.getGlobal().info("1");
         if(!PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)
                 || !(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                         || event.getAction().equals(Action.RIGHT_CLICK_AIR))
                 || !(event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)
                      || !SpecialBlockInventoryData.getRpName(event.getPlayer().getInventory().getItemInMainHand()).equals(""))
                 || !EventUtil.isMainHandEvent(event)) {
-//Logger.getGlobal().info("2 "+PluginData.isModuleEnabled(event.getPlayer().getWorld(), Modules.SPECIAL_BLOCKS_FLINT)+event.getAction().equals(Action.RIGHT_CLICK_BLOCK)+event.getPlayer().getInventory().getItemInMainHand());
             return;
         }
-//Logger.getGlobal().info("3");
-        Block block =  event.getPlayer().getTargetBlock(null, 1000);
+        Block block =  (event.getClickedBlock()!=null?
+                        event.getClickedBlock():event.getPlayer().getTargetBlock(null, 1000));
         ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
         String rpName = "";
         if(handItem.getType().equals(Material.FLINT)) {
@@ -74,13 +71,12 @@ public class BlockPickerListener implements Listener {
         } else {
             rpName = SpecialBlockInventoryData.getRpName(handItem);
         }
-//Logger.getGlobal().info("flint "+rpName);
         ItemStack item = SpecialBlockInventoryData.getItem(block, rpName);
-//Logger.getGlobal().info("item "+item.getType());
-//Logger.getGlobal().info("item "+item.hasItemMeta());
         if(item!=null) {
             event.setCancelled(true);
             if(!event.getPlayer().isSneaking()) {
+                item = item.clone();
+                item.setAmount(2);
                 event.getPlayer().getInventory().addItem(item);
             } else if(item.hasItemMeta()){
                 if(!SpecialBlockInventoryData.openInventory(event.getPlayer(), item)) {
@@ -98,9 +94,9 @@ public class BlockPickerListener implements Listener {
         if((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR))
                 && event.getHand().equals(EquipmentSlot.HAND)
                 && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.FLINT)) {
-//Logger.getGlobal().info("Bowl: "+event.getPlayer().getInventory().getItemInMainHand().getType().name());
             event.setCancelled(true);
-            Block block = event.getPlayer().getTargetBlock(null, 1000);
+            Block block =  (event.getClickedBlock()!=null?
+                    event.getClickedBlock():event.getPlayer().getTargetBlock(null, 1000));
             Player player = event.getPlayer();
             if(player.isSneaking()) {
                 PluginData.getMessageUtil().sendInfoMessage(player, block.getBlockData().getAsString());
@@ -110,10 +106,6 @@ public class BlockPickerListener implements Listener {
                                                     +block.getLocation().getBlockX()+", "
                                                     +block.getLocation().getBlockY()+", "
                                                     +block.getLocation().getBlockZ()+ChatColor.AQUA+")");
-                //PluginData.getMessageUtil().sendIndentedInfoMessage(player, "Material: "+ChatColor.GREEN+block.getType().name());
-                //if(!block.getType().isLegacy()) {
-                //    PluginData.getMessageUtil().sendIndentedInfoMessage(player, ChatColor.GREEN+block.getType().getKey().toString());
-                //}
                 for(String line: info) {
                     PluginData.getMessageUtil().sendIndentedInfoMessage(player, line);
                 }

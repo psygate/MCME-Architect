@@ -283,6 +283,7 @@ public class ArmorStandListener implements Listener {
             case LOCK:
                 if(armorStand.getScoreboardTags().contains("LOCKED")) {
                     ArmorStandUtil.lockArmorStand(armorStand, false);
+                    armorStand.setVisible(true);
                     PluginData.getMessageUtil().sendInfoMessage(player,"Armor stand unlocked.");
                 } else {
                     ArmorStandUtil.lockArmorStand(armorStand, true);
