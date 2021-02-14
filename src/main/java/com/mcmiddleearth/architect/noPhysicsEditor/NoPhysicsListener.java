@@ -40,6 +40,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  *
@@ -82,7 +83,12 @@ public class NoPhysicsListener extends WatchedListener{
             connectNoPhysicsBlocks(event.getBlock());
         }
     }
-    
+
+    @EventHandler
+    private void onRedstoneChange(BlockRedstoneEvent event) {
+        event.setNewCurrent(event.getOldCurrent());
+    }
+
     public static void connectNoPhysicsBlocks(Block block) {
         /*if(PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
                 && NoPhysicsData.isNoPhysicsBlock(block)

@@ -25,6 +25,7 @@ public enum SpecialBlockType {
     BLOCK         ,//("normal"),
     BISECTED         ,//("normal"),
     BLOCK_ON_WATER,//("placed on top of clicked water block"),
+    BLOCK_CONNECT, //connects to other blocks like vanilla
     OPEN_HALF_DOOR, //("open half doors")
     FOUR_DIRECTIONS,//("fourFaced"),
     MATCH_ORIENTATION,//("fourFaced"),
