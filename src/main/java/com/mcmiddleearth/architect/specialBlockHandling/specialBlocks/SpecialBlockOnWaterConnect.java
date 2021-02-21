@@ -17,10 +17,8 @@
 package com.mcmiddleearth.architect.specialBlockHandling.specialBlocks;
 
 import com.mcmiddleearth.architect.specialBlockHandling.SpecialBlockType;
-import com.mcmiddleearth.pluginutil.LegacyMaterialUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -31,17 +29,17 @@ import org.bukkit.entity.Player;
  *
  * @author Eriol_Eandur
  */
-public class SpecialBlockOnWater extends SpecialBlock {
-    
-    private SpecialBlockOnWater(String id, BlockData data) {
-        super(id, data, SpecialBlockType.BLOCK_ON_WATER);
+public class SpecialBlockOnWaterConnect extends SpecialBlockConnect {
+
+    private SpecialBlockOnWaterConnect(String id, BlockData data) {
+        super(id, data, SpecialBlockType.BLOCK_ON_WATER_CONNECT);
     }
     
-    public static SpecialBlockOnWater loadFromConfig(ConfigurationSection config, String id) {
+    public static SpecialBlockOnWaterConnect loadFromConfig(ConfigurationSection config, String id) {
         BlockData data;
         try {
             data = Bukkit.getServer().createBlockData(config.getString("blockData",""));
-            return new SpecialBlockOnWater(id, data);
+            return new SpecialBlockOnWaterConnect(id, data);
         } catch(IllegalArgumentException e) {
             return null;
         }
@@ -52,5 +50,4 @@ public class SpecialBlockOnWater extends SpecialBlock {
         return player.getTargetBlockExact(4, FluidCollisionMode.ALWAYS).getRelative(BlockFace.UP);
 
     }
-
 }

@@ -172,8 +172,14 @@ public class SpecialBlockInventoryData {
                         case BLOCK_ON_WATER:
                             blockData = SpecialBlockOnWater.loadFromConfig(section, fullName(rpName,itemKey));
                             break;
+                        case BLOCK_ON_WATER_CONNECT:
+                            blockData = SpecialBlockOnWaterConnect.loadFromConfig(section, fullName(rpName,itemKey));
+                            break;
                         case BLOCK_CONNECT:
                             blockData = SpecialBlockConnect.loadFromConfig(section, fullName(rpName,itemKey));
+                            break;
+                        case DIAGONAL_CONNECT:
+                            blockData = SpecialBlockDiagonalConnect.loadFromConfig(section, fullName(rpName,itemKey));
                             break;
                         case BISECTED:
                             blockData = SpecialBlockBisected.loadFromConfig(section, fullName(rpName,itemKey));
@@ -370,10 +376,10 @@ public class SpecialBlockInventoryData {
         //byte dataValue = block.getData();
         List<SpecialBlock> vanillaMatches = new ArrayList<>();
         for(SpecialBlock data: blockList) {
-if(data.getId().contains("redstone_dust_power4_center")) {
+/*if(data.getId().contains("redstone_dust_power4_center")) {
 Logger.getGlobal().info("data " + data.getBlockData().getAsString(true));
 Logger.getGlobal().info("block " + block.getBlockData().getAsString(true));
-}
+}*/
             if(rpName(data.getId()).equals(rpName)
                     && data.matches(block)) {
                 if(data instanceof SpecialBlockVanilla) {

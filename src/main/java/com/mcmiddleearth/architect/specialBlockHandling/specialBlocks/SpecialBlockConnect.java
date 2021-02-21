@@ -40,7 +40,11 @@ public class SpecialBlockConnect extends SpecialBlock {
     private SpecialBlockConnect(String id, BlockData data) {
         super(id, data, SpecialBlockType.BLOCK_CONNECT);
     }
-    
+
+    protected SpecialBlockConnect(String id, BlockData data, SpecialBlockType type) {
+        super(id, data, type);
+    }
+
     public static SpecialBlockConnect loadFromConfig(ConfigurationSection config, String id) {
         BlockData data;
         try {
