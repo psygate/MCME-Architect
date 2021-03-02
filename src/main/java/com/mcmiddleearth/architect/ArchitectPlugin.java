@@ -99,11 +99,12 @@ public class ArchitectPlugin extends JavaPlugin {
             
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
         // AbstractArchitectCommand methods are used by command /architect help
+        WorldConfig serverConfig = PluginData.getOrCreateWorldConfig("server");
         setCommandExecutor("armor", new ArmorStandEditorCommand());
         setCommandExecutor("banner", new BannerEditorCommand());
         setCommandExecutor("random", new RandomiserCommand());
         setCommandExecutor("noPhy", new NoPhysicsCommand());
-        setCommandExecutor("fbt", new FbtCommand());
+        if(serverConfig.isModuleEnabled(Modules.FULL_BRIGHTNESS, true)) setCommandExecutor("fbt", new FbtCommand());
         setCommandExecutor("get", new GetCommand());
         setCommandExecutor("sl", new SlCommand());
         setCommandExecutor("vv", new VvCommand());
