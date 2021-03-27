@@ -83,6 +83,8 @@ public class WorldConfig {
             worldConfigDir.mkdirs();
         }
         if (!defaultConfigFile.exists()) {
+            Logger.getGlobal().info("*****************************************************************");
+            Logger.getGlobal().info("missing default world config file --- creating defaultWorldConfig");
             this.defaultConfig = createDefaultConfig();
             saveDefaultConfig();
         }
