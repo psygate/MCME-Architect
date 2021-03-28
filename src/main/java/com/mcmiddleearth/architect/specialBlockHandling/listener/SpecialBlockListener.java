@@ -141,12 +141,12 @@ public class SpecialBlockListener extends WatchedListener{
             PluginData.getMessageUtil().sendErrorMessage(player, "Special block data not found, item is probably outdated.");
             return;
         }
-        Block blockPlace;
-        if(data instanceof SpecialBlockOnWater) {
+        Block blockPlace = data.getBlock(event.getClickedBlock(), event.getBlockFace(), player);
+        /*if(data instanceof SpecialBlockOnWater) {
             blockPlace = player.getTargetBlockExact(4, FluidCollisionMode.ALWAYS).getRelative(BlockFace.UP);
         } else {
             blockPlace = event.getClickedBlock().getRelative(event.getBlockFace());
-        }
+        }*/
         if(!blockPlace.isEmpty() 
                 && !blockPlace.getType().equals(Material.GRASS)
                 && !blockPlace.getType().equals(Material.FIRE)

@@ -40,6 +40,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  *
@@ -82,7 +83,12 @@ public class NoPhysicsListener extends WatchedListener{
             connectNoPhysicsBlocks(event.getBlock());
         }
     }
-    
+
+    @EventHandler
+    private void onRedstoneChange(BlockRedstoneEvent event) {
+        event.setNewCurrent(event.getOldCurrent());
+    }
+
     public static void connectNoPhysicsBlocks(Block block) {
         /*if(PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_LIST_ENABLED)
                 && NoPhysicsData.isNoPhysicsBlock(block)
@@ -228,7 +234,11 @@ public class NoPhysicsListener extends WatchedListener{
                 && ((Slab) block.getBlockData()).getType().equals(Slab.Type.DOUBLE)
                 && PluginData.isModuleEnabled(block.getWorld(), Modules.DRAIN_WATERLOGGED_DOUBLE_SLABS)) {
                     event.setCancelled(true);
-                    block.setBlockData(Bukkit.createBlockData(Material.AIR),false);
+                    block.setBlockData(Bukkit.createBlockData(Material.AIR), false);
+            } else if((block.getBlockData() instanceof Waterlogged)
+                && (((Waterlogged) block.getBlockData()).isWaterlogged())) {
+                    event.setCancelled(true);
+                    block.setBlockData(Bukkit.createBlockData(Material.WATER), false);
             } else if((block.getBlockData() instanceof Fence)
                     && PluginData.isModuleEnabled(block.getWorld(), Modules.NO_PHYSICS_CONNECT_FENCES)) {
                 Fence fence = (Fence) block.getBlockData();

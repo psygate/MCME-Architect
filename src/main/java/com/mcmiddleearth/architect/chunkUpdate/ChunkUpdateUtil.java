@@ -31,6 +31,7 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.entity.Player;
 
@@ -117,7 +118,8 @@ public class ChunkUpdateUtil {
         }
     }*/
     private static synchronized void floodFillUpdate(Player player, Block block, int step, Set<Block> visited) {
-        if(!(block.getBlockData() instanceof Wall || block.getBlockData() instanceof Fence
+        if(step!= 0 && !(block.getBlockData() instanceof Wall || block.getBlockData() instanceof Fence
+                                                  || block.getBlockData() instanceof GlassPane
                                                   || block.getType().name().contains("CONCRETE_POWDER"))
                 || visited.contains(block)
                 || step == maxStep) {

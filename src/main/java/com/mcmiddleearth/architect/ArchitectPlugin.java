@@ -70,7 +70,10 @@ public class ArchitectPlugin extends JavaPlugin {
         //ProtocolLibUtil.init(this);
         //DoorListener.addOpenHalfDoorListener();
         PluginData.getMessageUtil().setPluginName("Architect");
-        
+
+        loadData();
+        WorldConfig serverConfig = PluginData.getOrCreateWorldConfig("server");
+
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ArmorStandListener(), this);
         pluginManager.registerEvents(new BannerListener(), this);
@@ -96,14 +99,14 @@ public class ArchitectPlugin extends JavaPlugin {
         pluginManager.registerEvents(new ClipboardPlayerListener(), this);
         pluginManager.registerEvents(new ItemBlockListener(), this);
 //        pluginManager.registerEvents(new AfkListener(), this);
-            
+
         // all CommandExecutors should be subclasses of AbstractArchitectCommand
         // AbstractArchitectCommand methods are used by command /architect help
         setCommandExecutor("armor", new ArmorStandEditorCommand());
         setCommandExecutor("banner", new BannerEditorCommand());
         setCommandExecutor("random", new RandomiserCommand());
         setCommandExecutor("noPhy", new NoPhysicsCommand());
-        setCommandExecutor("fbt", new FbtCommand());
+        if(serverConfig.isModuleEnabled(Modules.FULL_BRIGHTNESS, true)) setCommandExecutor("fbt", new FbtCommand());
         setCommandExecutor("get", new GetCommand());
         setCommandExecutor("sl", new SlCommand());
         setCommandExecutor("vv", new VvCommand());
@@ -127,7 +130,6 @@ public class ArchitectPlugin extends JavaPlugin {
         //setCommandExecutor("speed", new SpeedCommand());
 //        setCommandExecutor("newafkk", new NewAfkCommand());
         
-        loadData();
         new BlockDataManager().createBlockIdDataMapping();
         
         rpSwitchTask = new RPSwitchTask().runTaskTimer(this, 500, 20);

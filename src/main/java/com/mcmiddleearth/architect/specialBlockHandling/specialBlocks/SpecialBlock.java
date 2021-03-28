@@ -123,7 +123,11 @@ public class SpecialBlock {
     public SpecialBlock getNextBlock() {
         return SpecialBlockInventoryData.getSpecialBlock(nextBlockId);
     }
-    
+
+    public Block getBlock(Block clicked, BlockFace blockFace, Player player) {
+        return clicked.getRelative(blockFace);
+    }
+
     public void placeBlock(final Block blockPlace, final BlockFace blockFace, final Player player) {
         final Location playerLoc = player.getLocation();
         final BlockState state = getBlockState(blockPlace, blockFace, playerLoc);
